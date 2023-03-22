@@ -1,0 +1,5 @@
+dist
+env39
+examples
+pyepidoc
+tests
