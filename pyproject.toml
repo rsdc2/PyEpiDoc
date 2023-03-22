@@ -1,0 +1,28 @@
+# pyproject.toml
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyepidoc"
+requires-python = "==3.9.16"
+dependencies = [
+    "lxml == 4.9.2",
+    "mypy == 1.1.1",
+    "pytest == 7.2.2"
+    # "lxml",
+    # "mypy",
+    # "pytest"
+]
+version = "0.1.1"
+authors = [
+    {name = "Robert Crellin"}
+]
+keywords = ["XML", "EpiDoc", "TEI"]
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "env39"] 
+
+[tool.setuptools]
+include-package-data = true
