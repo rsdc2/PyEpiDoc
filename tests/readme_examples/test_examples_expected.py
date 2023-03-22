@@ -4,7 +4,7 @@ from pyepidoc import EpiDoc
 def test_tokens_example():
     from pyepidoc import EpiDoc
 
-    doc = EpiDoc("examples/ISic000001_tokenized.xml")
+    doc = EpiDoc("tests/readme_examples/files/input/ISic000001_tokenized.xml")
 
     tokens = doc.tokens
     tokens_str = ' '.join([str(token) for token in tokens])
@@ -14,7 +14,7 @@ def test_tokens_example():
 
 def test_tokenize_example():
     # Load the EpiDoc file
-    doc = EpiDoc("examples/ISic000032_untokenized.xml")
+    doc = EpiDoc("tests/readme_examples/files/input/ISic000032_untokenized.xml")
 
     # Tokenize the edition
     doc.tokenize()
