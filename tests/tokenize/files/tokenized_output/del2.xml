@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+    <text> <!--ISic000022-->
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+                <ab>
+                    <lb n="1"/><w><del rend="erasure"><gap reason="lost" extent="unknown" unit="character"/></del>oni
+                    <lb n="2" break="no"/>no<del rend="erasure"><gap reason="lost" extent="unknown" unit="character"/></del></w> 
+                    <lb n="3"/><name>Pio</name> <w><expan><abbr><unclear>nobili</unclear>ss</abbr><ex>imo</ex></expan></w>
+                </ab>
+            </div>
+        </body>
+    </text>
+</TEI>

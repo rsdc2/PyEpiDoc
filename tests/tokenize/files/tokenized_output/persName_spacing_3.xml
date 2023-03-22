@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+    <text> <!-- made up ?-->
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+                <ab>
+                    <lb n="1"/><w><expan><abbr>l</abbr><ex>iberto</ex></expan></w> <name>Maximus</name>
+                </ab>
+            </div>
+        </body>
+    </text>
+</TEI>

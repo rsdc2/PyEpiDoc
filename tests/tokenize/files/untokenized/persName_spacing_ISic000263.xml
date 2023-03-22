@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../schematron/ircyr-checking.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>                                                
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <text> <!-- ISic000263 -->
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+                <ab>
+                    <lb n="1"/><persName type="attested"><name type="praenomen"><expan><abbr>M</abbr><ex>arco</ex></expan></name> <g ref="#interpunct">·</g> <name type="nomen">Aemilio</name> <g ref="#interpunct">·</g> <persName type="attested"><name type="libertinatio"><expan><abbr>M</abbr><ex>arci</ex></expan></name></persName> <g ref="#interpunct">·</g> <expan><abbr>l</abbr><ex>iberto</ex></expan> <g ref="#interpunct">·</g> 
+                    <lb n="2"/><name type="cognomen">Antho</name></persName> <g ref="#interpunct">·</g>
+                </ab>
+            </div>
+        </body>
+    </text>
+</TEI>
