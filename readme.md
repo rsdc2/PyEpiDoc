@@ -11,7 +11,7 @@ with the [I.Sicily](http://sicily.classics.ox.ac.uk/) corpus.
 ## Dependencies
 
 PyEpiDoc depends on [```lxml```](https://lxml.de/) for parsing XML.
-To run the tests you need [```PyTest```](https://docs.pytest.org/en/7.2.x/).
+To run the tests you need [```pytest```](https://docs.pytest.org/en/7.2.x/).
 You can use [```mypy```](https://www.mypy-lang.org/) to check the types.
 
 
