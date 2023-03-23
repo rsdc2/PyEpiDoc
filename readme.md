@@ -27,12 +27,6 @@ in the cloned / downloaded folder's **parent** folder type:
 pip install ./pyepidoc --user
 ```
 
-or 
-
-```
-python3.9 -m pip install ./pyepidoc --user
-```
-
 
 ### ```venv``` virtual environment
 
@@ -40,12 +34,6 @@ If you are using a ```venv``` virtual environment, once the virtual environment 
 
 ```
 pip install ./pyepidoc
-```
-
-or:
-
-```
-python3.9 -m pip install ./pyepidoc
 ```
 
 
