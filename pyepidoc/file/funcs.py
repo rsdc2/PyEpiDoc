@@ -21,32 +21,16 @@ def filepath_from_list(
     filename:Optional[Union[str, list]]=None
 ) -> str:
     
-
-    output_list:list = []
-
-    for item in folder_list:
-        if item == '' or item is None: 
-            continue
-        
-        new_item = item
-
-        if len(output_list) > 0:
-            if output_list[-1][-1] == '/':
-                output_list[-1] = output_list[-1][:-1]
-
-        if new_item[0] != '/': new_item = '/' + new_item
-        if new_item[-1] != '/': 
-            new_item += '/'
-
-
-        output_list += [new_item]
+    output_str = '/'.join(folder_list)
+    if output_str[-1] != '/':
+        output_str += '/'
     
     if isinstance(filename, str):
-        output_list += [filename]
+        output_str += filename
     elif isinstance(filename, list):
-        output_list += filename
+        output_str += filename[0]
 
-    return ''.join(output_list)
+    return output_str
 
 
 
