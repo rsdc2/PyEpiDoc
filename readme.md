@@ -1,7 +1,7 @@
 # PyEpiDoc (α)
 
-PyEpiDoc is a Python library for parsing and interacting with [TEI](https://tei-c.org/) XML
-[EpiDoc](https://epidoc.stoa.org/) files. So far it has only been tested on Python 3.9.16, but it may well work on other versions. However, the installer currently specifies that Python 3.9.16 is required.
+PyEpiDoc is a Python (>=3.9.16) library for parsing and interacting with [TEI](https://tei-c.org/) XML
+[EpiDoc](https://epidoc.stoa.org/) files. It has been tested on Python 3.9.16 on Linux (Ubuntu), and 3.10.0 on Windows, but it should work on later versions.
 
 PyEpiDoc has been designed for use, in the first instance, 
 with the [I.Sicily](http://sicily.classics.ox.ac.uk/) corpus.
