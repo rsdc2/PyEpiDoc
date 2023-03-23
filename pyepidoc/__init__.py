@@ -1,2 +1,3 @@
-from .epidoc.epidoc import EpiDoc
-from .epidoc.corpus import EpiDocCorpus
+from .fileinfo import FileInfo
+from .filename import Filename
+from .filetypes import FileMode
