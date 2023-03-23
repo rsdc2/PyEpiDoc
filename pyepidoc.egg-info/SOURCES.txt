@@ -1,4 +1,5 @@
 LICENSE
+MANIFEST.in
 pyproject.toml
 pyepidoc/__init__.py
 pyepidoc/utils.py
