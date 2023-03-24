@@ -117,8 +117,8 @@ mypy pyepidoc
 The PyEpiDoc package has three subpackages:
 
 - ```file``` containing modules for file handling;
-- ```xml``` containing modules for XML handling;
-- ```epidoc``` containing modules for handling EpiDoc XML specifically.
+- ```base``` containing modules with base classes for EpiDoc XML handling;
+- ```epidoc``` containing modules for handling EpiDoc specific XML nodes, e.g. ```<ab>```, ```<w>``` etc.
 
 In addition ```utils.py``` provides general utility functions, in particular for handling Python 
 ```list```s.
