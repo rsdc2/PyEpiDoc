@@ -83,7 +83,7 @@ doc = EpiDoc("examples/ISic000032_untokenized.xml")
 # Tokenize the edition
 doc.tokenize()
 
-# Prettify the edition XML
+# Prettify the <div type="edition"> XML
 doc.prettify_edition()
 
 # Add spaces between tokens
