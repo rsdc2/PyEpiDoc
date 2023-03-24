@@ -99,9 +99,9 @@ doc.to_xml("examples/ISic000032_tokenized.xml")
 
 2. To run all the tests:
 
-```
-pytest
-```
+    ```
+    pytest
+    ```
 
 
 ## Check the types
