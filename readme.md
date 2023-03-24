@@ -22,19 +22,21 @@ To install PyEpiDoc along with its dependencies (```lxml```, ```pytest```, ```my
 
 2. Navigate into the cloned / downloaded repoitory.
 
-From within the cloned repository, install at the ```user``` level with:
+3. From within the cloned repository, install at the ```user``` level with:
 
-```
-pip install . --user
-```
+    ```
+    pip install . --user
+    ```
+
+### Virtual environments
 
 If you are using a ```venv``` virtual environment:
 
-- Make sure the virtual environment has been activated, e.g. on Linux:
+1. Make sure the virtual environment has been activated, e.g. on Linux:
 
     ```source env/bin/activate```
 
-- Install with ```pip```:
+2. Install with ```pip```:
 
     ```pip install .```
 
