@@ -16,7 +16,11 @@ You can use [```mypy```](https://www.mypy-lang.org/) to check the types.
 
 
 ## Install
-To install PyEpiDoc along with its dependencies (```lxml```, ```pytest```, ```mypy```), first clone or download the repository.
+To install PyEpiDoc along with its dependencies (```lxml```, ```pytest```, ```mypy```):
+
+1. Clone or download the repository;
+
+2. Navigate into the cloned / downloaded repoitory.
 
 From within the cloned repository, install at the ```user``` level with:
 
@@ -89,13 +93,14 @@ Given an untokenized EpiDoc file ```ISic000032_untokenized.xml``` in an ```examp
 
 ## Run the tests
 
-From the **parent** folder of ```tests```:
+1. Navigate to the folder that contains ```tests/```. Unless you move it, this will be the cloned / downloaded ```PyEpiDoc```. 
+
+2. To run all the tests:
 
 ```
 pytest
 ```
 
-will run all the tests.
 
 ## Check the types
 
