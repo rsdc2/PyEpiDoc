@@ -46,14 +46,6 @@ def test_tokenize(tokenize_type:str):
     tokenized_filepath = filepath_from_list([tokenized_folderpath], filename)
     benchmark_filepath = filepath_from_list([benchmark_folderpath], filename)
 
-    tokenized_f = FileInfo(
-        filepath=tokenized_filepath,
-        mode = FileMode.r.value,
-        fullpath=False
-    )
-
-    # if tokenized_f.exists:
-    #     os.remove(tokenized_f.full_filepath)
 
     tokenize(
         src_folderpath=untokenized_folderpath, 
@@ -61,6 +53,12 @@ def test_tokenize(tokenize_type:str):
         filenames=[tokenize_type],
         space_words=True,
         ids=False,
+        fullpath=False
+    )
+
+    tokenized_f = FileInfo(
+        filepath=tokenized_filepath,
+        mode = FileMode.r.value,
         fullpath=False
     )
 
