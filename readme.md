@@ -18,24 +18,21 @@ You can use [```mypy```](https://www.mypy-lang.org/) to check the types.
 ## Install
 To install PyEpiDoc along with its dependencies (```lxml```, ```pytest```, ```mypy```), first clone or download the repository.
 
-
-
-### ```venv``` virtual environment
-
-If you are using a ```venv``` virtual environment, once the virtual environment has been activated:
+From within the cloned repository, install at the ```user``` level with:
 
 ```
-pip install ./pyepidoc
+pip install . --user
 ```
 
+If you are using a ```venv``` virtual environment:
 
-### User installation
-If you are using a local Python instance, 
-in the cloned / downloaded folder's **parent** folder type:
+- Make sure the virtual environment has been activated, e.g. on Linux:
 
-```
-pip install ./pyepidoc --user
-```
+    ```source env/bin/activate```
+
+- Install with ```pip```:
+
+    ```pip install .```
 
 
 ## Uninstall
