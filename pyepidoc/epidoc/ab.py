@@ -7,7 +7,7 @@ from lxml.etree import _Element # type: ignore
 
 from ..base import Element
 from .textpart import TextPart
-from .word import Token
+from .token import Token
 from .epidoctypes import (
     TokenCarrier, 
     AtomicTokenType, 

@@ -18,7 +18,7 @@ from .epidoctypes import (
     AbbrInfo
 )
 
-from .word import Token
+from .token import Token
 from .constants import SET_IDS, SPACE_WORDS
 
 
