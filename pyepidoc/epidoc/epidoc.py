@@ -185,14 +185,6 @@ class EpiDoc(Root):
 
         return set(_lemmata)
 
-    # def lemmatize(self, analyser, overwrite:bool, inplace:bool) -> list[str]:
-    #     return [word.lemmatize(analyser, overwrite=overwrite, inplace=inplace) 
-    #         for word in self.words]
-
-    # def morphologize(self, analyser, overwrite:bool, inplace:bool) -> list[Optional[str]]:
-    #     return [word.morphologize(analyser, overwrite=overwrite, inplace=inplace) 
-    #         for word in self.words]   
-
     @property
     def morphologies(self) -> set[Morphology]:
         _morphologies = [word.morphology for word in self.tokens]

@@ -95,44 +95,9 @@ class Token(Element):
     def lemma(self, value:str):
         self.set_attrib('lemma', value)
 
-    # def lemmatize(self, analyser, overwrite:bool, inplace:bool) -> str:
-    #     if overwrite or self.lemma is None or not inplace:
-    #         if self.type == WordType.Num:   # TODO check working correctly
-    #             lemma = str(self)
-    #         elif self.no_gaps == True:
-    #             # lemmatize_word returns (None, None) if no lemmatizer present
-    #             form, lemma = analyser.lemmatize_word(word=self, lang=self.abdivlang) 
-    #         else:
-    #             lemma = '_'
-
-    #     if inplace and lemma != None:
-    #         self.lemma = lemma
-        
-    #     return lemma
-
     @property
     def morphology(self) -> Morphology:
         return Morphology(full=self.pos)
-
-    # def morphologize(self, analyser, overwrite:bool, inplace:bool) -> Optional[str]:
-    #     if (overwrite or not inplace or self.pos is None) and self.no_gaps == True:
-    #         analyses = analyser.analyse_morph(text_form=str(self), lemma=self.lemma, lang=self.abdivlang)
-    #     else:
-    #         analyses = [(str(self), '_')]
-
-    #     if analyses == []:
-    #         val = ''
-    #     elif analyses is None:  # morphological analyser returns None if there is not analyser
-    #         val = None
-    #     elif len(analyses) == 1:
-    #         val = analyses[0][1]
-    #     elif len(analyses) > 1:
-    #         val = analyses[0][1]
-
-    #     if inplace and val is not None:
-    #         self.pos = val
-        
-    #     return val
 
     @property
     def number(self) -> Optional[str]:
