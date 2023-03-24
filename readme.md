@@ -95,7 +95,7 @@ Given an untokenized EpiDoc file ```ISic000032_untokenized.xml``` in an ```examp
 From the **parent** folder of ```tests```:
 
 ```
-pytest -k test
+pytest
 ```
 
 will run all the tests.
