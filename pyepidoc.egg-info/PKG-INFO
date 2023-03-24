@@ -1,7 +1,0 @@
-Metadata-Version: 2.1
-Name: pyepidoc
-Version: 0.1.1
-Author: Robert Crellin
-Keywords: XML,EpiDoc,TEI
-Requires-Python: >=3.9.16
-License-File: LICENSE

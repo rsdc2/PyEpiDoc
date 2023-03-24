@@ -1,4 +1,0 @@
-dist
-env39
-pyepidoc
-tests
