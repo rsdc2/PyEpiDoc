@@ -7,7 +7,7 @@ from typing import Optional
 import re
 
 from .ab import Ab
-from ..xml import Element
+from ..base import Element
 from .word import Token
 from .textpart import TextPart
 from .empty import EmptyElement

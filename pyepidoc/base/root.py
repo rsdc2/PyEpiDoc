@@ -133,6 +133,5 @@ class Root:
         if self.e is None: 
             return []
 
-        # TODO this is not true for all cases
+        # NB the cast won't necessarily be correct for all test cases
         return cast(list[_Element], self.e.xpath(xpathstr, namespaces={'ns': NS}))
-        # return xpathRes if type(xpathRes) is list else []

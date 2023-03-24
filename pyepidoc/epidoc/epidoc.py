@@ -3,8 +3,8 @@ from typing import Optional, Union
 from lxml import etree # type: ignore
 from lxml.etree import _Element  # type: ignore
 
-from ..xml.element import Element
-from ..xml.root import Root
+from ..base.element import Element
+from ..base.root import Root
 from ..utils import flatlist, maxone
 from ..file import FileInfo, FileMode
 

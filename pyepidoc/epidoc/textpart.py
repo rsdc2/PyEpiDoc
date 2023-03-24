@@ -1,5 +1,5 @@
 from .constants import XMLNS
-from ..xml.element import Element
+from ..base.element import Element
 
 
 class TextPart(Element):

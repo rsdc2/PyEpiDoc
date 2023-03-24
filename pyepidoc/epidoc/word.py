@@ -6,11 +6,11 @@ from functools import cached_property
 from lxml.etree import _Element # type: ignore
 from copy import deepcopy
 
-from ..xml import Namespace as ns
+from ..base import Namespace as ns
 from .epidoctypes import TokenType
 from .constants import NS, XMLNS
 
-from ..xml.element import Element
+from ..base.element import Element
 from .epidoctypes import (
     Morphology, 
     TokenInfo, 

@@ -5,7 +5,7 @@ from copy import deepcopy
 from functools import reduce
 from lxml.etree import _Element # type: ignore
 
-from ..xml import Element
+from ..base import Element
 from .textpart import TextPart
 from .word import Token
 from .epidoctypes import (
