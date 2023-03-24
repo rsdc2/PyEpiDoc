@@ -75,20 +75,20 @@ print(' '.join([str(token) for token in tokens]))
 Given an untokenized EpiDoc file ```ISic000032_untokenized.xml``` in an ```examples``` folder in the current working directory:
 
 ```
-    # Load the EpiDoc file
-    doc = EpiDoc("examples/ISic000032_untokenized.xml")
+# Load the EpiDoc file
+doc = EpiDoc("examples/ISic000032_untokenized.xml")
 
-    # Tokenize the edition
-    doc.tokenize()
+# Tokenize the edition
+doc.tokenize()
 
-    # Prettify
-    doc.prettify()
+# Prettify the edition XML
+doc.prettify_edition()
 
-    # Add spaces between tokens
-    doc.add_space_between_tokens()
+# Add spaces between tokens
+doc.add_space_between_tokens()
 
-    # Save the results to a new XML file
-    doc.to_xml("examples/ISic000032_tokenized.xml")
+# Save the results to a new XML file
+doc.to_xml("examples/ISic000032_tokenized.xml")
 ```
 
 ## Run the tests
