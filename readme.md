@@ -20,7 +20,7 @@ To install PyEpiDoc along with its dependencies (```lxml```, ```pytest```, ```my
 
 1. Clone or download the repository;
 
-2. Navigate into the cloned / downloaded repoitory.
+2. Navigate into the cloned / downloaded repository.
 
 3. From within the cloned repository, install at the ```user``` level with:
 
