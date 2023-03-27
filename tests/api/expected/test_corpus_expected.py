@@ -14,7 +14,5 @@ def test_load_corpus():
         fullpath=False
     )
 
-    print(corpus.tokens)
-    breakpoint()
     assert corpus.doccount == 2
     assert corpus.tokencount > 0
