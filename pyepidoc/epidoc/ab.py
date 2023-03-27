@@ -17,11 +17,17 @@ from .epidoctypes import (
 
 from ..utils import update
 
-from .constants import NS, XMLNS
+from .constants import XMLNS
+
 
 class Ab(Element):
 
+    """
+    
+    """
+
     def __init__(self, e:Optional[_Element]=None):
+
         if type(e) is not _Element and e is not None:
             raise TypeError('e should be _Element type or None.')
 
