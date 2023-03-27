@@ -17,7 +17,7 @@ from .epidoctypes import (
 
 from ..utils import update
 
-from .constants import XMLNS
+from ..constants import XMLNS
 
 
 class Ab(Element):

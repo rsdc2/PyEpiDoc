@@ -20,7 +20,7 @@ from .epidoctypes import (
     CompoundTokenType, 
     ContainerType
 )
-from .constants import (
+from ..constants import (
     XMLNS, 
     SET_IDS, 
     SPACE_WORDS

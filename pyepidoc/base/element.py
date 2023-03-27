@@ -22,7 +22,7 @@ from lxml.etree import ( # type: ignore
 
 from .namespace import Namespace as ns
 
-from ..epidoc.constants import NS, XMLNS, SubsumableRels
+from ..constants import NS, XMLNS, SubsumableRels
 from ..epidoc.epidoctypes import (
     Tag, 
     whitespace, 

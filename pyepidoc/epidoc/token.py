@@ -8,7 +8,7 @@ from copy import deepcopy
 
 from ..base import Namespace as ns
 from .epidoctypes import TokenType
-from .constants import NS, XMLNS
+from ..constants import NS, XMLNS
 
 from ..base.element import Element
 from .epidoctypes import (

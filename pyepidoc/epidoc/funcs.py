@@ -12,7 +12,7 @@ from .epidoctypes import TokenInfo, Morphology, AbbrInfo
 from ..file import FileInfo
 from ..file.funcs import filepath_from_list
 from .corpus import EpiDocCorpus
-from .constants import *
+from ..constants import *
 
 
 def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> list[TokenInfo]:

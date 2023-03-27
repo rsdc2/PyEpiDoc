@@ -9,7 +9,7 @@ from lxml.etree import ( # type: ignore
     )
 
 from ..file import FileInfo
-from ..epidoc.constants import NS, XMLNS
+from ..constants import NS, XMLNS
 
 
 class Root:    

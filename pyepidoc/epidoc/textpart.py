@@ -1,4 +1,4 @@
-from .constants import XMLNS
+from ..constants import XMLNS
 from ..base.element import Element
 
 

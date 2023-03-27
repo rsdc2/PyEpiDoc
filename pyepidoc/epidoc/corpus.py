@@ -14,7 +14,7 @@ from .epidoctypes import (
 
 from ..file.funcs import filepath_from_list
 from ..utils import maxone
-from .constants import SET_IDS
+from ..constants import SET_IDS
 from ..utils import head
 
 class EpiDocCorpus:

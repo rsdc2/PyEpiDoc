@@ -19,7 +19,7 @@ from .epidoctypes import (
 )
 
 from .token import Token
-from .constants import SET_IDS, SPACE_WORDS
+from ..constants import SET_IDS, SPACE_WORDS
 
 
 class EpiDoc(Root):
