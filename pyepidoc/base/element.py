@@ -817,7 +817,7 @@ class Element(Root):
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
-        return f"<Element object {''.join(['{', self.tag.ns, '}', self.tag.name, '; text: ', self.text_desc, '; tail: ', tail])}>"
+        return f"<Element object {''.join(['{', self.tag.ns, '}', self.tag.name, '; text: ', self.text_desc.strip(), '; tail: ', tail.strip()])}>"
 
     def __str__(self):
         return self.__repr__()
