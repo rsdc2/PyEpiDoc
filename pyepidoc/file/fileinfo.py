@@ -35,12 +35,21 @@ class FileInfo(object):
             raise FileExistsError(f'File {self.full_filepath} does not exist.')    
 
         self._create_folderpath = create_folderpath
-        self.handle_create_folderpath()
+        self._handle_create_folderpath()
 
-    def handle_create_folderpath(self) -> None:
+    def _handle_create_folderpath(self) -> None:
+        """
+        Creates self.full_folderpath, including 
+        all intermediate subdirectories, 
+        if self._create_folderpath is set to True. 
+        Raises |FileExistsError| if the folderpath
+        does not exist and self._create_folderpath
+        is set to False (default).
+        """
+
         if not path.exists(self.full_folderpath):
             if self._create_folderpath:
-                makedirs(self.full_folderpath)
+                makedirs(self.full_folderpath, exist_ok=True)
             else:
                 raise FileExistsError(
                     "The folder path does not exist. \
@@ -55,6 +64,10 @@ class FileInfo(object):
 
     @property
     def full_filepath(self) -> str:
+        """
+        Returns the full path of the file.
+        """
+
         filepath = filepath_from_list(
             [self.full_folderpath], 
             self._filename

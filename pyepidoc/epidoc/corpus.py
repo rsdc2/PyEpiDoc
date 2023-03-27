@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import Optional, Union
-from functools import reduce, cached_property
+from functools import cached_property
 import os
 
-from ..file import FileInfo, FileMode
 from .epidoc import EpiDoc
+from .token import Token
 from .epidoctypes import (
     SetRelation,
     TokenInfo, 
@@ -12,10 +12,10 @@ from .epidoctypes import (
     SpaceUnit
 )
 
-from ..file.funcs import filepath_from_list
-from ..utils import maxone
+from ..file import FileInfo, FileMode, filepath_from_list
+from ..utils import maxone, flatlist, head
 from ..constants import SET_IDS
-from ..utils import head
+
 
 class EpiDocCorpus:
 
@@ -23,6 +23,10 @@ class EpiDocCorpus:
     _head: Optional[int]
     _folderpath: Optional[str]
     _fullpath:bool
+
+    """
+    Provides an interface for handling a corpus of (i.e. more than one) EpiDoc files.
+    """
 
     def __init__(
         self, 
@@ -289,3 +293,7 @@ class EpiDocCorpus:
     @property
     def tokencount(self) -> int:
         return sum([doc.tokencount for doc in self.docs])
+
+    @property
+    def tokens(self) -> list[Token]:
+        return flatlist([doc.tokens for doc in self.docs])
