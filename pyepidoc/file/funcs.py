@@ -5,7 +5,7 @@ from typing import Union, Optional
 from collections import namedtuple
 from enum import Enum
 
-from .filetypes import Path, FileMode
+from .filetypes import FilePath, FileMode
 
 
 def filepath(folderpath:str, filename:str) -> str:

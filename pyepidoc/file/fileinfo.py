@@ -1,6 +1,6 @@
 from typing import Optional
 from os import getcwd, path, makedirs
-from .filetypes import Path, FileMode
+from .filetypes import FilePath, FileMode
 from .filename import Filename
 from .funcs import filepath_from_list
 
@@ -13,8 +13,8 @@ class FileInfo(object):
     def __init__(self, 
         filepath:str,
         mode=FileMode.r,
-        create_folderpath:bool=True,
-        fullpath=False
+        create_folderpath:bool=False,
+        fullpath:bool=False
     ):
         if type(filepath) is not str:
             raise TypeError(f"filepath is of type {type(filepath)}, but should be of type str.")
@@ -31,14 +31,23 @@ class FileInfo(object):
                 folderpath
             ])
 
-        if mode == FileMode.r.value and not self.exists:
-            raise FileExistsError(f'File {self.full_filepath} does not exist.')
+        if mode == FileMode.r and not self.exists:
+            raise FileExistsError(f'File {self.full_filepath} does not exist.')    
 
         self._create_folderpath = create_folderpath
+        self.handle_create_folderpath()
 
-    def create_folderpath(self) -> None:
-        if not path.exists(self.full_folderpath) and self._create_folderpath:
-            makedirs(self.full_folderpath)
+    def handle_create_folderpath(self) -> None:
+        if not path.exists(self.full_folderpath):
+            if self._create_folderpath:
+                makedirs(self.full_folderpath)
+            else:
+                raise FileExistsError(
+                    "The folder path does not exist. \
+                        If you would like to create the folder path, \
+                        please set the FileInfo create_folderpath variable \
+                        to True."
+                )
 
     @property
     def exists(self) -> bool:
@@ -67,16 +76,16 @@ class FileInfo(object):
     def full_folderpath(self) -> str:
         return self._full_folderpath
 
-    def parse_filepath(self, fullpath:str) -> Path:
+    def parse_filepath(self, fullpath:str) -> FilePath:
         items = fullpath.split('/')
 
         if len(items) == 1:
-            return Path(None, items[0])
+            return FilePath(None, items[0])
 
         folderpath = '/'.join(items[:-1])
         filename = items[-1]
 
-        return Path(folderpath, filename)
+        return FilePath(folderpath, filename)
 
     @property
     def relative_folderpath(self) -> Optional[str]:

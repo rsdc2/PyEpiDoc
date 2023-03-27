@@ -46,7 +46,20 @@ def test_tokenize(tokenize_type:str):
     tokenized_filepath = filepath_from_list([tokenized_folderpath], filename)
     benchmark_filepath = filepath_from_list([benchmark_folderpath], filename)
 
+    # Remove old output files if they exist
+    try:
+        tokenized_f = FileInfo(
+            filepath=tokenized_filepath,
+            mode = FileMode.r.value,
+            fullpath=False
+        )
+        if tokenized_f.exists:
+            os.remove(tokenized_f.full_filepath)
+    except FileExistsError:
+        pass
 
+    
+    # Tokenize the files
     tokenize(
         src_folderpath=untokenized_folderpath, 
         dst_folderpath=tokenized_folderpath,
