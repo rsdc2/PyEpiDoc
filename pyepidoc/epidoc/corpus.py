@@ -54,41 +54,6 @@ class EpiDocCorpus:
 
         raise TypeError("Invalid input type.")
 
-    # def analyse(self, 
-    #     morphology=True, 
-    #     lemmata=True, 
-    #     dstfolder:Optional[str]=None,
-    #     verbose:bool=False,
-    #     langs:list[str]=['lat', 'la', 'grc']) -> Optional[EpiDocCorpus]:
-        
-    #     try:
-    #         from analysis import Analysis # type: ignore
-    #     except ImportError as e:
-    #         print("No analysis module installed.")
-    #         return None
-
-    #     analyser = Analysis(languages=langs)
-
-    #     def reduce_func(acc:list[EpiDoc], doc:EpiDoc) -> list[EpiDoc]:
-
-    #         if lemmata:
-    #             if verbose: 
-    #                 print(f'Lemmatizing {doc.id}...')
-    #             doc.lemmatize(analyser=analyser, overwrite=True, inplace=True)
-
-    #         if morphology:
-    #             if verbose: 
-    #                 print(f'Analysing morphology {doc.id}...')
-    #             doc.morphologize(analyser=analyser, overwrite=True, inplace=True)
-
-    #         self._doc_to_xml(dstfolder=dstfolder, doc=doc)
-        
-    #         return acc + [doc]
-
-    #     empty_list:list[EpiDoc] = []
-    #     analysed_docs = reduce(reduce_func, self.docs, empty_list)
-    #     return EpiDocCorpus(analysed_docs)
-
     @property
     def datemin(self) -> int:
         not_afters = [doc.not_after for doc in self.docs if doc.not_after is not None]

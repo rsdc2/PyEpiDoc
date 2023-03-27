@@ -75,7 +75,6 @@ def test_write_file():
     with open(fi.full_filepath, "w") as f:
         f.write(s)
 
-
     # Remove the file
     os.remove(fi.full_filepath)
 
