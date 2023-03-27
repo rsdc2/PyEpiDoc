@@ -13,7 +13,7 @@ the [I.Sicily GitHub wiki](https://github.com/ISicily/ISicily/wiki).
 ## Dependencies
 
 PyEpiDoc depends on [```lxml```](https://lxml.de/) for parsing XML.
-```lxml``` is used as opposed to ```ElementTree``` primarily to 
+```lxml``` is used as rather than ```ElementTree``` primarily to 
 make use of its full ```xpath``` support.
 
 To run the tests you need [```pytest```](https://docs.pytest.org/en/7.2.x/).
