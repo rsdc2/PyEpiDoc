@@ -1,5 +1,10 @@
+"""
+This file provides generic utility functions especially for handling
+lists and strings.
+"""
+
 from typing import TypeVar, Optional, Union
-from itertools import chain
+from functools import reduce
 
 T = TypeVar('T')
 
@@ -10,8 +15,12 @@ def is_xd(xd_list: list) -> bool:
 
 def flatlist(xd_list: list) -> list:
 
+    def reduce_list(acc: list, l:list) -> list: 
+        return acc + l
+
     if is_xd(xd_list):
-        return flatlist(list(chain(*xd_list)))
+        l:list = reduce(reduce_list, xd_list, [])
+        return flatlist(l)
 
     return xd_list
     
