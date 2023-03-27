@@ -41,7 +41,7 @@ def test_filepath_does_not_exist_create_folderpath_write():
         )   
 
     except FileExistsError:
-        pytest.fail("Unexpected FileExistsError.")     
+        pytest.fail("FileExistsError: there was a problem creating the folderpath.")     
 
 
     # Now that the folder path has been created,
