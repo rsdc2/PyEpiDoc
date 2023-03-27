@@ -24,6 +24,16 @@ from ..constants import SET_IDS, SPACE_WORDS
 
 class EpiDoc(Root):
 
+    """
+    This class provides services for interacting with individual
+    EpiDoc files.
+    It is therefore the domain of metadata such as 
+    date, authority etc.
+    as well as that for accessing the editions present
+    in the file.
+    """
+
+
     @property
     def abbr_infos(self) -> set[AbbrInfo]:
         _abbr_infos = [token.abbr_info for token in self.tokens]

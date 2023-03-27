@@ -22,17 +22,36 @@ from .epidoctypes import (
 from ..utils import maxone
 
 class Token(Element):
-    
+
+    """
+    Class for providing services for tokens, including
+        lexical words <w>, 
+        names <name> and
+        numbers <num>.
+    If present on the element,
+        provides access to morphological and lemmatisation
+        data.
+    """
+
     @property
     def abbr_info(self) -> AbbrInfo:
         return AbbrInfo(form=str(self), abbr=self.abbr_str)
 
     @property
     def abbr_str(self) -> str:
+        """
+        Return all abbreviation text in the token 
+        as a |str|.
+        """
+
         return ''.join([abbr.text for abbr in self.abbrs])
 
     @property
     def abbrs(self) -> list[Element]:
+        """
+        Return all abbreviation elements as a |list| of |Element|.
+        """
+
         return [abbr for abbr in self.get_desc_elems_by_name('abbr') 
             if abbr.text is not None]
 
@@ -42,12 +61,25 @@ class Token(Element):
 
     @cached_property
     def abdivlang(self) -> Optional[str]:
+
         """Returns the language of the most immediate parent where this is specified."""
+        
         langs = [parent.get_attrib('lang', XMLNS) for parent in self.abdivparents 
             if parent.get_attrib('lang', XMLNS) is not None]
         return maxone(langs, suppress_more_than_one_error=True)
 
     def convert_to_name(self, inplace=True) -> Token:
+        """
+        Converts the containing token tag, 
+        e.g. <w>,
+        to <name> if the element's text 
+        starts with a capital.
+
+        If inplace=False, returns a copy of the token.
+        Otherwise returns the original token with the 
+        change made.
+        """
+
         if self.text_desc is None:
             return self
 
@@ -60,7 +92,8 @@ class Token(Element):
 
             return self
         
-        return Token(deepcopy(self._e)).convert_to_name(True)
+        token_copy = Token(deepcopy(self._e))
+        return token_copy.convert_to_name(True)
 
     @property
     def case(self) -> Optional[str]:
@@ -85,6 +118,11 @@ class Token(Element):
 
     @property
     def hassupplied(self) -> bool:
+        """
+        Returns True if token contains a 
+        <supplied> tag.
+        """
+
         return len(self.supplied) > 0
         
     @property
@@ -149,6 +187,7 @@ class Token(Element):
             CompoundTokenType.PersName.value
         ]:
             return self.form.capitalize().strip().replace('·', '')
+        
         if self.type in [TokenType.Num.value]:
             return self.form.upper().strip().replace('·', '')
         

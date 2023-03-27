@@ -34,6 +34,21 @@ def prettify(
     edition:Edition
 ) -> Edition:
 
+    """
+    <div type="edition"> elements generally set xml:space="preserve".
+    Accordingly, built-in pretty-printers
+    do not prettify the text.
+    This function prettifies the edition text in particular such that 
+    <lb> tags start new lines.
+
+    Arguments:
+
+    spaceunit -- sets the kind of unit, whether a tab or a space,
+    to be used for indenting lines.
+
+    number -- sets the number of spaceunit for each indentation.
+    """
+
     newlinetags = ['div', 'ab', 'lb']
 
     def _get_multiplier(element:Element) -> int:
@@ -134,6 +149,10 @@ def prettify(
 
 class Edition(Element):
 
+    """
+    Provides services for <div type="edition> elements.
+    """
+
     def __init__(self, e:Optional[_Element]=None):
         if type(e) is not _Element and e is not None:
             raise TypeError('e should be _Element type or None.')
@@ -148,6 +167,11 @@ class Edition(Element):
         
     @property
     def abs(self) -> list[Ab]:
+        """
+        Returns all the <ab> elements in an edition 
+        as a |list| of |Ab|.
+        """
+
         return [Ab(element._e) 
             for element in self.get_desc_elems_by_name(['ab'])]
 
