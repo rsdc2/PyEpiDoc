@@ -26,7 +26,7 @@ def test_tokenize_example():
     doc.add_space_between_tokens()
 
     # Save the results to a new XML file
-    doc.to_xml("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
+    doc.to_xml("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml", create_folderpath=True)
 
 
     tokenized_doc = EpiDoc("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml")

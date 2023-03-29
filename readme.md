@@ -95,7 +95,8 @@ doc.prettify_edition()
 doc.add_space_between_tokens()
 
 # Save the results to a new XML file
-doc.to_xml("examples/ISic000032_tokenized.xml")
+# Creates the folderpath if it does not exist
+doc.to_xml("examples/ISic000032_tokenized.xml", create_folderpath=True)
 ```
 
 ## Run the tests
