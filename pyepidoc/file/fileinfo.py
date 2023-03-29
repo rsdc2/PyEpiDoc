@@ -50,7 +50,6 @@ class FileInfo(object):
             if self._create_folderpath:
                 makedirs(self.full_folderpath, exist_ok=True)
             else:
-                breakpoint()
                 raise FileExistsError(
                     "The folder path does not exist. \
                         If you would like to create the folder path, \
