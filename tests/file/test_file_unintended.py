@@ -8,7 +8,7 @@ def test_file_does_not_exist_read():
     raises a FileExistsError.
     """
 
-    fp = "tests/file/files/non_existent_file.xml"
+    fp = "file/files/non_existent_file.xml"
 
     with pytest.raises(FileExistsError):
         f = FileInfo(
@@ -26,7 +26,7 @@ def test_filepath_does_not_exist_write():
     non-existent folder raises the right error.
     """
     
-    fp = "tests/file/non_existent_folder/non_existent_file.xml"
+    fp = "file/non_existent_folder/non_existent_file.xml"
 
     with pytest.raises(FileExistsError):
         f = FileInfo(

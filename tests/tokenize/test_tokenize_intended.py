@@ -39,9 +39,9 @@ tests = [
 @pytest.mark.parametrize("tokenize_type", tests)
 def test_tokenize(tokenize_type:str):
     filename = f'{tokenize_type}.xml'
-    untokenized_folderpath = 'tests/tokenize/files/untokenized'
-    tokenized_folderpath = 'tests/tokenize/files/tokenized_output'
-    benchmark_folderpath = 'tests/tokenize/files/tokenized_benchmark'
+    untokenized_folderpath = 'tokenize/files/untokenized'
+    tokenized_folderpath = 'tokenize/files/tokenized_output'
+    benchmark_folderpath = 'tokenize/files/tokenized_benchmark'
     untokenized_filepath = filepath_from_list([untokenized_folderpath], filename)
     tokenized_filepath = filepath_from_list([tokenized_folderpath], filename)
     benchmark_filepath = filepath_from_list([benchmark_folderpath], filename)

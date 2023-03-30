@@ -2,7 +2,7 @@ from pyepidoc.epidoc.epidoc import EpiDoc
 import pytest
 
 relative_filepaths = [
-    'tests/api/files/single_files_untokenized/ISic000001.xml'
+    'api/files/single_files_untokenized/ISic000001.xml'
 ]
 
 

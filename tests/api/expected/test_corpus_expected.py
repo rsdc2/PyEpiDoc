@@ -1,6 +1,6 @@
 from pyepidoc import EpiDocCorpus
 
-corpus_folderpath = "tests/api/files/corpus"
+corpus_folderpath = "api/files/corpus"
 
 
 def test_load_corpus():

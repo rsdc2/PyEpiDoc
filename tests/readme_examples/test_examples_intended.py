@@ -4,7 +4,7 @@ from pyepidoc import EpiDoc
 def test_tokens_example():
     from pyepidoc import EpiDoc
 
-    doc = EpiDoc("tests/readme_examples/files/input/ISic000001_tokenized.xml")
+    doc = EpiDoc("readme_examples/files/input/ISic000001_tokenized.xml")
 
     tokens = doc.tokens
     tokens_str = ' '.join([str(token) for token in tokens])
@@ -14,7 +14,7 @@ def test_tokens_example():
 
 def test_tokenize_example():
     # Load the EpiDoc file
-    doc = EpiDoc("tests/readme_examples/files/input/ISic000032_untokenized.xml")
+    doc = EpiDoc("readme_examples/files/input/ISic000032_untokenized.xml")
 
     # Tokenize the edition
     doc.tokenize()
@@ -26,11 +26,11 @@ def test_tokenize_example():
     doc.add_space_between_tokens()
 
     # Save the results to a new XML file
-    doc.to_xml("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml", create_folderpath=True)
+    doc.to_xml("readme_examples/files/tokenized_output/ISic000032_tokenized.xml", create_folderpath=True)
 
 
-    tokenized_doc = EpiDoc("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
-    tokenized_benchmark = EpiDoc("tests/readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")
+    tokenized_doc = EpiDoc("readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
+    tokenized_benchmark = EpiDoc("readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")
 
     assert [str(word) for word in tokenized_doc.tokens] == [str(word) for word in tokenized_benchmark.tokens]
     assert [word.xml for word in tokenized_doc.tokens] == [word.xml for word in tokenized_benchmark.tokens]
