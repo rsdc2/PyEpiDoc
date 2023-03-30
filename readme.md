@@ -101,7 +101,7 @@ doc.to_xml("examples/ISic000032_tokenized.xml", create_folderpath=True)
 
 ## Run the tests
 
-1. Navigate to the folder that contains ```tests/```. Unless you move it, this will be the cloned / downloaded ```PyEpiDoc```. 
+1. Navigate to the ```tests/``` folder. 
 
 2. To run all the tests:
 
