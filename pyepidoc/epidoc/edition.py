@@ -80,10 +80,14 @@ def prettify(
         return parents
 
     def prettify_lb(lb:Element) -> None:
+        first_parent = lb.get_first_parent_by_name(['ab', 'div'])
+        if first_parent is None:
+            return
+
         lb.tail = ''.join([
             default_str(lb.tail),
             "\n",
-            (spaceunit.value * number) * (lb.get_first_parent_by_name(['ab', 'div']).depth + 1)
+            (spaceunit.value * number) * (first_parent.depth + 1)
         ])
 
     def prettify_prev(element:Element) -> None:
@@ -101,10 +105,14 @@ def prettify(
         ])
 
     def prettify_parent_of_lb(element:Element) -> None:
+        first_parent = element.get_first_parent_by_name(['ab', 'div'])
+        if first_parent is None:
+            return
+
         element.text = ''.join([
             default_str(element.text).strip(),
             "\n",
-            (spaceunit.value * number) * (element.get_first_parent_by_name(['ab', 'div']).depth + 1)
+            (spaceunit.value * number) * (first_parent.depth + 1)
         ])
 
     def prettify_closing_tags(elements:list[Element]) -> None:

@@ -5,7 +5,7 @@ from lxml.etree import _Element  # type: ignore
 
 from ..base.element import Element
 from ..base.root import Root
-from ..utils import flatlist, maxone
+from ..utils import flatlist, maxone, maxoneT
 from ..file import FileInfo, FileMode
 
 from .edition import Edition
@@ -44,9 +44,13 @@ class EpiDoc(Root):
 
     @property
     def authority(self) -> Optional[str]:
+        if self.publication_stmt is None:
+            return None
+
         elem = maxone(self
             .publication_stmt
-            .get_desc_elems_by_name('authority'), defaultval=None)
+            .get_desc_elems_by_name('authority'), 
+        )
 
         if elem is None:
             return None
@@ -70,10 +74,11 @@ class EpiDoc(Root):
 
     @property
     def date(self) -> Optional[int]:
-        if isinstance(self.orig_date, EmptyElement):
+        if self.orig_date is None:
             return None
             
         date = self.orig_date.get_attrib('when-custom')
+
         try:
             return int(date) if date is not None else None
         except ValueError:
@@ -149,13 +154,27 @@ class EpiDoc(Root):
 
     @property
     def id(self) -> str:
-        idno = ''
-        if self.authority == 'Epigraphische Datenbank Heidelberg':
-            idno = maxone(self.publication_stmt.get_desc_elems_by_name('idno', {'type': 'localID'}), None).text
-        elif self.authority == 'I.Sicily':
-            idno = maxone(self.publication_stmt.get_desc_elems_by_name('idno', {'type': 'filename'}), None).text
 
-        return '[None]' if idno is None else idno
+        def get_idno_elems(s:str) -> list[Element]:
+            if self.publication_stmt is None:
+                return []
+
+            return self.publication_stmt.get_desc_elems_by_name('idno', {'type': s})            
+
+        idno_elem = None
+
+        if self.authority == 'Epigraphische Datenbank Heidelberg':
+            idno_elems = get_idno_elems('localID')
+            idno_elem = maxone(idno_elems)
+
+        elif self.authority == 'I.Sicily':
+            idno_elems = get_idno_elems('filename')
+            idno_elem = maxone(idno_elems)
+
+        if idno_elem is None:
+            return '[None]'
+
+        return idno_elem.text
 
     @property
     def ismultilingual(self) -> bool:
@@ -167,7 +186,7 @@ class EpiDoc(Root):
         return [item for item in flatlist(items)]
 
     def _get_daterange_attrib(self, attrib_name:str) -> Optional[int]:
-        if isinstance(self.orig_date, EmptyElement):
+        if self.orig_date is None:
             return None
 
         daterange_val = self.orig_date.get_attrib(attrib_name)
@@ -182,10 +201,15 @@ class EpiDoc(Root):
 
         """Used by EDH to host language information."""
 
-        _lang_usage = maxone([Element(language) for language in self.get_desc('langUsage')])
-        if _lang_usage is None: return None
-        languages = _lang_usage.get_desc_elems_by_name('language')
-        return set([language.get_attrib('ident') for language in languages])
+        language_elems = [Element(language) for language in self.get_desc('langUsage')]
+        lang_usage = maxone(language_elems, None)
+
+        if lang_usage is None: 
+            return None
+
+        languages = lang_usage.get_desc_elems_by_name('language')
+        idents = [language.get_attrib('ident') for language in languages]
+        return set([ident for ident in idents if ident is not None])
 
     @property
     def lemmata(self) -> set[str]:
@@ -208,20 +232,30 @@ class EpiDoc(Root):
         return self._get_daterange_attrib('notBefore-custom')
 
     @property
-    def orig_date(self) -> Union[Element, EmptyElement]:
+    def orig_date(self) -> Optional[Element]:
         # TODO consider all orig_dates: at the moment only does the first        
-        _orig_date = maxone(self.get_desc('origDate'), suppress_more_than_one_error=True)
-        if _orig_date is None:
-            return EmptyElement()
+        orig_date = maxone(
+            self.get_desc('origDate'),
+            defaultval=None,
+            throw_if_more_than_one=False
+        )
+        if orig_date is None:
+            return None
 
-        if _orig_date.attrib == dict():
-            _orig_date = maxone(Element(_orig_date).get_desc('origDate'), suppress_more_than_one_error=True)            
+        if orig_date.attrib == dict():
+            orig_date = maxone(Element(orig_date).get_desc('origDate'), throw_if_more_than_one=False)    
 
-        return Element(_orig_date) if _orig_date is not None else EmptyElement()
+        if orig_date is None:
+            return None        
+
+        return Element(orig_date)
 
     @property
-    def publication_stmt(self) -> Element:
-        return maxone(self.get_desc('publicationStmt'), defaultval=Element, cls=Element)
+    def publication_stmt(self) -> Optional[Element]:
+        publication_stmt = maxone(self.get_desc('publicationStmt'))
+        if publication_stmt is None:
+            return None
+        return Element(publication_stmt)
 
     @property
     def prefix(self) -> str:
@@ -248,16 +282,20 @@ class EpiDoc(Root):
                 edition.space_words(override)
 
     @property
-    def tei(self) -> Element:
-        return maxone(self.get_desc('TEI'), defaultval=None, cls=Element)
+    def tei(self) -> Optional[Element]:
+        return maxone(self.get_desc('TEI'))
 
     @property
-    def tei_header(self) -> Element:
-        return maxone(self.get_desc('teiHeader'), defaultval=None, cls=Element)
+    def tei_header(self) -> Optional[Element]:
+        return maxone(self.get_desc('teiHeader'))
 
     @property
     def textclasses(self) -> list[str]:
-        textclass_element: Element = maxone(self.get_desc('textClass'), Element, Element)
+        textclass_element = maxone(self.get_desc('textClass'))
+
+        if textclass_element is None:
+            return []
+
         terms = textclass_element.get_desc_elems_by_name('term')
         terms_with_ana = [term for term in terms 
                                 if term.has_attrib('ana')]

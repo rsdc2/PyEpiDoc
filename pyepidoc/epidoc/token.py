@@ -34,21 +34,38 @@ class Token(Element):
     """
 
     @cached_property
-    def abdivparents(self) -> list[Element]:
+    def ab_or_div_parents(self) -> list[Element]:
+
+        """
+        Returns a list of <ab> and <div> parent |Element|.
+        """
+
         return self.get_parents_by_name(['ab', 'div'])
 
     @cached_property
-    def abdivlang(self) -> Optional[str]:
+    def ab_or_div_lang(self) -> Optional[str]:
 
         """
         Returns the language of the most immediate 
         <ab> or <div> parent where this is specified.
         """
         
-        langs = [parent.get_attrib('lang', XMLNS) for parent in self.abdivparents 
+        langs = [parent.get_attrib('lang', XMLNS) for parent in self.ab_or_div_parents 
             if parent.get_attrib('lang', XMLNS) is not None]
 
-        return maxone(langs, suppress_more_than_one_error=True)
+        return maxone(langs, None, throw_if_more_than_one=False)
+
+    @property
+    def abbr(self) -> Optional[Element]:
+        """
+        Returns the first <abbr> |Element|, if present.
+        """
+
+        return maxone(
+            lst=self.abbrs,
+            defaultval=None,
+            throw_if_more_than_one=False
+        )
 
     @property
     def abbr_info(self) -> AbbrInfo:
@@ -62,16 +79,6 @@ class Token(Element):
         """
 
         return ''.join([abbr.text for abbr in self.abbrs])
-
-    @property
-    def abbrs(self) -> list[Element]:
-        """
-        Return all abbreviation elements as a |list| of |Element|.
-        """
-
-        return [abbr for abbr in self.get_desc_elems_by_name('abbr') 
-            if abbr.text is not None]
-
 
     def convert_to_name(self, inplace=True) -> Token:
         """
@@ -105,28 +112,14 @@ class Token(Element):
         pos = self.pos
         return pos[7] if pos else None
 
-
     @cached_property
     def form(self) -> str:
+        """
+        Returns the full form, including any abbreviation expansion.
+        """
+
         return self._clean_text(self.text_desc)
 
-    @property
-    def hasabbr(self) -> bool:
-        """
-        Returns True if the token contains an 
-        abbreviation, i.e. <abbr>.
-        """
-        
-        return len(self.abbrs) > 0
-
-    @property
-    def hassupplied(self) -> bool:
-        """
-        Returns True if token contains a 
-        <supplied> tag.
-        """
-
-        return len(self.supplied) > 0
         
     @property
     def lemma(self) -> Optional[str]:
@@ -175,10 +168,6 @@ class Token(Element):
             return elem
 
         return _remove_whitespace_from_child(self._e)
-
-    @property
-    def supplied(self):
-        return [Element(supplied) for supplied in self.get_desc('supplied')]
 
     @property
     def type(self) -> TokenType:

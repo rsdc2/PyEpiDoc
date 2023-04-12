@@ -11,7 +11,6 @@ from functools import reduce, cached_property
 import operator
 import re
 import uuid
-from re import Match
 
 from lxml import etree # type: ignore
 from lxml.etree import ( # type: ignore
@@ -32,7 +31,7 @@ from ..epidoc.epidoctypes import (
 )
 from .root import Root
 from ..epidoc.empty import EmptyElement
-from ..utils import maxone
+from ..utils import maxone, maxoneT
 
 
 class Element(Root):    
@@ -45,7 +44,50 @@ class Element(Root):
 
         self._e = e
 
+
+    def __gt__(self, other) -> bool:
+        if type(other) is not Element:
+            raise TypeError(f"Other element is of type {type(other)}.")
+
+        if len(self.id_internal) != len(other.id_internal):
+            return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.gt)
+
+        return self.id_internal[-1] > other.id_internal[-1]
+
+    def __lt__(self, other) -> bool:
+        if type(other) is not Element:
+            raise TypeError(f"Previous element is of type {type(other)}.")
+
+        if len(self.id_internal) != len(other.id_internal):
+            return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.lt)
+
+        return self.id_internal[-1] < other.id_internal[-1]
+
+    def __repr__(self):
+        tail = '' if self.tail is None else self.tail
+        return f"<Element object {''.join(['{', self.tag.ns, '}', self.tag.name, '; text: ', self.text_desc.strip(), '; tail: ', tail.strip()])}>"
+
+    def __str__(self):
+        return self.__repr__()
+
+    @property
+    def abbrs(self) -> list[Element]:
+        """
+        Return all abbreviation elements as a |list| of |Element|.
+        """
+
+        return [abbr for abbr in self.get_desc_elems_by_name('abbr') 
+            if abbr.text is not None]
         
+    @property
+    def has_abbr(self) -> bool:
+        """
+        Returns True if the token contains an 
+        abbreviation, i.e. <abbr>.
+        """
+        
+        return len(self.abbrs) > 0
+
     def append_space(self) -> Element:
         """Appends a space to the element in place."""
 
@@ -88,13 +130,19 @@ class Element(Root):
 
     @property
     def desc_elems(self) -> list[Element]:
+        """
+        Returns a list of all descendant |Element|s.
+        Does not return any text nodes.
+        """
+
         if self._e is None:
             return []
 
         _descs = self._e.xpath('.//*')
         descs = _descs if type(_descs) is list else []
 
-        return [Element(desc) for desc in descs if type(desc) is _Element]
+        return [Element(desc) for desc in descs 
+            if type(desc) is _Element]
 
     @property
     def dict_desc(self) -> dict:
@@ -108,9 +156,20 @@ class Element(Root):
         return self._e
 
     @property
+    def expans(self) -> list[Element]:
+        """
+        Return all abbreviation elements as a |list| of |Element|.
+        """
+
+        return [expan for expan in self.get_desc_elems_by_name('expan') 
+            if expan.text is not None]
+
+    @property
     def final_tailtoken_boundary(self) -> bool:
-        """Returns True if the final element of the tail is a whitespace,
-        implying a word break at the end of the element"""
+        """
+        Returns True if the final element of the tail is a whitespace,
+        implying a word break at the end of the element.
+        """
 
         if self.tail is None: 
             return False
@@ -153,17 +212,17 @@ class Element(Root):
 
     def get_desc_elems_by_name(self, 
         elem_names:Union[list[str], str], 
-        attribs:Optional[dict[str, str]]=None) -> list[Element]:
+        attribs:Optional[dict[str, str]]=None
+    ) -> list[Element]:
 
         return [Element(desc) 
             for desc in self.get_desc(elemnames=elem_names, attribs=attribs)]
 
-    def get_first_parent_by_name(self, parenttagnames:list[str]) -> Element:
+    def get_first_parent_by_name(self, parent_tag_names:list[str]) -> Optional[Element]:
         return maxone(
-            lst=self.get_parents_by_name(parenttagnames), 
+            lst=self.get_parents_by_name(parent_tag_names), 
             defaultval=None, 
-            cls=None, 
-            suppress_more_than_one_error=True
+            throw_if_more_than_one=False
         )
 
     def get_parents_by_name(self,  parenttagnames:list[str]) -> list[Element]:
@@ -239,8 +298,8 @@ class Element(Root):
             if self.tag.name in BoundaryType.values():
                 return [self.tail_completer]
 
-            return self._internal_tokens[:-1] + \
-                [maxone(self._internal_tokens[-1:], '') + self.tail_completer]
+
+            return self._internal_tokens[:-1] + [maxoneT(self._internal_tokens[-1:], '') + self.tail_completer]
             
         return []
 
@@ -368,7 +427,8 @@ class Element(Root):
     @property
     def next_no_spaces(self) -> list[Element]:
 
-        """Returns a list of elements where """
+        """Returns a list of the next |Element| not 
+        separated by whitespace."""
 
         def _lb_no_break_next(element:Element) -> bool:
             """Keep going if element is a linebreak with no word break"""
@@ -585,6 +645,20 @@ class Element(Root):
         matches = list(filter(self._subsume_filterfunc(head=other, dep=self), SubsumableRels))
 
         return len(matches) > 0
+
+    @property
+    def supplied(self):
+        return [Element(supplied) for supplied in self.get_desc('supplied')]
+
+    @property
+    def hassupplied(self) -> bool:
+        """
+        Returns True if token contains a 
+        <supplied> tag.
+        """
+
+        return len(self.supplied) > 0
+
 
     @property
     def _tail_prototokens(self) -> list[str]:
@@ -808,28 +882,3 @@ class Element(Root):
             return op(len(id1), len(id2))
 
         return op(equal_id1[-1], equal_id2[-1])
-
-    def __gt__(self, other) -> bool:
-        if type(other) is not Element:
-            raise TypeError(f"Other element is of type {type(other)}.")
-
-        if len(self.id_internal) != len(other.id_internal):
-            return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.gt)
-
-        return self.id_internal[-1] > other.id_internal[-1]
-
-    def __lt__(self, other) -> bool:
-        if type(other) is not Element:
-            raise TypeError(f"Previous element is of type {type(other)}.")
-
-        if len(self.id_internal) != len(other.id_internal):
-            return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.lt)
-
-        return self.id_internal[-1] < other.id_internal[-1]
-
-    def __repr__(self):
-        tail = '' if self.tail is None else self.tail
-        return f"<Element object {''.join(['{', self.tag.ns, '}', self.tag.name, '; text: ', self.text_desc.strip(), '; tail: ', tail.strip()])}>"
-
-    def __str__(self):
-        return self.__repr__()

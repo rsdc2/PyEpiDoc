@@ -242,7 +242,7 @@ class EpiDocCorpus:
 
     @cached_property
     def prefix(self) -> str:
-        doc = maxone(self.docs, None, suppress_more_than_one_error=True)
+        doc = maxone(self.docs, None, throw_if_more_than_one=True)
         if doc is None:
             return ''
         

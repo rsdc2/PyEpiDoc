@@ -1,12 +1,16 @@
+from __future__ import annotations
+
 """
 This file provides generic utility functions especially for handling
 lists and strings.
 """
 
-from typing import TypeVar, Optional, Union
+from typing import TypeVar, Optional, Union, Callable
 from functools import reduce
 
 T = TypeVar('T')
+U = TypeVar('U')
+V = TypeVar('V')
 
 
 def is_xd(xd_list: list) -> bool:
@@ -41,27 +45,60 @@ def update(set1:set, set2:set):
 
 def maxone(
     lst:list[T], 
-    defaultval:Optional[Union[type, T]]=None, 
-    cls:Optional[type]=None, 
-    suppress_more_than_one_error:bool=False,
+    defaultval: Optional[T]=None, 
+    # callback:Optional[Callable[[T], V]]=None, 
+    throw_if_more_than_one:bool=True,
     idx:int=0
-):
+) -> Optional[T]:
+
+    """
+    Returns a maximum of one item from a |list|.
+    If more than one items are present, returns the item 
+    at index 0, if cls is None; 
+    otherwise calls callback with lst[idx] as the argument. 
+    If no items are present, returns the defaultval: 
+    if defaultval is a class, an instance of the class is returned.
+    """
 
     if len(lst) == 0:
-        if type(defaultval) == type:
-            return defaultval()
         return defaultval
 
-    if len(lst) == 1:
-        return cls(lst[idx]) if cls else lst[idx]
-
     if len(lst) > 1:
-        if not suppress_more_than_one_error:
+        if throw_if_more_than_one:
             raise ValueError(f'More than one {type(lst[idx])} present.')
 
-        return cls(lst[idx]) if cls else lst[idx]
+        return lst[idx]
 
-    raise ValueError('Unexpected lst value.')
+    # Only one item in list
+    return lst[0]
+
+
+def maxoneT(
+    lst:list[T], 
+    defaultval: T, 
+    # callback:Optional[Callable[[T], V]]=None, 
+    throw_if_more_than_one:bool=True,
+    idx:int=0
+) -> T:
+
+    """
+    Returns a maximum of one item from a |list|.
+    If more than one items are present, returns the item 
+    at index idx. 
+    If no items are present, returns the defaultval.
+    """
+
+    if len(lst) == 0:
+        return defaultval
+
+    if len(lst) > 1:
+        if throw_if_more_than_one:
+            raise ValueError(f'More than one {type(lst[idx])} present.')
+
+        return lst[idx]
+
+    # Only one item in list
+    return lst[0]
 
 
 def default_str(str_or_none:Optional[str]):
