@@ -119,7 +119,6 @@ class Token(Element):
         """
 
         return self._clean_text(self.text_desc)
-
         
     @property
     def lemma(self) -> Optional[str]:
