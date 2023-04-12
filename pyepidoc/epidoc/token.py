@@ -105,21 +105,10 @@ class Token(Element):
         pos = self.pos
         return pos[7] if pos else None
 
-    @property
-    def no_gaps(self) -> bool:
-        """
-        Returns True if the token contains 
-        no <gap> tags.
-        """
-        return self.gaps == []
 
     @cached_property
     def form(self) -> str:
         return self._clean_text(self.text_desc)
-
-    @property
-    def gaps(self) -> list[Element]:
-        return [Element(gap) for gap in self.get_desc('gap')]
 
     @property
     def hasabbr(self) -> bool:

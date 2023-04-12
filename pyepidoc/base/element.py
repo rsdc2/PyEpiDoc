@@ -136,6 +136,10 @@ class Element(Root):
         
         return self.internal_token_elements[0]
 
+    @property
+    def gaps(self) -> list[Element]:
+        return [Element(gap) for gap in self.get_desc('gap')]
+
     def get_attrib(
         self, 
         attribname:str, 
@@ -392,6 +396,14 @@ class Element(Root):
             return _next_no_spaces(acc + [element], element.next)
 
         return _next_no_spaces([], self)
+
+    @property
+    def no_gaps(self) -> bool:
+        """
+        Returns True if the token contains 
+        no <gap> tags.
+        """
+        return self.gaps == []
 
     @property
     def nospace_till_next_element(self) -> bool:
