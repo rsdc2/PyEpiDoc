@@ -5,13 +5,14 @@ from .epidoctypes import (
     SpaceUnit, 
     Morphology, 
     TokenInfo, 
-    AbbrInfo, 
+    Morphology
 )
 from .epidoc import EpiDoc
-from .epidoctypes import TokenInfo, Morphology, AbbrInfo
+from .abbr import AbbrInfo
+from .corpus import EpiDocCorpus
+
 from ..file import FileInfo
 from ..file.funcs import filepath_from_list
-from .corpus import EpiDocCorpus
 from ..constants import *
 
 

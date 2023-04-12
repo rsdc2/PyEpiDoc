@@ -188,7 +188,6 @@ class Ab(Element):
         for word in self.tokens:
             word.remove_whitespace()
 
-
         return Ab(_e)
 
     @property
@@ -219,7 +218,6 @@ class Ab(Element):
             next_no_spaces_desc_flat = [element for descsequence in next_no_spaces_desc for element in descsequence]
             new_acc_desc = update(acc_desc, set(next_no_spaces_desc_flat))
             
-            # breakpoint()
             return _get_word_carrier_sequences(new_acc, new_acc_desc, tokenables[1:])
 
         def _remove_subsets(
@@ -234,8 +232,12 @@ class Ab(Element):
             
             return acc + [sequence]
 
-        tokencarrier_sequences = _get_word_carrier_sequences([], set(), self.token_carriers)
-        # breakpoint()
+        tokencarrier_sequences = _get_word_carrier_sequences(
+            [], 
+            set(), 
+            self.token_carriers
+        )
+        
         return reduce(_remove_subsets, tokencarrier_sequences, [])
 
     @property
@@ -245,7 +247,6 @@ class Ab(Element):
         WordCarriers are XML elements that carry text fragments
         either as element-internal text, or in their tails.
         """
-
         
         return [element for element in self.desc_elems 
             if element.tag.name in TokenCarrier]

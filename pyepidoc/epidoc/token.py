@@ -2,24 +2,24 @@ from __future__ import annotations
 
 from typing import Optional
 from functools import cached_property
-
-from lxml.etree import _Element # type: ignore
 from copy import deepcopy
 
-from ..base import Namespace as ns
-from .epidoctypes import TokenType
-from ..constants import NS, XMLNS
+from lxml.etree import _Element # type: ignore
 
+from ..base import Namespace as ns
+from ..utils import maxone
+from ..constants import NS, XMLNS
 from ..base.element import Element
+
+from .abbr import AbbrInfo
 from .epidoctypes import (
     Morphology, 
     TokenInfo, 
-    AbbrInfo, 
     CompoundTokenType, 
-    AtomicTokenType
+    AtomicTokenType,
+    TokenType
 )
 
-from ..utils import maxone
 
 class Token(Element):
 
@@ -32,6 +32,23 @@ class Token(Element):
         provides access to morphological and lemmatisation
         data.
     """
+
+    @cached_property
+    def abdivparents(self) -> list[Element]:
+        return self.get_parents_by_name(['ab', 'div'])
+
+    @cached_property
+    def abdivlang(self) -> Optional[str]:
+
+        """
+        Returns the language of the most immediate 
+        <ab> or <div> parent where this is specified.
+        """
+        
+        langs = [parent.get_attrib('lang', XMLNS) for parent in self.abdivparents 
+            if parent.get_attrib('lang', XMLNS) is not None]
+
+        return maxone(langs, suppress_more_than_one_error=True)
 
     @property
     def abbr_info(self) -> AbbrInfo:
@@ -55,18 +72,6 @@ class Token(Element):
         return [abbr for abbr in self.get_desc_elems_by_name('abbr') 
             if abbr.text is not None]
 
-    @cached_property
-    def abdivparents(self) -> list[Element]:
-        return self.get_parents_by_name(['ab', 'div'])
-
-    @cached_property
-    def abdivlang(self) -> Optional[str]:
-
-        """Returns the language of the most immediate parent where this is specified."""
-        
-        langs = [parent.get_attrib('lang', XMLNS) for parent in self.abdivparents 
-            if parent.get_attrib('lang', XMLNS) is not None]
-        return maxone(langs, suppress_more_than_one_error=True)
 
     def convert_to_name(self, inplace=True) -> Token:
         """
@@ -102,6 +107,10 @@ class Token(Element):
 
     @property
     def no_gaps(self) -> bool:
+        """
+        Returns True if the token contains 
+        no <gap> tags.
+        """
         return self.gaps == []
 
     @cached_property
@@ -114,6 +123,11 @@ class Token(Element):
 
     @property
     def hasabbr(self) -> bool:
+        """
+        Returns True if the token contains an 
+        abbreviation, i.e. <abbr>.
+        """
+        
         return len(self.abbrs) > 0
 
     @property
@@ -144,10 +158,14 @@ class Token(Element):
 
     @property
     def pos(self) -> Optional[str]:
+        """Returns the content of the part of speech (POS) 
+        attribute of the token."""
         return self.get_attrib('pos')
 
     @pos.setter
     def pos(self, value:str):
+        """Sets the part of speech (POS) attribute of the 
+        token."""
         self.set_attrib('pos', value)
 
     def remove_whitespace(self) -> Token:

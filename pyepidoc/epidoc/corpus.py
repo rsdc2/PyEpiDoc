@@ -5,10 +5,10 @@ import os
 
 from .epidoc import EpiDoc
 from .token import Token
+from .abbr import AbbrInfo
 from .epidoctypes import (
     SetRelation,
     TokenInfo, 
-    AbbrInfo, 
     SpaceUnit
 )
 

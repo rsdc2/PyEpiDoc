@@ -10,12 +10,11 @@ from ..file import FileInfo, FileMode
 
 from .edition import Edition
 from .empty import EmptyElement
-
+from .abbr import AbbrInfo
 from .epidoctypes import (
     TokenInfo, 
     Morphology, 
-    SpaceUnit,
-    AbbrInfo
+    SpaceUnit
 )
 
 from .token import Token
