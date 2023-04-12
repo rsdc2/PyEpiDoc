@@ -13,7 +13,7 @@ from .epidoctypes import (
 )
 
 from ..file import FileInfo, FileMode, filepath_from_list
-from ..utils import maxone, flatlist, head
+from ..utils import maxone, flatlist, top
 from ..constants import SET_IDS
 
 
@@ -114,7 +114,7 @@ class EpiDocCorpus:
         if self._docs is None:
             print('Loading epidoc files...')
             self._docs = [EpiDoc(file) 
-                for file in head(self.files, self._head)] 
+                for file in top(self.files, self._head)] 
         
         return self._docs
 

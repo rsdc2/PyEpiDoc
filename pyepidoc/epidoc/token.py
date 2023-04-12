@@ -7,7 +7,7 @@ from copy import deepcopy
 from lxml.etree import _Element # type: ignore
 
 from ..base import Namespace as ns
-from ..utils import maxone
+from ..utils import maxone, remove_none
 from ..constants import NS, XMLNS
 from ..base.element import Element
 
@@ -48,17 +48,21 @@ class Token(Element):
         """
         Returns the language of the most immediate 
         <ab> or <div> parent where this is specified.
+        If more than one are present, returns the first.
         """
         
-        langs = [parent.get_attrib('lang', XMLNS) for parent in self.ab_or_div_parents 
-            if parent.get_attrib('lang', XMLNS) is not None]
+        langs = [parent.get_attrib('lang', XMLNS) 
+            for parent in self.ab_or_div_parents]
+        
+        filtered_langs = remove_none(langs)
 
-        return maxone(langs, None, throw_if_more_than_one=False)
+        return maxone(filtered_langs, throw_if_more_than_one=False)
 
     @property
     def abbr(self) -> Optional[Element]:
         """
-        Returns the first <abbr> |Element|, if present.
+        Returns the first <abbr> |Element|, if present,
+        else None.
         """
 
         return maxone(
@@ -111,6 +115,18 @@ class Token(Element):
     def case(self) -> Optional[str]:
         pos = self.pos
         return pos[7] if pos else None
+
+    @property
+    def expan(self) -> Optional[Element]:
+        """
+        Returns the first <expan> |Element|, if present,
+        else None.
+        """
+
+        return maxone(
+            lst=self.expans,
+            throw_if_more_than_one=False
+        )
 
     @cached_property
     def form(self) -> str:

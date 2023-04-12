@@ -29,7 +29,7 @@ def flatlist(xd_list: list) -> list:
     return xd_list
     
 
-def head(l:list[T], length:Optional[int]=10) -> list[T]:
+def top(l:list[T], length:Optional[int]=10) -> list[T]:
     if length is None:
         return l
 
@@ -38,15 +38,19 @@ def head(l:list[T], length:Optional[int]=10) -> list[T]:
 
     return l
 
+
 def update(set1:set, set2:set):
     set1.update(set2)
     return set1
 
 
+def remove_none(l:list[Optional[T]]) -> list[T]:
+    return [item for item in l if item is not None]
+
+
 def maxone(
     lst:list[T], 
     defaultval: Optional[T]=None, 
-    # callback:Optional[Callable[[T], V]]=None, 
     throw_if_more_than_one:bool=True,
     idx:int=0
 ) -> Optional[T]:
@@ -71,6 +75,20 @@ def maxone(
 
     # Only one item in list
     return lst[0]
+
+def head(
+    lst:list[T],
+    defaultval:Optional[T]=None,
+    throw_if_more_than_one:bool=False
+):
+    return maxone(lst, defaultval, throw_if_more_than_one, 0)
+
+def last(
+    lst:list[T],
+    defaultval:Optional[T]=None,
+    throw_if_more_than_one:bool=False
+):
+    return maxone(lst, defaultval, throw_if_more_than_one, len(lst) - 1)
 
 
 def maxoneT(
