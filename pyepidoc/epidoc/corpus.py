@@ -166,11 +166,16 @@ class EpiDocCorpus:
             if doc.not_before is not None and doc.not_after is not None
             and doc.not_before >= start and doc.not_after <= end], folderpath=self.folderpath)
 
-    def filter_by_form(self, forms:list[str], set_relation=SetRelation.intersection) -> EpiDocCorpus:
-        _corpus = [doc for doc in self.docs
+    def filter_by_form(
+        self, 
+        forms:list[str], 
+        set_relation=SetRelation.intersection
+    ) -> EpiDocCorpus:
+    
+        corpus = [doc for doc in self.docs
             if set_relation(set(forms), doc.forms)]
 
-        return EpiDocCorpus(_corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=None)
 
     def filter_by_ids(self, ids:list[str]) -> EpiDocCorpus:
         _corpus = [doc for doc in self.docs
@@ -186,36 +191,56 @@ class EpiDocCorpus:
 
     def filter_by_languages(self, 
         languages:list[str], 
-        set_relation=SetRelation.intersection) -> EpiDocCorpus:
+        set_relation=SetRelation.intersection
+    ) -> EpiDocCorpus:
 
-        _corpus = [doc for doc in self.docs
+        corpus = [doc for doc in self.docs
             if set_relation(set(languages), doc.textlangs)]
 
-        return EpiDocCorpus(_corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=None)
 
-    def filter_by_lemmata(self, lemmata:list[str], set_relation=SetRelation.intersection) -> EpiDocCorpus:
-        _corpus = [doc for doc in self.docs
+    def filter_by_lemmata(
+        self, 
+        lemmata:list[str], 
+        set_relation=SetRelation.intersection
+    ) -> EpiDocCorpus:
+    
+        corpus = [doc for doc in self.docs
             if set_relation(set(lemmata), doc.lemmata)]
 
-        return EpiDocCorpus(_corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=None)
 
-    def filter_by_morphology(self, morphologies:list[TokenInfo], set_relation=SetRelation.intersection) -> EpiDocCorpus:
-        _corpus = [doc for doc in self.docs
+    def filter_by_morphology(
+        self, 
+        morphologies:list[TokenInfo], 
+        set_relation=SetRelation.intersection
+    ) -> EpiDocCorpus:
+    
+        corpus = [doc for doc in self.docs
             if set_relation(set(morphologies), doc.morphologies)]
 
-        return EpiDocCorpus(_corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=None)
 
-    def filter_by_textclass(self, textclasses:list[str], set_relation=SetRelation.intersection) -> EpiDocCorpus:
-        _corpus = [doc for doc in self.docs
+    def filter_by_textclass(
+        self, 
+        textclasses:list[str], 
+        set_relation=SetRelation.intersection
+    ) -> EpiDocCorpus:
+    
+        corpus = [doc for doc in self.docs
             if set_relation(set(textclasses), doc.textclasses)]
 
-        return EpiDocCorpus(_corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=None)
 
-    def filter_by_word_info(self, word_infos:list[TokenInfo], set_relation=SetRelation.intersection) -> EpiDocCorpus:
-        _corpus = [doc for doc in self.docs
+    def filter_by_word_info(
+        self, word_infos:list[TokenInfo], 
+        set_relation=SetRelation.intersection
+    ) -> EpiDocCorpus:
+
+        corpus = [doc for doc in self.docs
             if set_relation(set(word_infos), doc.token_infos)]
 
-        return EpiDocCorpus(_corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=None)
 
     @property
     def folderpath(self) -> Optional[str]:
