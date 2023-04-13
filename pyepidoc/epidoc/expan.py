@@ -8,10 +8,6 @@ from ..base.namespace import Namespace
 from .ex import Ex
 from .abbr import Abbr
 
-element_classes: dict[str, type] = {
-    'ex': Ex,
-    'abbr': Abbr
-}
 
 class Expan(Element):
 
@@ -39,10 +35,11 @@ class Expan(Element):
             tail.strip()]
         )
 
-        return f"<Expan {content}>"
+        return f"Expan({content})>"
 
     def __str__(self) -> str:
-        objs = [self.get_elem_obj(elem) for elem in self.children]
+        objs = [self.abbr_or_expan(elem) for elem in self.desc_elems
+            if elem.name_no_namespace in ['ex', 'abbr']]
 
         return ''.join([str(obj) for obj in objs])
 
@@ -63,7 +60,13 @@ class Expan(Element):
         return [Ex(elem) for elem in self.ex_elems]        
 
     @staticmethod
-    def get_elem_obj(elem: Element) -> Optional[Union[Expan, Abbr ,Ex]]:
+    def abbr_or_expan(elem: Element) -> Optional[Union[Expan, Abbr ,Ex]]:
+
+        element_classes: dict[str, type] = {
+            'ex': Ex,
+            'abbr': Abbr
+        }
+
         tag = elem.name_no_namespace
         cls = element_classes.get(tag, None)
 

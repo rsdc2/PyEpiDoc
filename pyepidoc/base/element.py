@@ -77,7 +77,7 @@ class Element(Root):
             tail.strip()]
         )
 
-        return f"<Element {content}>"
+        return f"Element({content})"
 
     def __str__(self):
         return self.text_desc_compressed_whitespace
