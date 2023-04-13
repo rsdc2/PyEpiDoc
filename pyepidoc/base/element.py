@@ -100,6 +100,16 @@ class Element(Root):
         
         return len(self.abbr_elems) > 0
 
+    @property
+    def am_elems(self) -> list[Element]:
+        """
+        Returns a |list| of abbreviation marker elements <am>.
+        See https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-am.html,
+        last accessed 2023-04-13.
+        """
+
+        return [abbr for abbr in self.get_desc_elems_by_name('am')]
+
     def append_space(self) -> Element:
         """Appends a space to the element in place."""
 

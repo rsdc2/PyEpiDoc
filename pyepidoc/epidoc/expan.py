@@ -4,9 +4,11 @@ from typing import Optional, Union
 from lxml.etree import _Element # type: ignore
 
 from ..base import Element
+from ..utils import head, flatlist
 
 from .ex import Ex
 from .abbr import Abbr
+from .am import Am
 from .epidoctypes import AbbrType
 
 
@@ -39,7 +41,7 @@ class Expan(Element):
         return f"Expan({content})"
 
     def __str__(self) -> str:
-        objs = [self.abbr_or_ex(elem) for elem in self.desc_elems
+        objs = [self.abbr_ex_or_am(elem) for elem in self.desc_elems
             if elem.name_no_namespace in ['ex', 'abbr']]
 
         return ''.join([str(obj) for obj in objs])
@@ -49,15 +51,28 @@ class Expan(Element):
         return [Abbr(elem.e) for elem in self.abbr_elems]        
 
     @property
+    def first_abbr(self) -> Optional[Abbr]:
+        return head(self.abbr)
+
+    @property
     def abbr_count(self) -> int:
         return len(self.abbr_elems)
 
+    @property
+    def am(self) -> list[Am]:
+        return flatlist([abbr.am for abbr in self.abbr])
+
+    @property
+    def am_count(self) -> int:
+        return len(self.am_elems)
+
     @staticmethod
-    def abbr_or_ex(elem: Element) -> Optional[Union[Abbr, Ex]]:
+    def abbr_ex_or_am(elem: Element) -> Optional[Union[Abbr, Ex, Am]]:
 
         element_classes: dict[str, type] = {
             'ex': Ex,
-            'abbr': Abbr
+            'abbr': Abbr,
+            'am': Am
         }
 
         tag = elem.name_no_namespace
@@ -70,16 +85,24 @@ class Expan(Element):
 
     @property
     def abbr_type(self) -> AbbrType:
+
+        if self.first_abbr is not None:
+            if self.first_abbr.is_multiplicative:
+                return AbbrType.multiplication  
+
         if len(self.abbr) == 1 and len(self.ex) == 1:
             return AbbrType.suspension
 
         if len(self.abbr) > 1:
+
             if self.last_child is not None:
-                last_child_type = type(self.abbr_or_ex(self.last_child))
+                last_child_type = type(self.abbr_ex_or_am(self.last_child))
+                
                 if last_child_type is Abbr:
                     return AbbrType.contraction
                 elif last_child_type is Ex:
                     return AbbrType.contraction_with_suspension
+
 
         return AbbrType.unknown
 
