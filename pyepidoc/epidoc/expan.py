@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from typing import Optional, Union
 from lxml.etree import _Element # type: ignore
+
 from ..base import Element
-from ..base.namespace import Namespace
 
 from .ex import Ex
 from .abbr import Abbr
+from .epidoctypes import AbbrType
 
 
 class Expan(Element):
@@ -35,32 +36,24 @@ class Expan(Element):
             tail.strip()]
         )
 
-        return f"Expan({content})>"
+        return f"Expan({content})"
 
     def __str__(self) -> str:
-        objs = [self.abbr_or_expan(elem) for elem in self.desc_elems
+        objs = [self.abbr_or_ex(elem) for elem in self.desc_elems
             if elem.name_no_namespace in ['ex', 'abbr']]
 
         return ''.join([str(obj) for obj in objs])
 
     @property
     def abbr(self) -> list[Abbr]:
-        return [Abbr(elem) for elem in self.abbr_elems]        
+        return [Abbr(elem.e) for elem in self.abbr_elems]        
 
     @property
     def abbr_count(self) -> int:
         return len(self.abbr_elems)
 
-    @property
-    def ex_count(self) -> int:
-        return len(self.ex_elems)
-
-    @property
-    def ex(self) -> list[Ex]:
-        return [Ex(elem) for elem in self.ex_elems]        
-
     @staticmethod
-    def abbr_or_expan(elem: Element) -> Optional[Union[Expan, Abbr ,Ex]]:
+    def abbr_or_ex(elem: Element) -> Optional[Union[Abbr, Ex]]:
 
         element_classes: dict[str, type] = {
             'ex': Ex,
@@ -74,3 +67,27 @@ class Expan(Element):
             return None
 
         return cls(elem.e)
+
+    @property
+    def abbr_type(self) -> AbbrType:
+        if len(self.abbr) == 1 and len(self.ex) == 1:
+            return AbbrType.suspension
+
+        if len(self.abbr) > 1:
+            if self.last_child is not None:
+                last_child_type = type(self.abbr_or_ex(self.last_child))
+                if last_child_type is Abbr:
+                    return AbbrType.contraction
+                elif last_child_type is Ex:
+                    return AbbrType.contraction_with_suspension
+
+        return AbbrType.unknown
+
+    @property
+    def ex_count(self) -> int:
+        return len(self.ex_elems)
+
+    @property
+    def ex(self) -> list[Ex]:
+        return [Ex(elem.e) for elem in self.ex_elems]        
+

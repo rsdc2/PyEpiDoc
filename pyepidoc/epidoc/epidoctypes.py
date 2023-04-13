@@ -48,6 +48,7 @@ class ContainerType(EnumerableEnum):
     Ab = 'ab'
     Div = 'div'
 
+
 class CompoundTokenType(EnumerableEnum):
     PersName = 'persName'
     PlaceName = 'placeName'
@@ -62,6 +63,14 @@ TokenCarrier = set(
     BoundaryType.values() + 
     CompoundTokenType.values()
 )
+
+
+class AbbrType(EnumerableEnum):
+    suspension = 'suspension'
+    contraction = 'contraction'
+    contraction_with_suspension = 'contraction_with_suspension'
+    multiplication = 'muliplication'
+    unknown = 'unknown'
 
 
 class TokenType(Enum):

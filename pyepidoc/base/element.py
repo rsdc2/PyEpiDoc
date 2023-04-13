@@ -205,6 +205,13 @@ class Element(Root):
         return self.children[0]
 
     @property
+    def last_child(self) -> Optional[Element]:
+        if self.children == []:
+            return None
+        
+        return self.children[-1]
+
+    @property
     def _first_internal_protoword(self) -> str:
         if self._internal_prototokens == []:
             return ''
