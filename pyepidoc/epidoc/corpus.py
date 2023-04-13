@@ -6,6 +6,7 @@ import os
 from .epidoc import EpiDoc
 from .token import Token
 from .abbr import AbbrInfo
+from .expan import Expan
 from .epidoctypes import (
     SetRelation,
     TokenInfo, 
@@ -13,7 +14,7 @@ from .epidoctypes import (
 )
 
 from ..file import FileInfo, FileMode, filepath_from_list
-from ..utils import maxone, flatlist, top
+from ..utils import maxone, flatlist, top, head
 from ..constants import SET_IDS
 
 
@@ -127,12 +128,28 @@ class EpiDocCorpus:
         _epidoc = EpiDoc(file)
         return _epidoc
 
+    @property
+    def expans(self) -> list[Expan]:
+        return flatlist([doc.expans for doc in self.docs])
+
     @cached_property
     def files(self) -> list[FileInfo]:
+
+        """
+        Returns a list of |FileInfo| for the files in the corpus.
+        No subdirectories will be considered.
+        """
+
         if self._folderpath is None:
             return []
 
-        folder, subfolder, files = next(os.walk(self._folderpath))
+        l = list(os.walk(self._folderpath))
+        first = head(l) # Subfolders not considered: only take the first
+
+        if first is None:
+            return []
+
+        folder, subfolder, files = head(l)
         sorted_files = sorted(files)
 
         fileinfos:list[FileInfo] = []
