@@ -29,7 +29,7 @@ def test_expans():
     edition = head(doc.editions)
 
     assert edition != None
-    assert len(edition.expans) != None
+    assert len(edition.expans) == 3
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths)
