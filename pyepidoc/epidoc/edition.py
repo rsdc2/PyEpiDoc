@@ -206,6 +206,10 @@ class Edition(Element):
         return self.get_desc_elems_by_name(['div'])
 
     @property
+    def edition_text(self) -> str:
+        return self.text_desc
+
+    @property
     def gaps(self) -> list[Element]:
         gaps = []
         for ab in self.abs:
