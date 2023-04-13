@@ -1,3 +1,6 @@
+# This file contains the Edition class
+# as well as a function 'prettify' for prettifying the XML of the edition
+
 from __future__ import annotations
 
 from itertools import chain
