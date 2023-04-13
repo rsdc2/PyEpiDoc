@@ -71,19 +71,19 @@ class Element(Root):
             self.tag.name, 
             "'",
             ": '", 
-            self.text_desc.strip(), 
+            self.text_desc_compressed_whitespace.strip(), 
             "'",
-            f"{'; tail:' if tail.strip() != '' else ''}", 
+            f"{'; tail: ' if tail.strip() != '' else ''}", 
             tail.strip()]
         )
 
         return f"<Element {content}>"
 
     def __str__(self):
-        return self.__repr__()
+        return self.text_desc_compressed_whitespace
 
     @property
-    def abbrs(self) -> list[Element]:
+    def abbr_elems(self) -> list[Element]:
         """
         Return all abbreviation elements as a |list| of |Element|.
         """
@@ -98,7 +98,7 @@ class Element(Root):
         abbreviation, i.e. <abbr>.
         """
         
-        return len(self.abbrs) > 0
+        return len(self.abbr_elems) > 0
 
     def append_space(self) -> Element:
         """Appends a space to the element in place."""
@@ -168,9 +168,20 @@ class Element(Root):
         return self._e
 
     @property
-    def expans(self) -> list[Element]:
+    def ex_elems(self) -> list[Element]:
         """
-        Return all abbreviation elements as a |list| of |Element|.
+        Return all abbreviation expansions (minus abbreviation) 
+        as a |list| of |Element|.
+        """
+
+        return [ex for ex in self.get_desc_elems_by_name('ex')]
+
+
+    @property
+    def expan_elems(self) -> list[Element]:
+        """
+        Return all abbreviation expansions (i.e. abbreviation + expansion) 
+        as a |list| of |Element|.
         """
 
         return [expan for expan in self.get_desc_elems_by_name('expan')]
@@ -724,6 +735,11 @@ class Element(Root):
         if self._e is None: 
             return ''
         return ''.join(self._e.xpath('.//text()'))
+
+    @property
+    def text_desc_compressed_whitespace(self) -> str:
+        pattern = r'[\t\s\n]+'
+        return re.sub(pattern, ' ', self.text_desc)
 
     @staticmethod
     def w_factory(

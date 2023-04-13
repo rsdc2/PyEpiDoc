@@ -7,11 +7,12 @@ from copy import deepcopy
 from lxml.etree import _Element # type: ignore
 
 from ..base import Namespace as ns
-from ..utils import maxone, remove_none
+from ..utils import maxone, remove_none, head
 from ..constants import NS, XMLNS
 from ..base.element import Element
 
 from .abbr import AbbrInfo
+from .expan import Expan
 from .epidoctypes import (
     Morphology, 
     TokenInfo, 
@@ -66,7 +67,7 @@ class Token(Element):
         """
 
         return maxone(
-            lst=self.abbrs,
+            lst=self.abbr_elems,
             defaultval=None,
             throw_if_more_than_one=False
         )
@@ -82,7 +83,7 @@ class Token(Element):
         as a |str|.
         """
 
-        return ''.join([abbr.text for abbr in self.abbrs])
+        return ''.join([abbr.text for abbr in self.abbr_elems])
 
     def convert_to_name(self, inplace=True) -> Token:
         """
@@ -117,7 +118,11 @@ class Token(Element):
         return pos[7] if pos else None
 
     @property
-    def expan(self) -> Optional[Element]:
+    def expans(self) -> list[Expan]:
+        return [Expan(elem.e) for elem in self.expan_elems]
+
+    @property
+    def first_expan(self) -> Optional[Expan]:
         """
         Returns the first <expan> |Element|, if present,
         else None.
@@ -125,10 +130,7 @@ class Token(Element):
         including both abbreviation and expansion.
         """
 
-        return maxone(
-            lst=self.expans,
-            throw_if_more_than_one=False
-        )
+        return head(self.expans)
 
     @cached_property
     def form(self) -> str:

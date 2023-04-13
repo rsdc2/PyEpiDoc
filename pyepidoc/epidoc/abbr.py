@@ -1,4 +1,12 @@
 from typing import Optional
+from ..base import Element
+
+class Abbr(Element):    
+    def __str__(self) -> str:
+        return self.text_desc_compressed_whitespace
+
+
+
 
 class AbbrInfo:
 

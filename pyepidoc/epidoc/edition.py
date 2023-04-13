@@ -9,9 +9,17 @@ from lxml.etree import _Element # type: ignore
 from typing import Optional
 import re
 
-from .ab import Ab
 from ..base import Element
+from ..constants import (
+    XMLNS, 
+    SET_IDS, 
+    SPACE_WORDS
+)
+from ..utils import default_str, flatlist
+
+from .ab import Ab
 from .token import Token
+from .expan import Expan
 from .textpart import TextPart
 from .empty import EmptyElement
 
@@ -23,12 +31,7 @@ from .epidoctypes import (
     CompoundTokenType, 
     ContainerType
 )
-from ..constants import (
-    XMLNS, 
-    SET_IDS, 
-    SPACE_WORDS
-)
-from ..utils import default_str
+
 
 
 def prettify(
@@ -208,6 +211,10 @@ class Edition(Element):
     @property
     def edition_text(self) -> str:
         return self.text_desc
+
+    @property
+    def expans(self) -> list[Expan]:
+        return flatlist([ab.expans for ab in self.abs])
 
     @property
     def gaps(self) -> list[Element]:

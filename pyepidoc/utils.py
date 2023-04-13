@@ -6,11 +6,27 @@ lists and strings.
 """
 
 from typing import TypeVar, Optional, Union, Callable
+
 from functools import reduce
 
 T = TypeVar('T')
 U = TypeVar('U')
 V = TypeVar('V')
+
+# element_classes = {
+#     'expan': Expan,
+#     'ex': Ex,
+#     'abbr': Abbr
+# }
+
+
+# def get_elem_obj(e: Element) -> Element | Expan | Abbr | Ex:
+#     cls = element_classes.get(e.name_no_namespace, None)
+
+#     if cls is None:
+#         return e
+
+#     return cls(e.e)
 
 
 def is_xd(xd_list: list) -> bool:
@@ -19,7 +35,7 @@ def is_xd(xd_list: list) -> bool:
 
 def flatlist(xd_list: list) -> list:
 
-    def reduce_list(acc: list, l:list) -> list: 
+    def reduce_list(acc: list, l:list): 
         return acc + l
 
     if is_xd(xd_list):

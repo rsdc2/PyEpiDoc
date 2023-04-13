@@ -1,7 +1,17 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import Optional, Union
 from lxml.etree import _Element # type: ignore
 from ..base import Element
+from ..base.namespace import Namespace
 
+from .ex import Ex
+from .abbr import Abbr
+
+element_classes: dict[str, type] = {
+    'ex': Ex,
+    'abbr': Abbr
+}
 
 class Expan(Element):
 
@@ -19,10 +29,45 @@ class Expan(Element):
         if self.tag.name != 'expan':
             raise TypeError('Element should be of type <expan>.')
 
+    def __repr__(self):
+        tail = '' if self.tail is None else self.tail
+        content = ''.join([
+            "'",
+            str(self),
+            "'",
+            f"{'; tail: ' if tail.strip() != '' else ''}", 
+            tail.strip()]
+        )
+
+        return f"<Expan {content}>"
+
+    def __str__(self) -> str:
+        objs = [self.get_elem_obj(elem) for elem in self.children]
+
+        return ''.join([str(obj) for obj in objs])
+
+    @property
+    def abbr(self) -> list[Abbr]:
+        return [Abbr(elem) for elem in self.abbr_elems]        
+
     @property
     def abbr_count(self) -> int:
-        return len(self.abbr_elements)
+        return len(self.abbr_elems)
 
     @property
     def ex_count(self) -> int:
-        return len(self.ex)
+        return len(self.ex_elems)
+
+    @property
+    def ex(self) -> list[Ex]:
+        return [Ex(elem) for elem in self.ex_elems]        
+
+    @staticmethod
+    def get_elem_obj(elem: Element) -> Optional[Union[Expan, Abbr ,Ex]]:
+        tag = elem.name_no_namespace
+        cls = element_classes.get(tag, None)
+
+        if cls is None:
+            return None
+
+        return cls(elem.e)

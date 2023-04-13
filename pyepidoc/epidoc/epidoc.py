@@ -5,11 +5,11 @@ from lxml.etree import _Element  # type: ignore
 
 from ..base.element import Element
 from ..base.root import Root
-from ..utils import flatlist, maxone, maxoneT
+from ..utils import flatlist, maxone
 from ..file import FileInfo, FileMode
 
 from .edition import Edition
-from .empty import EmptyElement
+from .expan import Expan
 from .abbr import AbbrInfo
 from .epidoctypes import (
     TokenInfo, 
@@ -31,6 +31,20 @@ class EpiDoc(Root):
     as well as that for accessing the editions present
     in the file.
     """
+
+    def __bytes__(self) -> bytes:
+        return etree.tostring(
+            self.e, 
+            pretty_print=True, 
+            encoding='utf-8', 
+            xml_declaration=True
+        )
+
+    def __repr__(self) -> str:
+        return f'EpiDoc(id="{self.id}")'
+
+    def __str__(self) -> str:
+        return str(bytes(self))
 
 
     @property
@@ -142,6 +156,10 @@ class EpiDoc(Root):
 
         for edition in self.editions:
             edition.prettify(spaceunit=spaceunit, number=number)
+
+    @property
+    def expans(self) -> list[Expan]:
+        return flatlist([edition.expans for edition in self.editions])
 
     @property
     def formatted_text(self) -> str:
@@ -391,17 +409,3 @@ class EpiDoc(Root):
     @property
     def tokens_str(self) -> str:
         return ' '.join(self.tokens_list_str)
-
-    def __repr__(self) -> str:
-        return f'EpiDoc(id="{self.id}")'
-
-    def __str__(self) -> str:
-        return str(bytes(self))
-
-    def __bytes__(self) -> bytes:
-        return etree.tostring(
-            self.e, 
-            pretty_print=True, 
-            encoding='utf-8', 
-            xml_declaration=True
-        )

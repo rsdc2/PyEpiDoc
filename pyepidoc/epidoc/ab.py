@@ -5,9 +5,9 @@ from copy import deepcopy
 from functools import reduce
 from lxml.etree import _Element # type: ignore
 
-from ..base import Element
 from .textpart import TextPart
 from .token import Token
+from .expan import Expan
 from .epidoctypes import (
     TokenCarrier, 
     AtomicTokenType, 
@@ -15,8 +15,8 @@ from .epidoctypes import (
     SetRelation, 
 )
 
+from ..base import Element
 from ..utils import update
-
 from ..constants import XMLNS
 
 
@@ -72,8 +72,8 @@ class Ab(Element):
         return self
 
     @property
-    def expans(self) -> list[Element]:
-        return [expan for expan in self.get_desc_elems_by_name('expan')]
+    def expans(self) -> list[Expan]:
+        return [Expan(e.e) for e in self.expan_elems]
 
     @property
     def gaps(self):
