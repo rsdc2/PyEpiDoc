@@ -1,4 +1,6 @@
 from pyepidoc.epidoc.epidoc import EpiDoc
+from pyepidoc.utils import head
+
 import pytest
 
 relative_filepaths = [
@@ -18,6 +20,16 @@ def test_collect_tokens():
         'annis', 
         'VI'
     ]
+
+
+def test_expans():
+    filepath = relative_filepaths[0]
+    
+    doc = EpiDoc(filepath, fullpath=False)
+    edition = head(doc.editions)
+
+    assert edition != None
+    assert len(edition.expans) != None
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths)
