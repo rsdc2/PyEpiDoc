@@ -161,8 +161,7 @@ class Element(Root):
         Return all abbreviation elements as a |list| of |Element|.
         """
 
-        return [expan for expan in self.get_desc_elems_by_name('expan') 
-            if expan.text is not None]
+        return [expan for expan in self.get_desc_elems_by_name('expan')]
 
     @property
     def final_tailtoken_boundary(self) -> bool:
