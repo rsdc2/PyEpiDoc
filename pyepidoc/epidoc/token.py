@@ -121,6 +121,8 @@ class Token(Element):
         """
         Returns the first <expan> |Element|, if present,
         else None.
+        The <expan> element contains the whole word text, 
+        including both abbreviation and expansion.
         """
 
         return maxone(
