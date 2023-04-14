@@ -3,6 +3,7 @@ from os import getcwd, path, makedirs
 from .filetypes import FilePath, FileMode
 from .filename import Filename
 from .funcs import filepath_from_list
+from ..utils import remove_none
 
 
 class FileInfo(object):
@@ -26,10 +27,13 @@ class FileInfo(object):
             self._full_folderpath = folderpath
         else:
             self._relative_folderpath = folderpath
-            self._full_folderpath = filepath_from_list([
+            
+            
+            self._full_folderpath = filepath_from_list(remove_none([
                 getcwd(),
                 folderpath
-            ])
+            ]))
+            
 
         if mode == FileMode.r and not self.exists:
             raise FileExistsError(f'File {self.full_filepath} does not exist.')    
