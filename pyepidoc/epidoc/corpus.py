@@ -120,7 +120,11 @@ class EpiDocCorpus:
         return self._docs
 
     def epidoc(self, filename:str) -> EpiDoc:
-        filepath = filepath_from_list([self.folderpath], filename)
+        if self.folderpath is None:
+            filepath = filename
+        else:
+            filepath = filepath_from_list([self.folderpath], filename)
+        
         file = FileInfo(
             filepath=filepath, 
             mode=FileMode.r
@@ -155,7 +159,11 @@ class EpiDocCorpus:
         fileinfos:list[FileInfo] = []
         for file in sorted_files:
             if file[-4:] == '.xml':
-                filepath = filepath_from_list([self.folderpath], file)
+                if self.folderpath is None:
+                    filepath = file
+                else:
+                    filepath = filepath_from_list([self.folderpath], file)
+
                 fileinfos += [FileInfo(
                     filepath=filepath,
                     fullpath=True
