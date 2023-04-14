@@ -1,11 +1,17 @@
+from __future__ import annotations
+
 from typing import Optional
 from ..base import Element
 from ..utils import head
 from .am import Am
 
+
 class Abbr(Element):    
     def __str__(self) -> str:
-        return self.text_desc_compressed_whitespace
+        ams = [Am(elem.e) for elem in self.desc_elems
+            if elem.name_no_namespace == 'am']
+
+        return self.text.strip() + ''.join([str(am) for am in ams])
 
     @property
     def am(self) -> list[Am]:

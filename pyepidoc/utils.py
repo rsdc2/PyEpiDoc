@@ -5,7 +5,7 @@ This file provides generic utility functions especially for handling
 lists and strings.
 """
 
-from typing import TypeVar, Optional, Union, Callable
+from typing import TypeVar, Optional, Union, Callable, Sequence
 
 from functools import reduce
 
@@ -45,7 +45,7 @@ def flatlist(xd_list: list) -> list:
     return xd_list
     
 
-def top(l:list[T], length:Optional[int]=10) -> list[T]:
+def top(l:Sequence[T], length:Optional[int]=10) -> Sequence[T]:
     if length is None:
         return l
 
