@@ -6,7 +6,7 @@ from lxml.etree import ( # type: ignore
     _Element as _Element, 
     _ElementTree, 
     XMLSyntaxError
-    )
+)
 
 from ..file import FileInfo
 from ..constants import NS, XMLNS
