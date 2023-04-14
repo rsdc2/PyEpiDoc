@@ -1,10 +1,14 @@
 from __future__ import annotations
 from typing import (
+    List,
+    Sequence,
     Callable,
     Optional, 
     Union, 
     cast
 )
+
+from .types import Showable, ExtendableSeq
 
 from copy import deepcopy
 from functools import reduce, cached_property
@@ -14,7 +18,8 @@ import uuid
 
 from lxml import etree # type: ignore
 from lxml.etree import ( # type: ignore
-    _Element as _Element, 
+    _Element,
+    _ElementTree, 
     _Comment as C,
     _Comment
 )
@@ -34,7 +39,63 @@ from ..epidoc.empty import EmptyElement
 from ..utils import maxone, maxoneT
 
 
-class Element(Root):    
+class Element(Showable, Root):    
+
+    def __add__(self, other) -> list[Element]:
+        if type(other) is EmptyElement:
+            return [self]
+
+        if type(other) is not Element:
+            raise TypeError(f"Other element is of type {type(other)}.")
+
+        if self._e is None and other._e is not None:
+            return [other]
+        
+        if other._e is None and self._e is not None:
+            return [self]
+
+        if other._e is None and self._e is None:
+            return [self]
+
+        self_e = deepcopy(self._e)
+        other_e = deepcopy(other._e)
+
+        if self_e is None or other_e is None:
+            return []
+            
+        if other.tag != self.tag:
+            if self._can_subsume(other):
+                self_e.append(other_e)
+                return [Element(self_e)]
+
+            if self._subsumable_by(other):
+                self_e.tail = other.text
+                other_e.text = ''
+                other_e.insert(0, self_e)
+                
+                return [Element(other_e)]
+            
+            return [self, other]
+
+        new_other_children = list(other_e)
+
+        for child in new_other_children:
+            self_e.append(child)
+
+        return [Element(self_e)]
+
+    def __hash__(self) -> int:
+        return hash(
+            '.'.join(
+                [str(id_part) for id_part in self.id_internal]
+            )
+        )
+
+    def __eq__(self, other) -> bool:
+        if type(other) is not Element:
+            return False
+        
+        return self.id_internal == other.id_internal
 
     def __init__(self, e:Optional[_Element]=None):
         error_msg = f'e should be _Element type or None. Type is {type(e)}.'
@@ -542,18 +603,18 @@ class Element(Root):
             raise TypeError('Parent is of incorrect type.')
 
     @property
-    def parents(self) -> list[Element]:
+    def parents(self) -> ExtendableSeq[Element]:
 
-        def _climb(acc:list[Element], element:Union[Element, EmptyElement]) -> list[Element]:
-            if type(element) is EmptyElement:
+        def _climb(acc:ExtendableSeq[Element], element:Element | EmptyElement) -> ExtendableSeq[Element]:
+            if isinstance(element, EmptyElement):
                 return acc
-            elif type(element) is Element:
+            elif isinstance(element, Element) or issubclass(type(element), Element):
                 acc += [element]
                 return _climb(acc, element.parent)
             
             raise TypeError('element is of the wrong type.')
-
-        return _climb(acc=[], element=self)
+        init_list = cast(ExtendableSeq[Element], []) 
+        return _climb(acc=init_list, element=self)
 
     @property
     def preceding_or_ancestor(self) -> list[_Element]:
@@ -585,6 +646,14 @@ class Element(Root):
     @property
     def root(self) -> Root:
         return self.parents[-1]
+
+    @property
+    def roottree(self) -> Optional[_ElementTree]:
+        root_e = self.root.e
+        if root_e is None:
+            return None
+
+        return root_e.getroottree()
 
     def set_attrib(
         self, 
@@ -838,61 +907,6 @@ class Element(Root):
     def xml(self) -> _Element:
         return etree.tostring(self._e)
 
-    def __add__(self, other) -> list[Element]:
-        if type(other) is EmptyElement:
-            return [self]
-
-        if type(other) is not Element:
-            raise TypeError(f"Other element is of type {type(other)}.")
-
-        if self._e is None and other._e is not None:
-            return [other]
-        
-        if other._e is None and self._e is not None:
-            return [self]
-
-        if other._e is None and self._e is None:
-            return [self]
-
-        self_e = deepcopy(self._e)
-        other_e = deepcopy(other._e)
-
-        if self_e is None or other_e is None:
-            return []
-            
-        if other.tag != self.tag:
-            if self._can_subsume(other):
-                self_e.append(other_e)
-                return [Element(self_e)]
-
-            if self._subsumable_by(other):
-                self_e.tail = other.text
-                other_e.text = ''
-                other_e.insert(0, self_e)
-                
-                return [Element(other_e)]
-            
-            return [self, other]
-
-        new_other_children = list(other_e)
-
-        for child in new_other_children:
-            self_e.append(child)
-
-        return [Element(self_e)]
-
-    def __hash__(self) -> int:
-        return hash(
-            '.'.join(
-                [str(id_part) for id_part in self.id_internal]
-            )
-        )
-
-    def __eq__(self, other) -> bool:
-        if type(other) is not Element:
-            return False
-        
-        return self.id_internal == other.id_internal
 
     def _equalize_id_length(
         self, 
