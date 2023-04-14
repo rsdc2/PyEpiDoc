@@ -51,6 +51,10 @@ class Expan(Element):
         return [Abbr(elem.e) for elem in self.abbr_elems]        
 
     @property
+    def as_element(self) -> Element:
+        return Element(self.e)
+
+    @property
     def first_abbr(self) -> Optional[Abbr]:
         return head(self.abbr)
 
