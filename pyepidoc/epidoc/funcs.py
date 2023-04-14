@@ -10,10 +10,24 @@ from .epidoctypes import (
 from .epidoc import EpiDoc
 from .abbr import AbbrInfo
 from .corpus import EpiDocCorpus
+from ..base import Element
 
 from ..file import FileInfo
 from ..file.funcs import filepath_from_list
 from ..constants import *
+
+
+def doc_id(elem: Element) -> Optional[str]:
+    """
+    Finds the document id containing a given element.
+    """
+    roottree = elem.roottree
+
+    if roottree is None: 
+        return None
+
+    doc = EpiDoc(roottree)
+    return doc.id
 
 
 def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> list[TokenInfo]:
