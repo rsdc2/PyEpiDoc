@@ -19,9 +19,9 @@ def is_xd(xd_list: list) -> bool:
     return any([type(item) is list for item in xd_list])
 
 
-def flatlist(xd_list: list) -> list:
+def flatlist(xd_list:list) -> list:
 
-    def reduce_list(acc: list, l:list): 
+    def reduce_list(acc:list, l:list): 
         return acc + l
 
     if is_xd(xd_list):
@@ -30,7 +30,7 @@ def flatlist(xd_list: list) -> list:
 
     return xd_list
 
-    
+
 def listfilter(func, iterable:Iterable[T]) -> list[T]:
     return list(filter(func, iterable))
 
