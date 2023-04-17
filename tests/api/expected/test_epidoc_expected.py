@@ -6,7 +6,9 @@ import pytest
 
 relative_filepaths = {
     'ISic000001': 'api/files/single_files_untokenized/ISic000001.xml',
-    'lang': 'api/files/langs.xml'
+    'langs_1': 'api/files/langs_1.xml',
+    'langs_2': 'api/files/langs_2.xml',
+    'langs_3': 'api/files/langs_3.xml'
 }
 
 
@@ -39,11 +41,19 @@ def test_langs():
     Tests that the collecting of language information happens in the correct way.
     """
 
-    doc = EpiDoc(relative_filepaths['lang'], fullpath=False)
+    doc_1 = EpiDoc(relative_filepaths['langs_1'], fullpath=False)
 
-    assert doc.textlangs == {'la', 'grc'}
-    assert lang(head(doc.expans)) == 'la'
-    assert lang(head(doc.tokens)) == 'grc'
+    assert doc_1.langs == ['la', 'grc']
+    assert lang(head(doc_1.expans)) == 'la'
+    assert lang(head(doc_1.tokens)) == 'grc'
+
+    doc_2 = EpiDoc(relative_filepaths['langs_2'], fullpath=False)
+    assert lang(head(doc_2.expans)) == 'la'
+    assert lang(head(doc_2.tokens)) == 'grc'
+
+    doc_3 = EpiDoc(relative_filepaths['langs_3'], fullpath=False)
+    assert lang(head(doc_3.expans)) == 'la'
+    assert lang(head(doc_3.tokens)) == 'grc'
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths.values())

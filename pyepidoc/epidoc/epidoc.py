@@ -215,7 +215,7 @@ class EpiDoc(Root):
             return None
 
     @property
-    def lang_usages(self) -> Optional[set[str]]:
+    def lang_usages(self) -> list[str]:
 
         """Used by EDH to host language information."""
 
@@ -223,11 +223,59 @@ class EpiDoc(Root):
         lang_usage = maxone(language_elems, None)
 
         if lang_usage is None: 
-            return None
+            return []
 
         languages = lang_usage.get_desc_elems_by_name('language')
         idents = [language.get_attrib('ident') for language in languages]
-        return set([ident for ident in idents if ident is not None])
+        return [ident for ident in idents if ident is not None]
+
+    @property
+    def textlang(self) -> Optional[Element]:
+        """
+        Used by I.Sicily to host language information.        
+        """
+
+        textlang = maxone([Element(textlang) 
+            for textlang in self.get_desc('textLang')])
+        
+        if textlang is None: 
+            return None
+
+        return textlang
+
+    @property
+    def mainlang(self) -> Optional[str]:
+        if self.textlang is None:
+            return None
+        return self.textlang.get_attrib('mainLang')
+
+    @property
+    def otherlangs(self) -> list[str]:
+        if self.textlang is None:
+            return []
+        
+        otherlangs = self.textlang.get_attrib('otherLangs')
+        
+        if otherlangs is None:
+            return []
+
+        return otherlangs.split()
+
+    @property
+    def langs(self) -> list[str]:
+        """
+        Returns lang_usages if there are no textlangs.
+        """
+        
+        if self.mainlang is None:
+            return self.otherlangs
+
+        langs = [self.mainlang] + self.otherlangs
+
+        if len(langs) == 0:
+            return self.lang_usages
+
+        return langs
 
     @property
     def lemmata(self) -> set[str]:
@@ -327,33 +375,6 @@ class EpiDoc(Root):
 
         return functions
 
-    @property
-    def textlangs(self) -> Optional[set[str]]:
-        """
-        Used by I.Sicily to host language information.
-        Returns lang_usages if there are no textlangs.
-        """
-        textlang = maxone([Element(textlang) 
-            for textlang in self.get_desc('textLang')])
-        
-        if textlang is None: 
-            return set()
-        
-        mainlang = textlang.get_attrib('mainLang')
-        otherLang = textlang.get_attrib('otherLangs')
-        
-        if mainlang is None:
-            return set()
-
-        if otherLang is None:
-            langs = [mainlang]
-        else:
-            langs = [mainlang] + otherLang.split()
-
-        if len(langs) == 0:
-            return self.lang_usages
-
-        return set(langs)
 
     def to_xml(
         self, 

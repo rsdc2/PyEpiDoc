@@ -220,7 +220,7 @@ class EpiDocCorpus:
     ) -> EpiDocCorpus:
 
         corpus = [doc for doc in self.docs
-            if set_relation(set(languages), doc.textlangs)]
+            if set_relation(set(languages), doc.langs)]
 
         return EpiDocCorpus(corpus, folderpath=None)
 

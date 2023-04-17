@@ -91,10 +91,10 @@ def lang(elem: Element) -> Optional[str]:
     if doc is None:
         return None
 
-    if doc.textlangs is None:
+    if doc.langs is None:
         return None
     
-    return head(list(doc.textlangs), throw_if_more_than_one=False)
+    return doc.mainlang
     
 
 def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> list[TokenInfo]:
