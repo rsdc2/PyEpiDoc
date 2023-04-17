@@ -27,7 +27,7 @@ class Abbr(Element):
 
     @property
     def first_char(self) -> Optional[str]:
-        if len(self.text_desc_compressed_whitespace) > 0:
+        if len(self.text_desc_compressed_whitespace.strip()) > 0:
             return self.text_desc_compressed_whitespace[0]
 
         return None
