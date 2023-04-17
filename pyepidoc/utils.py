@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Iterable
 
 """
 This file provides generic utility functions especially for handling
@@ -12,21 +13,6 @@ from functools import reduce
 T = TypeVar('T')
 U = TypeVar('U')
 V = TypeVar('V')
-
-# element_classes = {
-#     'expan': Expan,
-#     'ex': Ex,
-#     'abbr': Abbr
-# }
-
-
-# def get_elem_obj(e: Element) -> Element | Expan | Abbr | Ex:
-#     cls = element_classes.get(e.name_no_namespace, None)
-
-#     if cls is None:
-#         return e
-
-#     return cls(e.e)
 
 
 def is_xd(xd_list: list) -> bool:
@@ -43,7 +29,11 @@ def flatlist(xd_list: list) -> list:
         return flatlist(l)
 
     return xd_list
+
     
+def listfilter(func, iterable:Iterable[T]) -> list[T]:
+    return list(filter(func, iterable))
+
 
 def top(l:Sequence[T], length:Optional[int]=10) -> Sequence[T]:
     if length is None:

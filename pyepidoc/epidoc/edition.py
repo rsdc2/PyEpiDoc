@@ -167,11 +167,14 @@ class Edition(Element):
     Provides services for <div type="edition> elements.
     """
 
-    def __init__(self, e:Optional[_Element]=None):
-        if type(e) is not _Element and e is not None:
-            raise TypeError('e should be _Element type or None.')
+    def __init__(self, e:Optional[_Element | Element]=None):
+        if type(e) not in [_Element, Element] and e is not None:
+            raise TypeError('e should be _Element or Element type, or None.')
 
-        self._e = e
+        if type(e) is _Element:
+            self._e = e
+        elif type(e) is Element:
+            self._e = e.e
 
         if self.tag.name != 'div':
             raise TypeError('Element should be of type <div>.')

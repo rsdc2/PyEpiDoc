@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Sequence
 from os import getcwd
 
 from .epidoctypes import (
@@ -11,10 +11,47 @@ from .epidoc import EpiDoc
 from .abbr import AbbrInfo
 from .corpus import EpiDocCorpus
 from ..base import Element
+from .ab import Ab
+from .edition import Edition
 
 from ..file import FileInfo
 from ..file.funcs import filepath_from_list
 from ..constants import *
+from ..utils import maxone, flatlist, head
+
+
+def ancestor_abs(elem: Element) -> Sequence[Ab]:
+    """
+    Returns first |ab| parent
+    """
+    return [Ab(elem) for elem in elem.parents 
+        if elem.name_no_namespace == 'ab']
+
+
+def ancestor_doc(elem: Element) -> Optional[EpiDoc]:
+    roottree = elem.roottree
+
+    if roottree is None: 
+        return None
+
+    return EpiDoc(roottree)
+
+
+def ancestor_edition(elem: Element) -> Optional[Edition]:
+
+    editions = [Edition(elem) for elem in elem.parents 
+        if elem.is_edition]
+
+    edition = maxone(
+        lst=editions,
+        defaultval=None,
+        throw_if_more_than_one=False
+    )
+
+    if edition is None:
+        return None
+    
+    return edition
 
 
 def doc_id(elem: Element) -> Optional[str]:
@@ -29,6 +66,36 @@ def doc_id(elem: Element) -> Optional[str]:
     doc = EpiDoc(roottree)
     return doc.id
 
+
+def lang(elem: Element) -> Optional[str]:
+    """
+    Returns the language of the element, based on 
+    the language specified either in the 
+    <div> or <ab> parent.
+    """
+
+    ab_ancestors = ancestor_abs(elem)
+    ab_langs = flatlist([ab.lang for ab in ab_ancestors 
+        if ab.lang is not None])
+
+    ab_lang = head(ab_langs, throw_if_more_than_one=False)
+
+    if ab_lang is not None:
+        return ab_lang
+
+    edition = ancestor_edition(elem)
+    if edition is not None and edition.lang is not None:
+        return edition.lang
+
+    doc = ancestor_doc(elem)
+    if doc is None:
+        return None
+
+    if doc.textlangs is None:
+        return None
+    
+    return head(list(doc.textlangs), throw_if_more_than_one=False)
+    
 
 def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> list[TokenInfo]:
     if lemmata and morphologies:

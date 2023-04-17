@@ -155,11 +155,20 @@ class Element(Showable, Root):
     @property
     def has_abbr(self) -> bool:
         """
-        Returns True if the token contains an 
+        Returns True if the element contains an 
         abbreviation, i.e. <abbr>.
         """
         
         return len(self.abbr_elems) > 0
+
+    @property
+    def is_edition(self) -> bool:
+        """
+        Returns True if the element is an edition <div>.
+        """
+
+        return self.name_no_namespace == 'div' \
+            and self.get_attrib('type') == 'edition'
 
     @property
     def am_elems(self) -> list[Element]:
@@ -605,6 +614,11 @@ class Element(Showable, Root):
     @property
     def parents(self) -> ExtendableSeq[Element]:
 
+        """
+        Returns an |ExtendableSeq| of parent |Element|
+        ordered by closest parent to furthest parent.
+        """
+
         def _climb(acc:ExtendableSeq[Element], element:Element | EmptyElement) -> ExtendableSeq[Element]:
             if isinstance(element, EmptyElement):
                 return acc
@@ -613,11 +627,18 @@ class Element(Showable, Root):
                 return _climb(acc, element.parent)
             
             raise TypeError('element is of the wrong type.')
+
         init_list = cast(ExtendableSeq[Element], []) 
         return _climb(acc=init_list, element=self)
 
     @property
     def preceding_or_ancestor(self) -> list[_Element]:
+
+        """
+        Returns any preceding or ancestor |_Element| whose
+        ancestor is an edition.
+        """
+
         if self._e is None:
             return []
 

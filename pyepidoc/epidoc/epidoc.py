@@ -331,6 +331,7 @@ class EpiDoc(Root):
     def textlangs(self) -> Optional[set[str]]:
         """
         Used by I.Sicily to host language information.
+        Returns lang_usages if there are no textlangs.
         """
         textlang = maxone([Element(textlang) 
             for textlang in self.get_desc('textLang')])
