@@ -5,7 +5,7 @@ from lxml.etree import _Element  # type: ignore
 
 from ..base.element import Element
 from ..base.root import Root
-from ..utils import flatlist, maxone
+from ..utils import flatlist, maxone, listfilter
 from ..file import FileInfo, FileMode
 
 from .edition import Edition
@@ -77,12 +77,12 @@ class EpiDoc(Root):
 
     @property
     def compound_words(self) -> list[Element]:
-        return [item for edition in self.editions 
+        return [item for edition in self.editions() 
             for item in edition.compound_tokens]
 
     def convert_ws_to_names(self) -> EpiDoc:
         """Converts all <w> to <name> in place if they begin with a capital."""
-        for edition in self.editions:
+        for edition in self.editions():
             edition.convert_words_to_names()
         return self
 
@@ -120,11 +120,11 @@ class EpiDoc(Root):
     def div_langs(self) -> set[str]:
         """Used by I.Sicily to host language information."""
         textpart_langs = [textpart.lang 
-            for edition in self.editions 
+            for edition in self.editions()
                 for textpart in edition.textparts
                     if textpart.lang is not None]
 
-        edition_langs = [edition.lang for edition in self.editions 
+        edition_langs = [edition.lang for edition in self.editions()
             if edition.lang is not None]
 
         combined = textpart_langs + edition_langs
@@ -133,16 +133,21 @@ class EpiDoc(Root):
 
     @property
     def edition_text(self) -> str:
-        return ''.join([edition.text_desc for edition in self.editions])
+        return ''.join([edition.text_desc for edition in self.editions()])
 
-    @property
-    def editions(self) -> list[Edition]:
-        editions = self.get_div_descendants('edition')
-        return [Edition(edition) for edition in editions]
+    def editions(self, include_transliterations=False) -> list[Edition]:
+        editions = [Edition(edition) 
+            for edition in self.get_div_descendants('edition')]
+
+        if include_transliterations:
+            return editions
+
+        else:
+            return listfilter(lambda edition: edition.subtype != 'transliteration', editions)
 
     @property
     def first_edition(self) -> Optional[Edition]:
-        return self.editions[0] if self.editions != [] else None
+        return self.editions()[0] if self.editions != [] else None
 
     def prettify_edition(
         self, 
@@ -154,16 +159,16 @@ class EpiDoc(Root):
         if verbose: 
             print(f'Prettifying {self.id}...')
 
-        for edition in self.editions:
+        for edition in self.editions():
             edition.prettify(spaceunit=spaceunit, number=number)
 
     @property
     def expans(self) -> list[Expan]:
-        return flatlist([edition.expans for edition in self.editions])
+        return flatlist([edition.expans for edition in self.editions()])
 
     @property
     def formatted_text(self) -> str:
-        _text = '\n'.join([edition.formatted_text for edition in self.editions])
+        _text = '\n'.join([edition.formatted_text for edition in self.editions()])
         return f'\n{self.id}\n{len(self.id) * "-"}\n{_text}\n'
 
     @property
@@ -200,7 +205,7 @@ class EpiDoc(Root):
 
     @property
     def gaps(self) -> list[Element]:
-        items = [edition.gaps for edition in self.editions]
+        items = [edition.gaps for edition in self.editions()]
         return [item for item in flatlist(items)]
 
     def _get_daterange_attrib(self, attrib_name:str) -> Optional[int]:
@@ -334,17 +339,17 @@ class EpiDoc(Root):
 
     def set_ids(self, override:bool=False) -> None:
         if SET_IDS or override:
-            for edition in self.editions:
+            for edition in self.editions():
                 edition.set_ids(override)
 
     def set_uuids(self) -> None:
         if SET_IDS:
-            for edition in self.editions:
+            for edition in self.editions():
                 edition.set_uuids()
 
     def add_space_between_tokens(self, override:bool=True) -> None:
         if SPACE_WORDS or override:
-            for edition in self.editions:
+            for edition in self.editions():
                 edition.space_words(override)
 
     @property
@@ -401,7 +406,7 @@ class EpiDoc(Root):
         if verbose: 
             print(f'Tokenizing {self.id}...')
 
-        for edition in self.editions:
+        for edition in self.editions():
             edition.tokenize()
 
     @property
@@ -419,13 +424,13 @@ class EpiDoc(Root):
 
     @property
     def tokens(self) -> list[Token]:
-        tokens = [token for edition in self.editions 
+        tokens = [token for edition in self.editions()
             for token in edition.tokens]
         return tokens
 
     @property
     def tokens_list_str(self) -> list[str]:
-        return [str(word) for edition in self.editions 
+        return [str(word) for edition in self.editions()
             for word in edition.tokens]
 
     @property

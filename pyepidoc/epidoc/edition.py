@@ -262,6 +262,10 @@ class Edition(Element):
                 ab.set_uuids()
 
     @property
+    def subtype(self) -> Optional[str]:
+        return self.get_attrib('subtype')
+
+    @property
     def textparts(self) -> list[TextPart]:
         return [TextPart(part) for part in self.get_div_descendants('textpart')]
 
