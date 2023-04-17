@@ -28,7 +28,7 @@ def ancestor_abs(elem: Element) -> Sequence[Ab]:
         if elem.name_no_namespace == 'ab']
 
 
-def ancestor_doc(elem: Element) -> Optional[EpiDoc]:
+def owner_doc(elem: Element) -> Optional[EpiDoc]:
     roottree = elem.roottree
 
     if roottree is None: 
@@ -87,7 +87,7 @@ def lang(elem: Element) -> Optional[str]:
     if edition is not None and edition.lang is not None:
         return edition.lang
 
-    doc = ancestor_doc(elem)
+    doc = owner_doc(elem)
     if doc is None:
         return None
 
