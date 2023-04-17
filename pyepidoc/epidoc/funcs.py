@@ -22,13 +22,17 @@ from ..utils import maxone, flatlist, head
 
 def ancestor_abs(elem: Element) -> Sequence[Ab]:
     """
-    Returns first |ab| parent
+    Returns a |Sequence| of |Ab|s containing an |Element|,
+    starting with the ancestor closest to the |Element|
     """
     return [Ab(elem) for elem in elem.parents 
         if elem.name_no_namespace == 'ab']
 
 
-def owner_doc(elem: Element) -> Optional[EpiDoc]:
+def owner_doc(elem:Element) -> Optional[EpiDoc]:
+    """
+    Returns the |EpiDoc| document owning an element.
+    """
     roottree = elem.roottree
 
     if roottree is None: 
@@ -38,6 +42,10 @@ def owner_doc(elem: Element) -> Optional[EpiDoc]:
 
 
 def ancestor_edition(elem: Element) -> Optional[Edition]:
+
+    """
+    Returns the |Edition| containing an element (if any).
+    """
 
     editions = [Edition(elem) for elem in elem.parents 
         if elem.is_edition]
