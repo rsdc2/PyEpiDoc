@@ -1,12 +1,18 @@
 from __future__ import annotations
-from typing import Iterable
 
 """
 This file provides generic utility functions especially for handling
 lists and strings.
 """
 
-from typing import TypeVar, Optional, Union, Callable, Sequence
+from typing import (
+    TypeVar, 
+    Optional, 
+    Union, 
+    Callable, 
+    Sequence,
+    Iterable
+)
 
 from functools import reduce
 
