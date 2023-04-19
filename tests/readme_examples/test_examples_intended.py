@@ -35,4 +35,4 @@ def test_tokenize_example():
     assert [str(word) for word in tokenized_doc.tokens] == [str(word) for word in tokenized_benchmark.tokens]
     assert [word.xml for word in tokenized_doc.tokens] == [word.xml for word in tokenized_benchmark.tokens]
     assert [word.xml for word in tokenized_doc.compound_words] == [word.xml for word in tokenized_benchmark.compound_words]
-    assert [edition.xml for edition in tokenized_doc.editions] == [edition.xml for edition in tokenized_benchmark.editions]
+    assert [edition.xml for edition in tokenized_doc.editions()] == [edition.xml for edition in tokenized_benchmark.editions()]

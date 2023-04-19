@@ -30,7 +30,7 @@ def test_expans():
     filepath = relative_filepaths['ISic000001']
     
     doc = EpiDoc(filepath, fullpath=False)
-    edition = head(doc.editions)
+    edition = head(doc.editions())
 
     assert edition != None
     assert len(edition.expan_elems) == 3

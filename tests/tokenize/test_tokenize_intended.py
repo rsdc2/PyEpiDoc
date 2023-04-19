@@ -87,4 +87,4 @@ def test_tokenize(tokenize_type:str):
     assert [str(word) for word in tokenized_epidoc.tokens] == [str(word) for word in tokenized_benchmark.tokens]
     assert [word.xml for word in tokenized_epidoc.tokens] == [word.xml for word in tokenized_benchmark.tokens]
     assert [word.xml for word in tokenized_epidoc.compound_words] == [word.xml for word in tokenized_benchmark.compound_words]
-    assert [edition.xml for edition in tokenized_epidoc.editions] == [edition.xml for edition in tokenized_benchmark.editions]
+    assert [edition.xml for edition in tokenized_epidoc.editions()] == [edition.xml for edition in tokenized_benchmark.editions()]
