@@ -21,7 +21,6 @@ from .ab import Ab
 from .token import Token
 from .expan import Expan
 from .textpart import TextPart
-from .empty import EmptyElement
 
 from .epidoctypes import (
     SpaceUnit, 
@@ -71,16 +70,20 @@ def prettify(
     def _get_prevs(elements:list[Element]) -> list[Element]:
         prevs:list[Element] = []
         for element in elements:
-            if not isinstance(element.previous, EmptyElement):
-                prevs += [element.previous]
+            if element.previous_sibling is not None:
+                prevs += [element.previous_sibling]
 
         return prevs
 
-    def get_parents(elements:list[Element]) -> list[Element]:
+    def get_parents_for_first_children(elements:list[Element]) -> list[Element]:
+        """
+        Returns parent elements for all first children
+        """
+
         parents:list[Element] = [] 
         for element in elements:
-            if isinstance(element.previous, EmptyElement):
-                if not isinstance(element.parent, EmptyElement):
+            if element.previous_sibling is None: # Explain why only gives parents if previous sibling is None
+                if element.parent is not None:
                     parents += [element.parent]
         
         return parents
@@ -148,7 +151,7 @@ def prettify(
             else:
                 prettify_prev(prev)
 
-        parents = get_parents(desc_elems)
+        parents = get_parents_for_first_children(desc_elems)
 
         for parent in parents:
             if tag == 'lb':

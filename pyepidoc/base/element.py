@@ -35,14 +35,13 @@ from ..epidoc.epidoctypes import (
     BoundaryType
 )
 from .root import Root
-from ..epidoc.empty import EmptyElement
 from ..utils import maxone, maxoneT
 
 
 class Element(Showable, Root):    
 
     def __add__(self, other) -> list[Element]:
-        if type(other) is EmptyElement:
+        if other is None:
             return [self]
 
         if type(other) is not Element:
@@ -298,9 +297,9 @@ class Element(Showable, Root):
         return self._internal_prototokens[0]
 
     @property
-    def first_internal_word_element(self) -> Union[EmptyElement, Element]:
+    def first_internal_word_element(self) -> Optional[Element]:
         if self.internal_token_elements == []:
-            return EmptyElement()
+            return None
         
         return self.internal_token_elements[0]
 
@@ -351,17 +350,17 @@ class Element(Showable, Root):
         Unique computed element id based on hierarchical position in the XML document. 
         """
         
-        def _recfunc(acc:list[int], element:Union[Element, EmptyElement]) -> list[int]:
-            if type(element) is EmptyElement:
+        def _recfunc(acc:list[int], element:Optional[Element]) -> list[int]:
+            if element is None:
                 return acc 
 
-            if element._e is None:
+            if element.e is None:
                 return acc
             
-            if element._e.getparent() is None:
+            if element.e.getparent() is None:
                 return acc
 
-            return _recfunc([element._e.getparent().index(element._e)] + acc, element.parent)
+            return _recfunc([element.e.getparent().index(element.e)] + acc, element.parent)
 
         return _recfunc([], self)
 
@@ -506,7 +505,7 @@ class Element(Showable, Root):
         return ns.remove_ns(self._e.tag)
 
     @property
-    def next(self) -> Union[Element, EmptyElement]:
+    def next_sibling(self) -> Optional[Element]:
 
         def _get_next(e:Optional[_Element]) -> Optional[_Element]:
             if e is None:
@@ -522,16 +521,16 @@ class Element(Showable, Root):
             return None
 
         if self._e is None:
-            return EmptyElement()
+            return None
 
         _next = _get_next(self._e)
         
         if type(_next) is _Element:
             return Element(_next)
         elif _next is None:
-            return EmptyElement()
+            return None
 
-        return EmptyElement()
+        return None
 
     @property
     def next_no_spaces(self) -> list[Element]:
@@ -541,7 +540,7 @@ class Element(Showable, Root):
 
         def _lb_no_break_next(element:Element) -> bool:
             """Keep going if element is a linebreak with no word break"""
-            next_elem = element.next
+            next_elem = element.next_sibling
 
             if isinstance(next_elem, Element):
                 if next_elem.e is None:
@@ -552,17 +551,17 @@ class Element(Showable, Root):
 
             return False
                 
-        def _next_no_spaces(acc:list[Element], element:Element | EmptyElement):
+        def _next_no_spaces(acc:list[Element], element:Optional[Element]):
             if not isinstance(element, Element): 
                 return acc
 
             if _lb_no_break_next(element):
-                return _next_no_spaces(acc + [element], element.next)
+                return _next_no_spaces(acc + [element], element.next_sibling)
 
             if element.final_tailtoken_boundary:
                 return acc + [element]
 
-            return _next_no_spaces(acc + [element], element.next)
+            return _next_no_spaces(acc + [element], element.next_sibling)
 
         return _next_no_spaces([], self)
 
@@ -579,20 +578,20 @@ class Element(Showable, Root):
         return self._tail_prototokens == [] and not self.final_tailtoken_boundary
 
     @property
-    def nonword_element(self) -> Union[Element, EmptyElement]:
+    def nonword_element(self) -> Optional[Element]:
         if self._e is None:
-            return EmptyElement()
+            return None
 
         if self.tag.name in BoundaryType.values():
             _e = deepcopy(self._e)
             _e.tail = None
             return Element(_e)
         
-        return EmptyElement()
+        return None
 
     @property
     def nonword_elements(self) -> list[Element]:
-        if type(self.nonword_element) is EmptyElement:
+        if self.nonword_element is None:
             return []
         elif type(self.nonword_element) is Element:
             return [self.nonword_element]
@@ -600,14 +599,14 @@ class Element(Showable, Root):
         return []
 
     @property
-    def parent(self) -> Union[Element, EmptyElement]:
+    def parent(self) -> Optional[Element]:
         if self._e is None:
-            return EmptyElement()
+            return None
 
         if type(self._e.getparent()) is _Element:    
             return Element(self._e.getparent())
         elif self._e.getparent() is None:
-            return EmptyElement()
+            return None
         else:
             raise TypeError('Parent is of incorrect type.')
 
@@ -619,8 +618,8 @@ class Element(Showable, Root):
         ordered by closest parent to furthest parent.
         """
 
-        def _climb(acc:ExtendableSeq[Element], element:Element | EmptyElement) -> ExtendableSeq[Element]:
-            if isinstance(element, EmptyElement):
+        def _climb(acc:ExtendableSeq[Element], element:Optional[Element]) -> ExtendableSeq[Element]:
+            if element is None:
                 return acc
             elif isinstance(element, Element) or issubclass(type(element), Element):
                 acc += [element]
@@ -646,17 +645,17 @@ class Element(Showable, Root):
             + self._e.xpath('ancestor::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) 
 
     @property
-    def previous(self) -> Union[Element, EmptyElement]:
+    def previous_sibling(self) -> Optional[Element]:
         if self._e is None:
-            return EmptyElement()
+            return None
 
         _prev = self._e.getprevious()
         if type(_prev) is _Element:
             return Element(_prev)
         elif _prev is None:
-            return EmptyElement()
+            return None
         elif type(_prev) is _Comment:
-            return EmptyElement()
+            return None
 
         raise TypeError(f"Previous element is of type {type(_prev)}.")
 

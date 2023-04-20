@@ -105,6 +105,10 @@ def lang(elem: Element) -> Optional[str]:
     return doc.mainlang
     
 
+def line(elem:Element):
+    pass
+
+
 def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> list[TokenInfo]:
     if lemmata and morphologies:
         return [TokenInfo(lemma, morphology) 
