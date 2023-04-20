@@ -1,6 +1,6 @@
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.utils import head
-from pyepidoc.epidoc.funcs import lang
+from pyepidoc.epidoc.funcs import lang, line
 
 import pytest
 
@@ -8,7 +8,9 @@ relative_filepaths = {
     'ISic000001': 'api/files/single_files_untokenized/ISic000001.xml',
     'langs_1': 'api/files/langs_1.xml',
     'langs_2': 'api/files/langs_2.xml',
-    'langs_3': 'api/files/langs_3.xml'
+    'langs_3': 'api/files/langs_3.xml',
+    'line_1': 'api/files/line_1.xml',
+    'line_2': 'api/files/line_2.xml'
 }
 
 
@@ -54,6 +56,25 @@ def test_langs():
     doc_3 = EpiDoc(relative_filepaths['langs_3'], fullpath=False)
     assert lang(head(doc_3.expans)) == 'la'
     assert lang(head(doc_3.tokens)) == 'grc'
+
+
+def test_lines():
+    doc_1 = EpiDoc(relative_filepaths['line_1'], fullpath=False)
+
+    token = head(doc_1.tokens)
+    assert line(token).n == '1'
+
+    supplied = head(token.supplied)
+    assert line(supplied).n == '1'
+
+    doc_2 = EpiDoc(relative_filepaths['line_2'], fullpath=False)
+    token = head(doc_2.tokens)
+
+    assert line(token).n == '1'
+    
+    second_token = doc_2.tokens[1]
+    assert second_token.text_desc == 'ambulavit'
+    assert line(second_token).n == '2'
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths.values())

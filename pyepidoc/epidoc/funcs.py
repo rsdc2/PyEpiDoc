@@ -13,6 +13,7 @@ from .corpus import EpiDocCorpus
 from ..base import Element
 from .ab import Ab
 from .edition import Edition
+from .lb import Lb
 
 from ..file import FileInfo
 from ..file.funcs import filepath_from_list
@@ -105,8 +106,11 @@ def lang(elem: Element) -> Optional[str]:
     return doc.mainlang
     
 
-def line(elem:Element):
-    pass
+def line(elem:Element) -> Optional[Lb]:
+    lb = elem.lb_in_preceding_or_ancestor
+    if lb is None:
+        return None
+    return Lb(elem.lb_in_preceding_or_ancestor)
 
 
 def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> list[TokenInfo]:

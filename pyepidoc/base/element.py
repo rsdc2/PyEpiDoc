@@ -5,6 +5,7 @@ from typing import (
     Callable,
     Optional, 
     Union, 
+    Iterable,
     cast
 )
 
@@ -21,7 +22,8 @@ from lxml.etree import ( # type: ignore
     _Element,
     _ElementTree, 
     _Comment as C,
-    _Comment
+    _Comment,
+    _ElementUnicodeResult
 )
 
 from .namespace import Namespace as ns
@@ -35,7 +37,7 @@ from ..epidoc.epidoctypes import (
     BoundaryType
 )
 from .root import Root
-from ..utils import maxone, maxoneT
+from ..utils import maxone, maxoneT, head, last
 
 
 class Element(Showable, Root):    
@@ -96,13 +98,16 @@ class Element(Showable, Root):
         
         return self.id_internal == other.id_internal
 
-    def __init__(self, e:Optional[_Element]=None):
-        error_msg = f'e should be _Element type or None. Type is {type(e)}.'
+    def __init__(self, e:Optional[Union[_Element, Element]]=None):
+        error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
 
-        if type(e) is not _Element and e is not None:
+        if type(e) not in [_Element, Element] and e is not None:
             raise TypeError(error_msg)
 
-        self._e = e
+        if type(e) is _Element:
+            self._e = e
+        elif type(e) is Element:
+            self._e = e.e
 
 
     def __gt__(self, other) -> bool:
@@ -312,6 +317,10 @@ class Element(Showable, Root):
         attribname:str, 
         namespace:Optional[str]=None
     ) -> Optional[str]:
+
+        """
+        Returns the value of the named attribute.
+        """
     
         if self._e is None:
             return ''
@@ -499,6 +508,37 @@ class Element(Showable, Root):
         return len(self.next_no_spaces) > 1
 
     @property
+    def lb_in_preceding_or_ancestor(self) -> Optional[_Element]:
+
+        """
+        Returns any preceding or |_Element| containing an
+        <lb> element.
+        cf. https://www.w3.org/TR/1999/REC-xpath-19991116/#axes
+        last accessed 2023-04-20.
+        """
+
+        def get_preceding_lb(elem:Element) -> list[_Element]:
+            
+            result = elem.xpath('preceding::*[descendant-or-self::ns:lb]')
+            if result == []:
+                if elem.parent is None:
+                    return []
+
+                return get_preceding_lb(elem.parent)
+
+            return result
+
+        if self._e is None:
+            return []
+
+        preceding_lb = last(get_preceding_lb(self))
+
+        if preceding_lb is None:
+            return None
+
+        return Element(preceding_lb)
+
+    @property
     def name_no_namespace(self) -> str:
         if self._e is None:
             return ''
@@ -531,6 +571,22 @@ class Element(Showable, Root):
             return None
 
         return None
+
+    @property
+    def next_siblings(self) -> list[Element]:
+        next_sibs = self.xpath('following-sibling::*')
+
+        return [Element(sib) for sib in next_sibs]
+
+        # elems = [Element(sib) for sib in next_sibs]
+
+        # def redfunc(acc:list[Element], elem:Element) -> list[Element]:
+        #     if elem.name_no_namespace == 'lb':
+        #         return acc
+
+        #     return acc + [elem]
+
+        # return reduce(redfunc, elems, [])
 
     @property
     def next_no_spaces(self) -> list[Element]:
@@ -631,7 +687,7 @@ class Element(Showable, Root):
         return _climb(acc=init_list, element=self)
 
     @property
-    def preceding_or_ancestor(self) -> list[_Element]:
+    def preceding_or_ancestor_in_edition(self) -> list[_Element]:
 
         """
         Returns any preceding or ancestor |_Element| whose
@@ -643,6 +699,7 @@ class Element(Showable, Root):
 
         return self._e.xpath('preceding::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) \
             + self._e.xpath('ancestor::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) 
+
 
     @property
     def previous_sibling(self) -> Optional[Element]:
@@ -688,7 +745,7 @@ class Element(Showable, Root):
         self._e.attrib[ns.give_ns(attribname, namespace)] = value
 
     def set_id(self) -> None:
-        self.id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor)) + "0"
+        self.id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)) + "0"
 
     def set_uuid(self) -> None:
         self.id_xml = str(uuid.uuid4())
