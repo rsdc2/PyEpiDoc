@@ -578,16 +578,6 @@ class Element(Showable, Root):
 
         return [Element(sib) for sib in next_sibs]
 
-        # elems = [Element(sib) for sib in next_sibs]
-
-        # def redfunc(acc:list[Element], elem:Element) -> list[Element]:
-        #     if elem.name_no_namespace == 'lb':
-        #         return acc
-
-        #     return acc + [elem]
-
-        # return reduce(redfunc, elems, [])
-
     @property
     def next_no_spaces(self) -> list[Element]:
 
