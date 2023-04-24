@@ -362,10 +362,12 @@ class EpiDoc(Root):
 
     @property
     def textclasses(self) -> list[str]:
-        textclass_element = maxone(self.get_desc('textClass'))
+        textclass_e = maxone(self.get_desc('textClass'))
 
-        if textclass_element is None:
+        if textclass_e is None:
             return []
+
+        textclass_element = Element(textclass_e)
 
         terms = textclass_element.get_desc_elems_by_name('term')
         terms_with_ana = [term for term in terms 
