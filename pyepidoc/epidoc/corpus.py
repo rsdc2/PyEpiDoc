@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Union
+from typing import Optional, Union, Sequence
 from functools import cached_property
 import os
 
@@ -14,7 +14,7 @@ from .epidoctypes import (
 )
 
 from ..file import FileInfo, FileMode, filepath_from_list
-from ..utils import maxone, flatlist, top, head
+from ..utils import maxone, flatlist, top, head, tail
 from ..constants import SET_IDS
 
 
@@ -245,6 +245,66 @@ class EpiDocCorpus:
             if set_relation(set(morphologies), doc.morphologies)]
 
         return EpiDocCorpus(corpus, folderpath=None)
+
+    def filter_by_orig_place(
+        self,
+        orig_places:list[str],
+        set_relation=SetRelation.intersection
+    ) -> EpiDocCorpus:
+
+        corpus = [doc for doc in self.docs
+            if set_relation(set(orig_places), set([doc.orig_place]))]
+
+        return EpiDocCorpus(corpus, folderpath=None)
+
+    def list_unique_orig_places(
+        self,
+        frequencies:bool=True,
+        min_freq:int=0,
+        sort_on:Optional[str]=None,
+        reverse:bool=True
+    ) -> Sequence[tuple[str, int] | str]:
+
+        """
+        Returns a list either of |tuple[str, int]| or of |str|
+        giving the ancient sites of origin of the documents in
+        the corpus.  
+        The min_freq parameter is ignored if the frequencies parameter is False.
+        """
+
+        if sort_on not in ['place', 'freq', None]:
+            raise ValueError(f'Cannot sort on {sort_on}.')
+
+        places = [doc.orig_place for doc in self.docs]
+        unique_places = set(places)
+
+        if sort_on == 'place':
+            places = sorted(unique_places, reverse=reverse)
+
+        if frequencies:
+            places_with_freq = [
+                (
+                    unique_place, 
+                    len(list(filter(lambda doc: doc.orig_place==unique_place, self.docs)))
+                ) 
+                for unique_place in unique_places
+            ]
+
+            # Filter out those below minimum frequency
+            places_with_freq = [x for x in places_with_freq if x[1] >= min_freq]
+            
+            if sort_on == 'freq':
+                places_with_freq = sorted(
+                    places_with_freq, 
+                    key=lambda place_with_freq: place_with_freq[1], 
+                    reverse=reverse
+            )
+
+                return places_with_freq
+
+            return places_with_freq
+
+        return places
 
     def filter_by_textclass(
         self, 
