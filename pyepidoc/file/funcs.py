@@ -3,7 +3,7 @@ from typing import Union, Optional
 from ..utils import remove_none
 
 from .filetypes import FilePath, FileMode
-
+import os
 
 def filepath(folderpath:str, filename:str) -> str:
     if folderpath == '' or folderpath is None:
@@ -32,4 +32,20 @@ def filepath_from_list(
     return output_str
 
 
+def str_to_file(s:str, filepath:str, fullpath:bool=False):
 
+    """
+    Saves string s to file at path filepath.
+    Raises FileExistsError if file already exists.
+    """
+
+    if not fullpath:
+        full_filepath = os.getcwd() + '/' + filepath
+    else:
+        full_filepath = filepath
+
+    if os.path.exists(full_filepath):
+        raise FileExistsError(f'File already exists at path {filepath}.')
+
+    with open(full_filepath, mode='w') as f:
+        f.write(s)
