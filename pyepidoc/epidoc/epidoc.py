@@ -1,11 +1,11 @@
 from __future__ import annotations
 from typing import Optional, Union
 from lxml import etree # type: ignore
-from lxml.etree import _Element  # type: ignore
+from lxml.etree import _Element, _ElementUnicodeResult  # type: ignore
 
 from ..base.element import Element
 from ..base.root import Root
-from ..utils import flatlist, maxone, listfilter
+from ..utils import flatlist, maxone, listfilter, head
 from ..file import FileInfo, FileMode
 
 from .edition import Edition
@@ -320,6 +320,15 @@ class EpiDoc(Root):
             return None        
 
         return Element(orig_date)
+
+    @property
+    def orig_place(self) -> str:
+        xpath_results = self.xpath('//ns:history/ns:origin/ns:origPlace/ns:placeName[@type="ancient"]/text()')
+        result: _ElementUnicodeResult = head(xpath_results, throw_if_more_than_one=True)
+        if result is None:
+            return 'None'
+        else:
+            return str(result)
 
     @property
     def publication_stmt(self) -> Optional[Element]:
