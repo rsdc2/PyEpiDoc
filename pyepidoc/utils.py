@@ -95,6 +95,17 @@ def head(
 ):
     return maxone(lst, defaultval, throw_if_more_than_one, 0)
 
+
+def tail(
+    lst:list[T],
+    defaultval:Optional[T]=None
+):
+    if len(lst) <= 1:
+        return defaultval
+
+    return lst[1:]
+
+
 def last(
     lst:list[T],
     defaultval:Optional[T]=None,
