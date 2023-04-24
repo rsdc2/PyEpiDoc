@@ -5,6 +5,7 @@ from lxml import etree # type: ignore
 from lxml.etree import ( # type: ignore
     _Element as _Element, 
     _ElementTree, 
+    _ElementUnicodeResult,
     XMLSyntaxError
 )
 
@@ -129,9 +130,9 @@ class Root:
 
         return ''.join(xpath_res)
 
-    def xpath(self, xpathstr:str) -> list[_Element]:
+    def xpath(self, xpathstr:str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 
             return []
 
         # NB the cast won't necessarily be correct for all test cases
-        return cast(list[_Element], self.e.xpath(xpathstr, namespaces={'ns': NS}))
+        return cast(list[Union[_Element,_ElementUnicodeResult]], self.e.xpath(xpathstr, namespaces={'ns': NS}))
