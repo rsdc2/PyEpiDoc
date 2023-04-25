@@ -10,7 +10,7 @@ T = TypeVar('T')
 Tag = namedtuple('Tag', ['ns', 'name'])
 
 whitespace = {'\n', '\t', ' '}
-
+PUNCTUATION = {'·'}
 
 class EnumerableEnum(Enum):
 

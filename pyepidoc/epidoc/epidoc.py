@@ -362,6 +362,14 @@ class EpiDoc(Root):
                 edition.space_words(override)
 
     @property
+    def supplied(self) -> list[Element]:
+        return flatlist([edition.supplied for edition in self.editions()])
+
+    @property
+    def has_supplied(self) -> bool:
+        return self.supplied != []
+
+    @property
     def tei(self) -> Optional[Element]:
         return maxone(self.get_desc('TEI'))
 

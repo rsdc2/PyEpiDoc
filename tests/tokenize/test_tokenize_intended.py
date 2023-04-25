@@ -21,6 +21,7 @@ tests = [
     'persName_spacing_3',
     'persName_spacing_4',
     'persName_spacing_ISic000263',
+    'interpunct', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_word_space',
     'interpunct_no_word_space',
     'roleName',

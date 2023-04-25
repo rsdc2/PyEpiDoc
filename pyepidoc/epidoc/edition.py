@@ -269,6 +269,11 @@ class Edition(Element):
         return self.get_attrib('subtype')
 
     @property
+    def supplied(self) -> list[Element]:
+        return [elem for elem in self.desc_elems 
+            if elem.name_no_namespace == 'supplied']
+
+    @property
     def textparts(self) -> list[TextPart]:
         return [TextPart(part) for part in self.get_div_descendants('textpart')]
 

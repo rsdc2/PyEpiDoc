@@ -18,7 +18,8 @@ from .epidoctypes import (
     TokenInfo, 
     CompoundTokenType, 
     AtomicTokenType,
-    TokenType
+    TokenType, 
+    PUNCTUATION
 )
 
 
@@ -104,7 +105,7 @@ class Token(Element):
             return self
         
         if inplace:
-            if self.text_desc == self.text_desc.capitalize():
+            if self.text_desc == self.text_desc.capitalize() and self.text_desc not in PUNCTUATION:
                 self._e.tag = ns.give_ns('name', NS)
 
             return self

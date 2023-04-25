@@ -257,6 +257,16 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(corpus, folderpath=None)
 
+    def filter_by_supplied(
+        self,
+        has_supplied=False
+    ) -> EpiDocCorpus:
+    
+        docs = [doc for doc in self.docs
+            if doc.has_supplied == has_supplied]
+
+        return EpiDocCorpus(docs, folderpath=None)
+
     def list_unique_orig_places(
         self,
         frequencies:bool=True,

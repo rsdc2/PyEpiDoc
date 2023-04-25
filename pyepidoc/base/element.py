@@ -915,12 +915,13 @@ class Element(Showable, Root):
         new_w:_Element
         new_g:_Element
 
-        if prototoken == '·':
+        if prototoken is not None and prototoken.strip() in ['·', '·']:
             namespace = ns.give_ns('g', ns=NS)
             new_g = etree.Element(namespace)
 
             if prototoken: 
                 new_g.text = prototoken
+                new_g.set('ref', '#interpunct')
 
             for e in subelements:
                 new_g.append(e)
