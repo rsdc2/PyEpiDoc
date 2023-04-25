@@ -873,6 +873,9 @@ class Element(Showable, Root):
     def text(self) -> str:
         if self._e is None:
             return ''
+
+        if self._e.text is None:
+            return ''
             
         return self._e.text
 
