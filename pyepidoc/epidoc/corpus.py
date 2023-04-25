@@ -393,7 +393,15 @@ class EpiDocCorpus:
         with open(dst.full_filepath, 'w') as f:
             f.write(self.formatted_text)
 
-    def tokenize(self, dstfolder:Optional[str]=None, verbose=True) -> None:
+    def tokenize(
+        self, 
+        dstfolder:Optional[str]=None, 
+        add_space_between_words:bool=True,
+        prettify_edition:bool=True,
+        set_ids:bool=False,
+        verbose=True
+    ) -> None:
+    
         if dstfolder is None: 
             return
 
@@ -402,13 +410,17 @@ class EpiDocCorpus:
                 print('Tokenizing', doc.id)
 
             doc.tokenize()
-            doc.add_space_between_tokens()
             
-            if SET_IDS:
+            if add_space_between_words:
+                doc.add_space_between_tokens()
+            
+            if set_ids:
                 doc.set_ids()
                 
-            doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
-            self._doc_to_xml(dstfolder=dstfolder, doc=doc)
+            if prettify_edition:
+                doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
+            
+            self._doc_to_xml(dstfolder, doc)
 
     @property
     def tokencount(self) -> int:
