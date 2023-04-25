@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+    <text> <!-- ISic000307-->
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+                <ab>
+                    <lb n="2"/><persName type="attested">
+                        <name> <expan><abbr>Q</abbr><ex>uinto</ex></expan></name> <g ref="#interpunct">·</g> <name>Atilio</name> <g ref="#interpunct">·</g> <name> <expan><abbr>Q</abbr><ex>uinti</ex></expan></name> <g ref="#interpunct">·</g> <w><expan><abbr>f</abbr><ex>ilio</ex></expan></w> <g ref="#interpunct">·</g> 
+                    <lb n="3"/><name><expan><abbr>Cla</abbr><ex>udia</ex></expan></name> <g ref="#interpunct">·</g> <name>Severo</name></persName>
+                </ab>
+            </div>
+        </body>
+    </text>
+</TEI>

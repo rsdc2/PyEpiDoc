@@ -24,6 +24,9 @@ tests = [
     'interpunct', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_2', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_3', # tests that recognises interpuncts correctly and puts in <g> tag
+    'interpunct_4', # tests that recognises interpuncts correctly and puts in <g> tag
+    'interpunct_5', # tests that recognises interpuncts correctly and puts in <g> tag
+    'interpunct_6', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_word_space',
     'interpunct_no_word_space',
     'roleName',
