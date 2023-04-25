@@ -936,22 +936,21 @@ class Element(Showable, Root):
                 new_parent.remove(child)
             
             for e in children:
-                if ns.remove_ns(e.tag) in \
-                    AtomicTokenType.values() + BoundaryType.values():
-                    new_e = deepcopy(e)
-                    new_e.tail = None
+                new_e = deepcopy(e)
+                new_e.tail = None
+
+                if ns.remove_ns(e.tag) in AtomicTokenType.values() + BoundaryType.values():
                     new_parent.append(new_e)
                     new_parent = append_tail(e.tail, new_parent)
                 elif ns.remove_ns(e.tag) in CompoundTokenType.values():
-                    new_e = deepcopy(e)
-                    new_e.tail = None
                     new_parent.append(Element.w_factory(parent=new_e))
                     new_parent = append_tail(e.tail, new_parent)
-                else:
+                else: # e.g. <expan>
                     namespace = ns.give_ns('w', ns=NS)
                     new_w = etree.Element(namespace)
-                    new_w.append(e)
+                    new_w.append(new_e)
                     new_parent.append(new_w)
+                    new_parent = append_tail(e.tail, new_parent)
 
             return new_parent
         else:
