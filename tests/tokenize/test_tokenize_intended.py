@@ -8,6 +8,7 @@ import pytest
 
 
 tests = [
+    'space',
     'expan', 
     'plain', 
     'persName', 

@@ -54,7 +54,6 @@ class CompoundTokenType(EnumerableEnum):
     PlaceName = 'placeName'
     RoleName = 'roleName'
     OrgName = 'orgName'
-    # Del = 'del'
 
 
 TokenCarrier = set(

@@ -204,7 +204,10 @@ class Element(Showable, Root):
         if type(other) is not Element: 
             return False
 
-        matches = list(filter(self._subsume_filterfunc(head=self, dep=other), SubsumableRels))
+        matches = list(filter(
+            self._subsume_filterfunc(head=self, dep=other),
+            SubsumableRels)
+        )
             
         return len(matches) > 0
 
