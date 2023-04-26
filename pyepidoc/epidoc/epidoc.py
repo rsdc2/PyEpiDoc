@@ -176,6 +176,38 @@ class EpiDoc(Root):
         return set([str(word) for word in self.tokens])
 
     @property
+    def gaps(self) -> list[Element]:
+        items = [edition.gaps for edition in self.editions()]
+        return [item for item in flatlist(items)]
+
+    def has_gap(self, reasons:list[str]=[]) -> bool:
+        """
+        Returns True if the document contains a <gap> element with a reason
+        contained in the "reasons" attribute.
+        If "reasons" is set to an empty list, 
+        returns True if there are any gaps regardless of reason.
+        """
+
+        if self.gaps == []:
+            return False
+        
+        # There must be gaps
+        if reasons == []:
+            return True
+
+        for gap in self.gaps:
+            doc_gap_reasons = gap.get_attrib('reason')
+            if doc_gap_reasons is None:
+                continue
+            doc_gap_reasons_split = doc_gap_reasons.split()
+            intersection = set(reasons).intersection(set(doc_gap_reasons_split))
+
+            if len(intersection) > 0:
+                return True
+
+        return False
+
+    @property
     def id(self) -> str:
 
         def get_idno_elems(s:str) -> list[Element]:
@@ -203,10 +235,6 @@ class EpiDoc(Root):
     def ismultilingual(self) -> bool:
         return len(self.div_langs) > 1 
 
-    @property
-    def gaps(self) -> list[Element]:
-        items = [edition.gaps for edition in self.editions()]
-        return [item for item in flatlist(items)]
 
     def _get_daterange_attrib(self, attrib_name:str) -> Optional[int]:
         if self.orig_date is None:

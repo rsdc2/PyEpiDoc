@@ -202,6 +202,18 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(corpus, folderpath=None)
 
+    def filter_by_gap(
+        self,
+        has_gap=False,
+        reasons:list[str]=[]
+    ) -> EpiDocCorpus:
+    
+        docs = [doc for doc in self.docs
+            if doc.has_gap(reasons=reasons) == has_gap]
+
+        return EpiDocCorpus(docs, folderpath=None)
+
+
     def filter_by_ids(self, ids:list[str]) -> EpiDocCorpus:
         _corpus = [doc for doc in self.docs
             if doc.id in ids]

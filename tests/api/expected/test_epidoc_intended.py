@@ -10,7 +10,8 @@ relative_filepaths = {
     'langs_2': 'api/files/langs_2.xml',
     'langs_3': 'api/files/langs_3.xml',
     'line_1': 'api/files/line_1.xml',
-    'line_2': 'api/files/line_2.xml'
+    'line_2': 'api/files/line_2.xml',
+    'gap': 'api/files/gap.xml'
 }
 
 
@@ -75,6 +76,12 @@ def test_lines():
     second_token = doc_2.tokens[1]
     assert second_token.text_desc == 'ambulavit'
     assert line(second_token).n == '2'
+
+
+def test_gaps():
+    doc = EpiDoc(relative_filepaths['gap'], fullpath=False)
+    has_gaps = doc.has_gap(reasons=['lost'])
+    assert has_gaps == True
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths.values())
