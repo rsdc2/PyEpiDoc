@@ -37,6 +37,10 @@ from ..utils import maxone, maxoneT, head, last
 
 class BaseElement(Showable, Root):    
 
+    """
+    Provides basic XML navigation services, but nothing specific to EpiDoc.
+    """
+
     def __hash__(self) -> int:
         return hash(
             '.'.join(

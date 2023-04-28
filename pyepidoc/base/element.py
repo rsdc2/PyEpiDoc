@@ -43,6 +43,10 @@ from ..utils import maxone, maxoneT, head, last
 
 class Element(BaseElement, Showable):    
 
+    """
+    Provides basic services for all EpiDoc elements.
+    """
+
     def __add__(self, other) -> list[Element]:
         if other is None:
             return [self]
