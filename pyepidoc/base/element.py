@@ -30,8 +30,8 @@ from lxml.etree import ( # type: ignore
 from .namespace import Namespace as ns
 
 from ..constants import NS, XMLNS, SubsumableRels
+from ..base.types import Tag
 from ..epidoc.epidoctypes import (
-    Tag, 
     whitespace, 
     AtomicTokenType, 
     CompoundTokenType, 

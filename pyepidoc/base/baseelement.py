@@ -26,7 +26,7 @@ from lxml.etree import ( # type: ignore
     _ElementUnicodeResult
 )
 
-from ..epidoc.epidoctypes import Tag
+from ..base.types import Tag
 
 from .namespace import Namespace as ns
 
