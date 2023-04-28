@@ -35,7 +35,7 @@ from .root import Root
 from ..utils import maxone, maxoneT, head, last
 
 
-class BaseElement(Showable, Root):    
+class BaseElement(Showable):    
 
     """
     Provides basic XML navigation services, but nothing specific to EpiDoc.
@@ -319,9 +319,15 @@ class BaseElement(Showable, Root):
             return None
 
         raise TypeError(f"Previous element is of type {type(_prev)}.")
-    
+
+    @property 
+    def previous_siblings(self) -> List[BaseElement]:
+        prev_sibs = self.xpath('preceding-sibling::*')
+
+        return [BaseElement(sib) for sib in prev_sibs]
+
     @property
-    def root(self) -> Root:
+    def root(self) -> BaseElement:
         return self.parents[-1]
 
     @property
