@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, Sequence
 
 from copy import deepcopy
 from functools import reduce
@@ -15,7 +15,7 @@ from .epidoctypes import (
     SetRelation, 
 )
 
-from ..base import Element
+from ..base import Element, BaseElement
 from ..utils import update
 from ..constants import XMLNS
 
@@ -44,14 +44,16 @@ class Ab(Element):
 
     """
 
-    def __init__(self, e:Optional[_Element | Element]=None):
+    def __init__(self, e:Optional[_Element | Element | BaseElement]=None):
 
-        if type(e) not in [_Element, Element] and e is not None:
+        if type(e) not in [_Element, Element, BaseElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')
 
         if type(e) is _Element:
             self._e = e
         elif type(e) is Element:
+            self._e = e.e
+        elif type(e) is BaseElement:
             self._e = e.e
 
         if self.tag.name != 'ab':
@@ -87,8 +89,8 @@ class Ab(Element):
         return self.get_attrib('lang', XMLNS)
 
     @property
-    def lbs(self) -> list[Element]:
-        return self.get_desc_elems_by_name(['lb'])
+    def lbs(self) -> Sequence[Element]:
+        return [Element(lb) for lb in self.get_desc_elems_by_name(['lb'])]
 
     @property
     def _proto_word_strs(self) -> list[str]:
@@ -251,7 +253,7 @@ class Ab(Element):
         either as element-internal text, or in their tails.
         """
         
-        return [element for element in self.desc_elems 
+        return [Element(element) for element in self.desc_elems 
             if element.tag.name in TokenCarrier]
 
     @property

@@ -3,7 +3,7 @@ from typing import Optional, Union
 from lxml import etree # type: ignore
 from lxml.etree import _Element, _ElementUnicodeResult  # type: ignore
 
-from ..base.element import Element
+from ..base.element import Element, BaseElement
 from ..base.root import Root
 from ..utils import flatlist, maxone, listfilter, head
 from ..file import FileInfo, FileMode
@@ -210,7 +210,7 @@ class EpiDoc(Root):
     @property
     def id(self) -> str:
 
-        def get_idno_elems(s:str) -> list[Element]:
+        def get_idno_elems(s:str) -> list[BaseElement]:
             if self.publication_stmt is None:
                 return []
 

@@ -49,7 +49,7 @@ def ancestor_edition(elem: Element) -> Optional[Edition]:
     """
 
     editions = [Edition(elem) for elem in elem.parents 
-        if elem.is_edition]
+        if Element(elem).is_edition]
 
     edition = maxone(
         lst=editions,

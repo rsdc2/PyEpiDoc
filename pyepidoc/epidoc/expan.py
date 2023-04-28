@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Optional, Union
 from lxml.etree import _Element # type: ignore
 
-from ..base import Element
+from ..base import Element, BaseElement
 from ..utils import head, flatlist
 
 from .ex import Ex
@@ -71,7 +71,7 @@ class Expan(Element):
         return len(self.am_elems)
 
     @staticmethod
-    def abbr_ex_or_am(elem: Element) -> Optional[Union[Abbr, Ex, Am]]:
+    def abbr_ex_or_am(elem: BaseElement) -> Optional[Union[Abbr, Ex, Am]]:
 
         element_classes: dict[str, type] = {
             'ex': Ex,

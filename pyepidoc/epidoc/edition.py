@@ -6,10 +6,10 @@ from __future__ import annotations
 from itertools import chain
 
 from lxml.etree import _Element # type: ignore
-from typing import Optional
+from typing import Optional, Sequence
 import re
 
-from ..base import Element
+from ..base import Element, BaseElement
 from ..constants import (
     XMLNS, 
     SET_IDS, 
@@ -21,6 +21,7 @@ from .ab import Ab
 from .token import Token
 from .expan import Expan
 from .textpart import TextPart
+
 
 from .epidoctypes import (
     SpaceUnit, 
@@ -56,7 +57,7 @@ def prettify(
 
     newlinetags = ['div', 'ab', 'lb']
 
-    def _get_multiplier(element:Element) -> int:
+    def _get_multiplier(element:BaseElement) -> int:
         if element.tag.name in chain(
             AtomicTokenType.values(),
             CompoundTokenType.values(),
@@ -67,28 +68,28 @@ def prettify(
             return element.depth + 1
         raise ValueError("Cannot find multiplier for this element.")
 
-    def _get_prevs(elements:list[Element]) -> list[Element]:
-        prevs:list[Element] = []
+    def _get_prevs(elements:Sequence[BaseElement]) -> Sequence[BaseElement]:
+        prevs:list[BaseElement] = []
         for element in elements:
             if element.previous_sibling is not None:
                 prevs += [element.previous_sibling]
 
         return prevs
 
-    def get_parents_for_first_children(elements:list[Element]) -> list[Element]:
+    def get_parents_for_first_children(elements:Sequence[BaseElement]) -> Sequence[BaseElement]:
         """
         Returns parent elements for all first children
         """
 
-        parents:list[Element] = [] 
+        parents:list[BaseElement] = [] 
         for element in elements:
             if element.previous_sibling is None: # Explain why only gives parents if previous sibling is None
                 if element.parent is not None:
-                    parents += [element.parent]
+                    parents.append(element.parent)
         
         return parents
 
-    def prettify_lb(lb:Element) -> None:
+    def prettify_lb(lb:BaseElement) -> None:
         first_parent = lb.get_first_parent_by_name(['ab', 'div'])
         if first_parent is None:
             return
@@ -99,21 +100,21 @@ def prettify(
             (spaceunit.value * number) * (first_parent.depth + 1)
         ])
 
-    def prettify_prev(element:Element) -> None:
+    def prettify_prev(element:BaseElement) -> None:
         element.tail = ''.join([
             default_str(element.tail),
             "\n",
             (spaceunit.value * number) * element.depth
         ])
 
-    def prettify_first_child(element:Element) -> None:
+    def prettify_first_child(element:BaseElement) -> None:
         element.text = ''.join([
             default_str(element.text).strip(),
             "\n",
             spaceunit.value * number * (element.depth + 1)
         ])
 
-    def prettify_parent_of_lb(element:Element) -> None:
+    def prettify_parent_of_lb(element:BaseElement) -> None:
         first_parent = element.get_first_parent_by_name(['ab', 'div'])
         if first_parent is None:
             return
@@ -124,7 +125,7 @@ def prettify(
             (spaceunit.value * number) * (first_parent.depth + 1)
         ])
 
-    def prettify_closing_tags(elements:list[Element]) -> None:
+    def prettify_closing_tags(elements:Sequence[BaseElement]) -> None:
         for element in elements:
             if element.children == []:
                 continue
@@ -170,13 +171,15 @@ class Edition(Element):
     Provides services for <div type="edition> elements.
     """
 
-    def __init__(self, e:Optional[_Element | Element]=None):
-        if type(e) not in [_Element, Element] and e is not None:
+    def __init__(self, e:Optional[_Element | Element | BaseElement]=None):
+        if type(e) not in [_Element, Element, BaseElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')
 
         if type(e) is _Element:
             self._e = e
         elif type(e) is Element:
+            self._e = e.e
+        elif type(e) is BaseElement:
             self._e = e.e
 
         if self.tag.name != 'div':
@@ -211,7 +214,7 @@ class Edition(Element):
         return self
 
     @property
-    def divs(self) -> list[Element]:
+    def divs(self) -> list[BaseElement]:
         return self.get_desc_elems_by_name(['div'])
 
     @property
@@ -269,7 +272,7 @@ class Edition(Element):
         return self.get_attrib('subtype')
 
     @property
-    def supplied(self) -> list[Element]:
+    def supplied(self) -> Sequence[BaseElement]:
         return [elem for elem in self.desc_elems 
             if elem.name_no_namespace == 'supplied']
 

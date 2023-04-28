@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Sequence
 from functools import cached_property
 from copy import deepcopy
 
@@ -10,6 +10,7 @@ from ..base import Namespace as ns
 from ..utils import maxone, remove_none, head
 from ..constants import NS, XMLNS
 from ..base.element import Element
+from ..base.baseelement import BaseElement
 
 from .abbr import AbbrInfo
 from .expan import Expan
@@ -36,7 +37,7 @@ class Token(Element):
     """
 
     @cached_property
-    def ab_or_div_parents(self) -> list[Element]:
+    def ab_or_div_parents(self) -> Sequence[BaseElement]:
 
         """
         Returns a list of <ab> and <div> parent |Element|.
@@ -61,7 +62,7 @@ class Token(Element):
         return maxone(filtered_langs, throw_if_more_than_one=False)
 
     @property
-    def abbr(self) -> Optional[Element]:
+    def abbr(self) -> Optional[BaseElement]:
         """
         Returns the first <abbr> |Element|, if present,
         else None.

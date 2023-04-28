@@ -10,6 +10,7 @@ from typing import (
 )
 
 from .types import Showable, ExtendableSeq
+from .baseelement import BaseElement
 
 from copy import deepcopy
 from functools import reduce, cached_property
@@ -40,13 +41,13 @@ from .root import Root
 from ..utils import maxone, maxoneT, head, last
 
 
-class Element(Showable, Root):    
+class Element(BaseElement, Showable):    
 
     def __add__(self, other) -> list[Element]:
         if other is None:
             return [self]
 
-        if type(other) is not Element:
+        if type(other) not in [Element]:
             raise TypeError(f"Other element is of type {type(other)}.")
 
         if self._e is None and other._e is not None:
@@ -85,48 +86,26 @@ class Element(Showable, Root):
 
         return [Element(self_e)]
 
-    def __hash__(self) -> int:
-        return hash(
-            '.'.join(
-                [str(id_part) for id_part in self.id_internal]
-            )
-        )
 
-    def __eq__(self, other) -> bool:
-        if type(other) is not Element:
-            return False
-        
-        return self.id_internal == other.id_internal
-
-    def __init__(self, e:Optional[Union[_Element, Element]]=None):
+    def __init__(self, e:Optional[Union[_Element, Element, BaseElement]]=None):
         error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
 
-        if type(e) not in [_Element, Element] and e is not None:
+
+
+        if type(e) not in [_Element, Element, BaseElement] and e is not None and not issubclass(type(e), BaseElement):
             raise TypeError(error_msg)
 
         if type(e) is _Element:
             self._e = e
         elif type(e) is Element:
             self._e = e.e
+        elif type(e) is BaseElement:
+            self._e = e.e
+        elif e is None:
+            self._e = None
+        elif issubclass(type(e), BaseElement):
+            self._e = e.e
 
-
-    def __gt__(self, other) -> bool:
-        if type(other) is not Element:
-            raise TypeError(f"Other element is of type {type(other)}.")
-
-        if len(self.id_internal) != len(other.id_internal):
-            return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.gt)
-
-        return self.id_internal[-1] > other.id_internal[-1]
-
-    def __lt__(self, other) -> bool:
-        if type(other) is not Element:
-            raise TypeError(f"Previous element is of type {type(other)}.")
-
-        if len(self.id_internal) != len(other.id_internal):
-            return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.lt)
-
-        return self.id_internal[-1] < other.id_internal[-1]
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
@@ -148,12 +127,12 @@ class Element(Showable, Root):
         return self.text_desc_compressed_whitespace
 
     @property
-    def abbr_elems(self) -> list[Element]:
+    def abbr_elems(self) -> Sequence[Element]:
         """
         Return all abbreviation elements as a |list| of |Element|.
         """
 
-        return [abbr for abbr in self.get_desc_elems_by_name('abbr') 
+        return [Element(abbr) for abbr in self.get_desc_elems_by_name('abbr') 
             if abbr.text is not None]
         
     @property
@@ -175,14 +154,14 @@ class Element(Showable, Root):
             and self.get_attrib('type') == 'edition'
 
     @property
-    def am_elems(self) -> list[Element]:
+    def am_elems(self) -> Sequence[Element]:
         """
         Returns a |list| of abbreviation marker elements <am>.
         See https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-am.html,
         last accessed 2023-04-13.
         """
 
-        return [abbr for abbr in self.get_desc_elems_by_name('am')]
+        return [Element(abbr) for abbr in self.get_desc_elems_by_name('am')]
 
     def append_space(self) -> Element:
         """Appends a space to the element in place."""
@@ -210,38 +189,13 @@ class Element(Showable, Root):
         )
             
         return len(matches) > 0
-
-    @property
-    def children(self) -> list[Element]:
-        if self._e is None:
-            return []
-            
-        _children: list[_Element] = list(self._e)
-        return [Element(child) for child in _children
-                    if type(child) is not _Comment]
-
+    
     @property
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
         return len([parent for parent in self.parents 
             if type(parent.parent) is Element])
-
-    @property
-    def desc_elems(self) -> list[Element]:
-        """
-        Returns a list of all descendant |Element|s.
-        Does not return any text nodes.
-        """
-
-        if self._e is None:
-            return []
-
-        _descs = self._e.xpath('.//*')
-        descs = _descs if type(_descs) is list else []
-
-        return [Element(desc) for desc in descs 
-            if type(desc) is _Element]
 
     @property
     def dict_desc(self) -> dict:
@@ -255,23 +209,22 @@ class Element(Showable, Root):
         return self._e
 
     @property
-    def ex_elems(self) -> list[Element]:
+    def ex_elems(self) -> Sequence[Element]:
         """
         Return all abbreviation expansions (minus abbreviation) 
         as a |list| of |Element|.
         """
 
-        return [ex for ex in self.get_desc_elems_by_name('ex')]
-
+        return [Element(ex) for ex in self.get_desc_elems_by_name('ex')]
 
     @property
-    def expan_elems(self) -> list[Element]:
+    def expan_elems(self) -> Sequence[Element]:
         """
         Return all abbreviation expansions (i.e. abbreviation + expansion) 
         as a |list| of |Element|.
         """
 
-        return [expan for expan in self.get_desc_elems_by_name('expan')]
+        return [Element(expan) for expan in self.get_desc_elems_by_name('expan')]
 
     @property
     def final_tailtoken_boundary(self) -> bool:
@@ -283,21 +236,7 @@ class Element(Showable, Root):
         if self.tail is None: 
             return False
         return self.tail[-1] in whitespace
-
-    @property
-    def first_child(self) -> Optional[Element]:
-        if self.children == []:
-            return None
-        
-        return self.children[0]
-
-    @property
-    def last_child(self) -> Optional[Element]:
-        if self.children == []:
-            return None
-        
-        return self.children[-1]
-
+    
     @property
     def _first_internal_protoword(self) -> str:
         if self._internal_prototokens == []:
@@ -314,47 +253,7 @@ class Element(Showable, Root):
     @property
     def gaps(self) -> list[Element]:
         return [Element(gap) for gap in self.get_desc('gap')]
-
-    def get_attrib(
-        self, 
-        attribname:str, 
-        namespace:Optional[str]=None
-    ) -> Optional[str]:
-
-        """
-        Returns the value of the named attribute.
-        """
     
-        if self._e is None:
-            return ''
-
-        return self._e.attrib.get(ns().give_ns(attribname, namespace), None)
-
-    def get_desc_elems_by_name(self, 
-        elem_names:Union[list[str], str], 
-        attribs:Optional[dict[str, str]]=None
-    ) -> list[Element]:
-
-        return [Element(desc) 
-            for desc in self.get_desc(elemnames=elem_names, attribs=attribs)]
-
-    def get_first_parent_by_name(self, parent_tag_names:list[str]) -> Optional[Element]:
-        return maxone(
-            lst=self.get_parents_by_name(parent_tag_names), 
-            defaultval=None, 
-            throw_if_more_than_one=False
-        )
-
-    def get_parents_by_name(self,  parenttagnames:list[str]) -> list[Element]:
-        return [parent for parent in self.parents 
-            if parent.tag.name in parenttagnames]
-
-    def has_attrib(self, attribname:str) -> bool:
-        if self._e is None:
-            return False
-
-        return attribname in self._e.attrib.keys()
-
     @property
     def id_internal(self) -> list[int]:
 
@@ -542,12 +441,6 @@ class Element(Showable, Root):
         return Element(preceding_lb)
 
     @property
-    def name_no_namespace(self) -> str:
-        if self._e is None:
-            return ''
-        return ns.remove_ns(self._e.tag)
-
-    @property
     def next_sibling(self) -> Optional[Element]:
 
         def _get_next(e:Optional[_Element]) -> Optional[_Element]:
@@ -574,12 +467,6 @@ class Element(Showable, Root):
             return None
 
         return None
-
-    @property
-    def next_siblings(self) -> list[Element]:
-        next_sibs = self.xpath('following-sibling::*')
-
-        return [Element(sib) for sib in next_sibs]
 
     @property
     def next_no_spaces(self) -> list[Element]:
@@ -660,26 +547,6 @@ class Element(Showable, Root):
             raise TypeError('Parent is of incorrect type.')
 
     @property
-    def parents(self) -> ExtendableSeq[Element]:
-
-        """
-        Returns an |ExtendableSeq| of parent |Element|
-        ordered by closest parent to furthest parent.
-        """
-
-        def _climb(acc:ExtendableSeq[Element], element:Optional[Element]) -> ExtendableSeq[Element]:
-            if element is None:
-                return acc
-            elif isinstance(element, Element) or issubclass(type(element), Element):
-                acc += [element]
-                return _climb(acc, element.parent)
-            
-            raise TypeError('element is of the wrong type.')
-
-        init_list = cast(ExtendableSeq[Element], []) 
-        return _climb(acc=init_list, element=self)
-
-    @property
     def preceding_or_ancestor_in_edition(self) -> list[_Element]:
 
         """
@@ -693,28 +560,12 @@ class Element(Showable, Root):
         return self._e.xpath('preceding::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) \
             + self._e.xpath('ancestor::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) 
 
-
-    @property
-    def previous_sibling(self) -> Optional[Element]:
-        if self._e is None:
-            return None
-
-        _prev = self._e.getprevious()
-        if type(_prev) is _Element:
-            return Element(_prev)
-        elif _prev is None:
-            return None
-        elif type(_prev) is _Comment:
-            return None
-
-        raise TypeError(f"Previous element is of type {type(_prev)}.")
-
     @property
     def _prototokens(self) -> list[str]:
         return self._internal_prototokens + self._tail_prototokens
     
     @property
-    def root(self) -> Root:
+    def root(self) -> BaseElement:
         return self.parents[-1]
 
     @property
@@ -761,17 +612,6 @@ class Element(Showable, Root):
             raise ValueError('Too many namespaces.')
 
         return Tag(match.groups()[0], match.groups()[1])
-
-    @property
-    def tail(self) -> Optional[str]:
-        return self._e.tail if self._e is not None else ''
-
-    @tail.setter
-    def tail(self, value:str):
-        if self._e is None:
-            return
-
-        self._e.tail = value
 
     @property
     def tail_completer(self) -> Optional[str]:
@@ -981,35 +821,3 @@ class Element(Showable, Root):
         return etree.tostring(self._e)
 
 
-    def _equalize_id_length(
-        self, 
-        id1:list[int], 
-        id2:list[int]
-    ) -> tuple[list[int], list[int]]:
-        
-        if len(id1) == len(id2):
-            return (id1, id2)
-
-        if len(id1) > len(id2):
-            newid1 = id1[:len(id2)-1]
-            return (newid1, id2)
-
-        if len(id2) > len(id1):
-            newid2 = id2[:len(id1)-1]
-            return (id1, newid2)
-
-        raise ValueError()
-
-    def _compare_equal_length_ids(
-        self, 
-        id1:list[int], 
-        id2:list[int], 
-        op:Callable[[int, int], bool]
-    ) -> bool:
-
-        equal_id1, equal_id2 = self._equalize_id_length(id1, id2)
-
-        if equal_id1 == equal_id2:
-            return op(len(id1), len(id2))
-
-        return op(equal_id1[-1], equal_id2[-1])
