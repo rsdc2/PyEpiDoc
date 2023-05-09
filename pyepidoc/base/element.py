@@ -681,7 +681,6 @@ class Element(BaseElement, Showable):
 
         return len(self.supplied) > 0
 
-
     @property
     def _tail_prototokens(self) -> list[str]:
 
@@ -823,5 +822,3 @@ class Element(BaseElement, Showable):
     @property
     def xml(self) -> _Element:
         return etree.tostring(self._e)
-
-

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+    <text> <!-- ISic000394-->
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+                <ab>
+                    <lb n="2"/><w>in</w> <w>pace</w> <foreign xml:lang="grc"><name><expan><abbr><hi rend="supraline">Χρί</hi></abbr><ex>στι</ex></expan></name></foreign> 
+                    <lb n="3"/><w>quiescit</w> <w>qui</w> <w>vixit</w>
+                </ab>
+            </div>
+        </body>
+    </text>
+</TEI>

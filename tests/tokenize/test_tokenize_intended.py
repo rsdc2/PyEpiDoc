@@ -16,6 +16,7 @@ tests = [
     # 'break_equals_no_with_comment',
     'break_equals_no_without_comment', 
     'break_equals_no_unclear',
+    'foreign',
     'persName_spacing',
     'persName_spacing_3',
     'persName_spacing_2',

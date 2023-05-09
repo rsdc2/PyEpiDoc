@@ -52,6 +52,7 @@ class CompoundTokenType(EnumerableEnum):
     PlaceName = 'placeName'
     RoleName = 'roleName'
     OrgName = 'orgName'
+    Foreign = 'foreign'
 
 
 TokenCarrier = set(
