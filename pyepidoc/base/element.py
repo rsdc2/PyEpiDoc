@@ -752,7 +752,7 @@ class Element(BaseElement, Showable):
 
         """TODO merge w_factory and make_word functions."""
 
-        def append_tail(_tail: Optional[str], _parent:_Element) -> _Element:
+        def append_tail_or_text(_tail: Optional[str], _parent:_Element) -> _Element:
             if _tail is not None:
                 tailword_strs = _tail.split()
                 tailtokens = [Element.w_factory(prototoken=tailtoken_str) 
@@ -764,6 +764,7 @@ class Element(BaseElement, Showable):
         new_w:_Element
         new_g:_Element
 
+        # Handle interpuncts
         if prototoken is not None and prototoken.strip() in ['·', '·']:
             namespace = ns.give_ns('g', ns=NS)
             new_g = etree.Element(namespace)
@@ -780,27 +781,35 @@ class Element(BaseElement, Showable):
         elif prototoken is None and parent is not None:
             children:list[_Element] = [deepcopy(e) for e in list(parent)] 
             new_parent:_Element = deepcopy(parent)
-
+            
+            # Remove text and children from new_parent
             for child in list(new_parent):
                 new_parent.remove(child)
-            
+            new_parent.text = None
+        
+            # Handle the text content of new_parent
+            new_parent = append_tail_or_text(parent.text, new_parent)
+
+            # Handle children of new_parent
             for e in children:
                 new_e = deepcopy(e)
                 new_e.tail = None
 
                 if ns.remove_ns(e.tag) in AtomicTokenType.values() + BoundaryType.values():
                     new_parent.append(new_e)
-                    new_parent = append_tail(e.tail, new_parent)
-                elif ns.remove_ns(e.tag) in CompoundTokenType.values():
+                    new_parent = append_tail_or_text(e.tail, new_parent)
+
+                elif ns.remove_ns(e.tag) in CompoundTokenType.values(): # e.g. <persName>, <orgName>
                     new_parent.append(Element.w_factory(parent=new_e))
-                    new_parent = append_tail(e.tail, new_parent)
+                    new_parent = append_tail_or_text(e.tail, new_parent)
+
                 else: # e.g. <expan>
                     namespace = ns.give_ns('w', ns=NS)
                     new_w = etree.Element(namespace)
                     new_w.append(new_e)
                     new_parent.append(new_w)
-                    new_parent = append_tail(e.tail, new_parent)
-
+                    new_parent = append_tail_or_text(e.tail, new_parent)
+                    
             return new_parent
         else:
             if prototoken: 

@@ -17,13 +17,12 @@ tests = [
     'break_equals_no_without_comment', 
     'break_equals_no_unclear',
     'foreign',
-    'persName_spacing',
-    'persName_spacing_3',
+    'persName_spacing_1',
     'persName_spacing_2',
     'persName_spacing_3',
     'persName_spacing_4',
     'persName_spacing_ISic000263',
-    'interpunct', # tests that recognises interpuncts correctly and puts in <g> tag
+    'interpunct_1', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_2', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_3', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_4', # tests that recognises interpuncts correctly and puts in <g> tag
@@ -32,9 +31,10 @@ tests = [
     'interpunct_word_space',
     'interpunct_no_word_space',
     'roleName',
-    'orgName',
-    'del',
-    'del2',
+    'orgName_1',
+    'orgName_2',
+    'del_1',
+    'del_2',
     'choice',
     'orig',
     'gap',
