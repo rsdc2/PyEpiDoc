@@ -143,8 +143,24 @@ class Ab(Element):
 
                 if element.token_elements == []:
                     return acc
-                    
-                return element.token_elements[:-1] + (element.token_elements[-1] + acc[0])  + acc[1:]
+                
+                # x = acc[0] + acc[1]
+                # y = (element.token_elements[-1] + x[0]) + x[1:]
+
+                # if len(acc) > 2:
+                #     return element.token_elements[:-1] + y + acc[2:]
+                # else:
+                #     return element.token_elements[:-1] + y
+            
+                def sumfunc(acc:list[Element], elem:Element) -> list[Element]:
+                    if acc == []:
+                        return [elem]
+                
+                    new_first = elem + acc[0]
+
+                    return new_first + acc[1:]
+
+                return reduce(sumfunc, reversed(element.token_elements + acc), [])
 
             return element.token_elements + acc
 
@@ -203,7 +219,7 @@ class Ab(Element):
         These sequences are what are tokenized in <w/> elements etc.
         """
         
-        def _get_word_carrier_sequences(
+        def get_word_carrier_sequences(
             acc:list[list[Element]], 
             acc_desc:set[Element], 
             tokenables:list[Element]
@@ -215,7 +231,7 @@ class Ab(Element):
             element = tokenables[0]
 
             if element in acc_desc:
-                return _get_word_carrier_sequences(acc, acc_desc, tokenables[1:])
+                return get_word_carrier_sequences(acc, acc_desc, tokenables[1:])
 
             new_acc = acc + [element.next_no_spaces]
 
@@ -223,9 +239,9 @@ class Ab(Element):
             next_no_spaces_desc_flat = [element for descsequence in next_no_spaces_desc for element in descsequence]
             new_acc_desc = update(acc_desc, set(next_no_spaces_desc_flat))
             
-            return _get_word_carrier_sequences(new_acc, new_acc_desc, tokenables[1:])
+            return get_word_carrier_sequences(new_acc, new_acc_desc, tokenables[1:])
 
-        def _remove_subsets(
+        def remove_subsets(
             acc:list[list[Element]], 
             sequence:list[Element]
         ) -> list[list[Element]]:
@@ -237,13 +253,13 @@ class Ab(Element):
             
             return acc + [sequence]
 
-        tokencarrier_sequences = _get_word_carrier_sequences(
+        tokencarrier_sequences = get_word_carrier_sequences(
             [], 
             set(), 
             self.token_carriers
         )
         
-        return reduce(_remove_subsets, tokencarrier_sequences, [])
+        return reduce(remove_subsets, tokencarrier_sequences, [])
 
     @property
     def token_carriers(self) -> list[Element]:

@@ -43,11 +43,13 @@ from ..utils import maxone, maxoneT, head, last
 
 class Element(BaseElement, Showable):    
 
+    _final_space: bool = False
+
     """
     Provides basic services for all EpiDoc elements.
     """
 
-    def __add__(self, other) -> list[Element]:
+    def __add__(self, other:Element) -> list[Element]:
         if other is None:
             return [self]
 
@@ -69,7 +71,10 @@ class Element(BaseElement, Showable):
         if self_e is None or other_e is None:
             return []
             
-        if other.tag != self.tag:
+        if self.tag != other.tag:
+            if self.right_bound:
+                return [self, other]
+            
             if self._can_subsume(other):
                 self_e.append(other_e)
                 return [Element(self_e)]
@@ -82,19 +87,45 @@ class Element(BaseElement, Showable):
                 return [Element(other_e)]
             
             return [self, other]
+        
+        if self.tag == other.tag:
 
-        new_other_children = list(other_e)
+            # if self.right_bound:
+            #     return [self, other]
 
-        for child in new_other_children:
-            self_e.append(child)
+            first_child = head(other.child_elems)
+            last_child = last(self.child_elems)
+            text = other.text
+            if last_child is not None:
+                tail = last_child.tail
+            else:
+                tail = ''
 
-        return [Element(self_e)]
+            if (text is None or text == '') and first_child is not None:
+                if self._can_subsume(first_child):
+
+                    for child in list(other_e):
+                        self_e.append(child)
+                    return [Element(self_e)]
+
+            if (tail is None or tail == '') and last_child is not None:
+                if other._can_subsume(last_child):
+                    for child in list(other_e):
+                        self_e.append(child)
+                    return [Element(self_e)]
+                    
+        # for child in list(other_e):
+        #     self_e.append(child)
+
+        return [Element(self_e), Element(other_e)]
 
 
-    def __init__(self, e:Optional[Union[_Element, Element, BaseElement]]=None):
+    def __init__(
+        self, 
+        e:Optional[Union[_Element, Element, BaseElement]] = None,
+        final_space:bool = False
+    ):
         error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-
-
 
         if type(e) not in [_Element, Element, BaseElement] and e is not None and not issubclass(type(e), BaseElement):
             raise TypeError(error_msg)
@@ -110,6 +141,7 @@ class Element(BaseElement, Showable):
         elif issubclass(type(e), BaseElement):
             self._e = e.e
 
+        self._final_space = final_space
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
@@ -195,6 +227,10 @@ class Element(BaseElement, Showable):
         return len(matches) > 0
     
     @property
+    def child_elems(self) -> list[Element]:
+        return [Element(child) for child in self.children]
+    
+    @property
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
@@ -239,6 +275,13 @@ class Element(BaseElement, Showable):
 
         if self.tail is None: 
             return False
+        
+        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
+            return False
+        
+        if self.tail == '':
+            return False
+
         return self.tail[-1] in whitespace
     
     @property
@@ -336,7 +379,7 @@ class Element(BaseElement, Showable):
     @property
     def internal_token_elements(self) -> list[Element]:
 
-        def _remove_internal_extraneous_whitespace(e: _Element):
+        def remove_internal_extraneous_whitespace(e: _Element) -> _Element:
             """
             Removes extra whitespace from the tails of the elements children:
             means that correct formatting is applied when reformatted. 
@@ -344,17 +387,15 @@ class Element(BaseElement, Showable):
             TODO: apply to all descendants
             """
 
-            def _remove_newlines_from_tail(child: _Element):
+            def remove_newlines_from_tail(child: _Element) -> _Element:
                 if child.tail is None:
                     return child
-
-                # [_remove_newlines_from_tail(child) for child in list(child)]
 
                 tail:str = child.tail
                 child.tail = re.sub(r'[\n\s\t]+', ' ', tail)
                 return child
 
-            def _remove_newlines_from_text(child: _Element):
+            def remove_newlines_from_text(child: _Element) -> _Element:
                 if child.text is None:
                     return child
 
@@ -368,15 +409,15 @@ class Element(BaseElement, Showable):
             for child in list(_e):
                 _e.remove(child)
 
-            children_with_new_tails = list(map(_remove_newlines_from_tail, children))     
-            children_with_new_text = list(map(_remove_newlines_from_text, children_with_new_tails))
+            children_with_new_tails = list(map(remove_newlines_from_tail, children))     
+            children_with_new_text = list(map(remove_newlines_from_text, children_with_new_tails))
 
             for child in children_with_new_text:
                 _e.append(child)
 
             return _e      
             
-        def _make_word(e: _Element) -> list[_Element]:
+        def make_word(e: _Element) -> list[Element]:
 
             """TODO merge with w_factory"""
 
@@ -387,11 +428,11 @@ class Element(BaseElement, Showable):
             if _element.tag.name in BoundaryType.values():
                 internalprotowords = _element._internal_prototokens
                 if internalprotowords == []:
-                    return [Element(_e)]
+                    return [Element(_e, final_space=True)]
 
                 if len(internalprotowords) == 1:
                     _e.tail = ''
-                    return Element(_e) + Element(Element.w_factory(internalprotowords[0]))
+                    return Element(_e) + Element.w_factory(internalprotowords[0])
                 
                 raise ValueError("More than 1 protoword.")
 
@@ -401,17 +442,29 @@ class Element(BaseElement, Showable):
             elif _element.tag.name in CompoundTokenType.values():
                 
                 w = Element.w_factory(parent=_element._e)
-                return [Element(w)]
+                return [w]
             
             w = Element.w_factory(subelements=[_e])
-            return [Element(w)]
+            if e.tail is not None and e.tail[-1] in ' ':
+                w._final_space = True
+            
+            return [w]
 
-        e = _remove_internal_extraneous_whitespace(self._e)
-        return _make_word(e)
+        e = remove_internal_extraneous_whitespace(self._e)
+        return make_word(e)
 
     @property
     def _join_to_next(self) -> bool:
         return len(self.next_no_spaces) > 1
+
+    @property
+    def _join_to_prev(self) -> bool:
+        prev_sibling = self.previous_sibling
+        
+        if prev_sibling is None:
+            return False
+        
+        return Element(prev_sibling)._join_to_next
 
     @property
     def lb_in_preceding_or_ancestor(self) -> Optional[_Element]:
@@ -478,7 +531,7 @@ class Element(BaseElement, Showable):
         """Returns a list of the next |Element| not 
         separated by whitespace."""
 
-        def _lb_no_break_next(element:Element) -> bool:
+        def lb_no_break_next(element:Element) -> bool:
             """Keep going if element is a linebreak with no word break"""
             next_elem = element.next_sibling
 
@@ -491,19 +544,19 @@ class Element(BaseElement, Showable):
 
             return False
                 
-        def _next_no_spaces(acc:list[Element], element:Optional[Element]):
+        def next_no_spaces(acc:list[Element], element:Optional[Element]):
             if not isinstance(element, Element): 
                 return acc
 
-            if _lb_no_break_next(element):
-                return _next_no_spaces(acc + [element], element.next_sibling)
+            if lb_no_break_next(element):
+                return next_no_spaces(acc + [element], element.next_sibling)
 
             if element.final_tailtoken_boundary:
                 return acc + [element]
 
-            return _next_no_spaces(acc + [element], element.next_sibling)
+            return next_no_spaces(acc + [element], element.next_sibling)
 
-        return _next_no_spaces([], self)
+        return next_no_spaces([], self)
 
     @property
     def no_gaps(self) -> bool:
@@ -568,6 +621,17 @@ class Element(BaseElement, Showable):
     def _prototokens(self) -> list[str]:
         return self._internal_prototokens + self._tail_prototokens
     
+    @property
+    def left_bound(self) -> bool:
+        pass
+
+    @property
+    def right_bound(self) -> bool:
+        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
+            return False
+        
+        return self._final_space
+
     @property
     def root(self) -> BaseElement:
         return self.parents[-1]
@@ -695,6 +759,7 @@ class Element(BaseElement, Showable):
             if item != '']
 
         if whitespace.intersection(set(self.tail)):
+
             if self.tail[0] in whitespace:
                 return tailsplit
             elif len(tailsplit) == 0:
@@ -707,11 +772,14 @@ class Element(BaseElement, Showable):
             return []
     
     @property
-    def tail_token_elems(self) -> list[Element]:
+    def tail_token_elements(self) -> list[Element]:
 
         def _make_words(protoword:Optional[str]) -> Element:
             w = Element.w_factory(protoword)
-            return Element(w)
+            
+            if protoword is not None and protoword[-1] in whitespace:
+                w._final_space = True
+            return w
 
         return list(map(_make_words, self._tail_prototokens))
             
@@ -748,7 +816,7 @@ class Element(BaseElement, Showable):
         prototoken:Optional[str]=None, 
         subelements:list[_Element]=[],
         parent:Optional[_Element]=None
-    ) -> _Element:
+    ) -> Element:
 
         """TODO merge w_factory and make_word functions."""
 
@@ -757,7 +825,7 @@ class Element(BaseElement, Showable):
                 tailword_strs = _tail.split()
                 tailtokens = [Element.w_factory(prototoken=tailtoken_str) 
                     for tailtoken_str in tailword_strs]
-                [_parent.append(tailtoken) for tailtoken in tailtokens] 
+                [_parent.append(tailtoken.e) for tailtoken in tailtokens] 
 
             return _parent           
 
@@ -776,7 +844,8 @@ class Element(BaseElement, Showable):
             for e in subelements:
                 new_g.append(e)
 
-            return new_g
+            g_elem = Element(new_g, final_space=True)
+            return g_elem
 
         elif prototoken is None and parent is not None:
             children:list[_Element] = [deepcopy(e) for e in list(parent)] 
@@ -800,7 +869,7 @@ class Element(BaseElement, Showable):
                     new_parent = append_tail_or_text(e.tail, new_parent)
 
                 elif ns.remove_ns(e.tag) in CompoundTokenType.values(): # e.g. <persName>, <orgName>
-                    new_parent.append(Element.w_factory(parent=new_e))
+                    new_parent.append(Element.w_factory(parent=new_e).e)
                     new_parent = append_tail_or_text(e.tail, new_parent)
 
                 else: # e.g. <expan>
@@ -810,7 +879,7 @@ class Element(BaseElement, Showable):
                     new_parent.append(new_w)
                     new_parent = append_tail_or_text(e.tail, new_parent)
                     
-            return new_parent
+            return Element(new_parent, final_space=True)
         else:
             if prototoken: 
                 namespace = ns.give_ns('w', ns=NS)
@@ -822,11 +891,11 @@ class Element(BaseElement, Showable):
             for child in subelements:
                 new_w.append(child)
 
-        return new_w
+        return Element(new_w, final_space=True)
 
     @property
     def token_elements(self) -> list[Element]:
-        return self.internal_token_elements + self.tail_token_elems
+        return self.internal_token_elements + self.tail_token_elements
 
     @property
     def xml(self) -> _Element:

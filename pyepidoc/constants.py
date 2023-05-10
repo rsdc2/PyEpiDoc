@@ -21,6 +21,8 @@ SubsumableRels = [
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'lb', 'ns': NS, 'attrs': {'break': 'no'}}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'g', 'ns': NS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'space', 'ns': NS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'unclear', 'ns': NS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'del', 'ns': NS, 'attrs': dict()}},
 ]
 
 SET_IDS = False
