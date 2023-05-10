@@ -49,7 +49,12 @@ class Element(BaseElement, Showable):
     Provides basic services for all EpiDoc elements.
     """
 
-    def __add__(self, other:Element) -> list[Element]:
+    def __add__(self, other:Optional[Element]) -> list[Element]:
+        """
+        Handles appending |Element|s.
+        """
+
+        # Handle cases where other is None
         if other is None:
             return [self]
 
@@ -70,8 +75,11 @@ class Element(BaseElement, Showable):
 
         if self_e is None or other_e is None:
             return []
-            
+        
+        # Handle unlike tags
         if self.tag != other.tag:
+            # If right-bounded, never subsume
+            # <lb break='no'> does not constitute a bound
             if self.right_bound:
                 return [self, other]
             
@@ -87,12 +95,12 @@ class Element(BaseElement, Showable):
                 return [Element(other_e)]
             
             return [self, other]
-        
+
+        # Handle like tags        
         if self.tag == other.tag:
-
-            # if self.right_bound:
-            #     return [self, other]
-
+            # No check for right bound, as assume 
+            # spaces have already been taken into 
+            # account in generating like adjacent tags
             first_child = head(other.child_elems)
             last_child = last(self.child_elems)
             text = other.text
@@ -101,6 +109,9 @@ class Element(BaseElement, Showable):
             else:
                 tail = ''
 
+            # Look inside other tag to see if contains 
+            # an element that can be subsumed by self;
+            # if so, merge tags
             if (text is None or text == '') and first_child is not None:
                 if self._can_subsume(first_child):
 
@@ -108,15 +119,15 @@ class Element(BaseElement, Showable):
                         self_e.append(child)
                     return [Element(self_e)]
 
+            # Look inside self to see if other tag can 
+            # subsume it;
+            # if so, merge tags
             if (tail is None or tail == '') and last_child is not None:
                 if other._can_subsume(last_child):
                     for child in list(other_e):
                         self_e.append(child)
                     return [Element(self_e)]
                     
-        # for child in list(other_e):
-        #     self_e.append(child)
-
         return [Element(self_e), Element(other_e)]
 
 
@@ -620,10 +631,6 @@ class Element(BaseElement, Showable):
     @property
     def _prototokens(self) -> list[str]:
         return self._internal_prototokens + self._tail_prototokens
-    
-    @property
-    def left_bound(self) -> bool:
-        pass
 
     @property
     def right_bound(self) -> bool:
