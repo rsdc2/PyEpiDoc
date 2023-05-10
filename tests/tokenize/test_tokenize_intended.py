@@ -33,6 +33,8 @@ tests = [
     'roleName',
     'orgName_1',
     'orgName_2',
+    'orgName_3',
+    'orgName_4',
     'del_1',
     'del_2',
     'choice',

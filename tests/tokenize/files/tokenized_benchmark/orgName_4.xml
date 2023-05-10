@@ -4,7 +4,7 @@
         <body>
             <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
                 <ab>
-                    <orgName type="military"><w>hello</w> <orgName><name>Iuvenis</name></orgName></orgName>
+                    <orgName type="military"><orgName><orgName><w>Iuvenis</w></orgName></orgName></orgName>
                 </ab>
             </div>
         </body>
