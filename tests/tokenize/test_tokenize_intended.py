@@ -31,6 +31,7 @@ tests = [
     'interpunct_6', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_7', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_8', # tests that recognises interpuncts correctly and puts in <g> tag
+    'interpunct_9', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_word_space',
     'interpunct_no_word_space',
     'roleName',

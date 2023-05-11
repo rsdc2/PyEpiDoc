@@ -861,8 +861,7 @@ class Element(BaseElement, Showable):
     def w_factory(
         prototoken:Optional[str]=None, 
         subelements:list[_Element]=[],
-        parent:Optional[_Element]=None,
-        final_space:bool=False
+        parent:Optional[_Element]=None
     ) -> Element:
 
         """TODO merge w_factory and make_word functions."""

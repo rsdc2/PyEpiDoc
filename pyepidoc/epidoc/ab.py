@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Sequence
+from typing import Optional, Sequence, cast
 
 from copy import deepcopy
 from functools import reduce
@@ -152,7 +152,9 @@ class Ab(Element):
 
                     return new_first + acc[1:]
 
-                return reduce(sumfunc, reversed(element.token_elements + acc), [])
+                # Don't sum the whole sequence every time
+                # On multiple passes, information on bounding left and right appears to get lost
+                return reduce(sumfunc, reversed(element.token_elements + acc[:2]), cast(list[Element], [])) + acc[2:]
 
             return element.token_elements + acc
 
