@@ -34,7 +34,8 @@ from ..epidoc.epidoctypes import (
     whitespace, 
     AtomicTokenType, 
     CompoundTokenType, 
-    BoundaryType
+    BoundaryType,
+    SubatomicTagType
 )
 from .root import Root
 from ..utils import maxone, maxoneT, head, last
@@ -456,6 +457,17 @@ class Element(BaseElement, Showable):
 
             """TODO merge with w_factory"""
 
+            def handle_compound_token(p:_Element) -> Element:
+                return Element.w_factory(parent=p)
+            
+            def handle_subatomic_tags(subelement:_Element) -> Element:
+                w = Element.w_factory(subelements=[subelement])
+
+                if e.tail is not None and e.tail[-1] in ' ':
+                    w._final_space = True
+                
+                return w
+            
             _e = deepcopy(e)
             _e.tail = self.tail_completer
             _element = Element(_e)
@@ -477,20 +489,28 @@ class Element(BaseElement, Showable):
                 raise ValueError("More than 1 protoword.")
 
             elif _element.tag.name in AtomicTokenType.values():            
-                return [_element]
+                return [_element] # i.e. do nothing because already a token
+            
+            elif _element.tag.name in SubatomicTagType.values() and _element.tag.name in CompoundTokenType.values():
+                # This handles cases like <hi> which may contain tokens, but may also only contain parts of tokens
+
+                potential_subtokens = _element.text_desc.split()
+
+                if len(potential_subtokens) > 1: # If there are more than one potential subtokens, then treat as compound token
+                    return [handle_compound_token(_element.e)]
+                elif len(potential_subtokens) == len(_element.tokenized_children):
+                    return [_element] # i.e. do nothing because there is nothing to tokenize
+                else:
+                    return [handle_subatomic_tags(subelement=_e)]
 
             elif _element.tag.name in CompoundTokenType.values():
-                
-                w = Element.w_factory(parent=_element._e)
-                return [w]
+                return [handle_compound_token(p=_element.e)]
             
-            w = Element.w_factory(subelements=[_e])
+            elif _element.tag.name in SubatomicTagType.values():
+                return [handle_subatomic_tags(subelement=_e)]
 
-            if e.tail is not None and e.tail[-1] in ' ':
-                w._final_space = True
-            
-            return [w]
-
+            raise ValueError("Invalid _element.tag.name")
+        
         e = remove_internal_extraneous_whitespace(self._e)
         return make_internal_token(e)
 
@@ -820,14 +840,14 @@ class Element(BaseElement, Showable):
     @property
     def tail_token_elements(self) -> list[Element]:
 
-        def _make_words(protoword:Optional[str]) -> Element:
+        def make_words(protoword:Optional[str]) -> Element:
             w = Element.w_factory(protoword)
             
             if protoword is not None and protoword[-1] in whitespace:
                 w._final_space = True
             return w
 
-        return list(map(_make_words, self._tail_prototokens))
+        return list(map(make_words, self._tail_prototokens))
             
     @property
     def text(self) -> str:
@@ -900,6 +920,7 @@ class Element(BaseElement, Showable):
             # Remove text and children from new_parent
             for child in list(new_parent):
                 new_parent.remove(child)
+
             new_parent.text = None
         
             # Handle the text content of new_parent
@@ -909,21 +930,34 @@ class Element(BaseElement, Showable):
             for e in children:
                 new_e = deepcopy(e)
                 new_e.tail = None
+                tag = ns.remove_ns(e.tag)
 
-                if ns.remove_ns(e.tag) in AtomicTokenType.values() + BoundaryType.values():
+                if tag in AtomicTokenType.values() + BoundaryType.values():
                     new_parent.append(new_e)
                     new_parent = append_tail_or_text(e.tail, new_parent)
 
-                elif ns.remove_ns(e.tag) in CompoundTokenType.values(): # e.g. <persName>, <orgName>
-                    new_parent.append(Element.w_factory(parent=new_e).e)
-                    new_parent = append_tail_or_text(e.tail, new_parent)
+                # elif tag in SubatomicTagType.values() and tag in CompoundTokenType.values(): # i.e. <hi>
+                #     if len(Element(e).tokenized_children) > 0:
+                #         new_parent.append(Element.w_factory(parent=new_e).e)
+                #         new_parent = append_tail_or_text(e.tail, new_parent)
+                #     else:
+                #         namespace = ns.give_ns('w', ns=NS)
+                #         new_w = etree.Element(namespace)
+                #         new_w.append(new_e)
+                #         new_parent.append(new_w)
+                #         new_parent = append_tail_or_text(e.tail, new_parent)                          
 
-                else: # e.g. <expan>
+                elif tag in SubatomicTagType.values(): # e.g. <expan>
                     namespace = ns.give_ns('w', ns=NS)
                     new_w = etree.Element(namespace)
                     new_w.append(new_e)
                     new_parent.append(new_w)
+                    new_parent = append_tail_or_text(e.tail, new_parent)                    
+
+                elif tag in CompoundTokenType.values(): # e.g. <persName>, <orgName>
+                    new_parent.append(Element.w_factory(parent=new_e).e)
                     new_parent = append_tail_or_text(e.tail, new_parent)
+
                     
             return Element(new_parent, final_space=True)
         else:
@@ -940,7 +974,20 @@ class Element(BaseElement, Showable):
         return Element(new_w, final_space=True)
 
     @property
+    def tokenized_children(self) -> list[Element]:
+        """
+        Returns children that are already tokenized.
+        """
+
+        return [child for child in self.child_elems
+            if child.name_no_namespace in AtomicTokenType.values()]
+
+    @property
     def token_elements(self) -> list[Element]:
+        """
+        Returns all potential child tokens.
+        For use in tokenization.
+        """
         return self.internal_token_elements + self.tail_token_elements
 
     @property

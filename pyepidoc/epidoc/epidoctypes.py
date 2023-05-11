@@ -25,7 +25,7 @@ class SubatomicTagType(EnumerableEnum):
     Supplied = 'supplied'
     Del = 'del'
     Choice = 'choice'   # Choice always contained by an atomic word type, but never smaller than that, so not like others in this category
-    Hi = 'hi'
+    Hi = 'hi' # can also contain atomic token types
 
 
 class AtomicTokenType(EnumerableEnum):
@@ -54,6 +54,8 @@ class CompoundTokenType(EnumerableEnum):
     RoleName = 'roleName'
     OrgName = 'orgName'
     Foreign = 'foreign'
+    Hi = 'hi' # can also contain atomic token types
+
 
 
 TokenCarrier = set(
