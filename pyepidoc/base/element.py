@@ -427,7 +427,7 @@ class Element(BaseElement, Showable):
 
             return _e      
             
-        def make_word(e: _Element) -> list[Element]:
+        def make_internal_token(e: _Element) -> list[Element]:
 
             """TODO merge with w_factory"""
 
@@ -467,7 +467,7 @@ class Element(BaseElement, Showable):
             return [w]
 
         e = remove_internal_extraneous_whitespace(self._e)
-        return make_word(e)
+        return make_internal_token(e)
 
     @property
     def _join_to_next(self) -> bool:
