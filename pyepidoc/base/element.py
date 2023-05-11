@@ -16,7 +16,6 @@ from copy import deepcopy
 from functools import reduce, cached_property
 import operator
 import re
-import uuid
 
 from lxml import etree # type: ignore
 from lxml.etree import ( # type: ignore
@@ -665,9 +664,6 @@ class Element(BaseElement, Showable):
 
     def set_id(self) -> None:
         self.id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)) + "0"
-
-    def set_uuid(self) -> None:
-        self.id_xml = str(uuid.uuid4())
 
     @property
     def tag(self) -> Tag:
