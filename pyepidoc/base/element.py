@@ -442,7 +442,10 @@ class Element(BaseElement, Showable):
 
                 if len(internalprotowords) == 1:
                     _e.tail = ''
-                    return Element(_e) + Element.w_factory(internalprotowords[0])
+                    elems = Element(_e) + Element.w_factory(internalprotowords[0])
+                    if len(self.tail_token_elements) > 0:
+                        elems[-1]._final_space = True
+                    return elems
                 
                 raise ValueError("More than 1 protoword.")
 
@@ -455,6 +458,7 @@ class Element(BaseElement, Showable):
                 return [w]
             
             w = Element.w_factory(subelements=[_e])
+
             if e.tail is not None and e.tail[-1] in ' ':
                 w._final_space = True
             
@@ -818,7 +822,8 @@ class Element(BaseElement, Showable):
     def w_factory(
         prototoken:Optional[str]=None, 
         subelements:list[_Element]=[],
-        parent:Optional[_Element]=None
+        parent:Optional[_Element]=None,
+        final_space:bool=False
     ) -> Element:
 
         """TODO merge w_factory and make_word functions."""
@@ -836,7 +841,7 @@ class Element(BaseElement, Showable):
         new_g:_Element
 
         # Handle interpuncts
-        if prototoken is not None and prototoken.strip() in ['·', '·']:
+        if prototoken is not None and prototoken.strip() in ['·', '·', '❦']:
             namespace = ns.give_ns('g', ns=NS)
             new_g = etree.Element(namespace)
 

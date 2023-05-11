@@ -143,14 +143,6 @@ class Ab(Element):
 
                 if element.token_elements == []:
                     return acc
-                
-                # x = acc[0] + acc[1]
-                # y = (element.token_elements[-1] + x[0]) + x[1:]
-
-                # if len(acc) > 2:
-                #     return element.token_elements[:-1] + y + acc[2:]
-                # else:
-                #     return element.token_elements[:-1] + y
             
                 def sumfunc(acc:list[Element], elem:Element) -> list[Element]:
                     if acc == []:
@@ -169,10 +161,6 @@ class Ab(Element):
     def set_ids(self) -> None:
         for wordcarrier in self.token_carriers:
             wordcarrier.set_id()
-
-    def set_uuids(self) -> None:
-        for wordcarrier in self.token_carriers:
-            wordcarrier.set_uuid()
 
     @property
     def textparts(self) -> list[TextPart]:
