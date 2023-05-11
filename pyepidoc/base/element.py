@@ -443,6 +443,8 @@ class Element(BaseElement, Showable):
                 if len(internalprotowords) == 1:
                     _e.tail = ''
                     elems = Element(_e) + Element.w_factory(internalprotowords[0])
+
+                    # Make sure there is a bound to the right if there are multiple tokens in the tail
                     if len(self.tail_token_elements) > 0:
                         elems[-1]._final_space = True
                     return elems
