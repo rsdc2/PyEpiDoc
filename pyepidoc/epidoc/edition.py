@@ -260,12 +260,7 @@ class Edition(Element):
     def set_ids(self, override:bool=False) -> None:
         if SET_IDS or override:
             for ab in self.abs:
-                ab.set_uuids()
-
-    def set_uuids(self) -> None:
-        if SET_IDS:
-            for ab in self.abs:
-                ab.set_uuids()
+                ab.set_ids()
 
     @property
     def subtype(self) -> Optional[str]:

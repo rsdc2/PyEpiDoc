@@ -79,7 +79,7 @@ class Element(BaseElement, Showable):
         if self.tag != other.tag:
             # If right-bounded, never subsume
             # <lb break='no'> does not constitute a bound
-            if self.right_bound:
+            if self.right_bound and other.left_bound:
                 return [self, other]
             
             if self._can_subsume(other):
@@ -638,10 +638,39 @@ class Element(BaseElement, Showable):
         return self._internal_prototokens + self._tail_prototokens
 
     @property
-    def right_bound(self) -> bool:
+    def left_bound(self) -> bool:
+        """
+        Return False if self is <lb break='no'>, otherwise return True.
+        First child only counted if the element has no text.
+        Used for element addition in __add__ method.
+        """
+
         if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
             return False
         
+        first_child = head(self.child_elems)
+        if first_child is not None and (self.text == '' or self.text is None):
+            if  first_child.name_no_namespace == 'lb' and first_child.get_attrib('break') == 'no':
+                return False
+            
+        return True
+
+    @property
+    def right_bound(self) -> bool:
+        """
+        Return False if self or last child is <lb break='no'>, otherwise return True.
+        Last child only counted if the last child has no tail.
+        Used for element addition in __add__ method.
+        """
+
+        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
+            return False
+
+        last_child = last(self.child_elems)
+        if last_child is not None and (last_child.tail == '' or last_child.tail is None):
+            if  last_child.name_no_namespace == 'lb' and last_child.get_attrib('break') == 'no':
+                return False
+
         return self._final_space
 
     @property

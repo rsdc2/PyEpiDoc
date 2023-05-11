@@ -380,13 +380,13 @@ class EpiDocCorpus:
         
         return doc.prefix
 
-    def set_uuids(self, dstfolder:Optional[str], verbose=True) -> None:
+    def set_ids(self, dstfolder:Optional[str], verbose=True) -> None:
         if SET_IDS:
             if dstfolder is None: 
                 return
             for doc in self.docs:
                 if verbose: print(f'Setting ids for {doc.id}...')
-                doc.set_uuids()
+                doc.set_ids()
                 self._doc_to_xml(dstfolder=dstfolder, doc=doc)
 
     @cached_property
