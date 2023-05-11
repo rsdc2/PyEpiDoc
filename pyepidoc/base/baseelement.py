@@ -264,10 +264,6 @@ class BaseElement(Showable):
         return ns.remove_ns(self._e.tag)
 
     @property
-    def next_sibling(self) -> Optional[BaseElement]:
-        pass
-
-    @property
     def next_siblings(self) -> list[BaseElement]:
         next_sibs = self.xpath('following-sibling::*')
 

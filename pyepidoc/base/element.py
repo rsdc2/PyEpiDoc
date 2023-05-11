@@ -225,17 +225,42 @@ class Element(BaseElement, Showable):
         self._e.tail = self._e.tail + ' '
         return self
 
-    def _can_subsume(self, other:Element) -> bool:
-        if type(other) is not Element: 
+    @property
+    def left_bound(self) -> bool:
+        """
+        Return False if self is <lb break='no'>, otherwise return True.
+        First child only counted if the element has no text.
+        Used for element addition in __add__ method.
+        """
+
+        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
+            return False
+        
+        first_child = head(self.child_elems)
+        if first_child is not None and (self.text == '' or self.text is None):
+            if  first_child.name_no_namespace == 'lb' and first_child.get_attrib('break') == 'no':
+                return False
+            
+        return True
+
+    @property
+    def right_bound(self) -> bool:
+        """
+        Return False if self or last child is <lb break='no'>, otherwise return True.
+        Last child only counted if the last child has no tail.
+        Used for element addition in __add__ method.
+        """
+
+        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
             return False
 
-        matches = list(filter(
-            self._subsume_filterfunc(head=self, dep=other),
-            SubsumableRels)
-        )
-            
-        return len(matches) > 0
-    
+        last_child = last(self.child_elems)
+        if last_child is not None and (last_child.tail == '' or last_child.tail is None):
+            if  last_child.name_no_namespace == 'lb' and last_child.get_attrib('break') == 'no':
+                return False
+
+        return self._final_space
+
     @property
     def child_elems(self) -> list[Element]:
         return [Element(child) for child in self.children]
@@ -514,34 +539,6 @@ class Element(BaseElement, Showable):
         return Element(preceding_lb)
 
     @property
-    def next_sibling(self) -> Optional[Element]:
-
-        def _get_next(e:Optional[_Element]) -> Optional[_Element]:
-            if e is None:
-                return None
-
-            _next_sib = e.getnext()
-
-            if type(_next_sib) is C:
-                return _get_next(_next_sib)
-            if type(_next_sib) is _Element:
-                return _next_sib
-
-            return None
-
-        if self._e is None:
-            return None
-
-        _next = _get_next(self._e)
-        
-        if type(_next) is _Element:
-            return Element(_next)
-        elif _next is None:
-            return None
-
-        return None
-
-    @property
     def next_no_spaces(self) -> list[Element]:
 
         """Returns a list of the next |Element| not 
@@ -573,6 +570,41 @@ class Element(BaseElement, Showable):
             return next_no_spaces(acc + [element], element.next_sibling)
 
         return next_no_spaces([], self)
+
+    @property
+    def next_sibling(self) -> Optional[Element]:
+
+        """
+        Finds the next non-comment sibling |Element|.
+        """
+
+        # TODO: put into base element layer; 
+        # previously tried to do this but caused recursion error
+
+        def _get_next(e:Optional[_Element]) -> Optional[_Element]:
+            if e is None:
+                return None
+
+            _next_sib = e.getnext()
+
+            if type(_next_sib) is C:
+                return _get_next(_next_sib)
+            if type(_next_sib) is _Element:
+                return _next_sib
+
+            return None
+
+        if self._e is None:
+            return None
+
+        _next = _get_next(self._e)
+        
+        if type(_next) is _Element:
+            return Element(_next)
+        elif _next is None:
+            return None
+
+        return None
 
     @property
     def no_gaps(self) -> bool:
@@ -638,42 +670,6 @@ class Element(BaseElement, Showable):
         return self._internal_prototokens + self._tail_prototokens
 
     @property
-    def left_bound(self) -> bool:
-        """
-        Return False if self is <lb break='no'>, otherwise return True.
-        First child only counted if the element has no text.
-        Used for element addition in __add__ method.
-        """
-
-        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
-            return False
-        
-        first_child = head(self.child_elems)
-        if first_child is not None and (self.text == '' or self.text is None):
-            if  first_child.name_no_namespace == 'lb' and first_child.get_attrib('break') == 'no':
-                return False
-            
-        return True
-
-    @property
-    def right_bound(self) -> bool:
-        """
-        Return False if self or last child is <lb break='no'>, otherwise return True.
-        Last child only counted if the last child has no tail.
-        Used for element addition in __add__ method.
-        """
-
-        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
-            return False
-
-        last_child = last(self.child_elems)
-        if last_child is not None and (last_child.tail == '' or last_child.tail is None):
-            if  last_child.name_no_namespace == 'lb' and last_child.get_attrib('break') == 'no':
-                return False
-
-        return self._final_space
-
-    @property
     def root(self) -> BaseElement:
         return self.parents[-1]
 
@@ -699,6 +695,51 @@ class Element(BaseElement, Showable):
 
     def set_id(self) -> None:
         self.id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)) + "0"
+
+    def _can_subsume(self, other:Element) -> bool:
+        if type(other) is not Element: 
+            return False
+
+        matches = list(filter(
+            self._subsume_filterfunc(head=self, dep=other),
+            SubsumableRels)
+        )
+            
+        return len(matches) > 0
+
+
+    def _subsumable_by(self, other:Element) -> bool:
+        if type(other) is not Element: 
+            return False
+
+        matches = list(filter(self._subsume_filterfunc(head=other, dep=self), SubsumableRels))
+
+        return len(matches) > 0
+
+    @staticmethod
+    def _subsume_filterfunc(head:Element, dep:Element):
+
+        def _filterfunc(item) -> bool:
+            if item['head'] != head.dict_desc:
+                return False
+
+            if item['dep']['name'] != dep.dict_desc['name']:
+                return False
+
+            if item['dep']['ns'] != dep.dict_desc['ns']:
+                return False
+
+            issubset = set(item['dep']['attrs']).issubset(set(dep.dict_desc['attrs']))
+
+            if issubset:
+                values_match = False not in [item['dep']['attrs'][key] == dep.dict_desc['attrs'][key] 
+                    for key in item['dep']['attrs'].keys()]
+                
+                return values_match
+
+            return False
+
+        return _filterfunc
 
     @property
     def tag(self) -> Tag:
@@ -736,39 +777,6 @@ class Element(BaseElement, Showable):
             return ''.join(reduce(rfunc, list(self.tail), [])).strip()
 
         return self.tail
-
-    @staticmethod
-    def _subsume_filterfunc(head:Element, dep:Element):
-
-        def _filterfunc(item) -> bool:
-            if item['head'] != head.dict_desc:
-                return False
-
-            if item['dep']['name'] != dep.dict_desc['name']:
-                return False
-
-            if item['dep']['ns'] != dep.dict_desc['ns']:
-                return False
-
-            issubset = set(item['dep']['attrs']).issubset(set(dep.dict_desc['attrs']))
-
-            if issubset:
-                values_match = False not in [item['dep']['attrs'][key] == dep.dict_desc['attrs'][key] 
-                    for key in item['dep']['attrs'].keys()]
-                
-                return values_match
-
-            return False
-
-        return _filterfunc
-
-    def _subsumable_by(self, other:Element) -> bool:
-        if type(other) is not Element: 
-            return False
-
-        matches = list(filter(self._subsume_filterfunc(head=other, dep=self), SubsumableRels))
-
-        return len(matches) > 0
 
     @property
     def supplied(self):
