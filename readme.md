@@ -110,7 +110,7 @@ from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.epidoctypes import TextClass
 
 # Load the corpus
-corpus = EpiDocCorpus(folderpath='corpus/')
+corpus = EpiDocCorpus(folderpath='corpus')
 
 # Filter the corpus to find the funerary inscriptions
 funerary_corpus = corpus.filter_by_textclass([TextClass.Funerary.value])
