@@ -20,14 +20,15 @@ from ..constants import SET_IDS
 
 class EpiDocCorpus:
 
+    """
+    Provides an interface for handling a corpus of (i.e. more than one) EpiDoc files.
+    """
+
     _docs: Optional[list[EpiDoc]]
     _head: Optional[int]
     _folderpath: Optional[str]
     _fullpath:bool
 
-    """
-    Provides an interface for handling a corpus of (i.e. more than one) EpiDoc files.
-    """
 
     def __init__(
         self, 
