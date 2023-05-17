@@ -123,7 +123,8 @@ catina_funerary_corpus = (
         .filter_by_languages(['la'])
 )
 
-# Output the of this set of documents to a file ```catina_funerary_ids_la``` in the current working directory.
+# Output the of this set of documents to a file ```catina_funerary_ids_la``` 
+# in the current working directory.
 catina_funerary_ids = '\n'.join(catina_funerary_corpus.ids)
 str_to_file(catina_funerary_ids, 'catina_funerary_ids_la.txt')
 
