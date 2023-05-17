@@ -108,6 +108,7 @@ Given a corpus of EpiDoc XML files in a folder ```corpus/``` in the current work
 ```
 from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.epidoctypes import TextClass
+from pyepidoc.file.funcs import str_to_file
 
 # Load the corpus
 corpus = EpiDocCorpus(folderpath='corpus')
