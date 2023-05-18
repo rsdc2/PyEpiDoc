@@ -84,6 +84,8 @@ print(' '.join([str(token) for token in tokens]))
 Given an untokenized EpiDoc file ```ISic000032_untokenized.xml``` in an ```examples``` folder in the current working directory:
 
 ```
+from pyepidoc import EpiDoc
+
 # Load the EpiDoc file
 doc = EpiDoc("examples/ISic000032_untokenized.xml")
 
@@ -95,6 +97,9 @@ doc.prettify_edition()
 
 # Add spaces between tokens
 doc.add_space_between_tokens()
+
+# Print list of tokens
+print('Tokens: ', doc.tokens_list_str)
 
 # Save the results to a new XML file
 # Creates the folderpath if it does not exist
