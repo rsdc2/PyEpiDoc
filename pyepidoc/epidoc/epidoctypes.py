@@ -21,6 +21,7 @@ class SubatomicTagType(EnumerableEnum):
     Ex = 'ex'
     Expan = 'expan'
     Unclear = 'unclear'
+    Gap = 'gap'
     Abbr = 'abbr'
     Supplied = 'supplied'
     Del = 'del'
@@ -39,7 +40,7 @@ class BoundaryType(EnumerableEnum):
     G = 'g'
     Lb = 'lb'
     Space = 'space'
-    Gap = 'gap'
+    # Gap = 'gap'
     Orig = 'orig'   # !! Temporary !!
 
 
@@ -55,7 +56,6 @@ class CompoundTokenType(EnumerableEnum):
     OrgName = 'orgName'
     Foreign = 'foreign'
     Hi = 'hi' # can also contain atomic token types
-
 
 
 TokenCarrier = set(

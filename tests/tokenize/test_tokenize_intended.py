@@ -47,6 +47,7 @@ tests = [
     'gap',
     'gap2',
     'gap3',
+    'gap4',
     'no_lb'
 ]
 

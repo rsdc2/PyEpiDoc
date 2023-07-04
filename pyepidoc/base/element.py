@@ -337,6 +337,34 @@ class Element(BaseElement, Showable):
     def gaps(self) -> list[Element]:
         return [Element(gap) for gap in self.get_desc('gap')]
     
+    def has_gap(self, reasons:list[str]=[]) -> bool:
+        """
+        Returns True if the document contains a <gap> element with a reason
+        contained in the "reasons" attribute.
+        If "reasons" is set to an empty list, 
+        returns True if there are any gaps regardless of reason.
+        """
+
+        if self.gaps == []:
+            return False
+        
+        # There must be gaps
+        if reasons == []:
+            return True
+
+        for gap in self.gaps:
+            doc_gap_reasons = gap.get_attrib('reason')
+            if doc_gap_reasons is None:
+                continue
+            doc_gap_reasons_split = doc_gap_reasons.split()
+            intersection = set(reasons).intersection(set(doc_gap_reasons_split))
+
+            if len(intersection) > 0:
+                return True
+
+        return False
+
+
     @property
     def id_internal(self) -> list[int]:
 
@@ -803,7 +831,7 @@ class Element(BaseElement, Showable):
         return [Element(supplied) for supplied in self.get_desc('supplied')]
 
     @property
-    def hassupplied(self) -> bool:
+    def has_supplied(self) -> bool:
         """
         Returns True if token contains a 
         <supplied> tag.
