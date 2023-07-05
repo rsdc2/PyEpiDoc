@@ -1,6 +1,7 @@
 """
 Functions for generating compressed token ids for I.Sicly documents. 
 For algorithms, cf. https://en.wikipedia.org/wiki/Positional_notation#Base_conversion, last accessed 2023-07-05
+I also found this article helpful: https://iq.opengenus.org/convert-decimal-to-hexadecimal/, last accessed 2023-07-05
 """
 
 digits16 = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F'}
