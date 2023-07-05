@@ -1,7 +1,7 @@
 """
 Functions for generating compressed token ids for I.Sicly documents. 
 For algorithms, cf. https://en.wikipedia.org/wiki/Positional_notation#Base_conversion, last accessed 2023-07-05
-I also found this article helpful: https://iq.opengenus.org/convert-decimal-to-hexadecimal/, last accessed 2023-07-05
+I also found these articles helpful: https://iq.opengenus.org/convert-decimal-to-hexadecimal/, https://stackoverflow.com/questions/6692183/python-integer-to-base-32-hex-aka-triacontakaidecimal last accessed 2023-07-05
 """
 
 digits16 = {0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F'}
@@ -36,23 +36,28 @@ def formatConv(id:str) -> int:
 
 def decToBase(dec:int, base:int) -> str:
     """
-    Convert a decimal number to a number of base 'base'
+    Convert a decimal number to a number of base 'base'.
+    This works by recursively dividing the quotient by
+    the base, to produce a quotient and a remainder, until 
+    the quotient is less than the base. Each sequence 
+    of quotient and remainder corresponds to two positions
+    in the new base number.
     """
 
     def f(i:int) -> list[int]:
         q = i // base
         r = i % base
 
-        to_app = [q] if q < base else f(q)
-
-        return to_app + [r]
+        return ([q] if q < base else f(q)) + [r]
         
     l = f(dec)
     return ''.join([digitsDict[base][item] for item in l])
 
 
 def baseToDec(baseInpt:str, base:int) -> int:
+    
     """Convert a string of base 'base' to a base 10 integer"""
+    
     def f(l:list[str], acc:int) -> int:
         if l == []:
             return acc

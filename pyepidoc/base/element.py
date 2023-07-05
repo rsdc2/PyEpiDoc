@@ -743,7 +743,7 @@ class Element(BaseElement, Showable):
         self._e.attrib[ns.give_ns(attribname, namespace)] = value
 
     def set_id(self, compress:bool=True) -> None:
-        id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)) + "0"
+        id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)).rjust(3, '0') + "0"
         self.id_xml = ids.compress(id_xml, 52) if compress else id_xml
 
     def _can_subsume(self, other:Element) -> bool:

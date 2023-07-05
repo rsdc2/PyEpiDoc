@@ -24,13 +24,13 @@ from ..utils import maxone, flatlist, head
 def tokenize(
     src_folderpath:str, 
     dst_folderpath:str, 
-    filenames:list[str],
+    isic_ids:list[str],
     space_words:bool,
     set_ids:bool,
     fullpath=False
 ) -> None:
 
-    for filename in filenames:
+    for filename in isic_ids:
         if fullpath == False:
             src_filepath = filepath_from_list([getcwd(), src_folderpath], filename + ".xml")
             dst_filepath = filepath_from_list([getcwd(), dst_folderpath], filename + ".xml")

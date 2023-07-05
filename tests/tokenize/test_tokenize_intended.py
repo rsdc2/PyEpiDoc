@@ -1,4 +1,4 @@
-from pyepidoc.epidoc.funcs import tokenize
+from pyepidoc.epidoc.scripts import tokenize
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.file import FileInfo, FileMode
 from pyepidoc.file.funcs import filepath_from_list
@@ -79,7 +79,7 @@ def test_tokenize(tokenize_type:str):
     tokenize(
         src_folderpath=untokenized_folderpath, 
         dst_folderpath=tokenized_folderpath,
-        filenames=[tokenize_type],
+        isic_ids=[tokenize_type],
         space_words=True,
         set_ids=False,
         fullpath=False
