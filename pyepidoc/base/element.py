@@ -38,6 +38,7 @@ from ..epidoc.epidoctypes import (
     SubatomicTagType
 )
 from .root import Root
+from ..epidoc import ids
 from ..utils import maxone, maxoneT, head, last
 
 
@@ -741,8 +742,9 @@ class Element(BaseElement, Showable):
 
         self._e.attrib[ns.give_ns(attribname, namespace)] = value
 
-    def set_id(self) -> None:
-        self.id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)) + "0"
+    def set_id(self, compress:bool=True) -> None:
+        id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)) + "0"
+        self.id_xml = ids.compress(id_xml, 52) if compress else id_xml
 
     def _can_subsume(self, other:Element) -> bool:
         if type(other) is not Element: 

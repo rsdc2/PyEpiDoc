@@ -64,12 +64,12 @@ def baseToDec(baseInpt:str, base:int) -> int:
     return f(list(baseInpt), 0)
 
 
-def compressId(id:str, base:int) -> str:
+def compress(id:str, base:int) -> str:
     """Compresses an I.Sicily ID to base 'base'"""
     return decToBase(formatConv(id), base)
 
 
-def expandId(id:str, base:int) -> str:
+def decompress(id:str, base:int) -> str:
     """Decompresses an I.Sicily ID from base 'base' to base 10"""
     expanded = str(baseToDec(id, base))
     return 'ISic' + expanded[:-4].rjust(6, '0') + '-' + expanded[-4:]
