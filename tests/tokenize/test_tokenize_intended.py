@@ -81,7 +81,7 @@ def test_tokenize(tokenize_type:str):
         dst_folderpath=tokenized_folderpath,
         filenames=[tokenize_type],
         space_words=True,
-        ids=False,
+        set_ids=False,
         fullpath=False
     )
 

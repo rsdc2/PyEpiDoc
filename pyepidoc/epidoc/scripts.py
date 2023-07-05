@@ -21,127 +21,14 @@ from ..constants import *
 from ..utils import maxone, flatlist, head
 
 
-def ancestor_abs(elem: Element) -> Sequence[Ab]:
-    """
-    Returns a |Sequence| of |Ab|s containing an |Element|,
-    starting with the ancestor closest to the |Element|
-    """
-    return [Ab(elem) for elem in elem.parents 
-        if elem.name_no_namespace == 'ab']
-
-
-def owner_doc(elem:Element) -> Optional[EpiDoc]:
-    """
-    Returns the |EpiDoc| document owning an element.
-    """
-    roottree = elem.roottree
-
-    if roottree is None: 
-        return None
-
-    return EpiDoc(roottree)
-
-
-def ancestor_edition(elem: Element) -> Optional[Edition]:
-
-    """
-    Returns the |Edition| containing an element (if any).
-    """
-
-    editions = [Edition(elem) for elem in elem.parents 
-        if Element(elem).is_edition]
-
-    edition = maxone(
-        lst=editions,
-        defaultval=None,
-        throw_if_more_than_one=False
-    )
-
-    if edition is None:
-        return None
-    
-    return edition
-
-
-def doc_id(elem: Element) -> Optional[str]:
-    """
-    Finds the document id containing a given element.
-    """
-    roottree = elem.roottree
-
-    if roottree is None: 
-        return None
-
-    doc = EpiDoc(roottree)
-    return doc.id
-
-
-def lang(elem: Element) -> Optional[str]:
-    """
-    Returns the language of the element, based on 
-    the language specified either in the 
-    <div> or <ab> parent.
-    """
-
-    ab_ancestors = ancestor_abs(elem)
-    ab_langs = flatlist([ab.lang for ab in ab_ancestors 
-        if ab.lang is not None])
-
-    ab_lang = head(ab_langs, throw_if_more_than_one=False)
-
-    if ab_lang is not None:
-        return ab_lang
-
-    edition = ancestor_edition(elem)
-    if edition is not None and edition.lang is not None:
-        return edition.lang
-
-    doc = owner_doc(elem)
-    if doc is None:
-        return None
-
-    if doc.langs is None:
-        return None
-    
-    return doc.mainlang
-    
-
-def line(elem:Element) -> Optional[Lb]:
-    lb = elem.lb_in_preceding_or_ancestor
-    if lb is None:
-        return None
-    return Lb(elem.lb_in_preceding_or_ancestor)
-
-
-def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> list[TokenInfo]:
-    if lemmata and morphologies:
-        return [TokenInfo(lemma, morphology) 
-            for lemma in set(lemmata) 
-                for morphology in set(morphologies)]
-
-    else:
-        raise ValueError("Both lemmata and morphologies must be specified.")
-
-
-def abbrinfo_factory(forms:list[str]=[], abbrs:list[str]=[]) -> list[AbbrInfo]:
-    if forms and abbrs:
-        return [AbbrInfo(form, abbr) 
-            for form in set(forms) 
-                for abbr in set(abbrs)]
-
-    else:
-        raise ValueError("Both lemmata and morphologies must be specified.")
-
-
 def tokenize(
     src_folderpath:str, 
     dst_folderpath:str, 
     filenames:list[str],
     space_words:bool,
-    ids:bool,
+    set_ids:bool,
     fullpath=False
 ) -> None:
-
 
     for filename in filenames:
         if fullpath == False:
@@ -166,12 +53,11 @@ def tokenize(
         )
 
         doc = EpiDoc(src)
-
         doc.tokenize()
         
         if space_words: 
             doc.add_space_between_tokens(override=True)
-        if ids:
+        if set_ids:
             doc.set_ids(override=True)
 
         doc.convert_ws_to_names()
