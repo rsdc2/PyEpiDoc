@@ -151,7 +151,6 @@ def tokenize(
             src_filepath = filepath_from_list([src_folderpath], filename + ".xml")
             dst_filepath = filepath_from_list([dst_folderpath], filename + ".xml")
 
-
         src = FileInfo(
             filepath=src_filepath, 
             mode='r', 
