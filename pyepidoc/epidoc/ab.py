@@ -130,12 +130,12 @@ class Ab(Element):
 
         ab_prototokens = self.text.split()
         ab_tokens = [Element(Element.w_factory(word)) for word in ab_prototokens]        
-
+        [self.e.insert(0, token.e) for token in reversed(ab_tokens)]
         sequences = self._token_carrier_sequences
         token_carriers = [element for sequence in sequences 
             for element in sequence]
-        token_carriers_sorted = ab_tokens + sorted(token_carriers)
-
+        token_carriers_sorted = sorted(token_carriers)
+        # token_carriers[0].e.insert()
         def _redfunc(acc:list[Element], element:Element) -> list[Element]:
             if element._join_to_next:
                 if acc == []:
@@ -154,7 +154,7 @@ class Ab(Element):
 
                 # Don't sum the whole sequence every time
                 # On multiple passes, information on bounding left and right appears to get lost
-                return reduce(sumfunc, reversed(element.token_elements + acc[:2]), cast(list[Element], [])) + acc[2:]
+                return reduce(sumfunc, reversed(element.token_elements + acc[:1]), cast(list[Element], [])) + acc[1:]
 
             return element.token_elements + acc
 

@@ -35,7 +35,9 @@ from ..epidoc.epidoctypes import (
     AtomicTokenType, 
     CompoundTokenType, 
     BoundaryType,
-    SubatomicTagType
+    SubatomicTagType,
+    AlwaysSubsumableType,
+    AlwaysSubsumable
 )
 from .root import Root
 from ..epidoc import ids
@@ -76,6 +78,7 @@ class Element(BaseElement, Showable):
 
         if self_e is None or other_e is None:
             return []
+
         
         # Handle unlike tags
         if self.tag != other.tag:
@@ -86,7 +89,7 @@ class Element(BaseElement, Showable):
             
             if self._can_subsume(other):
                 self_e.append(other_e)
-                return [Element(self_e)]
+                return [Element(self_e, other._final_space)]
 
             if self._subsumable_by(other):
                 self_e.tail = other.text
@@ -98,10 +101,14 @@ class Element(BaseElement, Showable):
             return [self, other]
 
         # Handle like tags        
-        if self.tag == other.tag:
+        if self.tag.name in AtomicTokenType.values() and other.tag.name in AtomicTokenType.values(): # Are there any tags that can merge apart from <w>?
             # No check for right bound, as assume 
             # spaces have already been taken into 
             # account in generating like adjacent tags
+            # if other.tag not in BoundaryType.values():
+            #     if self.right_bound and other.left_bound:
+            #         return [self, other]
+
             first_child = head(other.child_elems)
             last_child = last(self.child_elems)
             text = other.text
@@ -114,22 +121,24 @@ class Element(BaseElement, Showable):
             # an element that can be subsumed by self;
             # if so, merge tags
             if (text is None or text == '') and first_child is not None:
-                if self._can_subsume(first_child):
+                if not self.right_bound or first_child.tag.name in AlwaysSubsumable:
+                    if self._can_subsume(first_child):
 
-                    for child in list(other_e):
-                        self_e.append(child)
-                    return [Element(self_e)]
+                        for child in list(other_e):
+                            self_e.append(child)
+                        return [Element(self_e, other._final_space)]
 
             # Look inside self to see if other tag can 
             # subsume it;
             # if so, merge tags
             if (tail is None or tail == '') and last_child is not None:
-                if other._can_subsume(last_child):
-                    for child in list(other_e):
-                        self_e.append(child)
-                    return [Element(self_e)]
-                    
-        return [Element(self_e), Element(other_e)]
+                if not self.right_bound or last_child.tag.name in AlwaysSubsumable:
+                    if other._can_subsume(last_child):
+                        for child in list(other_e):
+                            self_e.append(child)
+                        return [Element(self_e, other._final_space)]
+            
+        return [Element(self_e, self._final_space), Element(other_e, other._final_space)]
 
 
     def __init__(
@@ -261,7 +270,12 @@ class Element(BaseElement, Showable):
             if  last_child.name_no_namespace == 'lb' and last_child.get_attrib('break') == 'no':
                 return False
 
-        return self._final_space
+        if self.e is None:
+            return False
+        
+        return self._final_space == True or self.e.tail == ' '
+
+        # return self._final_space
 
     @property
     def child_elems(self) -> list[Element]:
@@ -640,6 +654,7 @@ class Element(BaseElement, Showable):
                 return _get_next(_next_sib)
             if type(_next_sib) is _Element:
                 return _next_sib
+            e.getroottree()
 
             return None
 
@@ -749,6 +764,8 @@ class Element(BaseElement, Showable):
     def _can_subsume(self, other:Element) -> bool:
         if type(other) is not Element: 
             return False
+        
+        # breakpoint()
 
         matches = list(filter(
             self._subsume_filterfunc(head=self, dep=other),
@@ -756,7 +773,6 @@ class Element(BaseElement, Showable):
         )
             
         return len(matches) > 0
-
 
     def _subsumable_by(self, other:Element) -> bool:
         if type(other) is not Element: 
@@ -875,9 +891,13 @@ class Element(BaseElement, Showable):
             
             if protoword is not None and protoword[-1] in whitespace:
                 w._final_space = True
+            
             return w
 
-        return list(map(make_words, self._tail_prototokens))
+        tail_token_elems = list(map(make_words, self._tail_prototokens))
+        if tail_token_elems != []:
+            tail_token_elems[-1]._final_space = True if self.e is not None and self.e.tail != '' and self.e.tail[-1] in ['\n', ' '] else False
+        return tail_token_elems
             
     @property
     def text(self) -> str:
@@ -940,7 +960,7 @@ class Element(BaseElement, Showable):
             for e in subelements:
                 new_g.append(e)
 
-            g_elem = Element(new_g, final_space=True)
+            g_elem = Element(new_g, final_space=True) # Final space because result of a split operation
             return g_elem
 
         elif prototoken is None and parent is not None:
@@ -1018,7 +1038,10 @@ class Element(BaseElement, Showable):
         Returns all potential child tokens.
         For use in tokenization.
         """
-        return self.internal_token_elements + self.tail_token_elements
+        token_elems = self.internal_token_elements + self.tail_token_elements
+        if token_elems != []:
+            token_elems[-1]._final_space = True if self.e is not None and self.e.tail not in ['', None] and self.e.tail[-1] in ['\n', ' '] else False
+        return token_elems
 
     @property
     def xml(self) -> _Element:

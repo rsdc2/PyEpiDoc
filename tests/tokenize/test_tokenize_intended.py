@@ -48,7 +48,13 @@ tests = [
     'gap2',
     'gap3',
     'gap4',
-    'no_lb'
+    'no_lb',
+    'supplied_1',
+    'supplied_2',
+    'supplied_3',
+    'supplied_4',
+    'unclear_1',
+    'unclear_2'
 ]
 
 

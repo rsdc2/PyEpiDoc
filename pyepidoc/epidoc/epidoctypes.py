@@ -21,7 +21,6 @@ class SubatomicTagType(EnumerableEnum):
     Ex = 'ex'
     Expan = 'expan'
     Unclear = 'unclear'
-    # Gap = 'gap'
     Abbr = 'abbr'
     Supplied = 'supplied'
     Del = 'del'
@@ -44,6 +43,16 @@ class BoundaryType(EnumerableEnum):
     Orig = 'orig'   # !! Temporary !!
 
 
+class AlwaysSubsumableType(EnumerableEnum):
+    """For items that should be subsumed regardless of whether or not there is a space"""
+    # Hi = 'hi'
+    Lb = 'lb'
+    G = 'g'
+
+
+AlwaysSubsumable = AlwaysSubsumableType.values()
+
+
 class ContainerType(EnumerableEnum):
     Ab = 'ab'
     Div = 'div'
@@ -62,7 +71,8 @@ TokenCarrier = set(
     SubatomicTagType.values() + 
     AtomicTokenType.values() + 
     BoundaryType.values() + 
-    CompoundTokenType.values()
+    CompoundTokenType.values() + 
+    AlwaysSubsumableType.values()
 )
 
 
