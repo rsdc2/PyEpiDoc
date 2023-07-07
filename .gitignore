@@ -14,14 +14,14 @@ examples/ISic000032_tokenized.xml
 **/tokenized_output/*.xml
 todo.md
 data
-# *.ipynb
-# example_corpus.py
-# example_corpus_readme.py
-# example_epidoc_readme.py
-# example_epidoc.py
-# example_id.py
-# example_line.py
-# example*.py
+*.ipynb
+example_corpus.py
+example_corpus_readme.py
+example_epidoc_readme.py
+example_epidoc.py
+example_id.py
+example_line.py
+example*.py
 ISic000001_tokenized.xml
 resources.md
 test.xml
