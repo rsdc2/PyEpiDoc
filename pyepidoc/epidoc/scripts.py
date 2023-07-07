@@ -78,3 +78,45 @@ def tokenize_corpus(
 ) -> None:
     corpus = EpiDocCorpus(folderpath=src_folderpath, head=head)
     corpus.tokenize(dstfolder=dst_folderpath)
+
+
+def set_ids(
+    src_folderpath:str, 
+    dst_folderpath:str, 
+    ids:list[str],
+    fullpath=False
+):
+    for filename in ids:
+        if fullpath == False:
+            src_filepath = filepath_from_list([getcwd(), src_folderpath], filename + ".xml")
+            dst_filepath = filepath_from_list([getcwd(), dst_folderpath], filename + ".xml")
+        else:
+            src_filepath = filepath_from_list([src_folderpath], filename + ".xml")
+            dst_filepath = filepath_from_list([dst_folderpath], filename + ".xml")
+
+        src = FileInfo(
+            filepath=src_filepath, 
+            mode='r', 
+            create_folderpath=False,
+            fullpath=True
+        )
+
+        dst = FileInfo(
+            filepath=dst_filepath,
+            mode='w', 
+            create_folderpath=False,
+            fullpath=True
+        )
+
+        doc = EpiDoc(src)
+        doc.set_ids(override=True)
+
+        doc.convert_ws_to_names()
+        doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
+
+        doc.to_xml(
+            dst.full_filepath,
+            verbose=True,
+            create_folderpath=False,
+            fullpath=True
+        )
