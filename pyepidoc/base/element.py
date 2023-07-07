@@ -984,18 +984,7 @@ class Element(BaseElement, Showable):
 
                 if tag in AtomicTokenType.values() + BoundaryType.values():
                     new_parent.append(new_e)
-                    new_parent = append_tail_or_text(e.tail, new_parent)
-
-                # elif tag in SubatomicTagType.values() and tag in CompoundTokenType.values(): # i.e. <hi>
-                #     if len(Element(e).tokenized_children) > 0:
-                #         new_parent.append(Element.w_factory(parent=new_e).e)
-                #         new_parent = append_tail_or_text(e.tail, new_parent)
-                #     else:
-                #         namespace = ns.give_ns('w', ns=NS)
-                #         new_w = etree.Element(namespace)
-                #         new_w.append(new_e)
-                #         new_parent.append(new_w)
-                #         new_parent = append_tail_or_text(e.tail, new_parent)                          
+                    new_parent = append_tail_or_text(e.tail, new_parent)                    
 
                 elif tag in SubatomicTagType.values(): # e.g. <expan>
                     namespace = ns.give_ns('w', ns=NS)

@@ -26,12 +26,20 @@ def revDigits(d:dict[int, str]) -> dict[str, int]:
     return {v: k for k, v in d.items()}
 
 
-def formatConv(id:str) -> int:
+def remove_fixed_strs(id:str) -> int:
     """
-    Strips ISic and - from an I.Sicily token ID
+    Strips ISic and '-' from an I.Sicily token ID
     """
 
     return int(id.replace('-', '').replace('ISic', ''))
+
+
+def insert_fixed_strs(id:str) -> str:
+    """
+    Insert ISic and '-' for an I.Sicily token ID 
+    """
+    padded = id.rjust(10, '0')
+    return 'ISic' + padded[:-4] + '-' + padded[-4:]
 
 
 def decToBase(dec:int, base:int) -> str:
@@ -71,10 +79,10 @@ def baseToDec(baseInpt:str, base:int) -> int:
 
 def compress(id:str, base:int) -> str:
     """Compresses an I.Sicily ID to base 'base'"""
-    return decToBase(formatConv(id), base)
+    return decToBase(remove_fixed_strs(id), base).rjust(5, 'A')
 
 
 def decompress(id:str, base:int) -> str:
     """Decompresses an I.Sicily ID from base 'base' to base 10"""
     expanded = str(baseToDec(id, base))
-    return 'ISic' + expanded[:-4].rjust(6, '0') + '-' + expanded[-4:]
+    return insert_fixed_strs(expanded)
