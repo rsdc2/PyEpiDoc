@@ -19,7 +19,6 @@ from .epidoctypes import (
     TokenInfo, 
     CompoundTokenType, 
     AtomicTokenType,
-    TokenType, 
     PUNCTUATION
 )
 
@@ -191,7 +190,7 @@ class Token(Element):
         return _remove_whitespace_from_child(self._e)
 
     @property
-    def type(self) -> TokenType:
+    def type(self) -> str:
         return self.tag.name
 
     @property
@@ -205,7 +204,7 @@ class Token(Element):
         ]:
             return self.form.capitalize().strip().replace('·', '')
         
-        if self.type in [TokenType.Num.value]:
+        if self.type in [AtomicTokenType.Num.value]:
             return self.form.upper().strip().replace('·', '')
         
         return self.form.lower().strip().replace('·', '')
