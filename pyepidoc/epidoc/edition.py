@@ -243,14 +243,16 @@ class Edition(Element):
     def space_words(self, override:bool=False) -> None:
 
         if SPACE_WORDS or override:
-            for word in self.tokens:
-                word.append_space()
+            for elem in self.space_separated:
+                elem.append_space()
+            # for word in self.tokens:
+            #     word.append_space()
 
-            for compound in self.compound_tokens:
-                compound.append_space()
+            # for compound in self.compound_tokens:
+            #     compound.append_space()
 
-            for boundary in self.token_dividers:
-                boundary.append_space()
+            # for boundary in self.token_g_dividers:
+            #     boundary.append_space()
 
     @property
     def formatted_text(self) -> str:
@@ -261,6 +263,10 @@ class Edition(Element):
         if SET_IDS or override:
             for ab in self.abs:
                 ab.set_ids()
+
+    @property
+    def space_separated(self) -> list[Element]:
+        return flatlist([ab.space_separated for ab in self.abs])
 
     @property
     def subtype(self) -> Optional[str]:
@@ -291,9 +297,9 @@ class Edition(Element):
         return words
 
     @property
-    def token_dividers(self) -> list[Element]:
+    def token_g_dividers(self) -> list[Element]:
         dividers = []
         for ab in self.abs:
-            dividers += ab.dividers
+            dividers += ab.g_dividers
         
         return dividers

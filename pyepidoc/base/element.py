@@ -552,7 +552,7 @@ class Element(BaseElement, Showable):
             elif _element.tag.name in SubatomicTagType.values():
                 return [handle_subatomic_tags(subelement=_e)]
 
-            raise ValueError("Invalid _element.tag.name")
+            raise ValueError(f"Invalid _element.tag.name: {_element.tag.name}")
         
         e = remove_internal_extraneous_whitespace(self._e)
         return make_internal_token(e)

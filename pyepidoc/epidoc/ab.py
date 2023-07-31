@@ -12,7 +12,8 @@ from .epidoctypes import (
     TokenCarrier, 
     AtomicTokenType, 
     CompoundTokenType, 
-    SetRelation, 
+    SetRelation,
+    SpaceSeparated
 )
 
 from ..base import Element, BaseElement
@@ -165,6 +166,18 @@ class Ab(Element):
             wordcarrier.set_id()
 
     @property
+    def space_separated(self) -> list[Element]:
+        """
+        :return: a |list| of |Element|s that should be separated by spaces.
+        """
+
+        return [Element(item) for item 
+            in self.get_desc(
+                SpaceSeparated.values() 
+            )
+        ]
+
+    @property
     def textparts(self) -> list[TextPart]:
         return [TextPart(part) for part in self.get_div_descendants('textpart')]
 
@@ -271,7 +284,7 @@ class Ab(Element):
         ]
 
     @property
-    def dividers(self) -> list[Element]:
+    def g_dividers(self) -> list[Element]:
         return [Element(boundary) for boundary 
             in self.get_desc('g')
         ]

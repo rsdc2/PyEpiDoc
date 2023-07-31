@@ -26,6 +26,12 @@ class SubatomicTagType(EnumerableEnum):
     Del = 'del'
     Choice = 'choice'   # Choice always contained by an atomic word type, but never smaller than that, so not like others in this category
     Hi = 'hi' # can also contain atomic token types
+    Surplus = 'surplus'
+    Link = 'link'
+
+
+# class SpaceSeparated(EnumerableEnum):
+
 
 
 class AtomicTokenType(EnumerableEnum):
@@ -35,12 +41,20 @@ class AtomicTokenType(EnumerableEnum):
     Measure = 'measure'
 
 
+
 class BoundaryType(EnumerableEnum):
+    """
+    Not enclosed in tokens and space not inserted between
+    Except G and Lb are in always subsumable
+    """
     G = 'g'
     Lb = 'lb'
     Space = 'space'
     Gap = 'gap'
     Orig = 'orig'   # !! Temporary !!
+    Seg = 'seg'     # !! Temporary !!: Need to create a category of boundary that does not involve spacing
+
+
 
 
 class AlwaysSubsumableType(EnumerableEnum):
@@ -51,6 +65,20 @@ class AlwaysSubsumableType(EnumerableEnum):
 
 
 AlwaysSubsumable = AlwaysSubsumableType.values()
+
+class SpaceSeparated(EnumerableEnum):
+    Name = 'name'
+    W = 'w'
+    Num = 'num'
+    Measure = 'measure'
+    
+    PersName = 'persName'
+    PlaceName = 'placeName'
+    RoleName = 'roleName'
+    OrgName = 'orgName'
+    Foreign = 'foreign'
+    Note = 'note'
+    G = 'g'
 
 
 class ContainerType(EnumerableEnum):
@@ -65,6 +93,7 @@ class CompoundTokenType(EnumerableEnum):
     OrgName = 'orgName'
     Foreign = 'foreign'
     Hi = 'hi' # can also contain atomic token types
+    Note = 'note'
 
 
 TokenCarrier = set(
@@ -90,6 +119,9 @@ class TokenType(Enum):
     W = 'w'
     Num = 'num'
     Measure = 'measure'
+
+
+
 
 
 class TextClass(EnumerableEnum):

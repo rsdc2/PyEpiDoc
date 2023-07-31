@@ -20,7 +20,7 @@ def example():
 
 def example_tokenize():
     corpus = EpiDocCorpus(folderpath='data/isicily_master')
-    corpus.tokenize(dstfolder='data/isicily_tokenized')
+    corpus.tokenize(dstfolder='data/isicily_tokenized', add_space_between_words=True)
 
 
 def christian_corpus():
@@ -108,7 +108,7 @@ def clusters_corpus():
 
 if __name__ == '__main__':
     # example()
-    # example_tokenize()
+    example_tokenize()
     # example_textclasses()
     # christian_corpus()
-    clusters_corpus()
+    # clusters_corpus()
