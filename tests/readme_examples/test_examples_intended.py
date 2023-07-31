@@ -23,7 +23,7 @@ def test_tokenize_example():
     doc.prettify_edition()
 
     # Add spaces between tokens
-    doc.add_space_between_tokens()
+    doc.space_tokens()
 
     # Save the results to a new XML file
     doc.to_xml("readme_examples/files/tokenized_output/ISic000032_tokenized.xml", create_folderpath=True)

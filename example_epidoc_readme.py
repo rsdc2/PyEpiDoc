@@ -11,7 +11,7 @@ doc.tokenize()
 doc.prettify_edition()
 
 # Add spaces between tokens
-doc.add_space_between_tokens()
+doc.space_tokens()
 
 # Print list of tokens
 print('Tokens: ', doc.tokens_list_str)

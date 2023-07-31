@@ -379,10 +379,10 @@ class EpiDoc(Root):
             for edition in self.editions():
                 edition.set_ids(override)
 
-    def add_space_between_tokens(self, override:bool=True) -> None:
+    def space_tokens(self, override:bool=True) -> None:
         if SPACE_WORDS or override:
             for edition in self.editions():
-                edition.space_words(override)
+                edition.space_tokens(override)
 
     @property
     def supplied(self) -> list[Element]:

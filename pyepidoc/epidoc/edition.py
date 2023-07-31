@@ -240,19 +240,17 @@ class Edition(Element):
     def prettify(self, spaceunit:SpaceUnit, number:int) -> None:
         prettify(spaceunit=spaceunit, number=number, edition=self)
 
-    def space_words(self, override:bool=False) -> None:
+    def space_tokens(self, override:bool=False) -> None:
+
+        """
+        Separates tokens by spaces, as long as they should be separated by spaces
+        and the following token is not among the tokens that should be separated
+        from previous by a space
+        """
 
         if SPACE_WORDS or override:
             for elem in self.space_separated:
                 elem.append_space()
-            # for word in self.tokens:
-            #     word.append_space()
-
-            # for compound in self.compound_tokens:
-            #     compound.append_space()
-
-            # for boundary in self.token_g_dividers:
-            #     boundary.append_space()
 
     @property
     def formatted_text(self) -> str:
@@ -266,7 +264,17 @@ class Edition(Element):
 
     @property
     def space_separated(self) -> list[Element]:
+        """
+        :return: |Element|s that should be separated by spaces
+        """
         return flatlist([ab.space_separated for ab in self.abs])
+
+    @property
+    def no_space(self) -> list[Element]:
+        """
+        :return: |Element|s that should not be separated by spaces.
+        """
+        return flatlist([ab.no_space for ab in self.abs])
 
     @property
     def subtype(self) -> Optional[str]:

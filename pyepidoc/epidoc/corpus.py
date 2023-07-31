@@ -425,7 +425,7 @@ class EpiDocCorpus:
             doc.tokenize()
             
             if add_space_between_words:
-                doc.add_space_between_tokens()
+                doc.space_tokens()
             
             if set_ids:
                 doc.set_ids()

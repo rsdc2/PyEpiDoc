@@ -13,7 +13,8 @@ from .epidoctypes import (
     AtomicTokenType, 
     CompoundTokenType, 
     SetRelation,
-    SpaceSeparated
+    SpaceSeparated,
+    NoSpace
 )
 
 from ..base import Element, BaseElement
@@ -168,12 +169,23 @@ class Ab(Element):
     @property
     def space_separated(self) -> list[Element]:
         """
-        :return: a |list| of |Element|s that should be separated by spaces.
+        :return: a |list| of |Element|s that should be separated by spaces,
+        and the next sibling is not an Element that should not be separated
+        from the previous element by a space.
+        """
+
+        elems = [Element(item) for item in self.get_desc(SpaceSeparated.values())]
+        return [elem for elem in elems if elem.next_sibling not in self.no_space]
+    
+    @property
+    def no_space(self) -> list[Element]:
+        """
+        :return: a |list| of |Element|s that should not be separated by spaces.
         """
 
         return [Element(item) for item 
             in self.get_desc(
-                SpaceSeparated.values() 
+                NoSpace.values() 
             )
         ]
 

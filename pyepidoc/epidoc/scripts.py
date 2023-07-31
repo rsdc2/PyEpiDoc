@@ -56,7 +56,7 @@ def tokenize(
         doc.tokenize()
         
         if space_words: 
-            doc.add_space_between_tokens(override=True)
+            doc.space_tokens(override=True)
         if set_ids:
             doc.set_ids(override=True)
 

@@ -28,7 +28,7 @@ class SubatomicTagType(EnumerableEnum):
     Hi = 'hi' # can also contain atomic token types
     Surplus = 'surplus'
     Link = 'link'
-
+    Subst = 'subst'
 
 # class SpaceSeparated(EnumerableEnum):
 
@@ -79,9 +79,11 @@ class SpaceSeparated(EnumerableEnum):
     RoleName = 'roleName'
     OrgName = 'orgName'
     Foreign = 'foreign'
-    # Note = 'note'
     
     G = 'g'
+
+class NoSpace(EnumerableEnum):
+    Note = 'note'
 
 
 class ContainerType(EnumerableEnum):
