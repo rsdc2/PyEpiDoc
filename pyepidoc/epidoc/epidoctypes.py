@@ -118,17 +118,6 @@ class AbbrType(EnumerableEnum):
     unknown = 'unknown'
 
 
-class TokenType(Enum):
-    Name = 'name'
-    G = 'g'
-    W = 'w'
-    Num = 'num'
-    Measure = 'measure'
-
-
-
-
-
 class TextClass(EnumerableEnum):
     Funerary = '#function.funerary'
     LegalTestament = '#function.legal.testament'
