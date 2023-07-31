@@ -154,6 +154,22 @@ To check the integrity of the type annotations:
 mypy pyepidoc
 ```
 
+## Tokenizer behaviour
+
+The treatement of a given token by the tokenizer may be affected by one or more of the following:
+
+- Status in ```pyepidoc/epidoc/epidoctypes.py```
+- Presence in ```pyepidoc/constants.py``` in ```SubsumableRels```
+
+The token will be subsumed into a neighbouring ```<w>``` token if it is not separated by whitespace if:
+- it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels```
+
+The token will be subsumed into a neighbouring ```<w>``` token regardless of the presence of intervening whitespace if:
+- it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels``` and
+- it is a member of ```AlwaysSubsumableType``` in ```epidoctypes.py```
+
+
+
 ## Package structure
 
 The PyEpiDoc package has three subpackages:
