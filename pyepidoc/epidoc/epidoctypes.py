@@ -42,7 +42,7 @@ class AtomicTokenType(EnumerableEnum):
 
 
 
-class BoundaryType(EnumerableEnum):
+class AtomicNonTokenType(EnumerableEnum):
     """
     Not enclosed in tokens and space not inserted between
     Except G and Lb are in always subsumable
@@ -53,6 +53,7 @@ class BoundaryType(EnumerableEnum):
     Gap = 'gap'
     Orig = 'orig'   # !! Temporary !!
     Seg = 'seg'     # !! Temporary !!: Need to create a category of boundary that does not involve spacing
+    Note = 'note'   # !! Temporary !!
 
 
 
@@ -66,6 +67,7 @@ class AlwaysSubsumableType(EnumerableEnum):
 
 AlwaysSubsumable = AlwaysSubsumableType.values()
 
+
 class SpaceSeparated(EnumerableEnum):
     Name = 'name'
     W = 'w'
@@ -77,7 +79,8 @@ class SpaceSeparated(EnumerableEnum):
     RoleName = 'roleName'
     OrgName = 'orgName'
     Foreign = 'foreign'
-    Note = 'note'
+    # Note = 'note'
+    
     G = 'g'
 
 
@@ -99,7 +102,7 @@ class CompoundTokenType(EnumerableEnum):
 TokenCarrier = set(
     SubatomicTagType.values() + 
     AtomicTokenType.values() + 
-    BoundaryType.values() + 
+    AtomicNonTokenType.values() + 
     CompoundTokenType.values() + 
     AlwaysSubsumableType.values()
 )

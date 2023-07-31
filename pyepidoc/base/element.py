@@ -34,7 +34,7 @@ from ..epidoc.epidoctypes import (
     whitespace, 
     AtomicTokenType, 
     CompoundTokenType, 
-    BoundaryType,
+    AtomicNonTokenType,
     SubatomicTagType,
     AlwaysSubsumableType,
     AlwaysSubsumable
@@ -434,13 +434,13 @@ class Element(BaseElement, Showable):
     def _internal_prototokens(self) -> list[str]:
 
         if self.tail_completer is None:
-            if self.tag.name in BoundaryType.values():
+            if self.tag.name in AtomicNonTokenType.values():
                 return []
             
             return self._internal_tokens
 
         if self.tail_completer is not None:
-            if self.tag.name in BoundaryType.values():
+            if self.tag.name in AtomicNonTokenType.values():
                 return [self.tail_completer]
 
 
@@ -515,7 +515,7 @@ class Element(BaseElement, Showable):
             _e.tail = self.tail_completer
             _element = Element(_e)
 
-            if _element.tag.name in BoundaryType.values():
+            if _element.tag.name in AtomicNonTokenType.values():
                 internalprotowords = _element._internal_prototokens
                 if internalprotowords == []:
                     return [Element(_e, final_space=True)]
@@ -687,7 +687,7 @@ class Element(BaseElement, Showable):
         if self._e is None:
             return None
 
-        if self.tag.name in BoundaryType.values():
+        if self.tag.name in AtomicNonTokenType.values():
             _e = deepcopy(self._e)
             _e.tail = None
             return Element(_e)
@@ -982,7 +982,7 @@ class Element(BaseElement, Showable):
                 new_e.tail = None
                 tag = ns.remove_ns(e.tag)
 
-                if tag in AtomicTokenType.values() + BoundaryType.values():
+                if tag in AtomicTokenType.values() + AtomicNonTokenType.values():
                     new_parent.append(new_e)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
