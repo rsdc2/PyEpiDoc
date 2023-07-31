@@ -1,20 +1,13 @@
 from typing import Optional, TypeVar, Union, MutableSequence, Generic
-from dataclasses import dataclass
-import operator
-from collections import namedtuple
-from functools import reduce
 from enum import Enum
+import operator
+from ..base.types import EnumerableEnum
+
 
 T = TypeVar('T')
 
 whitespace = {'\n', '\t', ' '}
 PUNCTUATION = {'·'}
-
-class EnumerableEnum(Enum):
-
-    @classmethod
-    def values(cls) -> list:
-        return [item.value for item in cls]
 
 
 class SubatomicTagType(EnumerableEnum):
