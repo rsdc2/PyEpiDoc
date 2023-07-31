@@ -33,20 +33,25 @@ class AtomicTokenType(EnumerableEnum):
 
 class AtomicNonTokenType(EnumerableEnum):
     """
-    Not enclosed in tokens and space not inserted between
-    Except G and Lb are in always subsumable
+    These tokens do not contain text that can be incorporated into linguistic analysis.
+    They stand either for metalinguistic tokens, such as line breaks or interpuncts (<lb>, <g>),
+    text that cannot currently be analysed (<orig>, <seg>),
+    or editorial notes (<note>).
     """
     G = 'g'
     Lb = 'lb'
     Space = 'space'
     Gap = 'gap'
-    Orig = 'orig'   # !! Temporary !!
-    Seg = 'seg'     # !! Temporary !!: Need to create a category of boundary that does not involve spacing
-    Note = 'note'   # !! Temporary !!
+    Orig = 'orig'   
+    Seg = 'seg'     
+    Note = 'note'   
 
 
 class AlwaysSubsumableType(EnumerableEnum):
-    """For items that should be subsumed regardless of whether or not there is a space"""
+    """For items that should be subsumed regardless of whether or not there is a space.
+    Membership of this class means that the behaviour of SubsumableRels takes place 
+    regardless of the presence of a space between the tokens.
+    Note that the token must also be listed in SubsumableRels"""
     # Hi = 'hi'
     Lb = 'lb'
     G = 'g'
