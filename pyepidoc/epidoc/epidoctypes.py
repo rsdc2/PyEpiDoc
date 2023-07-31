@@ -30,16 +30,12 @@ class SubatomicTagType(EnumerableEnum):
     Link = 'link'
     Subst = 'subst'
 
-# class SpaceSeparated(EnumerableEnum):
-
-
 
 class AtomicTokenType(EnumerableEnum):
     Name = 'name'
     W = 'w'
     Num = 'num'
     Measure = 'measure'
-
 
 
 class AtomicNonTokenType(EnumerableEnum):
@@ -54,8 +50,6 @@ class AtomicNonTokenType(EnumerableEnum):
     Orig = 'orig'   # !! Temporary !!
     Seg = 'seg'     # !! Temporary !!: Need to create a category of boundary that does not involve spacing
     Note = 'note'   # !! Temporary !!
-
-
 
 
 class AlwaysSubsumableType(EnumerableEnum):
