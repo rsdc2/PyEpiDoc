@@ -132,7 +132,7 @@ class Ab(Element):
 
         ab_prototokens = self.text.split()
         ab_tokens = [Element(Element.w_factory(word)) for word in ab_prototokens]        
-        [self.e.insert(0, token.e) for token in reversed(ab_tokens)]
+        [self.e.insert(0, token.e) for token in reversed(ab_tokens) if self.e is not None]
         sequences = self._token_carrier_sequences
         token_carriers = [element for sequence in sequences 
             for element in sequence]
