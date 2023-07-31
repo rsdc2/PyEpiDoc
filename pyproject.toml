@@ -21,5 +21,8 @@ keywords = ["XML", "EpiDoc", "TEI"]
 [tool.setuptools.packages.find]
 exclude = ["tests", "env39", "examples"] 
 
+[tool.mypy]
+exclude = ["build"]
+
 [tool.setuptools]
 include-package-data = true
