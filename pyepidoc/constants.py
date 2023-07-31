@@ -22,8 +22,6 @@ SubsumableRels = [
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'g', 'ns': NS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'space', 'ns': NS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'unclear', 'ns': NS, 'attrs': dict()}},
-    # {'head': {'name': 'name', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'gap', 'ns': NS, 'attrs': dict()}},
-    # {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'gap', 'ns': NS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'supplied', 'ns': NS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'surplus', 'ns': NS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'subst', 'ns': NS, 'attrs': dict()}},
