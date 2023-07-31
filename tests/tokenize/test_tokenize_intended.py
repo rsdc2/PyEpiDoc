@@ -35,6 +35,8 @@ tests = [
     'interpunct_9', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_word_space',
     'interpunct_no_word_space',
+    'note_1',   # Tests that <note> is never separated from the previous space-separated token by a space
+    'note_2',   # Tests that <note> is never separated from the previous space-separated token by a space
     'roleName',
     'orgName_1',
     'orgName_2',
@@ -53,6 +55,7 @@ tests = [
     'supplied_2',
     'supplied_3',
     'supplied_4',
+    'surplus_1',
     'unclear_1',
     'unclear_2'
 ]
