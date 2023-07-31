@@ -130,14 +130,19 @@ class Ab(Element):
         the Element object.
         """
 
-        ab_prototokens = self.text.split()
+        ab_prototokens = self.text.split()  # split the string into tokens
+
+        # Create token elements from the split string elements
         ab_tokens = [Element(Element.w_factory(word)) for word in ab_prototokens]        
+
+        # Insert the tokens into the tree (: when does the text get deleted?)
         [self.e.insert(0, token.e) for token in reversed(ab_tokens) if self.e is not None]
+
         sequences = self._token_carrier_sequences
         token_carriers = [element for sequence in sequences 
             for element in sequence]
         token_carriers_sorted = sorted(token_carriers)
-        # token_carriers[0].e.insert()
+
         def _redfunc(acc:list[Element], element:Element) -> list[Element]:
             if element._join_to_next:
                 if acc == []:
