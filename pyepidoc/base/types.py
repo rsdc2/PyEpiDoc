@@ -11,6 +11,10 @@ class EnumerableEnum(Enum):
     @classmethod
     def values(cls) -> list:
         return [item.value for item in cls]
+    
+    @classmethod
+    def value_set(cls) -> set:
+        return set(cls.values())
 
 
 class Showable:

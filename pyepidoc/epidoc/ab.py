@@ -73,7 +73,7 @@ class Ab(Element):
 
         """Converts all <w> to <name> if they are capitalized."""
         if len(self.tokens) >= 2:
-            for token in self.tokens[1:]:
+            for token in self.w_tokens[1:]:
                 token.convert_to_name()
 
         return self
@@ -143,6 +143,7 @@ class Ab(Element):
         the Element object.
         """
 
+        # Get initial text before any child elements of the <ab>
         ab_prototokens = self.text.split()  # split the string into tokens
 
         # Create token elements from the split string elements
@@ -320,3 +321,9 @@ class Ab(Element):
     @property
     def tokens_str(self) -> str:
         return ' '.join(self.tokens_list_str)
+    
+    @property
+    def w_tokens(self) -> list[Token]:
+        return [Token(word) for word 
+            in self.get_desc(['w'])
+        ]

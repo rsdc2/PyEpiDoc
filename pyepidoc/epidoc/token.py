@@ -34,6 +34,18 @@ class Token(Element):
         provides access to morphological and lemmatisation
         data.
     """
+    
+    def __str__(self) -> str:
+        if self.type in [
+            AtomicTokenType.Name.value, 
+            CompoundTokenType.PersName.value
+        ]:
+            return self.form.capitalize().strip().replace('·', '')
+        
+        if self.type in [AtomicTokenType.Num.value]:
+            return self.form.upper().strip().replace('·', '')
+        
+        return self.form.lower().strip().replace('·', '')
 
     @cached_property
     def ab_or_div_parents(self) -> Sequence[BaseElement]:
@@ -155,6 +167,10 @@ class Token(Element):
 
     @property
     def number(self) -> Optional[str]:
+        """
+        :return: |str| or None containing the grammatical number of the token
+        """
+
         pos = self.pos
         return pos[2] if pos else None
 
@@ -197,14 +213,3 @@ class Token(Element):
     def word_info(self) -> TokenInfo:
         return TokenInfo(self.lemma, self.morphology)
 
-    def __str__(self) -> str:
-        if self.type in [
-            AtomicTokenType.Name.value, 
-            CompoundTokenType.PersName.value
-        ]:
-            return self.form.capitalize().strip().replace('·', '')
-        
-        if self.type in [AtomicTokenType.Num.value]:
-            return self.form.upper().strip().replace('·', '')
-        
-        return self.form.lower().strip().replace('·', '')

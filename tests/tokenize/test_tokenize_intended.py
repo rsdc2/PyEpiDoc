@@ -56,6 +56,7 @@ tests = [
     'supplied_2',
     'supplied_3',
     'supplied_4',
+    'supplied_with_num',
     'surplus_1',
     'unclear_1',
     'unclear_2'
