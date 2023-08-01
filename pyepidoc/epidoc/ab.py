@@ -16,6 +16,7 @@ from .epidoctypes import (
     SpaceSeparated,
     NoSpace
 )
+from ..utils import head
 
 from ..base import Element, BaseElement
 from ..utils import update
@@ -72,15 +73,21 @@ class Ab(Element):
     def convert_words_to_names(self) -> Ab:
 
         """Converts all <w> to <name> if they are capitalized."""
-        if len(self.tokens) >= 2:
-            for token in self.w_tokens[1:]:
-                token.convert_to_name()
+
+        for w in self.w_tokens:
+            if w == self.first_token:
+                continue
+            w.convert_to_name()
 
         return self
 
     @property
     def expans(self) -> list[Expan]:
         return [Expan(e.e) for e in self.expan_elems]
+
+    @property
+    def first_token(self) -> Optional[Token]:
+        return head(self.tokens)
 
     @property
     def g_dividers(self) -> list[Element]:

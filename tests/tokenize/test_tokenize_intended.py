@@ -84,7 +84,6 @@ def test_tokenize(tokenize_type:str):
             os.remove(tokenized_f.full_filepath)
     except FileExistsError:
         pass
-
     
     # Tokenize the files
     tokenize(

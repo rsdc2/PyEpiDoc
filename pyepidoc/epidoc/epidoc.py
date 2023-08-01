@@ -477,3 +477,7 @@ class EpiDoc(Root):
     @property
     def tokens_str(self) -> str:
         return ' '.join(self.tokens_list_str)
+    
+    @property
+    def w_tokens(self) -> list[Token]:
+        return flatlist([edition.w_tokens for edition in self.editions()])

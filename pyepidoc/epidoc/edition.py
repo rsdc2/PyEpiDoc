@@ -320,3 +320,6 @@ class Edition(Element):
     def tokens_str(self) -> str:
         return ' '.join(self.tokens_list_str)
 
+    @property
+    def w_tokens(self) -> list[Token]:
+        return flatlist([ab.w_tokens for ab in self.abs])

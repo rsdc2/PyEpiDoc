@@ -6,6 +6,7 @@ import pytest
 
 relative_filepaths = {
     'ISic000001': 'api/files/single_files_untokenized/ISic000001.xml',
+    'persName_nested': 'api/files/persName_nested.xml',
     'langs_1': 'api/files/langs_1.xml',
     'langs_2': 'api/files/langs_2.xml',
     'langs_3': 'api/files/langs_3.xml',
@@ -82,6 +83,12 @@ def test_gaps():
     doc = EpiDoc(relative_filepaths['gap'], fullpath=False)
     has_gaps = doc.has_gap(reasons=['lost'])
     assert has_gaps == True
+
+
+def test_nested():
+    doc = EpiDoc(relative_filepaths['persName_nested'], fullpath=False)
+    assert doc.tokens_list_str == ['Maximus', 'Decimus', 'meridius']
+    assert [str(token) for token in doc.w_tokens] == ['meridius']
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths.values())
