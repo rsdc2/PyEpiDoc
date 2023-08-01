@@ -9,7 +9,7 @@ from .am import Am
 class Abbr(Element):    
     def __str__(self) -> str:
         ams = [Am(elem.e) for elem in self.desc_elems
-            if elem.name_no_namespace == 'am']
+            if elem.local_name == 'am']
 
         return self.text.strip() + ''.join([str(am) for am in ams])
 

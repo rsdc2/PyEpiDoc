@@ -11,7 +11,7 @@ class Lb(Element):
 
     def __init__(self, e:Optional[Union[_Element, Element, BaseElement]]=None):
         type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-        node_name_err_msg = f'Element must be <lb>. Element is {Element(e).name_no_namespace}.'
+        node_name_err_msg = f'Element must be <lb>. Element is {Element(e).local_name}.'
 
         if type(e) not in [_Element, Element, BaseElement] and e is not None:
             raise TypeError(type_err_msg)
@@ -23,7 +23,7 @@ class Lb(Element):
         elif type(e) is BaseElement:
             self._e = e.e
 
-        if self.name_no_namespace != 'lb':
+        if self.local_name != 'lb':
             raise TypeError(node_name_err_msg)
 
     def __repr__(self):

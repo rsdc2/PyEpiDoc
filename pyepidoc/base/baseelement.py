@@ -161,7 +161,7 @@ class BaseElement(Showable):
         """
         :return: list of names of all descendant nodes
         """
-        return [elem.name_no_namespace for elem in self.desc_elems]
+        return [elem.local_name for elem in self.desc_elems]
 
     @property
     def desc_elem_name_set(self) -> set[str]:
@@ -272,7 +272,10 @@ class BaseElement(Showable):
         self.set_attrib('id', id_value, namespace=XMLNS)
 
     @property
-    def name_no_namespace(self) -> str:
+    def local_name(self) -> str:
+        """
+        :return: Name without namespace as |str|
+        """
         if self._e is None:
             return ''
         return ns.remove_ns(self._e.tag)

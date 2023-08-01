@@ -27,7 +27,7 @@ def ancestor_abs(elem: Element) -> Sequence[Ab]:
     starting with the ancestor closest to the |Element|
     """
     return [Ab(elem) for elem in elem.parents 
-        if elem.name_no_namespace == 'ab']
+        if elem.local_name == 'ab']
 
 
 def owner_doc(elem:Element) -> Optional[EpiDoc]:

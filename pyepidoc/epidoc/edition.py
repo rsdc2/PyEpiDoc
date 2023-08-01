@@ -283,7 +283,7 @@ class Edition(Element):
     @property
     def supplied(self) -> Sequence[BaseElement]:
         return [elem for elem in self.desc_elems 
-            if elem.name_no_namespace == 'supplied']
+            if elem.local_name == 'supplied']
 
     @property
     def textparts(self) -> list[TextPart]:

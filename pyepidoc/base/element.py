@@ -207,7 +207,7 @@ class Element(BaseElement, Showable):
         Returns True if the element is an edition <div>.
         """
 
-        return self.name_no_namespace == 'div' \
+        return self.local_name == 'div' \
             and self.get_attrib('type') == 'edition'
 
     @property
@@ -244,12 +244,12 @@ class Element(BaseElement, Showable):
         Used for element addition in __add__ method.
         """
 
-        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
+        if self.local_name == 'lb' and self.get_attrib('break') == 'no':
             return False
         
         first_child = head(self.child_elems)
         if first_child is not None and (self.text == '' or self.text is None):
-            if  first_child.name_no_namespace == 'lb' and first_child.get_attrib('break') == 'no':
+            if  first_child.local_name == 'lb' and first_child.get_attrib('break') == 'no':
                 return False
             
         return True
@@ -262,12 +262,12 @@ class Element(BaseElement, Showable):
         Used for element addition in __add__ method.
         """
 
-        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
+        if self.local_name == 'lb' and self.get_attrib('break') == 'no':
             return False
 
         last_child = last(self.child_elems)
         if last_child is not None and (last_child.tail == '' or last_child.tail is None):
-            if  last_child.name_no_namespace == 'lb' and last_child.get_attrib('break') == 'no':
+            if  last_child.local_name == 'lb' and last_child.get_attrib('break') == 'no':
                 return False
 
         if self.e is None:
@@ -327,7 +327,7 @@ class Element(BaseElement, Showable):
         if self.tail is None: 
             return False
         
-        if self.name_no_namespace == 'lb' and self.get_attrib('break') == 'no':
+        if self.local_name == 'lb' and self.get_attrib('break') == 'no':
             return False
         
         if self.tail == '':
@@ -1024,7 +1024,7 @@ class Element(BaseElement, Showable):
         """
 
         return [child for child in self.child_elems
-            if child.name_no_namespace in AtomicTokenType.values()]
+            if child.local_name in AtomicTokenType.values()]
 
     @property
     def token_elements(self) -> list[Element]:

@@ -8,7 +8,7 @@ from lxml.etree import _Element # type: ignore
 
 from ..base import Namespace as ns
 from ..utils import maxone, remove_none, head
-from ..constants import NS, XMLNS
+from ..constants import NS, XMLNS, A_TO_Z_SET
 from ..base.element import Element
 from ..base.baseelement import BaseElement
 
@@ -42,7 +42,8 @@ class Token(Element):
         ]:
             return self.form.capitalize().strip().replace('·', '')
         
-        if self.type in [AtomicTokenType.Num.value]:
+        # Capitalize Roman numerals only
+        if self.local_name == 'num' and self.charset == 'latin':
             return self.form.upper().strip().replace('·', '')
         
         return self.form.lower().strip().replace('·', '')
@@ -129,6 +130,10 @@ class Token(Element):
     def case(self) -> Optional[str]:
         pos = self.pos
         return pos[7] if pos else None
+
+    @property
+    def charset(self) -> str:
+        return "latin" if set(self.form) - A_TO_Z_SET == set() else "other"
 
     @property
     def expans(self) -> list[Expan]:

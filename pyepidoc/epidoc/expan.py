@@ -42,7 +42,7 @@ class Expan(Element):
 
     def __str__(self) -> str:
         objs = [self.abbr_ex_or_am(elem) for elem in self.desc_elems
-            if elem.name_no_namespace in ['ex', 'abbr']]
+            if elem.local_name in ['ex', 'abbr']]
 
         return ''.join([str(obj) for obj in objs])
 
@@ -79,7 +79,7 @@ class Expan(Element):
             'am': Am
         }
 
-        tag = elem.name_no_namespace
+        tag = elem.local_name
         cls = element_classes.get(tag, None)
 
         if cls is None:

@@ -8,6 +8,7 @@ NE_NO_G = NAMED_ENTITIES_NO_G = NAMED_ENTITIES - {'g'}
 NONWORDS = {'orig', 'gap', 'space'}
 
 PUNCT = {'⁞', '⁝', '∶', '·', '.', ','}
+A_TO_Z_SET = set('abcdefghijklmnopqrstuvwxyz' + 'abcdefghijklmnopqrstuvwxyz'.upper())
 
 LEFT_BRACE:str = '\u007b'
 RIGHT_BRACE:str = '\u007d'
