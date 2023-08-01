@@ -143,7 +143,7 @@ class BaseElement(Showable):
     @property
     def desc_elems(self) -> list[BaseElement]:
         """
-        Returns a list of all descendant |Element|s.
+        :return: a list of all descendant |Element|s.
         Does not return any text nodes.
         """
 
@@ -155,6 +155,20 @@ class BaseElement(Showable):
 
         return [BaseElement(desc) for desc in descs 
             if type(desc) is _Element]
+    
+    @property
+    def desc_elem_names(self) -> list[str]:
+        """
+        :return: list of names of all descendant nodes
+        """
+        return [elem.name_no_namespace for elem in self.desc_elems]
+
+    @property
+    def desc_elem_name_set(self) -> set[str]:
+        """
+        :return: set of names of all descendant nodes
+        """
+        return set(self.desc_elem_names)
 
     @property
     def dict_desc(self) -> dict:
