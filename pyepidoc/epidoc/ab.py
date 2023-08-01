@@ -83,12 +83,25 @@ class Ab(Element):
         return [Expan(e.e) for e in self.expan_elems]
 
     @property
+    def g_dividers(self) -> list[Element]:
+        return [Element(boundary) for boundary 
+            in self.get_desc('g')
+        ]
+
+    @property
     def gaps(self):
         return [Element(gap) for gap in self.get_desc('gap')]
 
     @property
-    def lang(self):
-        return self.get_attrib('lang', XMLNS)
+    def lang(self) -> Optional[str]:
+        lang = self.get_attrib('lang', XMLNS)
+        if lang is None:
+            if self.parent is None:
+                return None
+            
+            return self.parent.get_attrib('lang', XMLNS)
+        
+        return lang
 
     @property
     def lbs(self) -> Sequence[Element]:
@@ -299,9 +312,11 @@ class Ab(Element):
                 AtomicTokenType.values() 
             )
         ]
+    
+    @property
+    def tokens_list_str(self) -> list[str]:
+        return [str(token) for token in self.tokens]
 
     @property
-    def g_dividers(self) -> list[Element]:
-        return [Element(boundary) for boundary 
-            in self.get_desc('g')
-        ]
+    def tokens_str(self) -> str:
+        return ' '.join(self.tokens_list_str)

@@ -311,3 +311,12 @@ class Edition(Element):
             dividers += ab.g_dividers
         
         return dividers
+    
+    @property
+    def tokens_list_str(self) -> list[str]:
+        return flatlist([ab.tokens_list_str for ab in self.abs])
+                
+    @property
+    def tokens_str(self) -> str:
+        return ' '.join(self.tokens_list_str)
+
