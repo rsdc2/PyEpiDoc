@@ -504,7 +504,13 @@ class Element(BaseElement, Showable):
                 return Element.w_factory(parent=p)
             
             def handle_subatomic_tags(subelement:_Element) -> Element:
-                w = Element.w_factory(subelements=[subelement])
+                # Check that does not contain any atomic tokens
+                # If so, does not surround in an atomic token tag
+                if AtomicTokenType.value_set().intersection(Element(subelement).desc_elem_name_set) != set():
+                    w = Element(subelement) 
+                else:
+                    # Surround in Atomic token tag
+                    w = Element.w_factory(subelements=[subelement])
 
                 if e.tail is not None and e.tail[-1] in ' ':
                     w._final_space = True
@@ -997,7 +1003,6 @@ class Element(BaseElement, Showable):
                     new_parent.append(Element.w_factory(parent=new_e).e)
                     new_parent = append_tail_or_text(e.tail, new_parent)
 
-                    
             return Element(new_parent, final_space=True)
         else:
             if prototoken: 
