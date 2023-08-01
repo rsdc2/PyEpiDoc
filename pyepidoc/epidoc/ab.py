@@ -101,14 +101,17 @@ class Ab(Element):
 
     @property
     def lang(self) -> Optional[str]:
-        lang = self.get_attrib('lang', XMLNS)
-        if lang is None:
-            if self.parent is None:
-                return None
-            
-            return self.parent.get_attrib('lang', XMLNS)
-        
-        return lang
+
+        def _get_lang(elem:Element) -> Optional[str]:
+            lang = self.get_attrib('lang', XMLNS)
+
+            if lang is None:
+                if elem.parent is None or (elem.local_name == 'div' and elem.get_attrib('type') == 'edition'):
+                    return None
+                return _get_lang(elem.parent)
+            return lang
+
+        return _get_lang(self)
 
     @property
     def lbs(self) -> Sequence[Element]:
