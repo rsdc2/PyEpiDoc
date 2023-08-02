@@ -103,12 +103,17 @@ class Ab(Element):
     def lang(self) -> Optional[str]:
 
         def _get_lang(elem:Element) -> Optional[str]:
-            lang = self.get_attrib('lang', XMLNS)
+            lang = elem.get_attrib('lang', XMLNS)
 
             if lang is None:
-                if elem.parent is None or (elem.local_name == 'div' and elem.get_attrib('type') == 'edition'):
+                if elem.parent is None:
                     return None
+                
+                if elem.local_name == 'div' and elem.get_attrib('type') == 'edition':
+                    return lang
+
                 return _get_lang(elem.parent)
+            
             return lang
 
         return _get_lang(self)
