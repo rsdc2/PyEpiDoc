@@ -109,8 +109,9 @@ class Ab(Element):
         """
         
         def _get_lang(elem:Element) -> Optional[str]:
+            
             lang = elem.get_attrib('lang', XMLNS)
-
+            
             if lang is None:
                 if elem.parent is None:
                     return None
