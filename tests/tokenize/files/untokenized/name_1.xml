@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../schematron/ircyr-checking.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>                                                
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <text> <!--fragment of ISic000857-->
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="grc" resp="#JP">
+                <ab>
+                    <lb n="1"/>Λεο<supplied reason="omitted">σ</supplied>θένης
+                    <lb n="2"/>Λέπιδος
+                    <lb n="3"/>καὶ Ἐράσμιος
+              </ab>
+            </div>
+        </body>
+    </text>
+</TEI>

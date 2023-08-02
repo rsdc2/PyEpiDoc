@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+    <text> <!--fragment of ISic000857-->
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="grc" resp="#JP">
+                <ab>
+                    <lb n="1"/><w>Λεο<supplied reason="omitted">σ</supplied>θένης</w> 
+                    <lb n="2"/><name>Λέπιδος</name> 
+                    <lb n="3"/><w>καὶ</w> <name>Ἐράσμιος</name>
+                </ab>
+            </div>
+        </body>
+    </text>
+</TEI>

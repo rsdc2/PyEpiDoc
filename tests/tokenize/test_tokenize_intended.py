@@ -36,6 +36,7 @@ tests = [
     'interpunct_word_space',
     'interpunct_no_word_space',
     'link_1',
+    'name_1',
     'note_1',   # Tests that <note> is never separated from the previous space-separated token by a space
     'note_2',   # Tests that <note> is never separated from the previous space-separated token by a space
     'roleName',

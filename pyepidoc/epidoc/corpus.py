@@ -412,6 +412,7 @@ class EpiDocCorpus:
         add_space_between_words:bool=True,
         prettify_edition:bool=True,
         set_ids:bool=False,
+        convert_ws_to_names:bool=True,
         verbose=True
     ) -> None:
     
@@ -427,6 +428,9 @@ class EpiDocCorpus:
             if add_space_between_words:
                 doc.space_tokens()
             
+            if convert_ws_to_names:
+                doc.convert_ws_to_names()
+
             if set_ids:
                 doc.set_ids()
                 
