@@ -101,7 +101,13 @@ class Ab(Element):
 
     @property
     def lang(self) -> Optional[str]:
-
+        """
+        :return: the @lang attribute from <ab>.
+        If this is not present, ascends the hierarchy until 
+        gets to the <div type="edition">
+        node, at which point returns the <div> @lang attribute, if any.
+        """
+        
         def _get_lang(elem:Element) -> Optional[str]:
             lang = elem.get_attrib('lang', XMLNS)
 
