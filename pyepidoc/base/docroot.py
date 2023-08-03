@@ -142,6 +142,8 @@ class DocRoot:
         """
         Returns the processing instructions in the document.
         cf. https://lxml.de/api/lxml.etree._Element-class.html
+        and https://stackoverflow.com/questions/57081539/access-the-processing-instructions-before-after-a-root-element-with-lxml,
+        last accessed 03/08/2023
         """
 
         def _processing_instructions(
@@ -152,7 +154,7 @@ class DocRoot:
                 return list(reversed(acc))
             
             prev = e.getprevious()
-            
+
             return _processing_instructions(acc + [prev], prev)
 
         return _processing_instructions([], self.e)
