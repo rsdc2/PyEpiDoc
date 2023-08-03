@@ -6,7 +6,8 @@ from lxml.etree import ( # type: ignore
     _Element as _Element, 
     _ElementTree, 
     _ElementUnicodeResult,
-    XMLSyntaxError
+    XMLSyntaxError,
+    _ProcessingInstruction
 )
 
 from ..file import FileInfo
@@ -14,10 +15,27 @@ from ..constants import NS, XMLNS
 
 
 class DocRoot:    
-    _e: Optional[_Element]
-    _file: Optional[FileInfo]
-    _roottree: Optional[_ElementTree]
+    _e: Optional[_Element] = None
+    _file: Optional[FileInfo] = None
+    _roottree: Optional[_ElementTree] = None
 
+    def __bytes__(self) -> bytes:
+        """
+        Convert the XML to bytes including processing instructions
+        """
+
+        declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
+        processing_instructions = (self.processing_instructions_str + '\n').encode("utf-8")
+
+        b_str = etree.tostring(
+            self.e, 
+            pretty_print=True, 
+            encoding='utf-8', 
+            xml_declaration=False
+        )
+
+        return declaration + processing_instructions + b_str
+    
     def __init__(self, input:FileInfo | _ElementTree | str, fullpath=False):
         if type(input) is FileInfo:
             self._file = input
@@ -56,7 +74,7 @@ class DocRoot:
         return 0
 
     @property
-    def e(self) -> Optional[_Element]:
+    def e(self) -> _Element:
         if self._e is None:
             if self._file is None: 
                 raise TypeError("self._file is None")
@@ -66,6 +84,7 @@ class DocRoot:
                 self._e = self._roottree.getroot()
 
                 return self._e
+            
             except XMLSyntaxError:
                 print(f'XML syntax error in {self._file.filename}')
                 return _Element()
@@ -119,8 +138,32 @@ class DocRoot:
         return []
 
     @property
-    def headers(self):
-        pass
+    def processing_instructions(self) -> list[_ProcessingInstruction]:
+        """
+        Returns the processing instructions in the document.
+        cf. https://lxml.de/api/lxml.etree._Element-class.html
+        """
+
+        def _processing_instructions(
+            acc:list[_ProcessingInstruction], 
+            e:_Element | _ProcessingInstruction) -> list[_ProcessingInstruction]:
+
+            if e.getprevious() is None:
+                return list(reversed(acc))
+            
+            prev = e.getprevious()
+            
+            return _processing_instructions(acc + [prev], prev)
+
+        return _processing_instructions([], self.e)
+    
+    @property
+    def processing_instructions_str(self) -> str:
+        return '\n'.join([str(x) for x in self.processing_instructions])
+
+    @property
+    def roottree(self) -> _ElementTree:
+        return self.e.getroottree()
 
     @property
     def text_desc(self) -> str:

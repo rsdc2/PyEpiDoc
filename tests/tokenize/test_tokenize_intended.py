@@ -134,10 +134,9 @@ def tokenize_epidoc(tokenize_type:str) -> tuple[EpiDoc, EpiDoc]:
 
 def test_model_headers():
     # Tokenize the files
-    tokenized_epidoc, tokenized_benchmark = tokenize_epidoc(tokenize_type='xml_model_headers_1.xml')
+    tokenized_epidoc, tokenized_benchmark = tokenize_epidoc(tokenize_type='xml_model_headers_1')
+    assert tokenized_epidoc.processing_instructions_str == tokenized_benchmark.processing_instructions_str
 
-
-    
 
 @pytest.mark.parametrize("tokenize_type", tests)
 def test_tokenize(tokenize_type:str):

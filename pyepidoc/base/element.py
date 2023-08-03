@@ -39,7 +39,7 @@ from ..epidoc.epidoctypes import (
     AlwaysSubsumableType,
     AlwaysSubsumable
 )
-from .root import DocRoot
+from .docroot import DocRoot
 from ..epidoc import ids
 from ..utils import maxone, maxoneT, head, last
 

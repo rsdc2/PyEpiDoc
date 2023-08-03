@@ -106,7 +106,7 @@ class EpiDocCorpus:
                 mode='w', 
                 create_folderpath=True
             )
-            doc.to_xml(
+            doc.to_xml_file(
                 dst.full_filepath,
                 fullpath=True
             )

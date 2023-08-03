@@ -63,7 +63,7 @@ def tokenize(
         doc.convert_ws_to_names()
         doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
 
-        doc.to_xml(
+        doc.to_xml_file(
             dst.full_filepath,
             verbose=True,
             create_folderpath=False,
@@ -114,7 +114,7 @@ def set_ids(
         doc.convert_ws_to_names()
         doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
 
-        doc.to_xml(
+        doc.to_xml_file(
             dst.full_filepath,
             verbose=True,
             create_folderpath=False,

@@ -4,7 +4,7 @@ from lxml import etree # type: ignore
 from lxml.etree import _Element, _ElementUnicodeResult  # type: ignore
 
 from ..base.element import Element, BaseElement
-from ..base.root import DocRoot
+from ..base.docroot import DocRoot
 from ..utils import flatlist, maxone, listfilter, head
 from ..file import FileInfo, FileMode
 
@@ -32,20 +32,11 @@ class EpiDoc(DocRoot):
     in the file.
     """
 
-    def __bytes__(self) -> bytes:
-        return etree.tostring(
-            self.e, 
-            pretty_print=True, 
-            encoding='utf-8', 
-            xml_declaration=True
-        )
-
     def __repr__(self) -> str:
         return f'EpiDoc(id="{self.id}")'
 
     def __str__(self) -> str:
         return str(bytes(self))
-
 
     @property
     def abbr_infos(self) -> set[AbbrInfo]:
@@ -422,14 +413,17 @@ class EpiDoc(DocRoot):
 
         return functions
 
-
-    def to_xml(
+    def to_xml_file(
         self, 
         dst:str, 
         verbose=True, 
         create_folderpath=False,
         fullpath=False
     ) -> None:
+        
+        """
+        Writes out the XML to file
+        """
 
         dst_fileinfo = FileInfo(
             filepath=dst,
