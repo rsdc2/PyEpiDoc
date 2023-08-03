@@ -4,7 +4,7 @@ from lxml import etree # type: ignore
 from lxml.etree import _Element, _ElementUnicodeResult  # type: ignore
 
 from ..base.element import Element, BaseElement
-from ..base.root import Root
+from ..base.root import DocRoot
 from ..utils import flatlist, maxone, listfilter, head
 from ..file import FileInfo, FileMode
 
@@ -21,7 +21,7 @@ from .token import Token
 from ..constants import SET_IDS, SPACE_WORDS
 
 
-class EpiDoc(Root):
+class EpiDoc(DocRoot):
 
     """
     This class provides services for interacting with individual

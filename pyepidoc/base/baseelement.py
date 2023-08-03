@@ -31,7 +31,7 @@ from ..base.types import Tag
 from .namespace import Namespace as ns
 
 from ..constants import NS, XMLNS, SubsumableRels
-from .root import Root
+from .root import DocRoot
 from ..utils import maxone, maxoneT, head, last
 
 

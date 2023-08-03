@@ -13,9 +13,10 @@ from ..file import FileInfo
 from ..constants import NS, XMLNS
 
 
-class Root:    
+class DocRoot:    
     _e: Optional[_Element]
     _file: Optional[FileInfo]
+    _roottree: Optional[_ElementTree]
 
     def __init__(self, input:FileInfo | _ElementTree | str, fullpath=False):
         if type(input) is FileInfo:
@@ -24,6 +25,7 @@ class Root:
             return
         elif type(input) is _ElementTree:
             self._e = input.getroot()
+            self._roottree = input
             self._file = None
             return
         elif type(input) is str:
@@ -35,24 +37,6 @@ class Root:
             return
         
         raise TypeError(f"input is of type {type(input)}, but should be either FileInfo, _ElementTree or str.")
-
-    @property
-    def e(self) -> Optional[_Element]:
-        if self._e is None:
-            if self._file is None: 
-                raise TypeError("self._file is None")
-
-            try:
-                self._e = (etree
-                    .parse(self._file.full_filepath)
-                    .getroot())
-
-                return self._e
-            except XMLSyntaxError:
-                print(f'XML syntax error in {self._file.filename}')
-                return _Element()
-        
-        return self._e
 
     @staticmethod
     def _clean_text(text:str):
@@ -72,8 +56,21 @@ class Root:
         return 0
 
     @property
-    def xml(self) -> Optional[_Element]:
-        return self.e
+    def e(self) -> Optional[_Element]:
+        if self._e is None:
+            if self._file is None: 
+                raise TypeError("self._file is None")
+
+            try:
+                self._roottree = etree.parse(self._file.full_filepath)
+                self._e = self._roottree.getroot()
+
+                return self._e
+            except XMLSyntaxError:
+                print(f'XML syntax error in {self._file.filename}')
+                return _Element()
+        
+        return self._e
 
     def get_desc(self, 
         elemnames:Union[list[str], str], 
@@ -120,6 +117,10 @@ class Root:
             )
         
         return []
+
+    @property
+    def headers(self):
+        pass
 
     @property
     def text_desc(self) -> str:
