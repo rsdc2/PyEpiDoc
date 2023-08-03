@@ -12,7 +12,8 @@ relative_filepaths = {
     'langs_3': 'api/files/langs_3.xml',
     'line_1': 'api/files/line_1.xml',
     'line_2': 'api/files/line_2.xml',
-    'gap': 'api/files/gap.xml'
+    'gap': 'api/files/gap.xml',
+    'comma': 'api/files/comma.xml'
 }
 
 
@@ -89,6 +90,14 @@ def test_nested():
     doc = EpiDoc(relative_filepaths['persName_nested'], fullpath=False)
     assert doc.tokens_list_str == ['Maximus', 'Decimus', 'meridius']
     assert [str(token) for token in doc.w_tokens] == ['meridius']
+
+
+def test_punct():
+    """
+    Tests that comma is removed from string version of token
+    """
+    doc = EpiDoc(relative_filepaths['comma'], fullpath=False) 
+    assert str(doc.tokens[0]) == "hello"
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths.values())

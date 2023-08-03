@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Optional, Sequence
 from functools import cached_property
 from copy import deepcopy
+import re
 
 from lxml.etree import _Element # type: ignore
 
@@ -36,17 +37,19 @@ class Token(Element):
     """
     
     def __str__(self) -> str:
+        stripped_form = re.sub(r'[·\,\.\;\:]', '', self.form.strip())
+
         if self.type in [
             AtomicTokenType.Name.value, 
             CompoundTokenType.PersName.value
         ]:
-            return self.form.capitalize().strip().replace('·', '')
+            return stripped_form.capitalize()
         
         # Capitalize Roman numerals only
         if self.local_name == 'num' and self.charset == 'latin':
-            return self.form.upper().strip().replace('·', '')
+            return stripped_form.upper()
         
-        return self.form.lower().strip().replace('·', '')
+        return stripped_form.lower()
 
     @cached_property
     def ab_or_div_parents(self) -> Sequence[BaseElement]:
