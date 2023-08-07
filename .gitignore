@@ -28,3 +28,5 @@ test.xml
 test_interpunct.xml
 trial
 corpus
+out
+dependency

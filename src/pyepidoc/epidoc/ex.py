@@ -1,5 +1,5 @@
 from typing import Optional
-from lxml.etree import _Element # type: ignore
+from lxml.etree import _Element
 from ..base import Element
 
 

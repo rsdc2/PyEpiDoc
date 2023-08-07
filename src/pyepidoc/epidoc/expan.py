@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional, Union
-from lxml.etree import _Element # type: ignore
+from lxml.etree import _Element
 
 from ..base import Element, BaseElement
 from ..utils import head, flatlist

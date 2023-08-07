@@ -10,15 +10,11 @@ from typing import (
 )
 
 from .types import Showable, ExtendableSeq
-
-from copy import deepcopy
-from functools import reduce, cached_property
 import operator
 import re
-import uuid
 
-from lxml import etree # type: ignore
-from lxml.etree import ( # type: ignore
+from lxml import etree 
+from lxml.etree import ( 
     _Element,
     _ElementTree, 
     _Comment as C,
@@ -40,6 +36,8 @@ class BaseElement(Showable):
     """
     Provides basic XML navigation services, but nothing specific to EpiDoc.
     """
+    _e: _Element | None
+
 
     def __hash__(self) -> int:
         return hash(
@@ -107,10 +105,9 @@ class BaseElement(Showable):
 
         return op(equal_id1[-1], equal_id2[-1])
 
-
-
     def __init__(self, e:Optional[Union[_Element, BaseElement]]=None):
         error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
+        
 
         if type(e) not in [_Element, BaseElement] and e is not None:
             raise TypeError(error_msg)
@@ -250,10 +247,11 @@ class BaseElement(Showable):
             if element.e is None:
                 return acc
             
-            if element.e.getparent() is None:
+            parent = element.e.getparent()
+            if parent is None:
                 return acc
-
-            return _recfunc([element.e.getparent().index(element.e)] + acc, element.parent)
+            
+            return _recfunc([parent.index(element.e)] + acc, element.parent)
 
         return _recfunc([], self)
 
@@ -375,8 +373,8 @@ class BaseElement(Showable):
         if match is None:
             return Tag(None, None)
 
-        if len(match.groups()) == 0:
-            return etag
+        if len(match.groups()) == 0:    # i.e. no namespace: check
+            return Tag('', etag)
         elif len(match.groups()) > 2:
             raise ValueError('Too many namespaces.')
 

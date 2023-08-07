@@ -17,8 +17,8 @@ from functools import reduce, cached_property
 import operator
 import re
 
-from lxml import etree # type: ignore
-from lxml.etree import ( # type: ignore
+from lxml import etree 
+from lxml.etree import ( 
     _Element,
     _ElementTree, 
     _Comment as C,
@@ -151,11 +151,11 @@ class Element(BaseElement, Showable):
         if type(e) not in [_Element, Element, BaseElement] and e is not None and not issubclass(type(e), BaseElement):
             raise TypeError(error_msg)
 
-        if type(e) is _Element:
+        if isinstance(e, _Element):
             self._e = e
-        elif type(e) is Element:
+        elif isinstance(e, Element):
             self._e = e.e
-        elif type(e) is BaseElement:
+        elif isinstance(e, BaseElement):
             self._e = e.e
         elif e is None:
             self._e = None
@@ -394,10 +394,12 @@ class Element(BaseElement, Showable):
             if element.e is None:
                 return acc
             
-            if element.e.getparent() is None:
+            parent = element.e.getparent()
+
+            if parent is None:
                 return acc
 
-            return _recfunc([element.e.getparent().index(element.e)] + acc, element.parent)
+            return _recfunc([parent.index(element.e)] + acc, element.parent)
 
         return _recfunc([], self)
 
@@ -520,6 +522,8 @@ class Element(BaseElement, Showable):
             _e = deepcopy(e)
             _e.tail = self.tail_completer
             _element = Element(_e)
+            if _element.e is None:
+                return []
 
             if _element.tag.name in AtomicNonTokenType.values():
                 internalprotowords = _element._internal_prototokens
@@ -545,7 +549,7 @@ class Element(BaseElement, Showable):
 
                 potential_subtokens = _element.text_desc.split()
 
-                if len(potential_subtokens) > 1: # If there are more than one potential subtokens, then treat as compound token
+                if len(potential_subtokens) > 1: # If there is more than one potential subtoken, then treat as compound token
                     return [handle_compound_token(_element.e)]
                 elif len(potential_subtokens) == len(_element.tokenized_children):
                     return [_element] # i.e. do nothing because there is nothing to tokenize

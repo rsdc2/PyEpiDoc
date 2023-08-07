@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from itertools import chain
 
-from lxml.etree import _Element # type: ignore
+from lxml.etree import _Element 
 from typing import Optional, Sequence
 import re
 

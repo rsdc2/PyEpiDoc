@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import Optional, Union, cast
 
-from lxml import etree # type: ignore
-from lxml.etree import ( # type: ignore
+from lxml import etree 
+from lxml.etree import ( 
     _Element as _Element, 
     _ElementTree, 
     _ElementUnicodeResult,
@@ -150,12 +150,15 @@ class DocRoot:
             acc:list[_ProcessingInstruction], 
             e:_Element | _ProcessingInstruction) -> list[_ProcessingInstruction]:
 
-            if e.getprevious() is None:
+            previous = e.getprevious()
+
+            if previous is None:
                 return list(reversed(acc))
             
-            prev = e.getprevious()
-
-            return _processing_instructions(acc + [prev], prev)
+            if isinstance(previous, _Element):
+                return _processing_instructions(acc, previous)
+            
+            return _processing_instructions(acc + [previous], previous)
 
         return _processing_instructions([], self.e)
     

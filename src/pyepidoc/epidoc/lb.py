@@ -1,6 +1,6 @@
 from ..base import Element, BaseElement
 from typing import Optional, Union
-from lxml.etree import _Element # type: ignore
+from lxml.etree import _Element 
 
 
 class Lb(Element):    

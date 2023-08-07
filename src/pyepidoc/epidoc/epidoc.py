@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Optional, Union
-from lxml import etree # type: ignore
-from lxml.etree import _Element, _ElementUnicodeResult  # type: ignore
+from lxml.etree import _Element, _ElementUnicodeResult 
 
 from ..base.element import Element, BaseElement
 from ..base.docroot import DocRoot

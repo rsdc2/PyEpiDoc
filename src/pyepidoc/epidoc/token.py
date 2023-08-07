@@ -5,7 +5,7 @@ from functools import cached_property
 from copy import deepcopy
 import re
 
-from lxml.etree import _Element # type: ignore
+from lxml.etree import _Element 
 
 from ..base import Namespace as ns
 from ..utils import maxone, remove_none, head
@@ -194,9 +194,9 @@ class Token(Element):
         token."""
         self.set_attrib('pos', value)
 
-    def remove_whitespace(self) -> Token:
+    def remove_whitespace(self) -> _Element:
         
-        """Remove all internal whitespace from word element."""
+        """Remove all internal whitespace from word element, in place."""
 
         def _remove_whitespace_from_child(elem:_Element) -> _Element:
 

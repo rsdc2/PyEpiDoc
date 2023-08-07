@@ -3,7 +3,7 @@ from typing import Optional, Sequence, cast
 
 from copy import deepcopy
 from functools import reduce
-from lxml.etree import _Element # type: ignore
+from lxml.etree import _Element 
 
 from .textpart import TextPart
 from .token import Token
