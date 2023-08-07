@@ -9,7 +9,7 @@ from typing import (
     cast
 )
 
-from .types import Showable, ExtendableSeq
+from .basetypes import Showable, ExtendableSeq
 from .baseelement import BaseElement
 
 from copy import deepcopy
@@ -29,7 +29,7 @@ from lxml.etree import (
 from .namespace import Namespace as ns
 
 from ..constants import NS, XMLNS, SubsumableRels
-from ..base.types import Tag
+from .basetypes import Tag
 from ..epidoc.epidoctypes import (
     whitespace, 
     AtomicTokenType, 

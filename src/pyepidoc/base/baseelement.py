@@ -9,7 +9,7 @@ from typing import (
     cast
 )
 
-from .types import Showable, ExtendableSeq
+from .basetypes import Showable, ExtendableSeq
 import operator
 import re
 
@@ -22,7 +22,7 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from ..base.types import Tag
+from .basetypes import Tag
 
 from .namespace import Namespace as ns
 

@@ -1,7 +1,7 @@
 from typing import Optional, TypeVar, Union, MutableSequence, Generic
 from enum import Enum
 import operator
-from ..base.types import EnumerableEnum
+from ..base.basetypes import EnumerableEnum
 
 
 T = TypeVar('T')
