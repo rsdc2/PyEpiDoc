@@ -12,18 +12,12 @@ the [I.Sicily GitHub wiki](https://github.com/ISicily/ISicily/wiki).
 
 **NB: PyEpiDoc is currently under active development.**
 
-## Dependencies
 
-PyEpiDoc depends on [```lxml```](https://lxml.de/) for parsing XML.
-```lxml``` is used as rather than ```ElementTree``` primarily to 
-make use of its full ```xpath``` support.
+## Install (no dev dependencies)
 
-To run the tests you need [```pytest```](https://docs.pytest.org/en/7.2.x/).
-You can use [```mypy```](https://www.mypy-lang.org/) to check the types.
+### Locally
 
-
-## Install
-To install PyEpiDoc along with its dependencies (```lxml```, ```pytest```, ```mypy```):
+To install PyEpiDoc along with its dependencies (```lxml```):
 
 1. Clone or download the repository;
 
@@ -35,7 +29,7 @@ To install PyEpiDoc along with its dependencies (```lxml```, ```pytest```, ```my
     pip install . --user
     ```
 
-### Virtual environments
+### In a virtual environment
 
 If you are using a ```venv``` virtual environment:
 
@@ -47,11 +41,24 @@ If you are using a ```venv``` virtual environment:
 
     ```pip install .```
 
-
 ## Uninstall
 ```
 pip uninstall pyepidoc
 ```
+
+## Install for development
+
+To install PyEpiDoc along with its dependencies (```lxml```) and development dependencies (```pytest```, ```mypy```), e.g. in a virtual environment:
+
+1. Clone or download the repository;
+
+2. Navigate into the cloned / downloaded repository.
+
+3. From within the cloned repository, install with:
+
+    ```
+    pip install .[dev]
+    ```
 
 ## Example usage
 
@@ -167,7 +174,6 @@ The token will be subsumed into a neighbouring ```<w>``` token if it is not sepa
 The token will be subsumed into a neighbouring ```<w>``` token regardless of the presence of intervening whitespace if:
 - it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels``` and
 - it is a member of ```AlwaysSubsumableType``` in ```epidoctypes.py```
-
 
 
 ## Package structure
