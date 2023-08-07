@@ -158,7 +158,7 @@ str_to_file(catina_funerary_ids, 'catina_funerary_ids_la.txt')
 To check the integrity of the type annotations:
 
 ```
-mypy pyepidoc
+mypy src/pyepidoc
 ```
 
 ## Tokenizer behaviour

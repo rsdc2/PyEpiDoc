@@ -26,8 +26,8 @@ dev = [
 where = ["src"]
 
 [tool.mypy]
-include = ["pyepidoc"]
 ignore_missing_imports = true
+exclude = ['out', 'build']
 
 [tool.setuptools]
 include-package-data = false
