@@ -194,6 +194,12 @@ In addition ```utils.py``` provides general utility functions, in particular for
 At the moment the parser ignores XML comments, so any new XML files produced (e.g. through tokenization) will not reproduce the comments.
 This will be implemented soon.
 
+## Dependencies
+
+PyEpiDoc depends on [lxml](https://lxml.de/).
+
+Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) and [pytest](https://docs.pytest.org/en/7.4.x/).
+
 
 ## Acknowledgements
 

@@ -154,7 +154,7 @@ class EpiDocCorpus:
         if first is None:
             return []
 
-        folder, subfolder, files = head(l)
+        _, _, files = head(l)
         sorted_files = sorted(files)
 
         fileinfos:list[FileInfo] = []
@@ -167,7 +167,7 @@ class EpiDocCorpus:
 
                 fileinfos += [FileInfo(
                     filepath=filepath,
-                    fullpath=True
+                    fullpath=self.fullpath
                 )]
 
         return fileinfos
