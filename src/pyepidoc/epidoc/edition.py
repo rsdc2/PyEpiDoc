@@ -33,7 +33,6 @@ from .epidoctypes import (
 )
 
 
-
 def prettify(
     spaceunit:SpaceUnit, 
     number:int, 

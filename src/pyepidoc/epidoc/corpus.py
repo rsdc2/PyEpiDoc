@@ -371,7 +371,7 @@ class EpiDocCorpus:
         return set([lang for doc in self.docs for lang in doc.div_langs])
 
     def multilinguals(self, head:Optional[int]=None) -> list[EpiDoc]:
-        return [doc for doc in self.docs if doc.ismultilingual]
+        return [doc for doc in self.docs if doc.is_multilingual]
 
     @cached_property
     def prefix(self) -> str:
@@ -441,7 +441,7 @@ class EpiDocCorpus:
 
     @property
     def tokencount(self) -> int:
-        return sum([doc.tokencount for doc in self.docs])
+        return sum([doc.token_count for doc in self.docs])
 
     @property
     def tokens(self) -> list[Token]:

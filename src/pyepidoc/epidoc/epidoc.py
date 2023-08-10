@@ -136,34 +136,27 @@ class EpiDoc(DocRoot):
             return listfilter(lambda edition: edition.subtype != 'transliteration', editions)
 
     @property
+    def expans(self) -> list[Expan]:
+        return flatlist([edition.expans 
+                         for edition in self.editions()])
+
+    @property
     def first_edition(self) -> Optional[Edition]:
         return self.editions()[0] if self.editions != [] else None
 
-    def prettify_edition(
-        self, 
-        spaceunit=SpaceUnit.Space, 
-        number=4, 
-        verbose=True
-    ) -> None:
-    
-        if verbose: 
-            print(f'Prettifying {self.id}...')
-
-        for edition in self.editions():
-            edition.prettify(spaceunit=spaceunit, number=number)
-
-    @property
-    def expans(self) -> list[Expan]:
-        return flatlist([edition.expans for edition in self.editions()])
-
     @property
     def formatted_text(self) -> str:
-        _text = '\n'.join([edition.formatted_text for edition in self.editions()])
+        _text = '\n'.join([edition.formatted_text 
+                           for edition in self.editions()])
         return f'\n{self.id}\n{len(self.id) * "-"}\n{_text}\n'
 
     @property
     def forms(self) -> set[str]:
         return set([str(word) for word in self.tokens])
+
+    @property
+    def has_supplied(self) -> bool:
+        return self.supplied != []
 
     @property
     def gaps(self) -> list[Element]:
@@ -222,9 +215,8 @@ class EpiDoc(DocRoot):
         return idno_elem.text
 
     @property
-    def ismultilingual(self) -> bool:
+    def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 
-
 
     def _get_daterange_attrib(self, attrib_name:str) -> Optional[int]:
         if self.orig_date is None:
@@ -242,7 +234,8 @@ class EpiDoc(DocRoot):
 
         """Used by EDH to host language information."""
 
-        language_elems = [Element(language) for language in self.get_desc('langUsage')]
+        language_elems = [Element(language) 
+                          for language in self.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
         if lang_usage is None: 
@@ -253,18 +246,20 @@ class EpiDoc(DocRoot):
         return [ident for ident in idents if ident is not None]
 
     @property
-    def textlang(self) -> Optional[Element]:
+    def langs(self) -> list[str]:
         """
-        Used by I.Sicily to host language information.        
+        Returns lang_usages if there are no textlangs.
         """
-
-        textlang = maxone([Element(textlang) 
-            for textlang in self.get_desc('textLang')])
         
-        if textlang is None: 
-            return None
+        if self.mainlang is None:
+            return self.otherlangs
 
-        return textlang
+        langs = [self.mainlang] + self.otherlangs
+
+        if len(langs) == 0:
+            return self.lang_usages
+
+        return langs
 
     @property
     def mainlang(self) -> Optional[str]:
@@ -283,22 +278,6 @@ class EpiDoc(DocRoot):
             return []
 
         return otherlangs.split()
-
-    @property
-    def langs(self) -> list[str]:
-        """
-        Returns lang_usages if there are no textlangs.
-        """
-        
-        if self.mainlang is None:
-            return self.otherlangs
-
-        langs = [self.mainlang] + self.otherlangs
-
-        if len(langs) == 0:
-            return self.lang_usages
-
-        return langs
 
     @property
     def lemmata(self) -> set[str]:
@@ -332,7 +311,10 @@ class EpiDoc(DocRoot):
             return None
 
         if orig_date.attrib == dict():
-            orig_date = maxone(Element(orig_date).get_desc('origDate'), throw_if_more_than_one=False)    
+            orig_date = maxone(
+                Element(orig_date).get_desc('origDate'), 
+                throw_if_more_than_one=False
+            )    
 
         if orig_date is None:
             return None        
@@ -341,19 +323,18 @@ class EpiDoc(DocRoot):
 
     @property
     def orig_place(self) -> str:
-        xpath_results = self.xpath('//ns:history/ns:origin/ns:origPlace/ns:placeName[@type="ancient"]/text()')
-        result: _ElementUnicodeResult = head(xpath_results, throw_if_more_than_one=True)
+        xpath_results = self.xpath('//ns:history/ns:origin/'
+                                   'ns:origPlace/ns:placeName'
+                                   '[@type="ancient"]/text()')
+        result = head(
+            xpath_results, 
+            throw_if_more_than_one=True
+        )
+
         if result is None:
             return 'None'
-        else:
-            return str(result)
-
-    @property
-    def publication_stmt(self) -> Optional[Element]:
-        publication_stmt = maxone(self.get_desc('publicationStmt'))
-        if publication_stmt is None:
-            return None
-        return Element(publication_stmt)
+        
+        return str(result)
 
     @property
     def prefix(self) -> str:
@@ -363,6 +344,26 @@ class EpiDoc(DocRoot):
             return "HD"
         
         return ""
+
+    def prettify_edition(
+        self, 
+        spaceunit=SpaceUnit.Space, 
+        number=4, 
+        verbose=True
+    ) -> None:
+    
+        if verbose: 
+            print(f'Prettifying {self.id}...')
+
+        for edition in self.editions():
+            edition.prettify(spaceunit=spaceunit, number=number)
+
+    @property
+    def publication_stmt(self) -> Optional[Element]:
+        publication_stmt = maxone(self.get_desc('publicationStmt'))
+        if publication_stmt is None:
+            return None
+        return Element(publication_stmt)
 
     def set_ids(self, override:bool=False) -> None:
         if SET_IDS or override:
@@ -377,10 +378,6 @@ class EpiDoc(DocRoot):
     @property
     def supplied(self) -> list[Element]:
         return flatlist([edition.supplied for edition in self.editions()])
-
-    @property
-    def has_supplied(self) -> bool:
-        return self.supplied != []
 
     @property
     def tei(self) -> Optional[_Element]:
@@ -412,6 +409,20 @@ class EpiDoc(DocRoot):
 
         return functions
 
+    @property
+    def textlang(self) -> Optional[Element]:
+        """
+        Used by I.Sicily to host language information.        
+        """
+
+        textlang = maxone([Element(textlang) 
+            for textlang in self.get_desc('textLang')])
+        
+        if textlang is None: 
+            return None
+
+        return textlang
+
     def to_xml_file(
         self, 
         dst:str, 
@@ -437,25 +448,21 @@ class EpiDoc(DocRoot):
         with open(dst_fileinfo.full_filepath, 'wb') as f:
             f.write(bytes(self))
 
-    def tokenize(self, verbose=True) -> None:
-        if verbose: 
-            print(f'Tokenizing {self.id}...')
-
-        for edition in self.editions():
-            edition.tokenize()
-
-    @property
-    def translation(self) -> list[_Element]:
-        return self.get_div_descendants('apparatus')
-
     @property
     def token_infos(self) -> set[TokenInfo]:
         _word_infos = [word.word_info for word in self.tokens]
         return set(_word_infos)
 
     @property
-    def tokencount(self) -> int:
+    def token_count(self) -> int:
         return len(self.tokens)
+
+    def tokenize(self, verbose=True) -> None:
+        if verbose: 
+            print(f'Tokenizing {self.id}...')
+
+        for edition in self.editions():
+            edition.tokenize()
 
     @property
     def tokens(self) -> list[Token]:
@@ -471,6 +478,10 @@ class EpiDoc(DocRoot):
     def tokens_str(self) -> str:
         return ' '.join(self.tokens_list_str)
     
+    @property
+    def translation(self) -> list[_Element]:
+        return self.get_div_descendants('apparatus')
+
     @property
     def w_tokens(self) -> list[Token]:
         return flatlist([edition.w_tokens for edition in self.editions()])
