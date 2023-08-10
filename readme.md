@@ -113,7 +113,7 @@ print('Tokens: ', doc.tokens_list_str)
 doc.to_xml("examples/ISic000032_tokenized.xml", create_folderpath=True)
 ```
 
-### Corpus analysis
+### Corpus level analysis
 
 Given a corpus of EpiDoc XML files in a folder ```corpus/``` in the current working directory, the following code filters the corpus and writes a text file containing the ids of all Latin funerary inscriptions from Catania / Catina:
 
@@ -123,7 +123,7 @@ from pyepidoc.epidoc.epidoctypes import TextClass
 from pyepidoc.file.funcs import str_to_file
 
 # Load the corpus
-corpus = EpiDocCorpus(folderpath='corpus')
+corpus = EpiDocCorpus('corpus')
 
 # Filter the corpus to find the funerary inscriptions
 funerary_corpus = corpus.filter_by_textclass([TextClass.Funerary.value])
