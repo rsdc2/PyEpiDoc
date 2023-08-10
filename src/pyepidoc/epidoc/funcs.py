@@ -6,7 +6,7 @@ from .epidoc_types import (
 )
 from .epidoc import EpiDoc
 from .corpus import EpiDocCorpus
-from ..xml import Element
+from .element import Element
 from .ab import Ab
 from .edition import Edition
 from .lb import Lb

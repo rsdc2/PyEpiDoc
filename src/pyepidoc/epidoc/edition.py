@@ -9,7 +9,7 @@ from lxml.etree import _Element
 from typing import Optional, Sequence
 import re
 
-from ..xml import Element, BaseElement
+from ..xml import BaseElement
 from ..constants import (
     XMLNS, 
     SET_IDS, 
@@ -17,6 +17,7 @@ from ..constants import (
 )
 from ..utils import default_str, flatlist
 
+from .element import Element
 from .ab import Ab
 from .token import Token
 from .expan import Expan

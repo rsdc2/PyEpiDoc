@@ -1,6 +1,6 @@
 from typing import Optional
 from lxml.etree import _Element
-from ..xml import Element
+from .element import Element
 
 
 class Ex(Element):

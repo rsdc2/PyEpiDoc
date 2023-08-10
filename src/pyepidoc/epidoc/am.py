@@ -1,4 +1,6 @@
-from ..xml import Element
+from __future__ import annotations
+
+from .element import Element
 from typing import Optional
 
 class Am(Element):    

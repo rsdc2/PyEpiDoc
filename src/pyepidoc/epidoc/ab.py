@@ -5,6 +5,7 @@ from copy import deepcopy
 from functools import reduce
 from lxml.etree import _Element 
 
+from .element import Element
 from .textpart import TextPart
 from .token import Token
 from .expan import Expan
@@ -18,7 +19,7 @@ from .epidoc_types import (
 )
 from ..utils import head
 
-from ..xml import Element, BaseElement
+from ..xml import BaseElement
 from ..utils import update
 from ..constants import XMLNS
 

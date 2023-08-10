@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Optional, Union
 from lxml.etree import _Element
 
-from ..xml import Element, BaseElement
+from ..xml.baseelement import BaseElement
+from .element import Element
 from ..utils import head, flatlist
 
 from .ex import Ex
