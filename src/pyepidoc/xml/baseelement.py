@@ -151,7 +151,7 @@ class BaseElement(Showable):
         descs = _descs if type(_descs) is list else []
 
         return [BaseElement(desc) for desc in descs 
-            if type(desc) is _Element]
+            if isinstance(desc, (_Element))]
     
     @property
     def desc_elem_names(self) -> list[str]:
