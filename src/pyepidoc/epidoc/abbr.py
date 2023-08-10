@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from typing import Optional
-from .element import Element
+from .element import EpiDocElement
 from ..utils import head
 from .am import Am
 
 
-class Abbr(Element):    
+class Abbr(EpiDocElement):    
     def __str__(self) -> str:
         ams = [Am(elem.e) for elem in self.desc_elems
             if elem.local_name == 'am']

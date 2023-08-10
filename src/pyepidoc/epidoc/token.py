@@ -10,7 +10,7 @@ from lxml.etree import _Element
 from ..xml import Namespace as ns
 from ..utils import maxone, remove_none, head
 from ..constants import NS, XMLNS, A_TO_Z_SET
-from .element import Element
+from .element import EpiDocElement
 from ..xml.baseelement import BaseElement
 
 from .expan import Expan
@@ -21,7 +21,7 @@ from .epidoc_types import (
 )
 
 
-class Token(Element):
+class Token(EpiDocElement):
 
     """
     Class for providing services for tokens, including

@@ -6,7 +6,7 @@ from .epidoc_types import (
 )
 from .epidoc import EpiDoc
 from .corpus import EpiDocCorpus
-from .element import Element
+from .element import EpiDocElement
 from .ab import Ab
 from .edition import Edition
 from .lb import Lb
@@ -17,7 +17,7 @@ from ..constants import *
 from ..utils import maxone, flatlist, head
 
 
-def ancestor_abs(elem: Element) -> Sequence[Ab]:
+def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
     """
     Returns a |Sequence| of |Ab|s containing an |Element|,
     starting with the ancestor closest to the |Element|
@@ -26,7 +26,7 @@ def ancestor_abs(elem: Element) -> Sequence[Ab]:
         if elem.local_name == 'ab']
 
 
-def owner_doc(elem:Element) -> Optional[EpiDoc]:
+def owner_doc(elem:EpiDocElement) -> Optional[EpiDoc]:
     """
     Returns the |EpiDoc| document owning an element.
     """
@@ -38,14 +38,14 @@ def owner_doc(elem:Element) -> Optional[EpiDoc]:
     return EpiDoc(roottree)
 
 
-def ancestor_edition(elem: Element) -> Optional[Edition]:
+def ancestor_edition(elem: EpiDocElement) -> Optional[Edition]:
 
     """
     Returns the |Edition| containing an element (if any).
     """
 
     editions = [Edition(elem) for elem in elem.parents 
-        if Element(elem).is_edition]
+        if EpiDocElement(elem).is_edition]
 
     edition = maxone(
         lst=editions,
@@ -59,7 +59,7 @@ def ancestor_edition(elem: Element) -> Optional[Edition]:
     return edition
 
 
-def doc_id(elem: Element) -> Optional[str]:
+def doc_id(elem: EpiDocElement) -> Optional[str]:
     """
     Finds the document id containing a given element.
     """
@@ -72,7 +72,7 @@ def doc_id(elem: Element) -> Optional[str]:
     return doc.id
 
 
-def lang(elem: Element) -> Optional[str]:
+def lang(elem: EpiDocElement) -> Optional[str]:
     """
     Returns the language of the element, based on 
     the language specified either in the 
@@ -102,7 +102,7 @@ def lang(elem: Element) -> Optional[str]:
     return doc.mainlang
     
 
-def line(elem:Element) -> Optional[Lb]:
+def line(elem:EpiDocElement) -> Optional[Lb]:
     lb = elem.lb_in_preceding_or_ancestor
     if lb is None:
         return None

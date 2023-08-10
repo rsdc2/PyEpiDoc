@@ -5,7 +5,7 @@ from copy import deepcopy
 from functools import reduce
 from lxml.etree import _Element 
 
-from .element import Element
+from .element import EpiDocElement
 from .textpart import TextPart
 from .token import Token
 from .expan import Expan
@@ -24,7 +24,7 @@ from ..utils import update
 from ..constants import XMLNS
 
 
-class Ab(Element):
+class Ab(EpiDocElement):
 
     """
     The Ab class provides services for interaction with 
@@ -48,14 +48,14 @@ class Ab(Element):
 
     """
 
-    def __init__(self, e:Optional[_Element | Element | BaseElement]=None):
+    def __init__(self, e:Optional[_Element | EpiDocElement | BaseElement]=None):
 
-        if type(e) not in [_Element, Element, BaseElement] and e is not None:
+        if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')
 
         if type(e) is _Element:
             self._e = e
-        elif type(e) is Element:
+        elif type(e) is EpiDocElement:
             self._e = e.e
         elif type(e) is BaseElement:
             self._e = e.e
@@ -64,8 +64,8 @@ class Ab(Element):
             raise TypeError('Element should be of type <ab>.')
 
     @property
-    def compound_tokens(self) -> list[Element]:
-        return [Element(item) for item 
+    def compound_tokens(self) -> list[EpiDocElement]:
+        return [EpiDocElement(item) for item 
             in self.get_desc(
                 CompoundTokenType.values() 
             )
@@ -91,14 +91,14 @@ class Ab(Element):
         return head(self.tokens)
 
     @property
-    def g_dividers(self) -> list[Element]:
-        return [Element(boundary) for boundary 
+    def g_dividers(self) -> list[EpiDocElement]:
+        return [EpiDocElement(boundary) for boundary 
             in self.get_desc('g')
         ]
 
     @property
     def gaps(self):
-        return [Element(gap) for gap in self.get_desc('gap')]
+        return [EpiDocElement(gap) for gap in self.get_desc('gap')]
 
     @property
     def lang(self) -> Optional[str]:
@@ -109,7 +109,7 @@ class Ab(Element):
         node, at which point returns the <div> @lang attribute, if any.
         """
         
-        def _get_lang(elem:Element) -> Optional[str]:
+        def _get_lang(elem:EpiDocElement) -> Optional[str]:
             
             lang = elem.get_attrib('lang', XMLNS)
             
@@ -127,8 +127,8 @@ class Ab(Element):
         return _get_lang(self)
 
     @property
-    def lbs(self) -> Sequence[Element]:
-        return [Element(lb) for lb in self.get_desc_elems_by_name(['lb'])]
+    def lbs(self) -> Sequence[EpiDocElement]:
+        return [EpiDocElement(lb) for lb in self.get_desc_elems_by_name(['lb'])]
 
     @property
     def _proto_word_strs(self) -> list[str]:
@@ -142,7 +142,7 @@ class Ab(Element):
         token_carriers = [element for sequence in sequences for element in sequence]
         token_carriers_sorted = sorted(token_carriers)
 
-        def _redfunc(acc:list[str], element:Element) -> list[str]:
+        def _redfunc(acc:list[str], element:EpiDocElement) -> list[str]:
             if element.text is None and element.tail_completer is None and element._tail_prototokens == []:
                 return acc
         
@@ -157,7 +157,7 @@ class Ab(Element):
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
 
     @property
-    def token_elements(self) -> list[Element]:
+    def token_elements(self) -> list[EpiDocElement]:
 
         """
         Returns a list of Elements representing the text of the <ab/> element.
@@ -170,7 +170,7 @@ class Ab(Element):
         ab_prototokens = self.text.split()  # split the string into tokens
 
         # Create token elements from the split string elements
-        ab_tokens = [Element(Element.w_factory(word)) for word in ab_prototokens]        
+        ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) for word in ab_prototokens]        
 
         # Insert the tokens into the tree (: when does the text get deleted?)
         for token in reversed(ab_tokens):
@@ -182,7 +182,7 @@ class Ab(Element):
             for element in sequence]
         token_carriers_sorted = sorted(token_carriers)
 
-        def _redfunc(acc:list[Element], element:Element) -> list[Element]:
+        def _redfunc(acc:list[EpiDocElement], element:EpiDocElement) -> list[EpiDocElement]:
             if element._join_to_next:
                 if acc == []:
                     return element.token_elements
@@ -190,7 +190,7 @@ class Ab(Element):
                 if element.token_elements == []:
                     return acc
             
-                def sumfunc(acc:list[Element], elem:Element) -> list[Element]:
+                def sumfunc(acc:list[EpiDocElement], elem:EpiDocElement) -> list[EpiDocElement]:
                     if acc == []:
                         return [elem]
                 
@@ -200,7 +200,7 @@ class Ab(Element):
 
                 # Don't sum the whole sequence every time
                 # On multiple passes, information on bounding left and right appears to get lost
-                return reduce(sumfunc, reversed(element.token_elements + acc[:1]), cast(list[Element], [])) + acc[1:]
+                return reduce(sumfunc, reversed(element.token_elements + acc[:1]), cast(list[EpiDocElement], [])) + acc[1:]
 
             return element.token_elements + acc
 
@@ -211,23 +211,23 @@ class Ab(Element):
             wordcarrier.set_id()
 
     @property
-    def space_separated(self) -> list[Element]:
+    def space_separated(self) -> list[EpiDocElement]:
         """
         :return: a |list| of |Element|s that should be separated by spaces,
         and the next sibling is not an Element that should not be separated
         from the previous element by a space.
         """
 
-        elems = [Element(item) for item in self.get_desc(SpaceSeparated.values())]
+        elems = [EpiDocElement(item) for item in self.get_desc(SpaceSeparated.values())]
         return [elem for elem in elems if elem.next_sibling not in self.no_space]
     
     @property
-    def no_space(self) -> list[Element]:
+    def no_space(self) -> list[EpiDocElement]:
         """
         :return: a |list| of |Element|s that should not be separated by spaces.
         """
 
-        return [Element(item) for item 
+        return [EpiDocElement(item) for item 
             in self.get_desc(
                 NoSpace.values() 
             )
@@ -272,7 +272,7 @@ class Ab(Element):
         return Ab(_e)
 
     @property
-    def _token_carrier_sequences(self) -> list[list[Element]]:
+    def _token_carrier_sequences(self) -> list[list[EpiDocElement]]:
 
         """
         Returns maximal sequences of word_carriers between whitespace.
@@ -280,10 +280,10 @@ class Ab(Element):
         """
         
         def get_word_carrier_sequences(
-            acc:list[list[Element]], 
-            acc_desc:set[Element], 
-            tokenables:list[Element]
-        ) -> list[list[Element]]:
+            acc:list[list[EpiDocElement]], 
+            acc_desc:set[EpiDocElement], 
+            tokenables:list[EpiDocElement]
+        ) -> list[list[EpiDocElement]]:
             
             if tokenables == []:
                 return acc
@@ -302,9 +302,9 @@ class Ab(Element):
             return get_word_carrier_sequences(new_acc, new_acc_desc, tokenables[1:])
 
         def remove_subsets(
-            acc:list[list[Element]], 
-            sequence:list[Element]
-        ) -> list[list[Element]]:
+            acc:list[list[EpiDocElement]], 
+            sequence:list[EpiDocElement]
+        ) -> list[list[EpiDocElement]]:
             
             if True in [SetRelation.propersubset(set(sequence), set(acc_item)) 
                 for acc_item in tokencarrier_sequences]:
@@ -322,14 +322,14 @@ class Ab(Element):
         return reduce(remove_subsets, tokencarrier_sequences, [])
 
     @property
-    def token_carriers(self) -> list[Element]:
+    def token_carriers(self) -> list[EpiDocElement]:
 
         """
         WordCarriers are XML elements that carry text fragments
         either as element-internal text, or in their tails.
         """
         
-        return [Element(element) for element in self.desc_elems 
+        return [EpiDocElement(element) for element in self.desc_elems 
             if element.tag.name in TokenCarrier]
 
     @property

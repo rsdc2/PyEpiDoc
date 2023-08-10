@@ -44,7 +44,7 @@ from . import ids
 from ..utils import maxone, maxoneT, head, last
 
 
-class Element(BaseElement, Showable):    
+class EpiDocElement(BaseElement, Showable):    
 
     _final_space: bool = False
 
@@ -52,7 +52,7 @@ class Element(BaseElement, Showable):
     Provides basic services for all EpiDoc elements.
     """
 
-    def __add__(self, other:Optional[Element]) -> list[Element]:
+    def __add__(self, other:Optional[EpiDocElement]) -> list[EpiDocElement]:
         """
         Handles appending |Element|s.
         """
@@ -61,7 +61,7 @@ class Element(BaseElement, Showable):
         if other is None:
             return [self]
 
-        if type(other) not in [Element]:
+        if type(other) not in [EpiDocElement]:
             raise TypeError(f"Other element is of type {type(other)}.")
 
         if self._e is None and other._e is not None:
@@ -89,14 +89,14 @@ class Element(BaseElement, Showable):
             
             if self._can_subsume(other):
                 self_e.append(other_e)
-                return [Element(self_e, other._final_space)]
+                return [EpiDocElement(self_e, other._final_space)]
 
             if self._subsumable_by(other):
                 self_e.tail = other.text
                 other_e.text = ''
                 other_e.insert(0, self_e)
                 
-                return [Element(other_e)]
+                return [EpiDocElement(other_e)]
             
             return [self, other]
 
@@ -126,7 +126,7 @@ class Element(BaseElement, Showable):
 
                         for child in list(other_e):
                             self_e.append(child)
-                        return [Element(self_e, other._final_space)]
+                        return [EpiDocElement(self_e, other._final_space)]
 
             # Look inside self to see if other tag can 
             # subsume it;
@@ -136,24 +136,24 @@ class Element(BaseElement, Showable):
                     if other._can_subsume(last_child):
                         for child in list(other_e):
                             self_e.append(child)
-                        return [Element(self_e, other._final_space)]
+                        return [EpiDocElement(self_e, other._final_space)]
             
-        return [Element(self_e, self._final_space), Element(other_e, other._final_space)]
+        return [EpiDocElement(self_e, self._final_space), EpiDocElement(other_e, other._final_space)]
 
 
     def __init__(
         self, 
-        e:Optional[Union[_Element, Element, BaseElement]] = None,
+        e:Optional[Union[_Element, EpiDocElement, BaseElement]] = None,
         final_space:bool = False
     ):
         error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
 
-        if type(e) not in [_Element, Element, BaseElement] and e is not None and not issubclass(type(e), BaseElement):
+        if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None and not issubclass(type(e), BaseElement):
             raise TypeError(error_msg)
 
         if isinstance(e, _Element):
             self._e = e
-        elif isinstance(e, Element):
+        elif isinstance(e, EpiDocElement):
             self._e = e.e
         elif isinstance(e, BaseElement):
             self._e = e.e
@@ -184,12 +184,12 @@ class Element(BaseElement, Showable):
         return self.text_desc_compressed_whitespace
 
     @property
-    def abbr_elems(self) -> Sequence[Element]:
+    def abbr_elems(self) -> Sequence[EpiDocElement]:
         """
         Return all abbreviation elements as a |list| of |Element|.
         """
 
-        return [Element(abbr) for abbr in self.get_desc_elems_by_name('abbr') 
+        return [EpiDocElement(abbr) for abbr in self.get_desc_elems_by_name('abbr') 
             if abbr.text is not None]
         
     @property
@@ -211,16 +211,16 @@ class Element(BaseElement, Showable):
             and self.get_attrib('type') == 'edition'
 
     @property
-    def am_elems(self) -> Sequence[Element]:
+    def am_elems(self) -> Sequence[EpiDocElement]:
         """
         Returns a |list| of abbreviation marker elements <am>.
         See https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-am.html,
         last accessed 2023-04-13.
         """
 
-        return [Element(abbr) for abbr in self.get_desc_elems_by_name('am')]
+        return [EpiDocElement(abbr) for abbr in self.get_desc_elems_by_name('am')]
 
-    def append_space(self) -> Element:
+    def append_space(self) -> EpiDocElement:
         """Appends a space to the element in place."""
 
         if self._e is None:
@@ -278,15 +278,15 @@ class Element(BaseElement, Showable):
         # return self._final_space
 
     @property
-    def child_elems(self) -> list[Element]:
-        return [Element(child) for child in self.children]
+    def child_elems(self) -> list[EpiDocElement]:
+        return [EpiDocElement(child) for child in self.children]
     
     @property
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
         return len([parent for parent in self.parents 
-            if type(parent.parent) is Element])
+            if type(parent.parent) is EpiDocElement])
 
     @property
     def dict_desc(self) -> dict:
@@ -300,22 +300,22 @@ class Element(BaseElement, Showable):
         return self._e
 
     @property
-    def ex_elems(self) -> Sequence[Element]:
+    def ex_elems(self) -> Sequence[EpiDocElement]:
         """
         Return all abbreviation expansions (minus abbreviation) 
         as a |list| of |Element|.
         """
 
-        return [Element(ex) for ex in self.get_desc_elems_by_name('ex')]
+        return [EpiDocElement(ex) for ex in self.get_desc_elems_by_name('ex')]
 
     @property
-    def expan_elems(self) -> Sequence[Element]:
+    def expan_elems(self) -> Sequence[EpiDocElement]:
         """
         Return all abbreviation expansions (i.e. abbreviation + expansion) 
         as a |list| of |Element|.
         """
 
-        return [Element(expan) for expan in self.get_desc_elems_by_name('expan')]
+        return [EpiDocElement(expan) for expan in self.get_desc_elems_by_name('expan')]
 
     @property
     def final_tailtoken_boundary(self) -> bool:
@@ -342,15 +342,15 @@ class Element(BaseElement, Showable):
         return self._internal_prototokens[0]
 
     @property
-    def first_internal_word_element(self) -> Optional[Element]:
+    def first_internal_word_element(self) -> Optional[EpiDocElement]:
         if self.internal_token_elements == []:
             return None
         
         return self.internal_token_elements[0]
 
     @property
-    def gaps(self) -> list[Element]:
-        return [Element(gap) for gap in self.get_desc('gap')]
+    def gaps(self) -> list[EpiDocElement]:
+        return [EpiDocElement(gap) for gap in self.get_desc('gap')]
     
     def has_gap(self, reasons:list[str]=[]) -> bool:
         """
@@ -379,7 +379,6 @@ class Element(BaseElement, Showable):
 
         return False
 
-
     @property
     def id_internal(self) -> list[int]:
 
@@ -387,7 +386,7 @@ class Element(BaseElement, Showable):
         Unique computed element id based on hierarchical position in the XML document. 
         """
         
-        def _recfunc(acc:list[int], element:Optional[Element]) -> list[int]:
+        def _recfunc(acc:list[int], element:Optional[EpiDocElement]) -> list[int]:
             if element is None:
                 return acc 
 
@@ -458,7 +457,7 @@ class Element(BaseElement, Showable):
         return self.text_desc.split()
 
     @property
-    def internal_token_elements(self) -> list[Element]:
+    def internal_token_elements(self) -> list[EpiDocElement]:
 
         def remove_internal_extraneous_whitespace(e: _Element) -> _Element:
             """
@@ -498,21 +497,21 @@ class Element(BaseElement, Showable):
 
             return _e      
             
-        def make_internal_token(e: _Element) -> list[Element]:
+        def make_internal_token(e: _Element) -> list[EpiDocElement]:
 
             """TODO merge with w_factory"""
 
-            def handle_compound_token(p:_Element) -> Element:
-                return Element.w_factory(parent=p)
+            def handle_compound_token(p:_Element) -> EpiDocElement:
+                return EpiDocElement.w_factory(parent=p)
             
-            def handle_subatomic_tags(subelement:_Element) -> Element:
+            def handle_subatomic_tags(subelement:_Element) -> EpiDocElement:
                 # Check that does not contain any atomic tokens
                 # If so, does not surround in an atomic token tag
-                if AtomicTokenType.value_set().intersection(Element(subelement).desc_elem_name_set) != set():
-                    w = Element(subelement) 
+                if AtomicTokenType.value_set().intersection(EpiDocElement(subelement).desc_elem_name_set) != set():
+                    w = EpiDocElement(subelement) 
                 else:
                     # Surround in Atomic token tag
-                    w = Element.w_factory(subelements=[subelement])
+                    w = EpiDocElement.w_factory(subelements=[subelement])
 
                 if e.tail is not None and e.tail[-1] in ' ':
                     w._final_space = True
@@ -521,18 +520,18 @@ class Element(BaseElement, Showable):
             
             _e = deepcopy(e)
             _e.tail = self.tail_completer
-            _element = Element(_e)
+            _element = EpiDocElement(_e)
             if _element.e is None:
                 return []
 
             if _element.tag.name in AtomicNonTokenType.values():
                 internalprotowords = _element._internal_prototokens
                 if internalprotowords == []:
-                    return [Element(_e, final_space=True)]
+                    return [EpiDocElement(_e, final_space=True)]
 
                 if len(internalprotowords) == 1:
                     _e.tail = ''
-                    elems = Element(_e) + Element.w_factory(internalprotowords[0])
+                    elems = EpiDocElement(_e) + EpiDocElement.w_factory(internalprotowords[0])
 
                     # Make sure there is a bound to the right if there are multiple tokens in the tail
                     if len(self.tail_token_elements) > 0:
@@ -580,7 +579,7 @@ class Element(BaseElement, Showable):
         if prev_sibling is None:
             return False
         
-        return Element(prev_sibling)._join_to_next
+        return EpiDocElement(prev_sibling)._join_to_next
 
     @property
     def lb_in_preceding_or_ancestor(self) -> Optional[_Element]:
@@ -592,7 +591,7 @@ class Element(BaseElement, Showable):
         last accessed 2023-04-20.
         """
 
-        def get_preceding_lb(elem:Element) -> list[_Element]:
+        def get_preceding_lb(elem:EpiDocElement) -> list[_Element]:
             
             result = elem.xpath('preceding::*[descendant-or-self::ns:lb]')
 
@@ -611,16 +610,16 @@ class Element(BaseElement, Showable):
         return last(get_preceding_lb(self))
 
     @property
-    def next_no_spaces(self) -> list[Element]:
+    def next_no_spaces(self) -> list[EpiDocElement]:
 
         """Returns a list of the next |Element| not 
         separated by whitespace."""
 
-        def lb_no_break_next(element:Element) -> bool:
+        def lb_no_break_next(element:EpiDocElement) -> bool:
             """Keep going if element is a linebreak with no word break"""
             next_elem = element.next_sibling
 
-            if isinstance(next_elem, Element):
+            if isinstance(next_elem, EpiDocElement):
                 if next_elem.e is None:
                     return False
                 if next_elem.e.tag == ns.give_ns('lb', NS):
@@ -629,8 +628,8 @@ class Element(BaseElement, Showable):
 
             return False
                 
-        def next_no_spaces(acc:list[Element], element:Optional[Element]):
-            if not isinstance(element, Element): 
+        def next_no_spaces(acc:list[EpiDocElement], element:Optional[EpiDocElement]):
+            if not isinstance(element, EpiDocElement): 
                 return acc
 
             if lb_no_break_next(element):
@@ -644,7 +643,7 @@ class Element(BaseElement, Showable):
         return next_no_spaces([], self)
 
     @property
-    def next_sibling(self) -> Optional[Element]:
+    def next_sibling(self) -> Optional[EpiDocElement]:
 
         """
         Finds the next non-comment sibling |Element|.
@@ -673,7 +672,7 @@ class Element(BaseElement, Showable):
         _next = _get_next(self._e)
         
         if type(_next) is _Element:
-            return Element(_next)
+            return EpiDocElement(_next)
         elif _next is None:
             return None
 
@@ -692,33 +691,33 @@ class Element(BaseElement, Showable):
         return self._tail_prototokens == [] and not self.final_tailtoken_boundary
 
     @property
-    def nonword_element(self) -> Optional[Element]:
+    def nonword_element(self) -> Optional[EpiDocElement]:
         if self._e is None:
             return None
 
         if self.tag.name in AtomicNonTokenType.values():
             _e = deepcopy(self._e)
             _e.tail = None
-            return Element(_e)
+            return EpiDocElement(_e)
         
         return None
 
     @property
-    def nonword_elements(self) -> list[Element]:
+    def nonword_elements(self) -> list[EpiDocElement]:
         if self.nonword_element is None:
             return []
-        elif type(self.nonword_element) is Element:
+        elif type(self.nonword_element) is EpiDocElement:
             return [self.nonword_element]
 
         return []
 
     @property
-    def parent(self) -> Optional[Element]:
+    def parent(self) -> Optional[EpiDocElement]:
         if self._e is None:
             return None
 
         if type(self._e.getparent()) is _Element:    
-            return Element(self._e.getparent())
+            return EpiDocElement(self._e.getparent())
         elif self._e.getparent() is None:
             return None
         else:
@@ -770,8 +769,8 @@ class Element(BaseElement, Showable):
         id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)).rjust(3, '0') + "0"
         self.id_xml = ids.compress(id_xml, 52) if compress else id_xml
 
-    def _can_subsume(self, other:Element) -> bool:
-        if type(other) is not Element: 
+    def _can_subsume(self, other:EpiDocElement) -> bool:
+        if type(other) is not EpiDocElement: 
             return False
         
         # breakpoint()
@@ -783,8 +782,8 @@ class Element(BaseElement, Showable):
             
         return len(matches) > 0
 
-    def _subsumable_by(self, other:Element) -> bool:
-        if type(other) is not Element: 
+    def _subsumable_by(self, other:EpiDocElement) -> bool:
+        if type(other) is not EpiDocElement: 
             return False
 
         matches = list(filter(self._subsume_filterfunc(head=other, dep=self), SubsumableRels))
@@ -792,7 +791,7 @@ class Element(BaseElement, Showable):
         return len(matches) > 0
 
     @staticmethod
-    def _subsume_filterfunc(head:Element, dep:Element):
+    def _subsume_filterfunc(head:EpiDocElement, dep:EpiDocElement):
 
         def _filterfunc(item) -> bool:
             if item['head'] != head.dict_desc:
@@ -856,7 +855,7 @@ class Element(BaseElement, Showable):
 
     @property
     def supplied(self):
-        return [Element(supplied) for supplied in self.get_desc('supplied')]
+        return [EpiDocElement(supplied) for supplied in self.get_desc('supplied')]
 
     @property
     def has_supplied(self) -> bool:
@@ -894,10 +893,10 @@ class Element(BaseElement, Showable):
             return []
     
     @property
-    def tail_token_elements(self) -> list[Element]:
+    def tail_token_elements(self) -> list[EpiDocElement]:
 
-        def make_words(protoword:Optional[str]) -> Element:
-            w = Element.w_factory(protoword)
+        def make_words(protoword:Optional[str]) -> EpiDocElement:
+            w = EpiDocElement.w_factory(protoword)
             
             if protoword is not None and protoword[-1] in whitespace:
                 w._final_space = True
@@ -949,14 +948,14 @@ class Element(BaseElement, Showable):
         prototoken:Optional[str]=None, 
         subelements:list[_Element]=[],
         parent:Optional[_Element]=None
-    ) -> Element:
+    ) -> EpiDocElement:
 
         """TODO merge w_factory and make_word functions."""
 
         def append_tail_or_text(_tail: Optional[str], _parent:_Element) -> _Element:
             if _tail is not None:
                 tailword_strs = _tail.split()
-                tailtokens = [Element.w_factory(prototoken=tailtoken_str) 
+                tailtokens = [EpiDocElement.w_factory(prototoken=tailtoken_str) 
                     for tailtoken_str in tailword_strs]
                 for tailtoken in tailtokens:
                     if tailtoken.e is not None:
@@ -979,7 +978,7 @@ class Element(BaseElement, Showable):
             for e in subelements:
                 new_g.append(e)
 
-            g_elem = Element(new_g, final_space=True) # Final space because result of a split operation
+            g_elem = EpiDocElement(new_g, final_space=True) # Final space because result of a split operation
             return g_elem
 
         elif prototoken is None and parent is not None:
@@ -1013,12 +1012,12 @@ class Element(BaseElement, Showable):
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
                 elif tag in CompoundTokenType.values(): # e.g. <persName>, <orgName>
-                    new_w_elem = Element.w_factory(parent=new_e)
+                    new_w_elem = EpiDocElement.w_factory(parent=new_e)
                     if new_w_elem.e is not None:
                         new_parent.append(new_w_elem.e)
                         new_parent = append_tail_or_text(e.tail, new_parent)
 
-            return Element(new_parent, final_space=True)
+            return EpiDocElement(new_parent, final_space=True)
         else:
             if prototoken: 
                 namespace = ns.give_ns('w', ns=NS)
@@ -1030,10 +1029,10 @@ class Element(BaseElement, Showable):
             for child in subelements:
                 new_w.append(child)
 
-        return Element(new_w, final_space=True)
+        return EpiDocElement(new_w, final_space=True)
 
     @property
-    def tokenized_children(self) -> list[Element]:
+    def tokenized_children(self) -> list[EpiDocElement]:
         """
         Returns children that are already tokenized.
         """
@@ -1042,7 +1041,7 @@ class Element(BaseElement, Showable):
             if child.local_name in AtomicTokenType.values()]
 
     @property
-    def token_elements(self) -> list[Element]:
+    def token_elements(self) -> list[EpiDocElement]:
         """
         Returns all potential child tokens.
         For use in tokenization.

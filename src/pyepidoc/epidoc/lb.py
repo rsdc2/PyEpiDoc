@@ -1,27 +1,27 @@
 from __future__ import annotations
 
-from .element import Element
+from .element import EpiDocElement
 from ..xml.baseelement import BaseElement
 from typing import Optional, Union
 from lxml.etree import _Element 
 
 
-class Lb(Element):    
+class Lb(EpiDocElement):    
 
     """
     Provides services for <lb> ('line break') elements.
     """
 
-    def __init__(self, e: _Element | Element | BaseElement | None = None):
+    def __init__(self, e: _Element | EpiDocElement | BaseElement | None = None):
         type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-        node_name_err_msg = f'Element must be <lb>. Element is {Element(e).local_name}.'
+        node_name_err_msg = f'Element must be <lb>. Element is {EpiDocElement(e).local_name}.'
 
-        if type(e) not in [_Element, Element, BaseElement] and e is not None:
+        if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None:
             raise TypeError(type_err_msg)
 
         if type(e) is _Element:
             self._e = e
-        elif type(e) is Element:
+        elif type(e) is EpiDocElement:
             self._e = e.e
         elif type(e) is BaseElement:
             self._e = e.e

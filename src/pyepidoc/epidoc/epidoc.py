@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional, Union
 from lxml.etree import _Element, _ElementUnicodeResult 
 
-from .element import Element, BaseElement
+from .element import EpiDocElement, BaseElement
 from ..xml.docroot import DocRoot
 from ..utils import flatlist, maxone, listfilter, head
 from ..file import FileInfo, FileMode
@@ -57,7 +57,7 @@ class EpiDoc(DocRoot):
         return self.get_div_descendants('commentary')
 
     @property
-    def compound_words(self) -> list[Element]:
+    def compound_words(self) -> list[EpiDocElement]:
         return [item for edition in self.editions() 
             for item in edition.compound_tokens]
 
@@ -150,7 +150,7 @@ class EpiDoc(DocRoot):
         return self.supplied != []
 
     @property
-    def gaps(self) -> list[Element]:
+    def gaps(self) -> list[EpiDocElement]:
         items = [edition.gaps for edition in self.editions()]
         return [item for item in flatlist(items)]
 
@@ -225,7 +225,7 @@ class EpiDoc(DocRoot):
 
         """Used by EDH to host language information."""
 
-        language_elems = [Element(language) 
+        language_elems = [EpiDocElement(language) 
                           for language in self.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
@@ -286,7 +286,7 @@ class EpiDoc(DocRoot):
         return self._get_daterange_attrib('notBefore-custom')
 
     @property
-    def orig_date(self) -> Optional[Element]:
+    def orig_date(self) -> Optional[EpiDocElement]:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
             self.get_desc('origDate'),
@@ -298,14 +298,14 @@ class EpiDoc(DocRoot):
 
         if orig_date.attrib == dict():
             orig_date = maxone(
-                Element(orig_date).get_desc('origDate'), 
+                EpiDocElement(orig_date).get_desc('origDate'), 
                 throw_if_more_than_one=False
             )    
 
         if orig_date is None:
             return None        
 
-        return Element(orig_date)
+        return EpiDocElement(orig_date)
 
     @property
     def orig_place(self) -> str:
@@ -345,11 +345,11 @@ class EpiDoc(DocRoot):
             edition.prettify(spaceunit=spaceunit, number=number)
 
     @property
-    def publication_stmt(self) -> Optional[Element]:
+    def publication_stmt(self) -> Optional[EpiDocElement]:
         publication_stmt = maxone(self.get_desc('publicationStmt'))
         if publication_stmt is None:
             return None
-        return Element(publication_stmt)
+        return EpiDocElement(publication_stmt)
 
     def set_ids(self) -> None:
         for edition in self.editions():
@@ -360,7 +360,7 @@ class EpiDoc(DocRoot):
             edition.space_tokens()
 
     @property
-    def supplied(self) -> list[Element]:
+    def supplied(self) -> list[EpiDocElement]:
         return flatlist([edition.supplied for edition in self.editions()])
 
     @property
@@ -378,7 +378,7 @@ class EpiDoc(DocRoot):
         if textclass_e is None:
             return []
 
-        textclass_element = Element(textclass_e)
+        textclass_element = EpiDocElement(textclass_e)
 
         terms = textclass_element.get_desc_elems_by_name('term')
         terms_with_ana = [term for term in terms 
@@ -394,12 +394,12 @@ class EpiDoc(DocRoot):
         return functions
 
     @property
-    def textlang(self) -> Optional[Element]:
+    def textlang(self) -> Optional[EpiDocElement]:
         """
         Used by I.Sicily to host language information.        
         """
 
-        textlang = maxone([Element(textlang) 
+        textlang = maxone([EpiDocElement(textlang) 
             for textlang in self.get_desc('textLang')])
         
         if textlang is None: 

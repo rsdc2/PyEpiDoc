@@ -15,7 +15,7 @@ from ..constants import (
 )
 from ..utils import default_str, flatlist
 
-from .element import Element
+from .element import EpiDocElement
 from .ab import Ab
 from .token import Token
 from .expan import Expan
@@ -163,19 +163,19 @@ def prettify(
     return edition
 
 
-class Edition(Element):
+class Edition(EpiDocElement):
 
     """
     Provides services for <div type="edition> elements.
     """
 
-    def __init__(self, e:Optional[_Element | Element | BaseElement]=None):
-        if type(e) not in [_Element, Element, BaseElement] and e is not None:
+    def __init__(self, e:Optional[_Element | EpiDocElement | BaseElement]=None):
+        if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')
 
         if type(e) is _Element:
             self._e = e
-        elif type(e) is Element:
+        elif type(e) is EpiDocElement:
             self._e = e.e
         elif type(e) is BaseElement:
             self._e = e.e
@@ -197,7 +197,7 @@ class Edition(Element):
             for element in self.get_desc_elems_by_name(['ab'])]
 
     @property
-    def compound_tokens(self) -> list[Element]:
+    def compound_tokens(self) -> list[EpiDocElement]:
         compound_tokens = []
         
         for ab in self.abs:
@@ -224,7 +224,7 @@ class Edition(Element):
         return flatlist([ab.expans for ab in self.abs])
 
     @property
-    def gaps(self) -> list[Element]:
+    def gaps(self) -> list[EpiDocElement]:
         gaps = []
         for ab in self.abs:
             gaps += ab.gaps
@@ -259,14 +259,14 @@ class Edition(Element):
             ab.set_ids()
 
     @property
-    def space_separated(self) -> list[Element]:
+    def space_separated(self) -> list[EpiDocElement]:
         """
         :return: |Element|s that should be separated by spaces
         """
         return flatlist([ab.space_separated for ab in self.abs])
 
     @property
-    def no_space(self) -> list[Element]:
+    def no_space(self) -> list[EpiDocElement]:
         """
         :return: |Element|s that should not be separated by spaces.
         """
@@ -301,7 +301,7 @@ class Edition(Element):
         return words
 
     @property
-    def token_g_dividers(self) -> list[Element]:
+    def token_g_dividers(self) -> list[EpiDocElement]:
         dividers = []
         for ab in self.abs:
             dividers += ab.g_dividers

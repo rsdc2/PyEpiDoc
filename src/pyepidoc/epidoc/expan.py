@@ -4,7 +4,7 @@ from typing import Optional, Union
 from lxml.etree import _Element
 
 from ..xml.baseelement import BaseElement
-from .element import Element
+from .element import EpiDocElement
 from ..utils import head, flatlist
 
 from .ex import Ex
@@ -13,7 +13,7 @@ from .am import Am
 from .epidoc_types import AbbrType
 
 
-class Expan(Element):
+class Expan(EpiDocElement):
 
     """
     Provides services for <expan> elements in EpiDoc XML.
@@ -52,8 +52,8 @@ class Expan(Element):
         return [Abbr(elem.e) for elem in self.abbr_elems]        
 
     @property
-    def as_element(self) -> Element:
-        return Element(self.e)
+    def as_element(self) -> EpiDocElement:
+        return EpiDocElement(self.e)
 
     @property
     def first_abbr(self) -> Optional[Abbr]:

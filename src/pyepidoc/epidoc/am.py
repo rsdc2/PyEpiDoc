@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from .element import Element
+from .element import EpiDocElement
 from typing import Optional
 
-class Am(Element):    
+class Am(EpiDocElement):    
 
     """
     Provides services for <am> ('abbreviation marker') elements.

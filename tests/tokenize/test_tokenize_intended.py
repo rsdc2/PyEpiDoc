@@ -14,7 +14,7 @@ tests = [
     'persName', 
     'break_equals_no_1',
     'break_equals_no_2',
-    # 'break_equals_no_with_comment',
+    'break_equals_no_with_comment',
     'break_equals_no_without_comment', 
     'break_equals_no_unclear',
     'foreign',
