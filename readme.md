@@ -152,7 +152,6 @@ str_to_file(catina_funerary_ids, 'catina_funerary_ids_la.txt')
     pytest
     ```
 
-
 ## Check the types
 
 To check the integrity of the type annotations:
