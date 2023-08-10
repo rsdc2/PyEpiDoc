@@ -162,8 +162,9 @@ class Ab(EpiDocElement):
         """
         Returns a list of Elements representing the text of the <ab/> element.
         Construct the sequence from right to left.
-        Relies on 'element addition' as specified in the __add__ method of
-        the Element object.
+        Relies on 'element addition', per the __add__ method of
+        the Element object, which specifies what happens at the boundary
+        of two different element types.
         """
 
         # Get initial text before any child elements of the <ab>
@@ -182,7 +183,11 @@ class Ab(EpiDocElement):
             for element in sequence]
         token_carriers_sorted = sorted(token_carriers)
 
-        def _redfunc(acc:list[EpiDocElement], element:EpiDocElement) -> list[EpiDocElement]:
+        def _redfunc(
+                acc:list[EpiDocElement], 
+                element:EpiDocElement
+                ) -> list[EpiDocElement]:
+            
             if element._join_to_next:
                 if acc == []:
                     return element.token_elements
@@ -190,7 +195,10 @@ class Ab(EpiDocElement):
                 if element.token_elements == []:
                     return acc
             
-                def sumfunc(acc:list[EpiDocElement], elem:EpiDocElement) -> list[EpiDocElement]:
+                def sumfunc(
+                    acc:list[EpiDocElement], 
+                    elem:EpiDocElement) -> list[EpiDocElement]:
+
                     if acc == []:
                         return [elem]
                 
@@ -200,7 +208,10 @@ class Ab(EpiDocElement):
 
                 # Don't sum the whole sequence every time
                 # On multiple passes, information on bounding left and right appears to get lost
-                return reduce(sumfunc, reversed(element.token_elements + acc[:1]), cast(list[EpiDocElement], [])) + acc[1:]
+                return reduce(
+                    sumfunc, 
+                    reversed(element.token_elements + acc[:1]), 
+                    cast(list[EpiDocElement], [])) + acc[1:]
 
             return element.token_elements + acc
 
