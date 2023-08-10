@@ -262,6 +262,7 @@ class Ab(EpiDocElement):
         for child in list(_e):
             _e.remove(child)
 
+        # Remove any text content of the <ab> node
         _e.text = ""
 
         # Append the new tokenized children
