@@ -3,7 +3,7 @@ Scripts for extracting abbreviations from PyEpiDoc
 """
 
 from pyepidoc import EpiDoc, EpiDocCorpus
-from pyepidoc.epidoc.epidoctypes import AbbrType
+from pyepidoc.epidoc.epidoc_types import AbbrType
 from pyepidoc.epidoc.funcs import lang, owner_doc
 from pyepidoc.utils import top, listfilter
 from pyepidoc.displayutils import show_elems

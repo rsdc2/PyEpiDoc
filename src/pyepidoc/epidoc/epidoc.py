@@ -9,8 +9,7 @@ from ..file import FileInfo, FileMode
 
 from .edition import Edition
 from .expan import Expan
-from .epidoctypes import (
-    Morphology, 
+from .epidoc_types import (
     SpaceUnit
 )
 
@@ -278,11 +277,6 @@ class EpiDoc(DocRoot):
             if word.lemma is not None]
 
         return set(_lemmata)
-
-    @property
-    def morphologies(self) -> set[Morphology]:
-        _morphologies = [word.morphology for word in self.tokens]
-        return set(_morphologies)
 
     @property
     def not_after(self) -> Optional[int]:

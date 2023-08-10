@@ -9,7 +9,7 @@ from ..utils import head, flatlist
 from .ex import Ex
 from .abbr import Abbr
 from .am import Am
-from .epidoctypes import AbbrType
+from .epidoc_types import AbbrType
 
 
 class Expan(Element):

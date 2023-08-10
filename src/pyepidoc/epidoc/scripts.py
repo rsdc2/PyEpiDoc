@@ -1,10 +1,8 @@
 from typing import Optional, Sequence
 from os import getcwd
 
-from .epidoctypes import (
-    SpaceUnit, 
-    Morphology, 
-    Morphology
+from .epidoc_types import (
+    SpaceUnit
 )
 from .epidoc import EpiDoc
 from .corpus import EpiDocCorpus

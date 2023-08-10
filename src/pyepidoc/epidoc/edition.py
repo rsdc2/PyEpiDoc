@@ -23,7 +23,7 @@ from .expan import Expan
 from .textpart import TextPart
 
 
-from .epidoctypes import (
+from .epidoc_types import (
     SpaceUnit, 
     TokenCarrier, 
     AtomicTokenType, 

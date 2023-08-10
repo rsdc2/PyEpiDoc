@@ -1,7 +1,7 @@
 from typing import Optional, TypeVar, Union, MutableSequence, Generic
 from enum import Enum
 import operator
-from ..xml.basetypes import EnumerableEnum
+from ..shared_types import EnumerableEnum
 
 
 T = TypeVar('T')
@@ -188,44 +188,3 @@ class SpaceUnit(Enum):
     Tab = "\t"
     Space = " "
 
-
-class Morphology:
-
-    def __init__(self, full:Optional[str]=None, case:Optional[str]=None, number:Optional[str]=None):
-        if full is not None and full != "_" and full != "":
-            self._parsefull(full)
-            return 
-        
-        self._case = '-' if case is None else case
-        self._number = '-' if number is None else number
-
-    @property
-    def case(self) -> str:
-        return self._case
-
-    @property
-    def number(self) -> str:
-        return self._number
-
-    def _parsefull(self, full:str):
-        if len(full) != 9:
-            raise ValueError('Morphology string of incorrect length.')
-
-        items = list(full)
-        self._case = items[7]
-        self._number = items[2]
-        
-    def __hash__(self):
-        return hash(str(self))
-
-    def __eq__(self, other):
-        if type(other) is Morphology:
-            return str(self) == str(other)
-        
-        return False
-
-    def __str__(self) -> str:
-        return f'--{self.number}----{self.case}-'
-
-    def __repr__(self) -> str:
-        return f'Morphology("{self.__str__()}")'

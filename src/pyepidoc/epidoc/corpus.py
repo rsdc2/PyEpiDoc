@@ -6,7 +6,7 @@ import os
 from .epidoc import EpiDoc
 from .token import Token
 from .expan import Expan
-from .epidoctypes import (
+from .epidoc_types import (
     SetRelation,
     SpaceUnit
 )

@@ -8,7 +8,7 @@ from lxml.etree import _Element
 from .textpart import TextPart
 from .token import Token
 from .expan import Expan
-from .epidoctypes import (
+from .epidoc_types import (
     TokenCarrier, 
     AtomicTokenType, 
     CompoundTokenType, 

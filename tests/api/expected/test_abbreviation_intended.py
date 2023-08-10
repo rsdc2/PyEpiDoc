@@ -1,5 +1,5 @@
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.epidoctypes import AbbrType
+from pyepidoc.epidoc.epidoc_types import AbbrType
 
 def test_abbr():
     doc = EpiDoc('api/files/abbreviations/multiplication.xml')

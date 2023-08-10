@@ -14,8 +14,7 @@ from .element import Element
 from ..xml.baseelement import BaseElement
 
 from .expan import Expan
-from .epidoctypes import (
-    Morphology, 
+from .epidoc_types import (
     CompoundTokenType, 
     AtomicTokenType,
     PUNCTUATION
@@ -162,11 +161,7 @@ class Token(Element):
     @lemma.setter
     def lemma(self, value:str):
         self.set_attrib('lemma', value)
-
-    @property
-    def morphology(self) -> Morphology:
-        return Morphology(full=self.pos)
-
+        
     @property
     def number(self) -> Optional[str]:
         """
