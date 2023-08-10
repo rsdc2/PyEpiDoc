@@ -16,8 +16,6 @@ RIGHT_BRACE:str = '\u007d'
 WHITESPACE:list = [' ', '\n']
 WHITESPACE_RE = r'(\s+)'
 
-VERBOSE = False
-
 SubsumableRels = [
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'lb', 'ns': NS, 'attrs': {'break': 'no'}}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'g', 'ns': NS, 'attrs': dict()}},
@@ -31,6 +29,3 @@ SubsumableRels = [
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'hi', 'ns': NS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': NS, 'attrs': dict()}, 'dep': {'name': 'choice', 'ns': NS, 'attrs': dict()}},
 ]
-
-SET_IDS = False
-SPACE_WORDS = False

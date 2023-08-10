@@ -11,9 +11,7 @@ import re
 
 from ..xml import BaseElement
 from ..constants import (
-    XMLNS, 
-    SET_IDS, 
-    SPACE_WORDS
+    XMLNS
 )
 from ..utils import default_str, flatlist
 
@@ -240,7 +238,7 @@ class Edition(Element):
     def prettify(self, spaceunit:SpaceUnit, number:int) -> None:
         prettify(spaceunit=spaceunit, number=number, edition=self)
 
-    def space_tokens(self, override:bool=False) -> None:
+    def space_tokens(self) -> None:
 
         """
         Separates tokens by spaces, as long as they should be separated by spaces
@@ -248,19 +246,17 @@ class Edition(Element):
         from previous by a space
         """
 
-        if SPACE_WORDS or override:
-            for elem in self.space_separated:
-                elem.append_space()
+        for elem in self.space_separated:
+            elem.append_space()
 
     @property
     def formatted_text(self) -> str:
         _text = re.sub(r'\n\s+', '\n', self.text_desc)
         return re.sub(r'(\S)·(\S)', r'\1 · \2', _text)
 
-    def set_ids(self, override:bool=False) -> None:
-        if SET_IDS or override:
-            for ab in self.abs:
-                ab.set_ids()
+    def set_ids(self) -> None:
+        for ab in self.abs:
+            ab.set_ids()
 
     @property
     def space_separated(self) -> list[Element]:

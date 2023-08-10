@@ -51,9 +51,9 @@ def tokenize(
         doc.tokenize()
         
         if space_words: 
-            doc.space_tokens(override=True)
+            doc.space_tokens()
         if set_ids:
-            doc.set_ids(override=True)
+            doc.set_ids()
 
         doc.convert_ws_to_names()
         doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
@@ -104,7 +104,7 @@ def set_ids(
         )
 
         doc = EpiDoc(src)
-        doc.set_ids(override=True)
+        doc.set_ids()
 
         doc.convert_ws_to_names()
         doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)

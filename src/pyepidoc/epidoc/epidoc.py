@@ -14,7 +14,6 @@ from .epidoc_types import (
 )
 
 from .token import Token
-from ..constants import SET_IDS, SPACE_WORDS
 
 
 class EpiDoc(DocRoot):
@@ -352,15 +351,13 @@ class EpiDoc(DocRoot):
             return None
         return Element(publication_stmt)
 
-    def set_ids(self, override:bool=False) -> None:
-        if SET_IDS or override:
-            for edition in self.editions():
-                edition.set_ids(override)
+    def set_ids(self) -> None:
+        for edition in self.editions():
+            edition.set_ids()
 
-    def space_tokens(self, override:bool=True) -> None:
-        if SPACE_WORDS or override:
-            for edition in self.editions():
-                edition.space_tokens(override)
+    def space_tokens(self) -> None:
+        for edition in self.editions():
+            edition.space_tokens()
 
     @property
     def supplied(self) -> list[Element]:

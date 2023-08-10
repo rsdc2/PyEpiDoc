@@ -13,7 +13,6 @@ from .epidoc_types import (
 
 from ..file import FileInfo, FileMode, filepath_from_list
 from ..utils import maxone, flatlist, top, head, tail
-from ..constants import SET_IDS
 
 
 class EpiDocCorpus:
@@ -357,13 +356,12 @@ class EpiDocCorpus:
         return doc.prefix
 
     def set_ids(self, dstfolder:Optional[str], verbose=True) -> None:
-        if SET_IDS:
-            if dstfolder is None: 
-                return
-            for doc in self.docs:
-                if verbose: print(f'Setting ids for {doc.id}...')
-                doc.set_ids()
-                self._doc_to_xml(dstfolder=dstfolder, doc=doc)
+        if dstfolder is None: 
+            return
+        for doc in self.docs:
+            if verbose: print(f'Setting ids for {doc.id}...')
+            doc.set_ids()
+            self._doc_to_xml(dstfolder=dstfolder, doc=doc)
 
     @cached_property
     def size(self) -> int:
