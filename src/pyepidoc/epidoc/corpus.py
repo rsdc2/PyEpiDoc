@@ -5,7 +5,6 @@ import os
 
 from .epidoc import EpiDoc
 from .token import Token
-from .abbr import AbbrInfo
 from .expan import Expan
 from .epidoctypes import (
     SetRelation,
@@ -179,16 +178,6 @@ class EpiDocCorpus:
                 )]
 
         return fileinfos
-
-    def filter_by_abbr_info(
-        self, 
-        abbr_infos:list[AbbrInfo], 
-        set_relation=SetRelation.intersection) -> EpiDocCorpus:
-        
-        _corpus = [doc for doc in self.docs
-            if set_relation(set(abbr_infos), doc.abbr_infos)]
-
-        return EpiDocCorpus(_corpus, folderpath=None)
 
     def filter_by_dateafter(self, start:int) -> EpiDocCorpus:
         return EpiDocCorpus([doc for doc in self.docs

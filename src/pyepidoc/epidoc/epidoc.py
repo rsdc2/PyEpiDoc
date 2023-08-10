@@ -9,7 +9,6 @@ from ..file import FileInfo, FileMode
 
 from .edition import Edition
 from .expan import Expan
-from .abbr import AbbrInfo
 from .epidoctypes import (
     TokenInfo, 
     Morphology, 
@@ -36,11 +35,6 @@ class EpiDoc(DocRoot):
 
     def __str__(self) -> str:
         return str(bytes(self))
-
-    @property
-    def abbr_infos(self) -> set[AbbrInfo]:
-        _abbr_infos = [token.abbr_info for token in self.tokens]
-        return set(_abbr_infos)
 
     @property
     def apparatus(self) -> list[_Element]:

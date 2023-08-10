@@ -8,7 +8,6 @@ from .epidoctypes import (
     Morphology
 )
 from .epidoc import EpiDoc
-from .abbr import AbbrInfo
 from .corpus import EpiDocCorpus
 from ..base import Element
 from .ab import Ab
@@ -123,16 +122,3 @@ def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> 
 
     else:
         raise ValueError("Both lemmata and morphologies must be specified.")
-
-
-def abbrinfo_factory(forms:list[str]=[], abbrs:list[str]=[]) -> list[AbbrInfo]:
-    """Deprecated??"""
-    
-    if forms and abbrs:
-        return [AbbrInfo(form, abbr) 
-            for form in set(forms) 
-                for abbr in set(abbrs)]
-
-    else:
-        raise ValueError("Both lemmata and morphologies must be specified.")
-

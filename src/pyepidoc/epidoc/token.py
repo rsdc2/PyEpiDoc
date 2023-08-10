@@ -13,7 +13,6 @@ from ..constants import NS, XMLNS, A_TO_Z_SET
 from ..base.element import Element
 from ..base.baseelement import BaseElement
 
-from .abbr import AbbrInfo
 from .expan import Expan
 from .epidoctypes import (
     Morphology, 
@@ -88,10 +87,6 @@ class Token(Element):
             defaultval=None,
             throw_if_more_than_one=False
         )
-
-    @property
-    def abbr_info(self) -> AbbrInfo:
-        return AbbrInfo(form=str(self), abbr=self.abbr_str)
 
     @property
     def abbr_str(self) -> str:

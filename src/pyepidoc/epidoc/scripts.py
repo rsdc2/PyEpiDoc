@@ -8,7 +8,6 @@ from .epidoctypes import (
     Morphology
 )
 from .epidoc import EpiDoc
-from .abbr import AbbrInfo
 from .corpus import EpiDocCorpus
 from ..base import Element
 from .ab import Ab
@@ -76,7 +75,7 @@ def tokenize_corpus(
     dst_folderpath:str, 
     head:Optional[int]=None
 ) -> None:
-    corpus = EpiDocCorpus(folderpath=src_folderpath, head=head)
+    corpus = EpiDocCorpus(src_folderpath, head=head)
     corpus.tokenize(dstfolder=dst_folderpath)
 
 
