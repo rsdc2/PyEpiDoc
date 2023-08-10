@@ -14,5 +14,5 @@ def test_load_corpus():
         fullpath=False
     )
 
-    assert corpus.doccount == 2
-    assert corpus.tokencount > 0
+    assert corpus.doc_count == 2
+    assert corpus.token_count > 0

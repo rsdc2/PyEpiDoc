@@ -101,7 +101,7 @@ class EpiDocCorpus:
         return [doc.date_mean for doc in self.docs]
 
     @property
-    def doccount(self) -> int:
+    def doc_count(self) -> int:
         return len(self.docs)
 
     @staticmethod
@@ -415,7 +415,7 @@ class EpiDocCorpus:
             self._doc_to_xml(dstfolder, doc)
 
     @property
-    def tokencount(self) -> int:
+    def token_count(self) -> int:
         return sum([doc.token_count for doc in self.docs])
 
     @property
