@@ -32,29 +32,37 @@ class EpiDocCorpus:
 
     def __init__(
         self, 
-        input:Optional[Union[EpiDocCorpus, list[EpiDoc]]]=None, 
+        inpt: EpiDocCorpus | list[EpiDoc] | str | None, 
         folderpath:Optional[str]=None, 
         head:Optional[int]=None,
         fullpath=False
     ):
+        
+        """
+        :param inpt:  if str, this is the path to the corpus
+        """
 
         self._docs = None  
         self._head = head
         self._fullpath = fullpath
 
-        if type(input) is EpiDocCorpus:
-            self._folderpath = input.folderpath
-            self._docs = input.docs
-            self._fullpath = input._fullpath
+        if type(inpt) is EpiDocCorpus:
+            self._folderpath = inpt.folderpath
+            self._docs = inpt.docs
+            self._fullpath = inpt._fullpath
             return
-        elif type(input) is list:
+        elif type(inpt) is list:
             self._folderpath = folderpath
-            if input == []:
+            if inpt == []:
                 return
-            elif type(input[0]) is EpiDoc:
-                self._docs = [doc for doc in input]
+            elif type(inpt[0]) is EpiDoc:
+                self._docs = [doc for doc in inpt]
                 return
-        elif input is None:
+        elif type(inpt) is str:
+            self._folderpath = inpt
+            return
+            
+        elif inpt is None:
             self._folderpath = folderpath
             return
 
