@@ -1,7 +1,7 @@
 # Provides functions for showing elements
 from typing import Sequence
 from .epidoc.funcs import doc_id, lang
-from .base import Element
+from .xml import Element
 
 def show_elems(
     elems:Sequence[Element],

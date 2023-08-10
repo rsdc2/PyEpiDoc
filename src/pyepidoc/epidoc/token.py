@@ -7,11 +7,11 @@ import re
 
 from lxml.etree import _Element 
 
-from ..base import Namespace as ns
+from ..xml import Namespace as ns
 from ..utils import maxone, remove_none, head
 from ..constants import NS, XMLNS, A_TO_Z_SET
-from ..base.element import Element
-from ..base.baseelement import BaseElement
+from .element import Element
+from ..xml.baseelement import BaseElement
 
 from .expan import Expan
 from .epidoctypes import (

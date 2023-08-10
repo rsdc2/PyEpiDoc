@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional
-from ..base import Element
+from ..xml import Element
 from ..utils import head
 from .am import Am
 

@@ -18,7 +18,7 @@ from .epidoctypes import (
 )
 from ..utils import head
 
-from ..base import Element, BaseElement
+from ..xml import Element, BaseElement
 from ..utils import update
 from ..constants import XMLNS
 

@@ -2,8 +2,8 @@ from __future__ import annotations
 from typing import Optional, Union
 from lxml.etree import _Element, _ElementUnicodeResult 
 
-from ..base.element import Element, BaseElement
-from ..base.docroot import DocRoot
+from .element import Element, BaseElement
+from ..xml.docroot import DocRoot
 from ..utils import flatlist, maxone, listfilter, head
 from ..file import FileInfo, FileMode
 

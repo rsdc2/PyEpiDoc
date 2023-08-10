@@ -1,4 +1,6 @@
-from ..base import Element, BaseElement
+from __future__ import annotations
+
+from ..xml import Element, BaseElement
 from typing import Optional, Union
 from lxml.etree import _Element 
 
@@ -9,7 +11,7 @@ class Lb(Element):
     Provides services for <lb> ('line break') elements.
     """
 
-    def __init__(self, e:Optional[Union[_Element, Element, BaseElement]]=None):
+    def __init__(self, e: _Element | Element | BaseElement | None = None):
         type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
         node_name_err_msg = f'Element must be <lb>. Element is {Element(e).local_name}.'
 

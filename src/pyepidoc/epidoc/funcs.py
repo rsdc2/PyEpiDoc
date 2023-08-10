@@ -8,7 +8,7 @@ from .epidoctypes import (
 )
 from .epidoc import EpiDoc
 from .corpus import EpiDocCorpus
-from ..base import Element
+from ..xml import Element
 from .ab import Ab
 from .edition import Edition
 from .lb import Lb

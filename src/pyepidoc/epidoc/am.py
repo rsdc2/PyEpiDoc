@@ -1,4 +1,4 @@
-from ..base import Element
+from ..xml import Element
 from typing import Optional
 
 class Am(Element):    

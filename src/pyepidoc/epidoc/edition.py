@@ -9,7 +9,7 @@ from lxml.etree import _Element
 from typing import Optional, Sequence
 import re
 
-from ..base import Element, BaseElement
+from ..xml import Element, BaseElement
 from ..constants import (
     XMLNS, 
     SET_IDS, 

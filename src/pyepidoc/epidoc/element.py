@@ -9,8 +9,8 @@ from typing import (
     cast
 )
 
-from .basetypes import Showable, ExtendableSeq
-from .baseelement import BaseElement
+from ..xml.basetypes import Showable, ExtendableSeq
+from ..xml.baseelement import BaseElement
 
 from copy import deepcopy
 from functools import reduce, cached_property
@@ -26,11 +26,11 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from .namespace import Namespace as ns
+from ..xml.namespace import Namespace as ns
 
 from ..constants import NS, XMLNS, SubsumableRels
-from .basetypes import Tag
-from ..epidoc.epidoctypes import (
+from ..xml.basetypes import Tag
+from .epidoctypes import (
     whitespace, 
     AtomicTokenType, 
     CompoundTokenType, 
@@ -39,8 +39,8 @@ from ..epidoc.epidoctypes import (
     AlwaysSubsumableType,
     AlwaysSubsumable
 )
-from .docroot import DocRoot
-from ..epidoc import ids
+from ..xml.docroot import DocRoot
+from . import ids
 from ..utils import maxone, maxoneT, head, last
 
 
