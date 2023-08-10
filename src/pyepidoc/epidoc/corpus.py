@@ -8,7 +8,6 @@ from .token import Token
 from .expan import Expan
 from .epidoctypes import (
     SetRelation,
-    TokenInfo, 
     SpaceUnit
 )
 
@@ -245,17 +244,6 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(corpus, folderpath=None)
 
-    def filter_by_morphology(
-        self, 
-        morphologies:list[TokenInfo], 
-        set_relation=SetRelation.intersection
-    ) -> EpiDocCorpus:
-    
-        corpus = [doc for doc in self.docs
-            if set_relation(set(morphologies), doc.morphologies)]
-
-        return EpiDocCorpus(corpus, folderpath=None)
-
     def filter_by_orig_place(
         self,
         orig_places:list[str],
@@ -334,16 +322,6 @@ class EpiDocCorpus:
     
         corpus = [doc for doc in self.docs
             if set_relation(set(textclasses), doc.textclasses)]
-
-        return EpiDocCorpus(corpus, folderpath=None)
-
-    def filter_by_word_info(
-        self, word_infos:list[TokenInfo], 
-        set_relation=SetRelation.intersection
-    ) -> EpiDocCorpus:
-
-        corpus = [doc for doc in self.docs
-            if set_relation(set(word_infos), doc.token_infos)]
 
         return EpiDocCorpus(corpus, folderpath=None)
 

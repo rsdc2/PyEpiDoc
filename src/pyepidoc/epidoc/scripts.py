@@ -4,7 +4,6 @@ from os import getcwd
 from .epidoctypes import (
     SpaceUnit, 
     Morphology, 
-    TokenInfo, 
     Morphology
 )
 from .epidoc import EpiDoc

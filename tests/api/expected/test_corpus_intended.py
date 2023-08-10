@@ -9,7 +9,7 @@ def test_load_corpus():
     """
 
     corpus = EpiDocCorpus(
-        folderpath=corpus_folderpath,
+        inpt=corpus_folderpath,
         head=None,
         fullpath=False
     )

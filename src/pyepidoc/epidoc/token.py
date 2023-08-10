@@ -16,7 +16,6 @@ from ..base.baseelement import BaseElement
 from .expan import Expan
 from .epidoctypes import (
     Morphology, 
-    TokenInfo, 
     CompoundTokenType, 
     AtomicTokenType,
     PUNCTUATION
@@ -215,7 +214,7 @@ class Token(Element):
     def type(self) -> str:
         return self.tag.name
 
-    @property
-    def word_info(self) -> TokenInfo:
-        return TokenInfo(self.lemma, self.morphology)
+    # @property
+    # def word_info(self) -> TokenInfo:
+    #     return TokenInfo(self.lemma, self.morphology)
 

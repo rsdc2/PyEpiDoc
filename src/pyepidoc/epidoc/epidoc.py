@@ -10,7 +10,6 @@ from ..file import FileInfo, FileMode
 from .edition import Edition
 from .expan import Expan
 from .epidoctypes import (
-    TokenInfo, 
     Morphology, 
     SpaceUnit
 )
@@ -441,11 +440,6 @@ class EpiDoc(DocRoot):
         
         with open(dst_fileinfo.full_filepath, 'wb') as f:
             f.write(bytes(self))
-
-    @property
-    def token_infos(self) -> set[TokenInfo]:
-        _word_infos = [word.word_info for word in self.tokens]
-        return set(_word_infos)
 
     @property
     def token_count(self) -> int:

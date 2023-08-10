@@ -4,7 +4,6 @@ from os import getcwd
 from .epidoctypes import (
     SpaceUnit, 
     Morphology, 
-    TokenInfo, 
     Morphology
 )
 from .epidoc import EpiDoc
@@ -110,15 +109,3 @@ def line(elem:Element) -> Optional[Lb]:
     if lb is None:
         return None
     return Lb(elem.lb_in_preceding_or_ancestor)
-
-
-def wordinfo_factory(lemmata:list[str]=[], morphologies:list[Morphology]=[]) -> list[TokenInfo]:
-    """Deprecated??"""
-
-    if lemmata and morphologies:
-        return [TokenInfo(lemma, morphology) 
-            for lemma in set(lemmata) 
-                for morphology in set(morphologies)]
-
-    else:
-        raise ValueError("Both lemmata and morphologies must be specified.")
