@@ -282,7 +282,7 @@ class BaseElement(Showable):
     def next_siblings(self) -> list[BaseElement]:
 
         """
-        :return: next sibling |BaseElement|, excluding text nodes
+        :return: next sibling |BaseElement|s, excluding text nodes
         """
         next_sibs = self.xpath('following-sibling::*')
 
