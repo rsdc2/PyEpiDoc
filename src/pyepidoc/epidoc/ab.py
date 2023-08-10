@@ -172,7 +172,9 @@ class Ab(Element):
         ab_tokens = [Element(Element.w_factory(word)) for word in ab_prototokens]        
 
         # Insert the tokens into the tree (: when does the text get deleted?)
-        [self.e.insert(0, token.e) for token in reversed(ab_tokens) if self.e is not None]
+        for token in reversed(ab_tokens):
+            if self.e is not None and token.e is not None:
+                self.e.insert(0, token.e)
 
         sequences = self._token_carrier_sequences
         token_carriers = [element for sequence in sequences 
@@ -260,7 +262,8 @@ class Ab(Element):
         _e.text = ""
 
         for element in tokenized_elements:
-            _e.append(element._e)
+            if element._e is not None:
+                _e.append(element._e)
 
         for word in self.tokens:
             word.remove_whitespace()

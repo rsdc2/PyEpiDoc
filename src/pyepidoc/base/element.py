@@ -564,6 +564,8 @@ class Element(BaseElement, Showable):
 
             raise ValueError(f"Invalid _element.tag.name: {_element.tag.name}")
         
+        if self._e is None:
+            raise TypeError("Underlying element is None.")
         e = remove_internal_extraneous_whitespace(self._e)
         return make_internal_token(e)
 
@@ -593,23 +595,20 @@ class Element(BaseElement, Showable):
         def get_preceding_lb(elem:Element) -> list[_Element]:
             
             result = elem.xpath('preceding::*[descendant-or-self::ns:lb]')
+
             if result == []:
                 if elem.parent is None:
                     return []
 
                 return get_preceding_lb(elem.parent)
 
-            return result
+            return [item for item in result
+                    if isinstance(item, _Element)]
 
         if self._e is None:
-            return []
-
-        preceding_lb = last(get_preceding_lb(self))
-
-        if preceding_lb is None:
             return None
 
-        return Element(preceding_lb)
+        return last(get_preceding_lb(self))
 
     @property
     def next_no_spaces(self) -> list[Element]:
@@ -829,9 +828,10 @@ class Element(BaseElement, Showable):
         if match is None:
             return Tag(None, None)
 
-        if len(match.groups()) == 0:
-            return etag
-        elif len(match.groups()) > 2:
+        if len(match.groups()) == 1:
+            raise ValueError("Only one match found.")        
+        
+        if len(match.groups()) > 2:
             raise ValueError('Too many namespaces.')
 
         return Tag(match.groups()[0], match.groups()[1])
@@ -906,7 +906,14 @@ class Element(BaseElement, Showable):
 
         tail_token_elems = list(map(make_words, self._tail_prototokens))
         if tail_token_elems != []:
-            tail_token_elems[-1]._final_space = True if self.e is not None and self.e.tail != '' and self.e.tail[-1] in ['\n', ' '] else False
+            if self.e is not None:
+                if self.e.tail != '' and self.e.tail is not None:
+                    if self.e.tail[-1] in ['\n', ' ']:
+                        tail_token_elems[-1]._final_space = True
+                        return tail_token_elems
+            
+            tail_token_elems[-1]._final_space = False
+        
         return tail_token_elems
             
     @property
@@ -951,7 +958,9 @@ class Element(BaseElement, Showable):
                 tailword_strs = _tail.split()
                 tailtokens = [Element.w_factory(prototoken=tailtoken_str) 
                     for tailtoken_str in tailword_strs]
-                [_parent.append(tailtoken.e) for tailtoken in tailtokens] 
+                for tailtoken in tailtokens:
+                    if tailtoken.e is not None:
+                        _parent.append(tailtoken.e)
 
             return _parent           
 
@@ -1004,8 +1013,10 @@ class Element(BaseElement, Showable):
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
                 elif tag in CompoundTokenType.values(): # e.g. <persName>, <orgName>
-                    new_parent.append(Element.w_factory(parent=new_e).e)
-                    new_parent = append_tail_or_text(e.tail, new_parent)
+                    new_w_elem = Element.w_factory(parent=new_e)
+                    if new_w_elem.e is not None:
+                        new_parent.append(new_w_elem.e)
+                        new_parent = append_tail_or_text(e.tail, new_parent)
 
             return Element(new_parent, final_space=True)
         else:
@@ -1038,9 +1049,12 @@ class Element(BaseElement, Showable):
         """
         token_elems = self.internal_token_elements + self.tail_token_elements
         if token_elems != []:
-            token_elems[-1]._final_space = True if self.e is not None and self.e.tail not in ['', None] and self.e.tail[-1] in ['\n', ' '] else False
-        return token_elems
+            if self.e is not None:
+                if self.e.tail != '' and self.e.tail is not None:
+                    if self.e.tail[-1] in ['\n', ' ']:
+                        token_elems[-1]._final_space = True
+                        return token_elems
+                    
+            token_elems[-1]._final_space = False
 
-    @property
-    def xml(self) -> _Element:
-        return etree.tostring(self._e)
+        return token_elems

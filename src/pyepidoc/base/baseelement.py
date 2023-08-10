@@ -282,7 +282,8 @@ class BaseElement(Showable):
     def next_siblings(self) -> list[BaseElement]:
         next_sibs = self.xpath('following-sibling::*')
 
-        return [BaseElement(sib) for sib in next_sibs]
+        return [BaseElement(sib) for sib in next_sibs
+                if type(sib) is _Element]
 
     @property
     def parent(self) -> Optional[BaseElement]:
@@ -333,9 +334,14 @@ class BaseElement(Showable):
 
     @property 
     def previous_siblings(self) -> List[BaseElement]:
+        """
+        Returns previous sibling non-text elements
+        """
+
         prev_sibs = self.xpath('preceding-sibling::*')
 
-        return [BaseElement(sib) for sib in prev_sibs]
+        return [BaseElement(sib) for sib in prev_sibs 
+                if type(sib) is _Element]
 
     @property
     def root(self) -> BaseElement:
@@ -432,9 +438,11 @@ class BaseElement(Showable):
         return '[' + ''.join([f"@{k}='{attribs[k]}'" for k in attribs]) + ']'
 
     @property
-    def xml(self) -> Optional[_Element]:
-        return self.e
-
+    def xml_byte_str(self) -> bytes:
+        if self._e is None:
+            raise TypeError("Underlying element is None")
+        return etree.tostring(self._e)
+    
     def get_desc(self, 
         elemnames:Union[list[str], str], 
         attribs:Optional[dict[str, str]]=None

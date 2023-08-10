@@ -383,11 +383,11 @@ class EpiDoc(DocRoot):
         return self.supplied != []
 
     @property
-    def tei(self) -> Optional[Element]:
+    def tei(self) -> Optional[_Element]:
         return maxone(self.get_desc('TEI'))
 
     @property
-    def tei_header(self) -> Optional[Element]:
+    def tei_header(self) -> Optional[_Element]:
         return maxone(self.get_desc('teiHeader'))
 
     @property
@@ -445,7 +445,7 @@ class EpiDoc(DocRoot):
             edition.tokenize()
 
     @property
-    def translation(self) -> _Element:
+    def translation(self) -> list[_Element]:
         return self.get_div_descendants('apparatus')
 
     @property

@@ -210,6 +210,9 @@ class Token(Element):
                 return _remove_whitespace_from_child(child)
 
             return elem
+        
+        if self._e is None:
+            raise TypeError("Underlying element is None")
 
         return _remove_whitespace_from_child(self._e)
 
