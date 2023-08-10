@@ -183,7 +183,7 @@ class Token(EpiDocElement):
         token."""
         self.set_attrib('pos', value)
 
-    def remove_whitespace(self) -> _Element:
+    def remove_element_internal_whitespace(self) -> _Element:
         
         """Remove all internal whitespace from word element, in place."""
 

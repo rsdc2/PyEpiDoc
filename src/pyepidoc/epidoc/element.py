@@ -140,7 +140,6 @@ class EpiDocElement(BaseElement, Showable):
             
         return [EpiDocElement(self_e, self._final_space), EpiDocElement(other_e, other._final_space)]
 
-
     def __init__(
         self, 
         e:Optional[Union[_Element, EpiDocElement, BaseElement]] = None,
@@ -646,7 +645,7 @@ class EpiDocElement(BaseElement, Showable):
     def next_sibling(self) -> Optional[EpiDocElement]:
 
         """
-        Finds the next non-comment sibling |Element|.
+        Finds the next non-comment sibling |EpiDocElement|.
         """
 
         # TODO: put into base element layer; 

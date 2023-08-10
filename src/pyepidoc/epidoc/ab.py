@@ -247,6 +247,7 @@ class Ab(EpiDocElement):
         if self._e is None:
             return None
 
+        # Get the tokenized elements
         if not inplace:
             _e = deepcopy(self._e)
 
@@ -257,17 +258,19 @@ class Ab(EpiDocElement):
             _e = self._e
             tokenized_elements = self.token_elements
 
+        # Remove existing children of <ab>
         for child in list(_e):
             _e.remove(child)
 
         _e.text = ""
 
+        # Append the new tokenized children
         for element in tokenized_elements:
             if element._e is not None:
                 _e.append(element._e)
 
-        for word in self.tokens:
-            word.remove_whitespace()
+        for token in self.tokens:
+            token.remove_element_internal_whitespace()
 
         return Ab(_e)
 
