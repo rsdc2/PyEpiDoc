@@ -8,7 +8,7 @@ from pyepidoc.epidoc.funcs import lang, owner_doc
 from pyepidoc.utils import top, listfilter
 from pyepidoc.displayutils import show_elems
 
-corpus_path = '/home/robert/Documents/programming/python/crossreads/pyepidoc/pyepidoc-data/isicily_master'
+corpus_path = '' # insert path to your corpus here 
 
 corpus = EpiDocCorpus(corpus_path, fullpath=True)
 
