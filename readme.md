@@ -195,9 +195,7 @@ This will be implemented soon.
 
 ## Dependencies
 
-PyEpiDoc depends on [lxml](https://lxml.de/).
-
-Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) and [pytest](https://docs.pytest.org/en/7.4.x/).
+PyEpiDoc depends on [lxml](https://lxml.de/). Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) and [pytest](https://docs.pytest.org/en/7.4.x/).
 
 
 ## Acknowledgements
