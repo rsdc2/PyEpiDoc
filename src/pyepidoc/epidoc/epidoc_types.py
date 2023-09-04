@@ -165,23 +165,6 @@ class TextClass(EnumerableEnum):
     ListInventory = '#function.list.inventory'
 
 
-class SetRelation(Enum):
-    @staticmethod
-    def intersection(set1:set, set2:set) -> bool:
-        return not set.isdisjoint(set1, set2)
-        
-    @staticmethod
-    def propersubset(set1:set, set2:set) -> bool:
-        return set.issubset(set1, set2) and set1 != set2
-
-    subset = set.issubset
-    equal = set.__eq__
-    disjoint = set.isdisjoint
-
-
-class GtLtRelation(Enum):
-    gt = operator.gt
-    lt = operator.lt
 
 
 class SpaceUnit(Enum):

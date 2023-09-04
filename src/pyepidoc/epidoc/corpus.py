@@ -6,10 +6,8 @@ import os
 from .epidoc import EpiDoc
 from .token import Token
 from .expan import Expan
-from .epidoc_types import (
-    SetRelation,
-    SpaceUnit
-)
+from .epidoc_types import SpaceUnit
+from pyepidoc.shared_types import SetRelation
 
 from ..file import FileInfo, FileMode, filepath_from_list
 from ..utils import maxone, flatlist, top, head, tail
@@ -249,7 +247,7 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(corpus, folderpath=None)
 
-    def filter_by_gap(
+    def filter_by_has_gap(
         self,
         has_gap=False,
         reasons:list[str]=[]
@@ -257,6 +255,27 @@ class EpiDocCorpus:
     
         docs = [doc for doc in self.docs
             if doc.has_gap(reasons=reasons) == has_gap]
+
+        return EpiDocCorpus(docs, folderpath=None)
+
+    def filter_by_has_supplied(
+        self,
+        has_supplied=False
+    ) -> EpiDocCorpus:
+        
+        """
+        Filters the corpus
+        according to whether or not it contains a <supplied>
+        element.
+
+        :param has_supplied: False returns a corpus where 
+        no documents have a <supplied> element; True 
+        returns a corpus where all the documents have a 
+        <supplied> element.
+        """
+    
+        docs = [doc for doc in self.docs
+            if doc.has_supplied == has_supplied]
 
         return EpiDocCorpus(docs, folderpath=None)
 
@@ -311,26 +330,6 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(corpus, folderpath=None)
 
-    def filter_by_has_supplied(
-        self,
-        has_supplied=False
-    ) -> EpiDocCorpus:
-        
-        """
-        Filters the corpus
-        according to whether or not it contains a <supplied>
-        element.
-
-        :param has_supplied: False returns a corpus where 
-        no documents have a <supplied> element; True 
-        returns a corpus where all the documents have a 
-        <supplied> element.
-        """
-    
-        docs = [doc for doc in self.docs
-            if doc.has_supplied == has_supplied]
-
-        return EpiDocCorpus(docs, folderpath=None)
 
 
     def filter_by_textclass(

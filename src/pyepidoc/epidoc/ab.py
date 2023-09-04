@@ -12,11 +12,11 @@ from .expan import Expan
 from .epidoc_types import (
     TokenCarrier, 
     AtomicTokenType, 
-    CompoundTokenType, 
-    SetRelation,
+    CompoundTokenType,
     SpaceSeparated,
     NoSpace
 )
+from pyepidoc.shared_types import SetRelation
 from ..utils import head
 
 from ..xml import BaseElement
