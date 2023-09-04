@@ -35,6 +35,9 @@ class EpiDocCorpus:
         head:Optional[int]=None,
         fullpath:bool=False
     ):
+        """
+        :param inpt: EpiDocCorpus object
+        """
         ...
 
     @overload
@@ -45,6 +48,9 @@ class EpiDocCorpus:
         head:Optional[int]=None,
         fullpath:bool=False
     ):
+        """
+        :param inpt: list of EpiDoc objects
+        """
         ...
 
     @overload
@@ -55,6 +61,9 @@ class EpiDocCorpus:
         head:Optional[int]=None,
         fullpath:bool=False
     ):
+        """
+        :param inpt: path to the corpus
+        """
         ...
 
     @overload
@@ -75,10 +84,6 @@ class EpiDocCorpus:
         fullpath:bool=False
     ):
         
-        """
-        :param inpt:  if str, this is the path to the corpus
-        """
-
         self._docs = None  
         self._head = head
         self._fullpath = fullpath
@@ -141,10 +146,16 @@ class EpiDocCorpus:
 
     @property
     def doc_count(self) -> int:
+        """
+        Returns the number of EpiDoc objects in the corpus.
+        """
         return len(self.docs)
 
     @staticmethod
-    def _doc_to_xml(dstfolder:Optional[str], doc:EpiDoc) -> None:
+    def _doc_to_xml_file(dstfolder:Optional[str], doc:EpiDoc) -> None:
+        
+        "Writes out an EpiDoc object to an XML file"
+
         if dstfolder:
             dst = FileInfo(
                 filepath = dstfolder + "/" + doc.id + ".xml", 
@@ -249,7 +260,6 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(docs, folderpath=None)
 
-
     def filter_by_ids(self, ids:list[str]) -> EpiDocCorpus:
         _corpus = [doc for doc in self.docs
             if doc.id in ids]
@@ -288,21 +298,72 @@ class EpiDocCorpus:
         orig_places:list[str],
         set_relation=SetRelation.intersection
     ) -> EpiDocCorpus:
+        
+        """
+        Filters the corpus according to the value
+        of <orig_place>.
+
+        :param set_relation: a value of SetRelation
+        """
 
         corpus = [doc for doc in self.docs
             if set_relation(set(orig_places), set([doc.orig_place]))]
 
         return EpiDocCorpus(corpus, folderpath=None)
 
-    def filter_by_supplied(
+    def filter_by_has_supplied(
         self,
         has_supplied=False
     ) -> EpiDocCorpus:
+        
+        """
+        Filters the corpus
+        according to whether or not it contains a <supplied>
+        element.
+
+        :param has_supplied: False returns a corpus where 
+        no documents have a <supplied> element; True 
+        returns a corpus where all the documents have a 
+        <supplied> element.
+        """
     
         docs = [doc for doc in self.docs
             if doc.has_supplied == has_supplied]
 
         return EpiDocCorpus(docs, folderpath=None)
+
+
+    def filter_by_textclass(
+        self, 
+        textclasses:list[str], 
+        set_relation=SetRelation.intersection
+    ) -> EpiDocCorpus:
+    
+        corpus = [doc for doc in self.docs
+            if set_relation(set(textclasses), doc.textclasses)]
+
+        return EpiDocCorpus(corpus, folderpath=None)
+
+    @property
+    def folderpath(self) -> Optional[str]:
+        return self._folderpath
+
+    @property
+    def formatted_text(self) -> str:
+        return ''.join([doc.formatted_text for doc in self.docs])
+
+    @property
+    def fullpath(self) -> bool:
+        return self._fullpath
+
+    @cached_property
+    def ids(self) -> list[Optional[str]]:
+        return [doc.id for doc in self.docs]
+
+    @property
+    def languages(self) -> set[str]:
+        return set([lang for doc in self.docs 
+                    for lang in doc.div_langs])
 
     def list_unique_orig_places(
         self,
@@ -353,37 +414,6 @@ class EpiDocCorpus:
 
         return places
 
-    def filter_by_textclass(
-        self, 
-        textclasses:list[str], 
-        set_relation=SetRelation.intersection
-    ) -> EpiDocCorpus:
-    
-        corpus = [doc for doc in self.docs
-            if set_relation(set(textclasses), doc.textclasses)]
-
-        return EpiDocCorpus(corpus, folderpath=None)
-
-    @property
-    def folderpath(self) -> Optional[str]:
-        return self._folderpath
-
-    @property
-    def formatted_text(self) -> str:
-        return ''.join([doc.formatted_text for doc in self.docs])
-
-    @property
-    def fullpath(self) -> bool:
-        return self._fullpath
-
-    @cached_property
-    def ids(self) -> list[Optional[str]]:
-        return [doc.id for doc in self.docs]
-
-    @property
-    def languages(self) -> set[str]:
-        return set([lang for doc in self.docs for lang in doc.div_langs])
-
     def multilinguals(self, head:Optional[int]=None) -> list[EpiDoc]:
         return [doc for doc in self.docs if doc.is_multilingual]
 
@@ -401,7 +431,7 @@ class EpiDocCorpus:
         for doc in self.docs:
             if verbose: print(f'Setting ids for {doc.id}...')
             doc.set_ids()
-            self._doc_to_xml(dstfolder=dstfolder, doc=doc)
+            self._doc_to_xml_file(dstfolder=dstfolder, doc=doc)
 
     @cached_property
     def size(self) -> int:
@@ -450,7 +480,7 @@ class EpiDocCorpus:
             if prettify_edition:
                 doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
             
-            self._doc_to_xml(dstfolder, doc)
+            self._doc_to_xml_file(dstfolder, doc)
 
     @property
     def token_count(self) -> int:
