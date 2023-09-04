@@ -1,5 +1,6 @@
 """
-Scripts for extracting abbreviations from PyEpiDoc
+Scripts for extracting abbreviations and 
+information about abbreviations from an EpiDoc corpus
 """
 
 from pyepidoc import EpiDoc, EpiDocCorpus
