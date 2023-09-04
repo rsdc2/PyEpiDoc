@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Union, Sequence
+from typing import Optional, Union, Sequence, overload
 from functools import cached_property
 import os
 
@@ -18,7 +18,8 @@ from ..utils import maxone, flatlist, top, head, tail
 class EpiDocCorpus:
 
     """
-    Provides an interface for handling a corpus of (i.e. more than one) EpiDoc files.
+    Provides an interface for handling a corpus of 
+    (i.e. more than one) EpiDoc files.
     """
 
     _docs: Optional[list[EpiDoc]]
@@ -26,13 +27,52 @@ class EpiDocCorpus:
     _folderpath: Optional[str]
     _fullpath:bool
 
+    @overload
+    def __init__(
+        self,
+        inpt: EpiDocCorpus,
+        folderpath:Optional[str]=None,
+        head:Optional[int]=None,
+        fullpath:bool=False
+    ):
+        ...
+
+    @overload
+    def __init__(
+        self,
+        inpt: list[EpiDoc],
+        folderpath:Optional[str]=None,
+        head:Optional[int]=None,
+        fullpath:bool=False
+    ):
+        ...
+
+    @overload
+    def __init__(
+        self,
+        inpt: str,
+        folderpath:Optional[str]=None,
+        head:Optional[int]=None,
+        fullpath:bool=False
+    ):
+        ...
+
+    @overload
+    def __init__(
+        self,
+        inpt: None,
+        folderpath:Optional[str]=None,
+        head:Optional[int]=None,
+        fullpath:bool=False
+    ):
+        ...
 
     def __init__(
         self, 
         inpt: EpiDocCorpus | list[EpiDoc] | str | None, 
-        folderpath:Optional[str]=None, 
+        folderpath:Optional[str]=None,
         head:Optional[int]=None,
-        fullpath=False
+        fullpath:bool=False
     ):
         
         """
