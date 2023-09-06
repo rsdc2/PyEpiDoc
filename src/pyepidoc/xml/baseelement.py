@@ -6,7 +6,8 @@ from typing import (
     Optional, 
     Union, 
     Iterable,
-    cast
+    cast,
+    overload
 )
 
 from ..shared_types import Showable, ExtendableSeq
@@ -27,7 +28,6 @@ from ..shared_types import Tag
 from .namespace import Namespace as ns
 
 from ..constants import NS, XMLNS, SubsumableRels
-from .docroot import DocRoot
 from ..utils import maxone, maxoneT, head, last
 
 
@@ -37,13 +37,6 @@ class BaseElement(Showable):
     Provides basic XML navigation services, but nothing specific to EpiDoc.
     """
     _e: _Element | None
-
-    def __hash__(self) -> int:
-        return hash(
-            '.'.join(
-                [str(id_part) for id_part in self.id_internal]
-            )
-        )
 
     def __eq__(self, other) -> bool:
         if type(other) is not BaseElement and not issubclass(type(other), BaseElement):
@@ -59,6 +52,38 @@ class BaseElement(Showable):
             return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.gt)
 
         return self.id_internal[-1] > other.id_internal[-1]
+
+    def __hash__(self) -> int:
+        return hash(
+            '.'.join(
+                [str(id_part) for id_part in self.id_internal]
+            )
+        )
+
+    @overload
+    def __init__(self, e: _Element):
+        ...
+
+    @overload
+    def __init__(self, e: BaseElement):
+        ...
+
+    @overload
+    def __init__(self, e: None):
+        ...
+
+    def __init__(self, e:Optional[Union[_Element, BaseElement]]=None):
+        error_msg = f'Expected type is _Element or BaseElement type or None. Actual type is {type(e)}.'
+        
+        if not isinstance(e, (_Element, BaseElement)) and e is not None:
+            raise TypeError(error_msg)
+
+        if isinstance(e, _Element):
+            self._e = e
+
+        elif isinstance(e, BaseElement):
+            self._e = e.e
+
 
     def __lt__(self, other) -> bool:
         if type(other) is not BaseElement and not issubclass(type(other), BaseElement):
@@ -104,19 +129,6 @@ class BaseElement(Showable):
 
         return op(equal_id1[-1], equal_id2[-1])
 
-    def __init__(self, e:Optional[Union[_Element, BaseElement]]=None):
-        error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-        
-
-        if type(e) not in [_Element, BaseElement] and e is not None:
-            raise TypeError(error_msg)
-
-        if type(e) is _Element:
-            self._e = e
-
-        elif type(e) is BaseElement:
-            self._e = e.e
-
     def __str__(self):
         return self.text_desc_compressed_whitespace
 
@@ -137,10 +149,18 @@ class BaseElement(Showable):
             if type(parent.parent) is BaseElement])
 
     @property
+    def desc_comments(self) -> Sequence[_Comment]:
+        if self.e is None:
+            return []
+        
+        return [item for item in self.e.iterdescendants()
+                 if isinstance(item, _Comment)]
+
+    @property
     def desc_elems(self) -> list[BaseElement]:
         """
         :return: a list of all descendant |Element|s.
-        Does not return any text nodes.
+        Does not return any text or comment nodes.
         """
 
         if self._e is None:
@@ -400,7 +420,6 @@ class BaseElement(Showable):
 
         self._e.tail = value
 
-            
     @property
     def text(self) -> str:
         if self._e is None:

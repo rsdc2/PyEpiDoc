@@ -345,8 +345,9 @@ class Ab(EpiDocElement):
         either as element-internal text, or in their tails.
         """
         
-        return [EpiDocElement(element) for element in self.desc_elems 
-            if element.tag.name in TokenCarrier]
+        return [EpiDocElement(element) 
+                for element in self.desc_elems
+                if element.tag.name in TokenCarrier]
 
     @property
     def tokens(self) -> list[Token]:

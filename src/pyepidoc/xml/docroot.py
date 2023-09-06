@@ -1,9 +1,16 @@
 from __future__ import annotations
-from typing import Optional, Union, cast
+from typing import (
+    Optional, 
+    Union, 
+    cast, 
+    overload, 
+    Sequence
+)
 
 from lxml import etree 
 from lxml.etree import ( 
-    _Element as _Element, 
+    _Comment,
+    _Element, 
     _ElementTree, 
     _ElementUnicodeResult,
     XMLSyntaxError,
@@ -12,6 +19,7 @@ from lxml.etree import (
 
 from ..file import FileInfo
 from ..constants import NS, XMLNS
+from .baseelement import BaseElement
 
 
 class DocRoot:    
@@ -35,26 +43,41 @@ class DocRoot:
         )
 
         return declaration + processing_instructions + b_str
-    
-    def __init__(self, input:FileInfo | _ElementTree | str, fullpath=False):
-        if type(input) is FileInfo:
-            self._file = input
+
+    @overload
+    def __init__(self, inpt:FileInfo, fullpath=False):
+        ...
+
+    @overload
+    def __init__(self, inpt:_ElementTree, fullpath=False):
+        ...
+
+    @overload
+    def __init__(self, inpt:str, fullpath=False):
+        """
+        :param inpt: str containing the filepath of the EpiDoc XML file.
+        """
+        ...
+
+    def __init__(self, inpt:FileInfo | _ElementTree | str, fullpath=False):
+        if type(inpt) is FileInfo:
+            self._file = inpt
             self._e = None
             return
-        elif type(input) is _ElementTree:
-            self._e = input.getroot()
-            self._roottree = input
+        elif type(inpt) is _ElementTree:
+            self._e = inpt.getroot()
+            self._roottree = inpt
             self._file = None
             return
-        elif type(input) is str:
+        elif type(inpt) is str:
             self._file = FileInfo(
-                filepath=input, 
+                filepath=inpt, 
                 fullpath=fullpath,
             )
             self._e = None
             return
         
-        raise TypeError(f"input is of type {type(input)}, but should be either FileInfo, _ElementTree or str.")
+        raise TypeError(f"input is of type {type(inpt)}, but should be either FileInfo, _ElementTree or str.")
 
     @staticmethod
     def _clean_text(text:str):
@@ -72,6 +95,27 @@ class DocRoot:
     @property
     def depth(self) -> int:
         return 0
+
+    @property
+    def desc_comments(self) -> Sequence[BaseElement]:
+        return [BaseElement(item) 
+                for item in self._desc_comments]
+
+    @property
+    def _desc_comments(self) -> Sequence[_Comment]:
+        if self.e is None:
+            return []
+        
+        return [item for item in self.e.iterdescendants()
+                 if isinstance(item, _Comment)]
+
+    @property
+    def desc_elems(self) -> Sequence[BaseElement]:
+        if self.e is None:
+            return []
+        
+        return [BaseElement(item) for item in self.e.iterdescendants()
+                 if isinstance(item, _Element)]
 
     @property
     def e(self) -> _Element:
