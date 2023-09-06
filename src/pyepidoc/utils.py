@@ -37,6 +37,17 @@ def flatlist(xd_list:list) -> list:
     return xd_list
 
 
+def flatten(xd_list:Sequence[Sequence[T]]) -> Sequence[T]:
+
+    """
+    Flattens list to one dimension.
+    """
+
+    def reduce_list(acc:Sequence[T], l:Sequence[T]) -> Sequence[T]: 
+        return list(acc) + list(l)
+
+    return reduce(reduce_list, xd_list, [])
+
 def listfilter(func, iterable:Iterable[T]) -> list[T]:
     return list(filter(func, iterable))
 

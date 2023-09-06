@@ -20,7 +20,7 @@ from pyepidoc.shared_types import SetRelation
 from ..utils import head
 
 from ..xml import BaseElement
-from ..utils import update
+from ..utils import update, flatlist, flatten
 from ..constants import XMLNS
 
 
@@ -160,9 +160,11 @@ class Ab(EpiDocElement):
     def token_elements(self) -> list[EpiDocElement]:
 
         """
+        The function that does the tokenization.
+        
         Returns a list of Elements representing the text of the <ab/> element.
-        Construct the sequence from right to left.
-        Relies on 'element addition', per the __add__ method of
+        Constructs the sequence from right to left.
+        Uses 'element addition', per the __add__ dunder method of
         the Element object, which specifies what happens at the boundary
         of two different element types.
         """
@@ -171,16 +173,15 @@ class Ab(EpiDocElement):
         ab_prototokens = self.text.split()  # split the string into tokens
 
         # Create token elements from the split string elements
-        ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) for word in ab_prototokens]        
+        ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) 
+                     for word in ab_prototokens]        
 
-        # Insert the tokens into the tree (: when does the text get deleted?)
+        # Insert the tokens into the tree
         for token in reversed(ab_tokens):
             if self.e is not None and token.e is not None:
                 self.e.insert(0, token.e)
 
-        sequences = self._token_carrier_sequences
-        token_carriers = [element for sequence in sequences 
-            for element in sequence]
+        token_carriers = flatten(self._token_carrier_sequences)
         token_carriers_sorted = sorted(token_carriers)
 
         def _redfunc(
@@ -321,17 +322,17 @@ class Ab(EpiDocElement):
             sequence:list[EpiDocElement]
         ) -> list[list[EpiDocElement]]:
             
-            if True in [SetRelation.propersubset(set(sequence), set(acc_item)) 
-                for acc_item in tokencarrier_sequences]:
+            if any([SetRelation.propersubset(set(sequence), set(acc_item))
+                for acc_item in tokencarrier_sequences]):
                 
                 return acc
             
             return acc + [sequence]
 
         tokencarrier_sequences = get_word_carrier_sequences(
-            [], 
-            set(), 
-            self.token_carriers
+            acc=[], 
+            acc_desc=set(), 
+            tokenables=self.token_carriers
         )
         
         return reduce(remove_subsets, tokencarrier_sequences, [])

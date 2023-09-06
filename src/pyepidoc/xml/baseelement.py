@@ -38,7 +38,6 @@ class BaseElement(Showable):
     """
     _e: _Element | None
 
-
     def __hash__(self) -> int:
         return hash(
             '.'.join(
