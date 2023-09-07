@@ -56,7 +56,7 @@ class EpiDocElement(BaseElement, Showable):
         """
         Handles appending |Element|s.
         """
-
+        # breakpoint()
         # Handle cases where other is None
         if other is None:
             return [self]
@@ -79,7 +79,6 @@ class EpiDocElement(BaseElement, Showable):
         if self_e is None or other_e is None:
             return []
 
-        
         # Handle unlike tags
         if self.tag != other.tag:
             # If right-bounded, never subsume
@@ -147,7 +146,7 @@ class EpiDocElement(BaseElement, Showable):
     ):
         error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
 
-        if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None and not issubclass(type(e), BaseElement):
+        if not isinstance(e, (_Element, EpiDocElement, BaseElement)) and e is not None:
             raise TypeError(error_msg)
 
         if isinstance(e, _Element):
@@ -158,8 +157,6 @@ class EpiDocElement(BaseElement, Showable):
             self._e = e.e
         elif e is None:
             self._e = None
-        elif issubclass(type(e), BaseElement):
-            self._e = e.e
 
         self._final_space = final_space
 
@@ -330,6 +327,9 @@ class EpiDocElement(BaseElement, Showable):
             return False
         
         if self.tail == '':
+            return False
+        
+        if self.tag.name == "Comment":
             return False
 
         return self.tail[-1] in whitespace
@@ -560,6 +560,12 @@ class EpiDocElement(BaseElement, Showable):
             elif _element.tag.name in SubatomicTagType.values():
                 return [handle_subatomic_tags(subelement=_e)]
 
+            elif _element.tag.name == "Comment":
+                comment = deepcopy(_element.e)
+                comment.tail = ""
+
+                return [EpiDocElement(comment)]
+
             raise ValueError(f"Invalid _element.tag.name: {_element.tag.name}")
         
         if self._e is None:
@@ -611,10 +617,10 @@ class EpiDocElement(BaseElement, Showable):
     @property
     def next_no_spaces(self) -> list[EpiDocElement]:
 
-        """Returns a list of the next |Element| not 
+        """Returns a list of the next |Element|s not 
         separated by whitespace."""
 
-        def lb_no_break_next(element:EpiDocElement) -> bool:
+        def no_break_next(element:EpiDocElement) -> bool:
             """Keep going if element is a linebreak with no word break"""
             next_elem = element.next_sibling
 
@@ -624,19 +630,22 @@ class EpiDocElement(BaseElement, Showable):
                 if next_elem.e.tag == ns.give_ns('lb', NS):
                     if next_elem.e.attrib.get('break') == 'no':
                         return True
+                if next_elem.tag.name == "Comment":
+                    return True
 
             return False
                 
-        def next_no_spaces(acc:list[EpiDocElement], element:Optional[EpiDocElement]):
+        def next_no_spaces(acc: list[EpiDocElement], element: Optional[EpiDocElement]):
+            
             if not isinstance(element, EpiDocElement): 
                 return acc
 
-            if lb_no_break_next(element):
+            if no_break_next(element):
                 return next_no_spaces(acc + [element], element.next_sibling)
 
             if element.final_tailtoken_boundary:
                 return acc + [element]
-
+            # breakpoint()
             return next_no_spaces(acc + [element], element.next_sibling)
 
         return next_no_spaces([], self)
@@ -657,9 +666,7 @@ class EpiDocElement(BaseElement, Showable):
 
             _next_sib = e.getnext()
 
-            if type(_next_sib) is C:
-                return _get_next(_next_sib)
-            if type(_next_sib) is _Element:
+            if isinstance(_next_sib, _Element):
                 return _next_sib
             e.getroottree()
 
@@ -670,7 +677,7 @@ class EpiDocElement(BaseElement, Showable):
 
         _next = _get_next(self._e)
         
-        if type(_next) is _Element:
+        if isinstance(_next, _Element):
             return EpiDocElement(_next)
         elif _next is None:
             return None
@@ -815,26 +822,6 @@ class EpiDocElement(BaseElement, Showable):
         return _filterfunc
 
     @property
-    def tag(self) -> Tag:
-
-        if self._e is None: 
-            return Tag(None, None)
-
-        etag = self._e.tag
-        match = re.search(r'\{(.+)\}(.+)', etag)
-
-        if match is None:
-            return Tag(None, None)
-
-        if len(match.groups()) == 1:
-            raise ValueError("Only one match found.")        
-        
-        if len(match.groups()) > 2:
-            raise ValueError('Too many namespaces.')
-
-        return Tag(match.groups()[0], match.groups()[1])
-
-    @property
     def tail_completer(self) -> Optional[str]:
 
         if self.tail is None:
@@ -868,9 +855,11 @@ class EpiDocElement(BaseElement, Showable):
     @property
     def _tail_prototokens(self) -> list[str]:
 
-        """Returns separate tokens in the element's tail text, 
+        """
+        Returns separate tokens in the element's tail text, 
         but any elements attached without a space to the element is left
-        to be picked up under _internal_prototokens."""
+        to be picked up under _internal_prototokens.
+        """
 
         if self.tail is None:
             return []
@@ -930,17 +919,6 @@ class EpiDocElement(BaseElement, Showable):
             return
 
         self._e.text = value
-
-    @property
-    def text_desc(self) -> str:
-        if self._e is None: 
-            return ''
-        return ''.join(self._e.xpath('.//text()'))
-
-    @property
-    def text_desc_compressed_whitespace(self) -> str:
-        pattern = r'[\t\s\n]+'
-        return re.sub(pattern, ' ', self.text_desc)
 
     @staticmethod
     def w_factory(
@@ -1037,7 +1015,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [child for child in self.child_elems
-            if child.local_name in AtomicTokenType.values()]
+            if child.local_name in AtomicTokenType.values() or child.tag.name == "Comment"]
 
     @property
     def token_elements(self) -> list[EpiDocElement]:
@@ -1045,6 +1023,7 @@ class EpiDocElement(BaseElement, Showable):
         Returns all potential child tokens.
         For use in tokenization.
         """
+        # breakpoint()
         token_elems = self.internal_token_elements + self.tail_token_elements
         if token_elems != []:
             if self.e is not None:

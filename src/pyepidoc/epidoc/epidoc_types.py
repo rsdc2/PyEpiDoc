@@ -94,11 +94,12 @@ class CompoundTokenType(EnumerableEnum):
 
 
 TokenCarrier = set(
-    SubatomicTagType.values() + 
-    AtomicTokenType.values() + 
-    AtomicNonTokenType.values() + 
-    CompoundTokenType.values() + 
-    AlwaysSubsumableType.values()
+    SubatomicTagType.values() 
+    + AtomicTokenType.values() 
+    + AtomicNonTokenType.values() 
+    + CompoundTokenType.values() 
+    + AlwaysSubsumableType.values() 
+    + ['Comment']
 )
 
 

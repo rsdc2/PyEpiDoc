@@ -138,8 +138,7 @@ class Ab(EpiDocElement):
         can be tokenized within the <ab/> element.
         """
 
-        sequences = self._token_carrier_sequences
-        token_carriers = [element for sequence in sequences for element in sequence]
+        token_carriers = flatten(self._token_carrier_sequences)
         token_carriers_sorted = sorted(token_carriers)
 
         def _redfunc(acc:list[str], element:EpiDocElement) -> list[str]:
@@ -155,6 +154,108 @@ class Ab(EpiDocElement):
             return element._prototokens + acc
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
+
+
+    def set_ids(self) -> None:
+        for wordcarrier in self.token_carriers:
+            wordcarrier.set_id()
+
+    @property
+    def space_separated(self) -> list[EpiDocElement]:
+        """
+        :return: a |list| of |Element|s that should be separated by spaces,
+        and the next sibling is not an Element that should not be separated
+        from the previous element by a space.
+        """
+
+        elems = [EpiDocElement(item) 
+                 for item in self.get_desc(SpaceSeparated.values())]
+        return [elem for elem in elems 
+                if elem.next_sibling not in self.no_space]
+    
+    @property
+    def no_space(self) -> list[EpiDocElement]:
+        """
+        :return: a |list| of |Element|s that should not be separated by spaces.
+        """
+
+        return [EpiDocElement(item) for item 
+            in self.get_desc(
+                NoSpace.values() 
+            )
+        ]
+
+    @property
+    def textparts(self) -> list[TextPart]:
+        return [TextPart(part) for part in self.get_div_descendants('textpart')]
+
+    @property
+    def token_carriers(self) -> list[EpiDocElement]:
+
+        """
+        WordCarriers are XML elements that carry text fragments
+        either as element-internal text, or in their tails.
+        """
+        # breakpoint()
+        return [EpiDocElement(element) 
+                for element in self.desc_elems
+                if element.tag.name in TokenCarrier]
+
+    @property
+    def _token_carrier_sequences(self) -> list[list[EpiDocElement]]:
+
+        """
+        Returns maximal sequences of word_carriers between whitespace.
+        These sequences are what are tokenized in <w/> elements etc.
+        """
+        
+        def get_word_carrier_sequences(
+            acc: list[list[EpiDocElement]], 
+            acc_desc: set[EpiDocElement], 
+            tokenables: list[EpiDocElement]
+        ) -> list[list[EpiDocElement]]:
+            
+            # breakpoint()
+
+            if tokenables == []:
+                return acc
+
+            element = tokenables[0]
+
+            if element in acc_desc:
+                return get_word_carrier_sequences(acc, acc_desc, tokenables[1:])
+
+            new_acc = acc + [element.next_no_spaces]
+
+            next_no_spaces_desc = [element_.desc_elems for element_ in element.next_no_spaces] + [element.next_no_spaces]
+            next_no_spaces_desc_flat = [EpiDocElement(item) for item in flatten(next_no_spaces_desc)]
+            new_acc_desc = update(acc_desc, set(next_no_spaces_desc_flat))
+            
+            # breakpoint()
+
+            return get_word_carrier_sequences(new_acc, new_acc_desc, tokenables[1:])
+
+        def remove_subsets(
+            acc:list[list[EpiDocElement]], 
+            sequence:list[EpiDocElement]
+        ) -> list[list[EpiDocElement]]:
+            
+            if any([SetRelation.propersubset(set(sequence), set(acc_item))
+                for acc_item in tokencarrier_sequences]):
+                
+                return acc
+            
+            return acc + [sequence]
+
+        # breakpoint()
+        tokencarrier_sequences = get_word_carrier_sequences(
+            acc=[], 
+            acc_desc=set(), 
+            tokenables=self.token_carriers
+        )
+        # breakpoint()
+        
+        return reduce(remove_subsets, tokencarrier_sequences, [])
 
     @property
     def token_elements(self) -> list[EpiDocElement]:
@@ -183,12 +284,14 @@ class Ab(EpiDocElement):
 
         token_carriers = flatten(self._token_carrier_sequences)
         token_carriers_sorted = sorted(token_carriers)
-
+        # breakpoint()
+        
         def _redfunc(
                 acc:list[EpiDocElement], 
                 element:EpiDocElement
                 ) -> list[EpiDocElement]:
             
+            # breakpoint()
             if element._join_to_next:
                 if acc == []:
                     return element.token_elements
@@ -217,37 +320,6 @@ class Ab(EpiDocElement):
             return element.token_elements + acc
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
-
-    def set_ids(self) -> None:
-        for wordcarrier in self.token_carriers:
-            wordcarrier.set_id()
-
-    @property
-    def space_separated(self) -> list[EpiDocElement]:
-        """
-        :return: a |list| of |Element|s that should be separated by spaces,
-        and the next sibling is not an Element that should not be separated
-        from the previous element by a space.
-        """
-
-        elems = [EpiDocElement(item) for item in self.get_desc(SpaceSeparated.values())]
-        return [elem for elem in elems if elem.next_sibling not in self.no_space]
-    
-    @property
-    def no_space(self) -> list[EpiDocElement]:
-        """
-        :return: a |list| of |Element|s that should not be separated by spaces.
-        """
-
-        return [EpiDocElement(item) for item 
-            in self.get_desc(
-                NoSpace.values() 
-            )
-        ]
-
-    @property
-    def textparts(self) -> list[TextPart]:
-        return [TextPart(part) for part in self.get_div_descendants('textpart')]
 
     def tokenize(self, inplace=True) -> Optional[Ab]:
         """
@@ -286,68 +358,6 @@ class Ab(EpiDocElement):
             token.remove_element_internal_whitespace()
 
         return Ab(_e)
-
-    @property
-    def _token_carrier_sequences(self) -> list[list[EpiDocElement]]:
-
-        """
-        Returns maximal sequences of word_carriers between whitespace.
-        These sequences are what are tokenized in <w/> elements etc.
-        """
-        
-        def get_word_carrier_sequences(
-            acc:list[list[EpiDocElement]], 
-            acc_desc:set[EpiDocElement], 
-            tokenables:list[EpiDocElement]
-        ) -> list[list[EpiDocElement]]:
-            
-            if tokenables == []:
-                return acc
-
-            element = tokenables[0]
-
-            if element in acc_desc:
-                return get_word_carrier_sequences(acc, acc_desc, tokenables[1:])
-
-            new_acc = acc + [element.next_no_spaces]
-
-            next_no_spaces_desc = [element_.desc_elems for element_ in element.next_no_spaces] + [element.next_no_spaces]
-            next_no_spaces_desc_flat = [element for descsequence in next_no_spaces_desc for element in descsequence]
-            new_acc_desc = update(acc_desc, set(next_no_spaces_desc_flat))
-            
-            return get_word_carrier_sequences(new_acc, new_acc_desc, tokenables[1:])
-
-        def remove_subsets(
-            acc:list[list[EpiDocElement]], 
-            sequence:list[EpiDocElement]
-        ) -> list[list[EpiDocElement]]:
-            
-            if any([SetRelation.propersubset(set(sequence), set(acc_item))
-                for acc_item in tokencarrier_sequences]):
-                
-                return acc
-            
-            return acc + [sequence]
-
-        tokencarrier_sequences = get_word_carrier_sequences(
-            acc=[], 
-            acc_desc=set(), 
-            tokenables=self.token_carriers
-        )
-        
-        return reduce(remove_subsets, tokencarrier_sequences, [])
-
-    @property
-    def token_carriers(self) -> list[EpiDocElement]:
-
-        """
-        WordCarriers are XML elements that carry text fragments
-        either as element-internal text, or in their tails.
-        """
-        
-        return [EpiDocElement(element) 
-                for element in self.desc_elems
-                if element.tag.name in TokenCarrier]
 
     @property
     def tokens(self) -> list[Token]:

@@ -18,7 +18,6 @@ from lxml import etree
 from lxml.etree import ( 
     _Element,
     _ElementTree, 
-    _Comment as C,
     _Comment,
     _ElementUnicodeResult
 )
@@ -98,7 +97,7 @@ class BaseElement(Showable):
 
     def __repr__(self) -> str:
         
-        return f"BaseElement({self.tag}: '{self.text.strip()}{self.tail.strip() if self.tail is not None else ''}')"
+        return f"BaseElement({self.tag}: '{self.text_desc_compressed_whitespace.strip()}{self.tail.strip() if self.tail is not None else ''}')"
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -171,11 +170,10 @@ class BaseElement(Showable):
         if self._e is None:
             return []
 
-        _descs = self._e.xpath('.//*')
+        _descs = self._e.xpath('.//node()')
         descs = _descs if type(_descs) is list else []
-
         return [BaseElement(desc) for desc in descs 
-            if isinstance(desc, (_Element))]
+            if isinstance(desc, _Element)]
     
     @property
     def desc_elem_names(self) -> list[str]:
@@ -303,6 +301,8 @@ class BaseElement(Showable):
         """
         if self._e is None:
             return ''
+        if isinstance(self.e, _Comment):
+            return "Comment"
         return ns.remove_ns(self._e.tag)
 
     @property
@@ -450,12 +450,14 @@ class BaseElement(Showable):
 
     @property
     def text_desc(self) -> str:
-        if self.e is None: 
+        if self._e is None: 
             return ''
-        
-        xpath_res = cast(list[str], self.e.xpath('.//text()'))
+        return ''.join(self._e.xpath('.//text()'))
 
-        return ''.join(xpath_res)
+    @property
+    def text_desc_compressed_whitespace(self) -> str:
+        pattern = r'[\t\s\n]+'
+        return re.sub(pattern, ' ', self.text_desc)
 
     @staticmethod
     def _clean_text(text:str):
