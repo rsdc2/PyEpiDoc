@@ -62,6 +62,9 @@ class BaseElement(Showable):
 
     @overload
     def __init__(self, e: _Element):
+        """
+        :param e: lxml |_Element|; |_Comment| is subclass of |_Element|
+        """
         ...
 
     @overload
@@ -84,7 +87,6 @@ class BaseElement(Showable):
         elif isinstance(e, BaseElement):
             self._e = e.e
 
-
     def __lt__(self, other) -> bool:
         if type(other) is not BaseElement and not issubclass(type(other), BaseElement):
             raise TypeError(f"Previous element is of type {type(other)}.")
@@ -93,7 +95,13 @@ class BaseElement(Showable):
             return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.lt)
 
         return self.id_internal[-1] < other.id_internal[-1]
-    
+
+    def __repr__(self) -> str:
+        
+        return f"BaseElement({self.tag}: '{self.text.strip()}{self.tail.strip() if self.tail is not None else ''}')"
+
+    def __str__(self) -> str:
+        return self.__repr__()
 
     def _equalize_id_length(
         self, 
@@ -128,9 +136,6 @@ class BaseElement(Showable):
             return op(len(id1), len(id2))
 
         return op(equal_id1[-1], equal_id2[-1])
-
-    def __str__(self):
-        return self.text_desc_compressed_whitespace
 
     @property
     def children(self) -> Sequence[BaseElement]:
@@ -197,6 +202,9 @@ class BaseElement(Showable):
     def e(self) -> Optional[_Element]:
         return self._e
 
+    @property
+    def e_type(self) -> type:
+        return type(self._e)
 
     @property
     def first_child(self) -> Optional[BaseElement]:
@@ -392,6 +400,9 @@ class BaseElement(Showable):
 
     @property
     def tag(self) -> Tag:
+
+        if isinstance(self._e, _Comment):
+            return Tag("", "Comment")
 
         if self._e is None: 
             return Tag(None, None)
