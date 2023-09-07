@@ -5,7 +5,7 @@ from functools import cached_property
 from copy import deepcopy
 import re
 
-from lxml.etree import _Element 
+from lxml.etree import _Element, _Comment
 
 from ..xml import Namespace as ns
 from ..utils import maxone, remove_none, head
@@ -185,15 +185,16 @@ class Token(EpiDocElement):
 
     def remove_element_internal_whitespace(self) -> _Element:
         
-        """Remove all internal whitespace from word element, in place."""
+        """Remove all internal whitespace from word element, in place, except for comments."""
 
         def _remove_whitespace_from_child(elem:_Element) -> _Element:
 
             for child in list(elem):
-                if child.text is not None:
-                    child.text = child.text.strip()
-                if child.tail is not None:
-                    child.tail = child.tail.strip()
+                if not isinstance(child, _Comment):
+                    if child.text is not None:
+                        child.text = child.text.strip()
+                    if child.tail is not None:
+                        child.tail = child.tail.strip()
 
             if len(list(elem)) > 0:
                 return _remove_whitespace_from_child(child)
