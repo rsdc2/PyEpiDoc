@@ -354,11 +354,9 @@ class BaseElement(Showable):
             return None
 
         _prev = self._e.getprevious()
-        if type(_prev) is _Element:
+        if isinstance(_prev, _Element):
             return BaseElement(_prev)
         elif _prev is None:
-            return None
-        elif type(_prev) is _Comment:
             return None
 
         raise TypeError(f"Previous element is of type {type(_prev)}.")

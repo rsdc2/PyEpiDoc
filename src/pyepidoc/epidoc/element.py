@@ -668,6 +668,7 @@ class EpiDocElement(BaseElement, Showable):
 
             if isinstance(_next_sib, _Element):
                 return _next_sib
+            
             e.getroottree()
 
             return None
