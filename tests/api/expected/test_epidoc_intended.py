@@ -16,6 +16,8 @@ relative_filepaths = {
     'comma': 'api/files/comma.xml'
 }
 
+line_2_output = 'api/files/line_2_output.xml'
+
 
 def test_collect_tokens():
     filepath = relative_filepaths['ISic000001']
@@ -104,3 +106,12 @@ def test_punct():
 def test_load_relative_filepath_from_str(filepath:str):
     doc = EpiDoc(filepath, fullpath=False)
     assert doc.tokens_list_str != []
+
+def test_reproduces_processing_instructions():
+    doc = EpiDoc(relative_filepaths['line_2'], fullpath=False)
+    doc.to_xml_file(line_2_output, fullpath=False)
+    doc_ = EpiDoc(line_2_output, fullpath=False)
+    assert len(doc.processing_instructions) == len(doc_.processing_instructions)
+    assert all([str(instr) in list(map(str, doc.processing_instructions)) 
+                for instr in doc_.processing_instructions])
+    

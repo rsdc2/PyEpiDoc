@@ -199,8 +199,8 @@ class DocRoot:
             if previous is None:
                 return list(reversed(acc))
             
-            # if isinstance(previous, _Element):
-            #     return _processing_instructions(acc, previous)
+            if type(previous) is not _ProcessingInstruction:
+                raise TypeError('_ProcessingInstruction expected.')
             
             return _processing_instructions(acc + [previous], previous)
 
