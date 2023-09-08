@@ -138,8 +138,8 @@ class BaseElement(Showable):
             return []
             
         _children: list[_Element] = self._e.getchildren()
-        return [BaseElement(child) for child in _children
-                    if type(child) is not _Comment]
+        return [BaseElement(child) for child in _children]
+                    # if type(child) is not _Comment]
 
     @property
     def depth(self) -> int:

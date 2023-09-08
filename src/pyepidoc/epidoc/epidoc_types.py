@@ -29,6 +29,7 @@ class AtomicTokenType(EnumerableEnum):
     W = 'w'
     Num = 'num'
     Measure = 'measure'
+    # Comment = 'Comment'
 
 
 class AtomicNonTokenType(EnumerableEnum):
@@ -55,6 +56,7 @@ class AlwaysSubsumableType(EnumerableEnum):
     # Hi = 'hi'
     Lb = 'lb'
     G = 'g'
+    Comment = 'Comment'
 
 
 AlwaysSubsumable = AlwaysSubsumableType.values()
