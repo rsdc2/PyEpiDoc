@@ -106,8 +106,8 @@ class EpiDocElement(BaseElement, Showable):
             # spaces have already been taken into 
             # account in generating like adjacent tags
             
-            first_child = head(other.child_elems_no_comments)
-            last_child = last(self.child_elems_no_comments)
+            first_child = head(other.child_elems)
+            last_child = last(self.child_elems)
             text = other.text
             if last_child is not None:
                 tail = last_child.tail
@@ -265,7 +265,7 @@ class EpiDocElement(BaseElement, Showable):
         if self.local_name == 'lb' and self.get_attrib('break') == 'no':
             return False
         
-        first_child = head(self.child_elems_no_comments)
+        first_child = head(self.child_elems)
         if first_child is not None and (self.text == '' or self.text is None):
             if  first_child.local_name == 'lb' and first_child.get_attrib('break') == 'no':
                 return False
@@ -286,7 +286,7 @@ class EpiDocElement(BaseElement, Showable):
         if self.local_name == "Commment":
             return False
 
-        last_child = last(self.child_elems_no_comments)
+        last_child = last(self.child_elems)
         if last_child is not None and (last_child.tail == '' or last_child.tail is None):
             if  last_child.local_name == 'lb' and last_child.get_attrib('break') == 'no':
                 return False
@@ -299,8 +299,8 @@ class EpiDocElement(BaseElement, Showable):
         # return self._final_space
 
     @property
-    def child_elems_no_comments(self) -> list[EpiDocElement]:
-        return [EpiDocElement(child) for child in self.children_no_comments]
+    def child_elems(self) -> list[EpiDocElement]:
+        return [EpiDocElement(child) for child in self.children]
     
     @property
     def depth(self) -> int:
@@ -574,7 +574,7 @@ class EpiDocElement(BaseElement, Showable):
 
                 if len(potential_subtokens) > 1: # If there is more than one potential subtoken, then treat as compound token
                     return [handle_compound_token(_element.e)]
-                elif len(potential_subtokens) == len(_element.tokenized_children_no_comments):
+                elif len(potential_subtokens) == len(_element.tokenized_children):
                     return [_element] # i.e. do nothing because there is nothing to tokenize
                 else:
                     return [handle_subatomic_tags(subelement=_e)]
@@ -1035,12 +1035,12 @@ class EpiDocElement(BaseElement, Showable):
         return EpiDocElement(new_w, final_space=True)
 
     @property
-    def tokenized_children_no_comments(self) -> list[EpiDocElement]:
+    def tokenized_children(self) -> list[EpiDocElement]:
         """
-        Returns children that are already tokenized.
+        Returns children that are already tokenized, including Comment nodes
         """
 
-        return [child for child in self.child_elems_no_comments
+        return [child for child in self.child_elems
             if child.local_name in AtomicTokenType.values() or child.tag.name == "Comment"]
 
     @property

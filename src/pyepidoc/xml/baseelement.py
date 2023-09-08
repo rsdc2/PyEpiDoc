@@ -133,13 +133,12 @@ class BaseElement(Showable):
         return op(equal_id1[-1], equal_id2[-1])
 
     @property
-    def children_no_comments(self) -> Sequence[BaseElement]:
+    def children(self) -> Sequence[BaseElement]:
         if self._e is None:
             return []
             
         _children: list[_Element] = self._e.getchildren()
         return [BaseElement(child) for child in _children]
-                    # if type(child) is not _Comment]
 
     @property
     def depth(self) -> int:
@@ -202,17 +201,17 @@ class BaseElement(Showable):
 
     @property
     def first_child(self) -> Optional[BaseElement]:
-        if self.children_no_comments == []:
+        if self.children == []:
             return None
         
-        return self.children_no_comments[0]
+        return self.children[0]
 
     @property
     def last_child(self) -> Optional[BaseElement]:
-        if self.children_no_comments == []:
+        if self.children == []:
             return None
         
-        return self.children_no_comments[-1]
+        return self.children[-1]
 
     def get_attrib(
         self, 

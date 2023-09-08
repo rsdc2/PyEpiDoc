@@ -125,9 +125,9 @@ def prettify(
 
     def prettify_closing_tags(elements:Sequence[BaseElement]) -> None:
         for element in elements:
-            if element.children_no_comments == []:
+            if element.children == []:
                 continue
-            lastchild = element.children_no_comments[-1]
+            lastchild = element.children[-1]
             lastchild.tail = ''.join([
                 default_str(lastchild.tail).strip(),
                 "\n",
