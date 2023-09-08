@@ -19,6 +19,7 @@ class FileInfo(object):
             fullpath:bool=False
         ):
         
+        # Check type of filepath
         if type(filepath) is not str:
             raise TypeError(f"filepath is of type {type(filepath)}, but should be of type str.")
 
@@ -30,12 +31,10 @@ class FileInfo(object):
         else:
             self._relative_folderpath = folderpath
             
-            
             self._full_folderpath = filepath_from_list(remove_none([
                 getcwd(),
                 folderpath
             ]))
-            
 
         if mode == FileMode.r and not self.exists:
             raise FileExistsError(f'File {self.full_filepath} does not exist.')    
