@@ -68,7 +68,7 @@ def remove_file(filepath:str):
     try:
         tokenized_f = FileInfo(
             filepath=filepath,
-            mode = FileMode.r.value,
+            mode = FileMode.r,
             fullpath=False
         )
         if tokenized_f.exists:
@@ -116,13 +116,13 @@ def tokenize_epidoc(tokenize_type:str) -> tuple[EpiDoc, EpiDoc]:
 
     tokenized_f = FileInfo(
         filepath=tokenized_filepath,
-        mode = FileMode.r.value,
+        mode = FileMode.r,
         fullpath=False
     )
 
     benchmark_f = FileInfo(
         filepath=benchmark_filepath,
-        mode = FileMode.r.value,
+        mode = FileMode.r,
         fullpath=False
     )
 

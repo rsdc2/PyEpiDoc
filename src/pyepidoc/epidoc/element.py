@@ -108,8 +108,8 @@ class EpiDocElement(BaseElement, Showable):
             #     if self.right_bound and other.left_bound:
             #         return [self, other]
 
-            first_child = head(other.child_elems)
-            last_child = last(self.child_elems)
+            first_child = head(other.child_elems_no_comments)
+            last_child = last(self.child_elems_no_comments)
             text = other.text
             if last_child is not None:
                 tail = last_child.tail
@@ -243,7 +243,7 @@ class EpiDocElement(BaseElement, Showable):
         if self.local_name == 'lb' and self.get_attrib('break') == 'no':
             return False
         
-        first_child = head(self.child_elems)
+        first_child = head(self.child_elems_no_comments)
         if first_child is not None and (self.text == '' or self.text is None):
             if  first_child.local_name == 'lb' and first_child.get_attrib('break') == 'no':
                 return False
@@ -261,7 +261,7 @@ class EpiDocElement(BaseElement, Showable):
         if self.local_name == 'lb' and self.get_attrib('break') == 'no':
             return False
 
-        last_child = last(self.child_elems)
+        last_child = last(self.child_elems_no_comments)
         if last_child is not None and (last_child.tail == '' or last_child.tail is None):
             if  last_child.local_name == 'lb' and last_child.get_attrib('break') == 'no':
                 return False
@@ -274,8 +274,8 @@ class EpiDocElement(BaseElement, Showable):
         # return self._final_space
 
     @property
-    def child_elems(self) -> list[EpiDocElement]:
-        return [EpiDocElement(child) for child in self.children]
+    def child_elems_no_comments(self) -> list[EpiDocElement]:
+        return [EpiDocElement(child) for child in self.children_no_comments]
     
     @property
     def depth(self) -> int:
@@ -1015,7 +1015,7 @@ class EpiDocElement(BaseElement, Showable):
         Returns children that are already tokenized.
         """
 
-        return [child for child in self.child_elems
+        return [child for child in self.child_elems_no_comments
             if child.local_name in AtomicTokenType.values() or child.tag.name == "Comment"]
 
     @property

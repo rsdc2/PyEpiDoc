@@ -11,12 +11,14 @@ class FileInfo(object):
     _relative_folderpath: Optional[str]
     _filename: str
 
-    def __init__(self, 
-        filepath:str,
-        mode=FileMode.r,
-        create_folderpath:bool=False,
-        fullpath:bool=False
-    ):
+    def __init__(
+            self, 
+            filepath:str,
+            mode=FileMode.r,
+            create_folderpath:bool=False,
+            fullpath:bool=False
+        ):
+        
         if type(filepath) is not str:
             raise TypeError(f"filepath is of type {type(filepath)}, but should be of type str.")
 

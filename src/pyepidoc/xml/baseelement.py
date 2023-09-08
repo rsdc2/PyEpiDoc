@@ -60,18 +60,14 @@ class BaseElement(Showable):
         )
 
     @overload
-    def __init__(self, e: _Element):
+    def __init__(self, e: Optional[_Element]=None):
         """
         :param e: lxml |_Element|; |_Comment| is subclass of |_Element|
         """
         ...
 
     @overload
-    def __init__(self, e: BaseElement):
-        ...
-
-    @overload
-    def __init__(self, e: None):
+    def __init__(self, e: Optional[BaseElement]=None):
         ...
 
     def __init__(self, e:Optional[Union[_Element, BaseElement]]=None):
@@ -137,11 +133,11 @@ class BaseElement(Showable):
         return op(equal_id1[-1], equal_id2[-1])
 
     @property
-    def children(self) -> Sequence[BaseElement]:
+    def children_no_comments(self) -> Sequence[BaseElement]:
         if self._e is None:
             return []
             
-        _children: list[_Element] = list(self._e)
+        _children: list[_Element] = self._e.getchildren()
         return [BaseElement(child) for child in _children
                     if type(child) is not _Comment]
 
@@ -206,17 +202,17 @@ class BaseElement(Showable):
 
     @property
     def first_child(self) -> Optional[BaseElement]:
-        if self.children == []:
+        if self.children_no_comments == []:
             return None
         
-        return self.children[0]
+        return self.children_no_comments[0]
 
     @property
     def last_child(self) -> Optional[BaseElement]:
-        if self.children == []:
+        if self.children_no_comments == []:
             return None
         
-        return self.children[-1]
+        return self.children_no_comments[-1]
 
     def get_attrib(
         self, 

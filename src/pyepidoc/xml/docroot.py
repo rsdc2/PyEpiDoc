@@ -49,17 +49,17 @@ class DocRoot:
         ...
 
     @overload
-    def __init__(self, inpt:_ElementTree, fullpath=False):
-        ...
-
-    @overload
     def __init__(self, inpt:str, fullpath=False):
         """
         :param inpt: str containing the filepath of the EpiDoc XML file.
         """
         ...
 
-    def __init__(self, inpt:FileInfo | _ElementTree | str, fullpath=False):
+    @overload
+    def __init__(self, inpt:_ElementTree, fullpath=False):
+        ...
+
+    def __init__(self, inpt:FileInfo | str | _ElementTree, fullpath=False):
         if type(inpt) is FileInfo:
             self._file = inpt
             self._e = None
