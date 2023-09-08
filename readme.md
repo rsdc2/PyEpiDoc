@@ -190,8 +190,7 @@ In addition ```utils.py``` provides general utility functions, in particular for
 
 ### XML comments
 
-At the moment the parser ignores XML comments, so any new XML files produced (e.g. through tokenization) will not reproduce the comments.
-This will be implemented soon.
+XML comments should now be handled correctly, and reproduced in new files.
 
 ## Dependencies
 
