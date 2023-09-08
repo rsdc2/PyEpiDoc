@@ -1,4 +1,5 @@
 from pyepidoc import EpiDoc
+import pytest
 
 test_file = 'api/files/line_2_output.xml'
 
@@ -9,8 +10,5 @@ def test_does_not_create_folderpath():
     """
     doc = EpiDoc(test_file)
 
-    try:
+    with pytest.raises(FileExistsError):
         doc.to_xml_file('filepath/testfile.xml')
-        assert False
-    except FileExistsError:
-        assert True
