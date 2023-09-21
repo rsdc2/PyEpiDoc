@@ -38,8 +38,11 @@ class SetRelation(Enum):
         return not set.isdisjoint(set1, set2)
         
     @staticmethod
-    def propersubset(set1:set, set2:set) -> bool:
-        return set.issubset(set1, set2) and set1 != set2
+    def propersubset(set1:set | list, set2:set | list) -> bool:
+        result = set.issubset(set1, set2) and set(set1) != set(set2)
+        if result:
+            print('hello')
+        return result
 
     subset = set.issubset
     equal = set.__eq__
