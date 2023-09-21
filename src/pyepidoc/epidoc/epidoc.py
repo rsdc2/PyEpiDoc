@@ -128,6 +128,10 @@ class EpiDoc(DocRoot):
 
     @property
     def expans(self) -> list[Expan]:
+        """
+        Returns a list of abbreviated items (including both abbreviation and expansion)
+        """
+        
         return flatlist([edition.expans 
                          for edition in self.editions()])
 
