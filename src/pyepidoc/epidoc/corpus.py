@@ -295,6 +295,10 @@ class EpiDocCorpus:
         languages:list[str], 
         set_relation=SetRelation.intersection
     ) -> EpiDocCorpus:
+        """
+        Returns a copy of the corpus filtered by the 
+        languages provided in the 'languages' parameter.
+        """
 
         corpus = [doc for doc in self.docs
             if set_relation(set(languages), doc.langs)]
