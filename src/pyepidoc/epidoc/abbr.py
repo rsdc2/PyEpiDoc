@@ -11,7 +11,7 @@ class Abbr(EpiDocElement):
         ams = [Am(elem.e) for elem in self.desc_elems
             if elem.local_name == 'am']
 
-        return self.text.strip() + ''.join([str(am) for am in ams])
+        return self.text_desc.strip() + ''.join([str(am) for am in ams])
 
     @property
     def am(self) -> list[Am]:
