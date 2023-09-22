@@ -124,7 +124,7 @@ class DocRoot:
                 raise TypeError("self._file is None")
 
             try:
-                self._roottree = etree.parse(self._file.full_filepath)
+                self._roottree:_ElementTree = etree.parse(self._file.full_filepath, parser=None)
                 self._e = self._roottree.getroot()
 
                 return self._e
@@ -134,6 +134,10 @@ class DocRoot:
                 return _Element()
         
         return self._e
+
+    @property
+    def file(self) -> Optional[FileInfo]:
+        return self._file
 
     def get_desc(self, 
         elemnames:Union[list[str], str], 
