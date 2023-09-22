@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Union, Sequence, overload
+from typing import Optional, Union, Sequence, overload, cast
 from functools import cached_property
 import os
 
@@ -208,7 +208,7 @@ class EpiDocCorpus:
         if first is None:
             return []
 
-        _, _, files = head(l)
+        _, _, files = head(l) # if l is not None else None, None, cast(list[str], [])
         sorted_files = sorted(files)
 
         fileinfos:list[FileInfo] = []
@@ -358,6 +358,16 @@ class EpiDocCorpus:
     @property
     def fullpath(self) -> bool:
         return self._fullpath
+
+    def get_doc_by_id(self, id:str) -> Optional[EpiDoc]:
+        docs = self.filter_by_ids([id]).docs
+        if docs == []:
+            return None
+        
+        if len(docs) > 1:
+            raise ValueError(f"More than one doc with id {id}.")
+        
+        return docs[0]
 
     @cached_property
     def ids(self) -> list[Optional[str]]:
