@@ -10,7 +10,8 @@ from ..file import FileInfo, FileMode
 from .edition import Edition
 from .expan import Expan
 from .epidoc_types import (
-    SpaceUnit
+    SpaceUnit,
+    AbbrType
 )
 
 from .token import Token
@@ -135,6 +136,17 @@ class EpiDoc(DocRoot):
         return flatlist([edition.expans 
                          for edition in self.editions()])
 
+    def expans_by_type(self, abbr_type:Optional[AbbrType]) -> list[Expan]:
+        """
+        Returns all the expans of the type specified in abbr_type.
+        If abbr_type is None, returns all the expans.
+        """
+        if abbr_type is None:
+            return self.expans
+        
+        return [expan for expan in self.expans 
+                if expan.abbr_type == abbr_type]
+                       
     @property
     def first_edition(self) -> Optional[Edition]:
         return self.editions()[0] if self.editions != [] else None
