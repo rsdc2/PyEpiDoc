@@ -17,6 +17,7 @@ from ..epidoc.epidoc_types import SpaceSeparated, NoSpace
 from .element import EpiDocElement
 from .ab import Ab
 from .lg import Lg
+from .l import L
 from .token import Token
 from .expan import Expan
 from .textpart import TextPart
@@ -52,7 +53,7 @@ def prettify(
     number -- sets the number of spaceunit for each indentation.
     """
 
-    newlinetags = ['div', 'ab', 'lg', 'lb']
+    newlinetags = ['div', 'ab', 'lg', 'l', 'lb']
 
     def _get_multiplier(element:BaseElement) -> int:
         if element.tag.name in chain(
@@ -112,7 +113,7 @@ def prettify(
         ])
 
     def prettify_parent_of_lb(element:BaseElement) -> None:
-        first_parent = element.get_first_parent_by_name(['ab', 'div'])
+        first_parent = element.get_first_parent_by_name(['lg', 'ab', 'div'])
         if first_parent is None:
             return
 
@@ -157,7 +158,7 @@ def prettify(
             else:
                 prettify_first_child(parent)
 
-        prettify_closing_tags(edition.get_desc_elems_by_name(['ab', 'lb', 'div']))
+        prettify_closing_tags(edition.get_desc_elems_by_name(['ab', 'l', 'lg' 'lb', 'div']))
         
     return edition
 
@@ -197,12 +198,11 @@ class Edition(EpiDocElement):
 
     @property
     def compound_tokens(self) -> list[EpiDocElement]:
-        compound_tokens = []
-        
-        for ab in self.abs:
-            compound_tokens += ab.compound_tokens
-
-        return compound_tokens
+        return [EpiDocElement(item) for item 
+            in self.get_desc(
+                CompoundTokenType.values() 
+            )
+        ]
 
     def convert_words_to_names(self) -> Edition:
         for ab in self.abs:
@@ -239,11 +239,21 @@ class Edition(EpiDocElement):
     def lgs(self) -> list[Ab]:
         """
         Returns all the <ab> elements in an edition 
-        as a |list| of |Ab|.
+        as a |list| of |Lg|.
         """
 
         return [Lg(element._e) 
             for element in self.get_desc_elems_by_name(['lg'])]
+
+    @property
+    def ls(self) -> list[Ab]:
+        """
+        Returns all the <ab> elements in an edition 
+        as a |list| of |L|s.
+        """
+
+        return [L(element._e) 
+            for element in self.get_desc_elems_by_name(['l'])]
 
     @property
     def no_space(self) -> list[EpiDocElement]:
@@ -301,10 +311,10 @@ class Edition(EpiDocElement):
 
     def tokenize(self) -> Optional[Edition]:
         for ab in self.abs:
-            ab.tokenize()
+            ab.tokenize()   
 
-        for lg in self.lgs:
-            lg.tokenize()
+        for l in self.ls:
+            l.tokenize()
 
         return self
 

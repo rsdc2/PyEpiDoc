@@ -336,7 +336,8 @@ class EpiDocElement(BaseElement, Showable):
         as a |list| of |Element|.
         """
 
-        return [EpiDocElement(expan) for expan in self.get_desc_elems_by_name('expan')]
+        return [EpiDocElement(expan) 
+                for expan in self.get_desc_elems_by_name('expan')]
 
     @property
     def final_tailtoken_boundary(self) -> bool:
@@ -421,8 +422,6 @@ class EpiDocElement(BaseElement, Showable):
 
             if parent is None:
                 return acc
-            
-            # print(parent)
 
             return _recfunc([parent.index(element.e)] + acc, element.parent)
 

@@ -90,6 +90,8 @@ class NoSpace(EnumerableEnum):
 
 class ContainerType(EnumerableEnum):
     Ab = 'ab'
+    Lg = 'lg'
+    L = 'l'
     Div = 'div'
 
 
@@ -104,7 +106,7 @@ class CompoundTokenType(EnumerableEnum):
     Date = 'date'
     RS = 'rs'
     Add = 'add' # Correct place?    
-
+    Cb = 'cb' # Column beginning
 
 
 TokenCarrier = set(
