@@ -216,6 +216,10 @@ class EpiDoc(DocRoot):
             idno_elems = get_idno_elems('filename')
             idno_elem = maxone(idno_elems)
 
+        elif self.authority == 'Università di Bologna':
+            idno_elems = get_idno_elems('localID')
+            idno_elem = maxone(idno_elems)
+
         if idno_elem is None:
             return '[None]'
 
@@ -452,12 +456,18 @@ class EpiDoc(DocRoot):
     def token_count(self) -> int:
         return len(self.tokens)
 
-    def tokenize(self, verbose=True) -> None:
+    def tokenize(self, verbose=True) -> EpiDoc:
+        """
+        Tokenizes the EpiDoc document in place.
+        """
+
         if verbose: 
             print(f'Tokenizing {self.id}...')
 
         for edition in self.editions():
             edition.tokenize()
+
+        return self
 
     @property
     def tokens(self) -> list[Token]:

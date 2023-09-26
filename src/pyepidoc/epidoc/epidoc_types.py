@@ -29,7 +29,6 @@ class AtomicTokenType(EnumerableEnum):
     W = 'w'
     Num = 'num'
     Measure = 'measure'
-    # Comment = 'Comment'
 
 
 class AtomicNonTokenType(EnumerableEnum):
@@ -46,6 +45,9 @@ class AtomicNonTokenType(EnumerableEnum):
     Orig = 'orig'   
     Seg = 'seg'     
     Note = 'note'   
+    Milestone = 'milestone'
+    Certainty = 'certainty'
+    HandShift = 'handShift'
 
 
 class AlwaysSubsumableType(EnumerableEnum):
@@ -63,6 +65,11 @@ AlwaysSubsumable = AlwaysSubsumableType.values()
 
 
 class SpaceSeparated(EnumerableEnum):
+
+    """
+    |Element|s that should be separated by spaces    
+    """
+
     Name = 'name'
     W = 'w'
     Num = 'num'
@@ -75,6 +82,7 @@ class SpaceSeparated(EnumerableEnum):
     Foreign = 'foreign'
     
     G = 'g'
+
 
 class NoSpace(EnumerableEnum):
     Note = 'note'
@@ -93,6 +101,10 @@ class CompoundTokenType(EnumerableEnum):
     Foreign = 'foreign'
     Hi = 'hi' # can also contain atomic token types
     Note = 'note'
+    Date = 'date'
+    RS = 'rs'
+    Add = 'add' # Correct place?    
+
 
 
 TokenCarrier = set(
@@ -111,6 +123,16 @@ class AbbrType(EnumerableEnum):
     contraction_with_suspension = 'contraction_with_suspension'
     multiplication = 'muliplication'
     unknown = 'unknown'
+
+    def __str__(self) -> str:
+        str_dict = {
+            'suspension': 'Suspension',
+            'contraction': 'Contraction',
+            'contraction_with_suspension': 'Contraction with suspension',
+            'multiplication': 'Multiplication',
+            'unknown': 'Unknown'
+        }        
+        return str_dict.get(self.name, 'Unknown')
 
 
 class TextClass(EnumerableEnum):

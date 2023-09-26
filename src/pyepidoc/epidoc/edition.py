@@ -10,17 +10,16 @@ from typing import Optional, Sequence
 import re
 
 from ..xml import BaseElement
-from ..constants import (
-    XMLNS
-)
+from ..constants import XMLNS
 from ..utils import default_str, flatlist
+from ..epidoc.epidoc_types import SpaceSeparated, NoSpace
 
 from .element import EpiDocElement
 from .ab import Ab
+from .lg import Lg
 from .token import Token
 from .expan import Expan
 from .textpart import TextPart
-
 
 from .epidoc_types import (
     SpaceUnit, 
@@ -53,7 +52,7 @@ def prettify(
     number -- sets the number of spaceunit for each indentation.
     """
 
-    newlinetags = ['div', 'ab', 'lb']
+    newlinetags = ['div', 'ab', 'lg', 'lb']
 
     def _get_multiplier(element:BaseElement) -> int:
         if element.tag.name in chain(
@@ -88,7 +87,7 @@ def prettify(
         return parents
 
     def prettify_lb(lb:BaseElement) -> None:
-        first_parent = lb.get_first_parent_by_name(['ab', 'div'])
+        first_parent = lb.get_first_parent_by_name(['lg', 'ab', 'div'])
         if first_parent is None:
             return
 
@@ -134,11 +133,11 @@ def prettify(
                 (spaceunit.value * number) * (_get_multiplier(element) - 1)
             ])
             
-    # Do the pretty printing
+    # Do the pretty-printing
     for tag in newlinetags:
         desc_elems = edition.get_desc_elems_by_name(elem_names=[tag])
 
-        if tag == 'ab':
+        if tag in ['ab', 'lg']:
             for ab in desc_elems:
                 prettify_first_child(ab)
 
@@ -158,7 +157,7 @@ def prettify(
             else:
                 prettify_first_child(parent)
 
-        prettify_closing_tags(edition.get_desc_elems_by_name(['ab', 'div']))
+        prettify_closing_tags(edition.get_desc_elems_by_name(['ab', 'lb', 'div']))
         
     return edition
 
@@ -221,22 +220,50 @@ class Edition(EpiDocElement):
 
     @property
     def expans(self) -> list[Expan]:
-        return flatlist([ab.expans for ab in self.abs])
+        return [Expan(e.e) for e in self.expan_elems]
+
+    @property
+    def formatted_text(self) -> str:
+        _text = re.sub(r'\n\s+', '\n', self.text_desc)
+        return re.sub(r'(\S)·(\S)', r'\1 · \2', _text)
 
     @property
     def gaps(self) -> list[EpiDocElement]:
-        gaps = []
-        for ab in self.abs:
-            gaps += ab.gaps
-
-        return gaps
+        return [EpiDocElement(gap) for gap in self.get_desc('gap')]
 
     @property
     def lang(self):
         return self.get_attrib('lang', XMLNS)
 
+    @property
+    def lgs(self) -> list[Ab]:
+        """
+        Returns all the <ab> elements in an edition 
+        as a |list| of |Ab|.
+        """
+
+        return [Lg(element._e) 
+            for element in self.get_desc_elems_by_name(['lg'])]
+
+    @property
+    def no_space(self) -> list[EpiDocElement]:
+        """
+        :return: |Element|s that should not be separated by spaces.
+        """
+        return [EpiDocElement(item) for item 
+            in self.get_desc(
+                NoSpace.values() 
+            )
+        ]
+
     def prettify(self, spaceunit:SpaceUnit, number:int) -> None:
         prettify(spaceunit=spaceunit, number=number, edition=self)
+
+    def set_ids(self) -> None:
+
+        # TODO This needs to be more general than abs
+        for ab in self.abs:
+            ab.set_ids()
 
     def space_tokens(self) -> None:
 
@@ -250,27 +277,14 @@ class Edition(EpiDocElement):
             elem.append_space()
 
     @property
-    def formatted_text(self) -> str:
-        _text = re.sub(r'\n\s+', '\n', self.text_desc)
-        return re.sub(r'(\S)·(\S)', r'\1 · \2', _text)
-
-    def set_ids(self) -> None:
-        for ab in self.abs:
-            ab.set_ids()
-
-    @property
     def space_separated(self) -> list[EpiDocElement]:
         """
         :return: |Element|s that should be separated by spaces
         """
-        return flatlist([ab.space_separated for ab in self.abs])
-
-    @property
-    def no_space(self) -> list[EpiDocElement]:
-        """
-        :return: |Element|s that should not be separated by spaces.
-        """
-        return flatlist([ab.no_space for ab in self.abs])
+        elems = [EpiDocElement(item) 
+                 for item in self.get_desc(SpaceSeparated.values())]
+        return [elem for elem in elems 
+                if elem.next_sibling not in self.no_space]
 
     @property
     def subtype(self) -> Optional[str]:
@@ -289,28 +303,28 @@ class Edition(EpiDocElement):
         for ab in self.abs:
             ab.tokenize()
 
+        for lg in self.lgs:
+            lg.tokenize()
+
         return self
 
     @property
     def tokens(self) -> list[Token]:
-        words = []
-        
-        for ab in self.abs:
-            words += ab.tokens
-        
-        return words
+        return [Token(word) for word 
+            in self.get_desc(
+                AtomicTokenType.values() 
+            )
+        ]
 
     @property
     def token_g_dividers(self) -> list[EpiDocElement]:
-        dividers = []
-        for ab in self.abs:
-            dividers += ab.g_dividers
-        
-        return dividers
+        return [EpiDocElement(boundary) for boundary 
+            in self.get_desc('g')
+        ]
     
     @property
     def tokens_list_str(self) -> list[str]:
-        return flatlist([ab.tokens_list_str for ab in self.abs])
+        return [str(token) for token in self.tokens]
                 
     @property
     def tokens_str(self) -> str:
@@ -318,4 +332,6 @@ class Edition(EpiDocElement):
 
     @property
     def w_tokens(self) -> list[Token]:
-        return flatlist([ab.w_tokens for ab in self.abs])
+        return [Token(word) for word 
+            in self.get_desc(['w'])
+        ]

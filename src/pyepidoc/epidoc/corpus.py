@@ -28,11 +28,12 @@ class EpiDocCorpus:
     @overload
     def __init__(
         self,
+        fullpath:bool,
         inpt: EpiDocCorpus,
         folderpath:Optional[str]=None,
-        head:Optional[int]=None,
-        fullpath:bool=False
-    ):
+        head:Optional[int]=None
+        ):
+
         """
         :param inpt: EpiDocCorpus object
         """
