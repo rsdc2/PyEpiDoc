@@ -357,7 +357,7 @@ class Ab(EpiDocElement):
         for token in self.tokens:
             token.remove_element_internal_whitespace()
 
-        return Ab(_e)
+        return self.__class__(_e)
 
     @property
     def tokens(self) -> list[Token]:
