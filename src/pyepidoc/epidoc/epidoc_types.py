@@ -26,6 +26,7 @@ class SubatomicTagType(EnumerableEnum):
 
 class AtomicTokenType(EnumerableEnum):
     Name = 'name'
+    AddName = 'addName'
     W = 'w'
     Num = 'num'
     Measure = 'measure'

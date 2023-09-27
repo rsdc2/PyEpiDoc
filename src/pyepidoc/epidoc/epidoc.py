@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Union
+from typing import Optional, Union, Literal
 from lxml.etree import _Element, _ElementUnicodeResult 
 
 from .element import EpiDocElement, BaseElement
@@ -99,8 +99,29 @@ class EpiDoc(DocRoot):
         return int(mean)
 
     @property
+    def distributor(self) -> Optional[str]:
+
+        """
+        IRT does not use <authority>
+        """
+        if self.publication_stmt is None:
+            return None
+
+        elem = maxone(self
+            .publication_stmt
+            .get_desc_elems_by_name('distributor'), 
+        )
+
+        if elem is None:
+            return None
+        
+        return elem.text
+
+    @property
     def div_langs(self) -> set[str]:
+
         """Used by I.Sicily to host language information."""
+        
         textpart_langs = [textpart.lang 
             for edition in self.editions()
                 for textpart in edition.textparts
@@ -162,13 +183,18 @@ class EpiDoc(DocRoot):
         return set([str(word) for word in self.tokens])
 
     @property
-    def has_supplied(self) -> bool:
-        return self.supplied != []
-
-    @property
     def gaps(self) -> list[EpiDocElement]:
         items = [edition.gaps for edition in self.editions()]
         return [item for item in flatlist(items)]
+
+    def get_lang_attr(self, lang_attr:Literal['div_langs'] | Literal['langs']) -> set[str]:
+        if lang_attr == 'div_langs':
+            return self.div_langs
+        
+        elif lang_attr == 'langs':
+            return set(self.langs)
+        
+        raise ValueError(f'Invalid lang_attr {lang_attr}')
 
     def has_gap(self, reasons:list[str]=[]) -> bool:
         """
@@ -198,6 +224,10 @@ class EpiDoc(DocRoot):
         return False
 
     @property
+    def has_supplied(self) -> bool:
+        return self.supplied != []
+
+    @property
     def id(self) -> str:
 
         def get_idno_elems(s:str) -> list[BaseElement]:
@@ -218,6 +248,10 @@ class EpiDoc(DocRoot):
 
         elif self.authority == 'Università di Bologna':
             idno_elems = get_idno_elems('localID')
+            idno_elem = maxone(idno_elems)
+
+        elif self.distributor == "King’s College London":
+            idno_elems = get_idno_elems('filename')
             idno_elem = maxone(idno_elems)
 
         if idno_elem is None:

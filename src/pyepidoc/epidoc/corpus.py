@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, Union, Sequence, overload, cast
+from typing import Optional, Union, Sequence, overload, cast, Literal
 from functools import cached_property
 import os
 
@@ -28,10 +28,10 @@ class EpiDocCorpus:
     @overload
     def __init__(
         self,
-        fullpath:bool,
         inpt: EpiDocCorpus,
         folderpath:Optional[str]=None,
-        head:Optional[int]=None
+        head:Optional[int]=None,
+        fullpath:Optional[bool]=None
         ):
 
         """
@@ -45,7 +45,7 @@ class EpiDocCorpus:
         inpt: list[EpiDoc],
         folderpath:Optional[str]=None,
         head:Optional[int]=None,
-        fullpath:bool=False
+        fullpath:Optional[bool]=None
     ):
         """
         :param inpt: list of EpiDoc objects
@@ -58,7 +58,7 @@ class EpiDocCorpus:
         inpt: str,
         folderpath:Optional[str]=None,
         head:Optional[int]=None,
-        fullpath:bool=False
+        fullpath:Optional[bool]=None
     ):
         """
         :param inpt: path to the corpus
@@ -71,7 +71,7 @@ class EpiDocCorpus:
         inpt: None,
         folderpath:Optional[str]=None,
         head:Optional[int]=None,
-        fullpath:bool=False
+        fullpath:Optional[bool]=None
     ):
         ...
 
@@ -80,7 +80,7 @@ class EpiDocCorpus:
         inpt: EpiDocCorpus | list[EpiDoc] | str | None, 
         folderpath:Optional[str]=None,
         head:Optional[int]=None,
-        fullpath:bool=False
+        fullpath:Optional[bool]=None
     ):
         
         self._docs = None  
@@ -100,6 +100,8 @@ class EpiDocCorpus:
                 self._docs = [doc for doc in inpt]
                 return
         elif type(inpt) is str:
+            if fullpath == True and len(inpt) > 0 and inpt[0] not in ['/']:
+                raise ValueError('Fullpath specified, but path is not a path from root.')
             self._folderpath = inpt
             return
             
@@ -293,16 +295,18 @@ class EpiDocCorpus:
         return self.filter_by_ids(ids=_str_range)
 
     def filter_by_languages(self, 
-        languages:list[str], 
-        set_relation=SetRelation.intersection
+        langs:list[str], 
+        set_relation=SetRelation.intersection,
+        language_attr:Literal['langs'] | Literal['div_langs']='langs'
     ) -> EpiDocCorpus:
         """
         Returns a copy of the corpus filtered by the 
-        languages provided in the 'languages' parameter.
+        languages provided in the 'langs' parameter.
+        Uses the 'textLang' element in the EpiDoc.
         """
 
         corpus = [doc for doc in self.docs
-            if set_relation(set(languages), doc.langs)]
+            if set_relation(set(langs), doc.get_lang_attr(language_attr))]
 
         return EpiDocCorpus(corpus, folderpath=None)
 
