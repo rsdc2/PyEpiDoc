@@ -25,6 +25,15 @@ class EpiDocCorpus:
     _folderpath: Optional[str]
     _fullpath:bool
 
+    def __add__(self, other:EpiDocCorpus) -> EpiDocCorpus:
+        if not isinstance(other, EpiDocCorpus):
+            raise TypeError("Cannot append: item to "
+                            "be appended is of type "
+                            f"{type(other)}; " 
+                            "required: EpiDocCorpus")
+
+        return EpiDocCorpus(list(set(self.docs + other.docs)))
+
     @overload
     def __init__(
         self,

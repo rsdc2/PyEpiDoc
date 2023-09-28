@@ -34,6 +34,15 @@ class EpiDoc(DocRoot):
     def __str__(self) -> str:
         return str(bytes(self))
 
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, EpiDoc):
+            raise TypeError(f"Cannot compare type EpiDoc with {type(other)}")
+        
+        return self.id == other.id
+
+    def __hash__(self) -> int:
+        return hash(self.id)
+
     @property
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants('apparatus')
