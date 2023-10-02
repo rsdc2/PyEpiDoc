@@ -23,7 +23,9 @@ class EpiDocCorpus:
     _docs: Optional[list[EpiDoc]]
     _head: Optional[int]
     _folderpath: Optional[str]
-    _fullpath:bool
+
+    # Optional because not all ways of initiating involve a file
+    _fullpath: Optional[bool]
 
     def __add__(self, other:EpiDocCorpus) -> EpiDocCorpus:
         if not isinstance(other, EpiDocCorpus):
@@ -109,8 +111,22 @@ class EpiDocCorpus:
                 self._docs = [doc for doc in inpt]
                 return
         elif type(inpt) is str:
+
+            # Check validity of the path to the corpus
+            if fullpath is None:
+                raise ValueError("Must specify whether a full path to corpus is given.")
+
+            if self.fullpath:            
+                if not os.path.isdir(inpt):
+                    raise FileExistsError(f"Path {inpt} does not exist. Cannot create corpus")
+            else:
+                if not os.path.isdir(os.getcwd() + '/' + inpt)       :
+                    raise FileExistsError(f"Path {os.getcwd() + '/' + inpt} does not exist. Cannot create corpus")
+            
+            # TODO: this will not work on Windows
             if fullpath == True and len(inpt) > 0 and inpt[0] not in ['/']:
                 raise ValueError('Fullpath specified, but path is not a path from root.')
+            
             self._folderpath = inpt
             return
             
@@ -213,6 +229,9 @@ class EpiDocCorpus:
         Returns a list of |FileInfo| for the files in the corpus.
         No subdirectories will be considered.
         """
+
+        if self.fullpath is None:
+            raise ValueError("Must specify whether full path to corpus is given.")
 
         if self._folderpath is None:
             return []
@@ -374,7 +393,7 @@ class EpiDocCorpus:
         return ''.join([doc.formatted_text for doc in self.docs])
 
     @property
-    def fullpath(self) -> bool:
+    def fullpath(self) -> Optional[bool]:
         return self._fullpath
 
     def get_doc_by_id(self, id:str) -> Optional[EpiDoc]:
