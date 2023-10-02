@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional, TypeVar, Union, MutableSequence, Generic
 from enum import Enum
 import operator
@@ -192,6 +193,12 @@ class TextClass(EnumerableEnum):
     Empty = '#function'
     ListInventory = '#function.list.inventory'
 
+    @staticmethod
+    def to_str(tc: TextClass) -> str:
+        return tc.value
+    
+    def __str__(self) -> str:
+        return self.value
 
 
 

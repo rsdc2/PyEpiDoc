@@ -6,7 +6,7 @@ import os
 from .epidoc import EpiDoc
 from .token import Token
 from .expan import Expan
-from .epidoc_types import SpaceUnit
+from .epidoc_types import SpaceUnit, TextClass
 from pyepidoc.shared_types import SetRelation
 
 from ..file import FileInfo, FileMode, filepath_from_list
@@ -119,6 +119,9 @@ class EpiDocCorpus:
             return
 
         raise TypeError("Invalid input type.")
+    
+    def __repr__(self) -> str:
+        return f'EpiDocCorpus( doc_count = {self.doc_count} )'
 
     @property
     def datemin(self) -> int:
@@ -348,16 +351,17 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(corpus, folderpath=None)
 
-
-
     def filter_by_textclass(
         self, 
-        textclasses:list[str], 
+        textclasses:list[str | TextClass], 
         set_relation=SetRelation.intersection
     ) -> EpiDocCorpus:
+
+        # Convert input textclasses to their string representation
+        _textclasses = list(map(str, textclasses))
     
         corpus = [doc for doc in self.docs
-            if set_relation(set(textclasses), doc.textclasses)]
+            if set_relation(set(_textclasses), doc.textclasses)]
 
         return EpiDocCorpus(corpus, folderpath=None)
 
