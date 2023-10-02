@@ -294,17 +294,17 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(docs, folderpath=None)
 
-    def filter_by_ids(self, ids:list[str]) -> EpiDocCorpus:
-        _corpus = [doc for doc in self.docs
-            if doc.id in ids]
-
-        return EpiDocCorpus(_corpus, folderpath=None)
-
     def filter_by_idrange(self, start:int, end:int) -> EpiDocCorpus:
         _int_range = range(start, end + 1)
         _str_range = [self.prefix + str(item).zfill(6) for item in _int_range]
         
         return self.filter_by_ids(ids=_str_range)
+
+    def filter_by_ids(self, ids:list[str]) -> EpiDocCorpus:
+        _corpus = [doc for doc in self.docs
+            if doc.id in ids]
+
+        return EpiDocCorpus(_corpus, folderpath=None)
 
     def filter_by_languages(self, 
         langs:list[str], 
