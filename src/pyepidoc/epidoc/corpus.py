@@ -123,9 +123,12 @@ class EpiDocCorpus:
                 if not os.path.isdir(os.getcwd() + '/' + inpt)       :
                     raise FileExistsError(f"Path {os.getcwd() + '/' + inpt} does not exist. Cannot create corpus")
             
-            # TODO: this will not work on Windows
-            if fullpath == True and len(inpt) > 0 and inpt[0] not in ['/']:
-                raise ValueError('Fullpath specified, but path is not a path from root.')
+            if fullpath == True: 
+                if os.name == 'nt' and len(inpt) > 3 and inpt[1:3] != ':\\':
+                    raise ValueError('Fullpath specified, but path is not a path from root.')
+                    
+                elif os.name == 'posix' and len(inpt) > 0 and inpt[0] not in ['/']:
+                        raise ValueError('Fullpath specified, but path is not a path from root.')                    
             
             self._folderpath = inpt
             return
