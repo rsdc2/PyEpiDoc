@@ -377,7 +377,7 @@ class EpiDoc(DocRoot):
                                    '[@type="ancient"]/text()')
         result = head(
             xpath_results, 
-            throw_if_more_than_one=True
+            throw_if_more_than_one=False
         )
 
         if result is None:
