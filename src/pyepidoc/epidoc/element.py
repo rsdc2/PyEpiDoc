@@ -972,8 +972,8 @@ class EpiDocElement(BaseElement, Showable):
 
         # Handle interpuncts
         if prototoken is not None and prototoken.strip() in ['·', '·', '❦', '∙']:
-            namespace = ns.give_ns('g', ns=NS)
-            new_g = etree.Element(namespace, nsmap=None, attrib=None)
+            tagname = ns.give_ns('g', ns=NS)
+            new_g = etree.Element(tagname, nsmap=None, attrib=None)
 
             if prototoken: 
                 new_g.text = prototoken
@@ -1009,8 +1009,8 @@ class EpiDocElement(BaseElement, Showable):
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
                 elif tag in SubatomicTagType.values(): # e.g. <expan>
-                    namespace = ns.give_ns('w', ns=NS)
-                    new_w = etree.Element(namespace, None, None)
+                    tagname = ns.give_ns('w', ns=NS)
+                    new_w = etree.Element(tagname, None, None)
                     new_w.append(new_e)
                     new_parent.append(new_w)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
@@ -1024,11 +1024,11 @@ class EpiDocElement(BaseElement, Showable):
             return EpiDocElement(new_parent, final_space=True)
         else:
             if prototoken: 
-                namespace = ns.give_ns('w', ns=NS)
-                new_w = etree.Element(namespace, None, None)
+                tagname = ns.give_ns('w', ns=NS)
+                new_w = etree.Element(tagname, None, None)
                 new_w.text = prototoken
             else:
-                new_w = etree.Element(ns.give_ns('w', ns=NS))
+                new_w = etree.Element(ns.give_ns('w', ns=NS), None, None)
  
             for child in subelements:
                 new_w.append(child)
