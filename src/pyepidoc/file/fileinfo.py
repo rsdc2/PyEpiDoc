@@ -14,9 +14,10 @@ class FileInfo(object):
     def __init__(
             self, 
             filepath:str,
-            mode=FileMode.r,
+            mode:FileMode=FileMode.r,
             create_folderpath:bool=False,
-            fullpath:bool=False
+            fullpath:bool=False,
+            error_on_not_exist:bool=True
         ):
         
         # Check type of filepath
@@ -36,7 +37,8 @@ class FileInfo(object):
                 folderpath
             ]))
 
-        if mode == FileMode.r and not self.exists:
+        if mode == FileMode.r and not self.exists and error_on_not_exist:
+            # breakpoint()
             raise FileExistsError(f'File {self.full_filepath} does not exist.')    
 
         self._create_folderpath = create_folderpath

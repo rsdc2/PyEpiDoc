@@ -4,6 +4,7 @@ import os
 
 corpus_folderpath = "api/files/corpus"
 
+
 def test_load_corpus_local():
     """
     Test that raises an error if asked to load a corpus

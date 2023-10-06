@@ -64,15 +64,18 @@ tests = [
 ]
 
 
-def remove_file(filepath:str):
+def remove_file(filepath:str, fullpath:bool):
+
     try:
         tokenized_f = FileInfo(
             filepath=filepath,
             mode = FileMode.r,
-            fullpath=False
+            fullpath=fullpath,
+            error_on_not_exist=False
         )
         if tokenized_f.exists:
             os.remove(tokenized_f.full_filepath)
+
     except FileExistsError:
         pass
 
@@ -102,7 +105,7 @@ def tokenize_epidoc(tokenize_type:str) -> tuple[EpiDoc, EpiDoc]:
             benchmark_filepath) = get_path_vars(tokenize_type)
 
     # Remove old output file if exists
-    remove_file(tokenized_filepath)
+    remove_file(tokenized_filepath, fullpath=False)
 
     # Tokenize the files
     tokenize(

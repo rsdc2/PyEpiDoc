@@ -199,7 +199,7 @@ class EpiDocCorpus:
         if dstfolder:
             dst = FileInfo(
                 filepath = dstfolder + "/" + doc.id + ".xml", 
-                mode='w', 
+                mode=FileMode.w, 
                 create_folderpath=create_folderpath,
                 fullpath=fullpath
             )
@@ -521,11 +521,20 @@ class EpiDocCorpus:
         
         return doc.prefix
 
-    def set_ids(self, dstfolder:str, fullpath:bool, verbose=True) -> None:
+    def set_ids(
+            self, 
+            dstfolder:str, 
+            fullpath:bool, 
+            verbose=True,
+            create_folderpath:bool=False) -> None:
         for doc in self.docs:
             if verbose: print(f'Setting ids for {doc.id}...')
             doc.set_ids()
-            self._doc_to_xml_file(dstfolder=dstfolder, doc=doc, fullpath=fullpath)
+            self._doc_to_xml_file(
+                dstfolder=dstfolder, 
+                doc=doc, 
+                fullpath=fullpath,
+                create_folderpath=create_folderpath)
 
     @cached_property
     def size(self) -> int:

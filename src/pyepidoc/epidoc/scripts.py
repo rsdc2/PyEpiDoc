@@ -10,7 +10,7 @@ from .ab import Ab
 from .edition import Edition
 from .lb import Lb
 
-from ..file import FileInfo
+from ..file import FileInfo, FileMode
 from ..file.funcs import filepath_from_list
 from ..constants import *
 from ..utils import maxone, flatlist, head
@@ -22,27 +22,29 @@ def tokenize(
     isic_ids:list[str],
     space_words:bool,
     set_ids:bool,
-    fullpath=False
+    fullpath:bool=False
 ) -> None:
 
+    # breakpoint()
     for filename in isic_ids:
-        if fullpath == False:
+        if not fullpath:
             src_filepath = filepath_from_list([getcwd(), src_folderpath], filename + ".xml")
             dst_filepath = filepath_from_list([getcwd(), dst_folderpath], filename + ".xml")
         else:
             src_filepath = filepath_from_list([src_folderpath], filename + ".xml")
             dst_filepath = filepath_from_list([dst_folderpath], filename + ".xml")
-
+        
+        # breakpoint()
         src = FileInfo(
             filepath=src_filepath, 
-            mode='r', 
+            mode=FileMode.r, 
             create_folderpath=False,
-            fullpath=True
+            fullpath=True,
         )
 
         dst = FileInfo(
             filepath=dst_filepath,
-            mode='w', 
+            mode=FileMode.w, 
             create_folderpath=False,
             fullpath=True
         )
@@ -92,14 +94,14 @@ def set_ids(
 
         src = FileInfo(
             filepath=src_filepath, 
-            mode='r', 
+            mode=FileMode.r, 
             create_folderpath=False,
             fullpath=True
         )
 
         dst = FileInfo(
             filepath=dst_filepath,
-            mode='w', 
+            mode=FileMode.w, 
             create_folderpath=False,
             fullpath=True
         )
