@@ -249,15 +249,15 @@ class EpiDocCorpus:
             raise ValueError("Must specify whether full path to corpus is given.")
 
         l = list(os.walk(self._folderpath))
-        first = head(l) # Subfolders not considered: only take the first
-
-        if first is None:
+        
+        if l == []:
             return []
-
-        _, _, files = head(l) # if l is not None else None, None, cast(list[str], [])
+        
+        _, _, files = l[0] 
         sorted_files = sorted(files)
 
         fileinfos:list[FileInfo] = []
+        
         for file in sorted_files:
             if file[-4:] == '.xml':
                 if self.folderpath is None:

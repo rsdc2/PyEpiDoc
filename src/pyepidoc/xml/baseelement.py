@@ -152,7 +152,7 @@ class BaseElement(Showable):
         if self.e is None:
             return []
         
-        return [item for item in self.e.iterdescendants()
+        return [item for item in self.e.iterdescendants(None)
                  if isinstance(item, _Comment)]
 
     @property
