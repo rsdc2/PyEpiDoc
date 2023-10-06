@@ -23,7 +23,7 @@ class SubatomicTagType(EnumerableEnum):
     Surplus = 'surplus'
     Link = 'link'
     Subst = 'subst'
-
+    C = 'c' # Character element
 
 class AtomicTokenType(EnumerableEnum):
     Name = 'name'

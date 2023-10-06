@@ -69,10 +69,11 @@ def tokenize(
 def tokenize_corpus(
     src_folderpath:str, 
     dst_folderpath:str, 
+    fullpath:bool,
     head:Optional[int]=None
 ) -> None:
     corpus = EpiDocCorpus(src_folderpath, head=head)
-    corpus.tokenize(dstfolder=dst_folderpath)
+    corpus.tokenize_to_folder(dstfolder=dst_folderpath, fullpath=fullpath)
 
 
 def set_ids(

@@ -192,7 +192,7 @@ class EpiDocCorpus:
         return len(self.docs)
 
     @staticmethod
-    def _doc_to_xml_file(dstfolder:Optional[str], doc:EpiDoc) -> None:
+    def _doc_to_xml_file(dstfolder:Optional[str], doc:EpiDoc, fullpath:bool) -> None:
         
         "Writes out an EpiDoc object to an XML file"
 
@@ -200,7 +200,8 @@ class EpiDocCorpus:
             dst = FileInfo(
                 filepath = dstfolder + "/" + doc.id + ".xml", 
                 mode='w', 
-                create_folderpath=True
+                create_folderpath=True,
+                fullpath=fullpath
             )
             doc.to_xml_file(
                 dst.full_filepath,
@@ -520,13 +521,11 @@ class EpiDocCorpus:
         
         return doc.prefix
 
-    def set_ids(self, dstfolder:Optional[str], verbose=True) -> None:
-        if dstfolder is None: 
-            return
+    def set_ids(self, dstfolder:str, fullpath:bool, verbose=True) -> None:
         for doc in self.docs:
             if verbose: print(f'Setting ids for {doc.id}...')
             doc.set_ids()
-            self._doc_to_xml_file(dstfolder=dstfolder, doc=doc)
+            self._doc_to_xml_file(dstfolder=dstfolder, doc=doc, fullpath=fullpath)
 
     @cached_property
     def size(self) -> int:
@@ -544,18 +543,16 @@ class EpiDocCorpus:
         with open(dst.full_filepath, 'w') as f:
             f.write(self.formatted_text)
 
-    def tokenize(
+    def tokenize_to_folder(
         self, 
-        dstfolder:Optional[str]=None, 
+        dstfolder:str, 
+        fullpath:bool,
         add_space_between_words:bool=True,
         prettify_edition:bool=True,
         set_ids:bool=False,
         convert_ws_to_names:bool=True,
-        verbose=True
+        verbose=True,
     ) -> None:
-    
-        if dstfolder is None: 
-            return
 
         for doc in self.docs:
             if verbose: 
@@ -575,7 +572,8 @@ class EpiDocCorpus:
             if prettify_edition:
                 doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
             
-            self._doc_to_xml_file(dstfolder, doc)
+            
+            self._doc_to_xml_file(dstfolder, doc, fullpath=fullpath)
 
     @property
     def token_count(self) -> int:

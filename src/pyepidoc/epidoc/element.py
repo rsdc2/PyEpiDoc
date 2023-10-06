@@ -971,7 +971,7 @@ class EpiDocElement(BaseElement, Showable):
         new_g:_Element
 
         # Handle interpuncts
-        if prototoken is not None and prototoken.strip() in ['·', '·', '❦']:
+        if prototoken is not None and prototoken.strip() in ['·', '·', '❦', '∙']:
             namespace = ns.give_ns('g', ns=NS)
             new_g = etree.Element(namespace)
 
