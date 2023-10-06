@@ -34,7 +34,15 @@ class EpiDocCorpus:
                             f"{type(other)}; " 
                             "required: EpiDocCorpus")
 
-        return EpiDocCorpus(list(set(self.docs + other.docs)))
+        if (self.fullpath != other.fullpath):
+            if self.docs == []:
+                return other
+            elif other.docs == []:
+                return self
+            
+            raise ValueError("Cannot resolve whether full path to corpus is given.")        
+
+        return EpiDocCorpus(list(set(self.docs + other.docs)), fullpath=None)
 
     @overload
     def __init__(
@@ -233,11 +241,11 @@ class EpiDocCorpus:
         No subdirectories will be considered.
         """
 
-        if self.fullpath is None:
-            raise ValueError("Must specify whether full path to corpus is given.")
-
         if self._folderpath is None:
             return []
+
+        if self.fullpath is None:
+            raise ValueError("Must specify whether full path to corpus is given.")
 
         l = list(os.walk(self._folderpath))
         first = head(l) # Subfolders not considered: only take the first
@@ -282,7 +290,7 @@ class EpiDocCorpus:
         corpus = [doc for doc in self.docs
             if set_relation(set(forms), doc.forms)]
 
-        return EpiDocCorpus(corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_has_gap(
         self,
@@ -293,7 +301,7 @@ class EpiDocCorpus:
         docs = [doc for doc in self.docs
             if doc.has_gap(reasons=reasons) == has_gap]
 
-        return EpiDocCorpus(docs, folderpath=None)
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_has_supplied(
         self,
@@ -314,8 +322,8 @@ class EpiDocCorpus:
         docs = [doc for doc in self.docs
             if doc.has_supplied == has_supplied]
 
-        return EpiDocCorpus(docs, folderpath=None)
-
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
+    
     def filter_by_idrange(self, start:int, end:int) -> EpiDocCorpus:
         _int_range = range(start, end + 1)
         _str_range = [self.prefix + str(item).zfill(6) for item in _int_range]
@@ -326,7 +334,7 @@ class EpiDocCorpus:
         _corpus = [doc for doc in self.docs
             if doc.id in ids]
 
-        return EpiDocCorpus(_corpus, folderpath=None)
+        return EpiDocCorpus(_corpus, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_languages(self, 
         langs:list[str], 
@@ -342,7 +350,10 @@ class EpiDocCorpus:
         corpus = [doc for doc in self.docs
             if set_relation(set(langs), doc.get_lang_attr(language_attr))]
 
-        return EpiDocCorpus(corpus, folderpath=None)
+        if corpus == []:
+            return EpiDocCorpus([], fullpath=None)
+        
+        return EpiDocCorpus(corpus, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_lemmata(
         self, 
@@ -353,7 +364,7 @@ class EpiDocCorpus:
         corpus = [doc for doc in self.docs
             if set_relation(set(lemmata), doc.lemmata)]
 
-        return EpiDocCorpus(corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_orig_place(
         self,
@@ -385,7 +396,7 @@ class EpiDocCorpus:
         corpus = [doc for doc in self.docs
             if set_relation(set(_textclasses), doc.textclasses)]
 
-        return EpiDocCorpus(corpus, folderpath=None)
+        return EpiDocCorpus(corpus, folderpath=self.folderpath, fullpath=self.fullpath)
 
     @property
     def folderpath(self) -> Optional[str]:
