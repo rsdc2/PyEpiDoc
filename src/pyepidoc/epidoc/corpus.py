@@ -272,14 +272,24 @@ class EpiDocCorpus:
         return fileinfos
 
     def filter_by_dateafter(self, start:int) -> EpiDocCorpus:
-        return EpiDocCorpus([doc for doc in self.docs
+        docs = [doc for doc in self.docs
             if (doc.not_before is not None and doc.not_before >= start) 
-            or (doc.date is not None and doc.date >= start)], folderpath=self.folderpath)
+            or (doc.date is not None and doc.date >= start)]
+
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)        
+        
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_daterange(self, start:int, end:int) -> EpiDocCorpus:
-        return EpiDocCorpus([doc for doc in self.docs
+        docs = [doc for doc in self.docs
             if doc.not_before is not None and doc.not_after is not None
-            and doc.not_before >= start and doc.not_after <= end], folderpath=self.folderpath)
+            and doc.not_before >= start and doc.not_after <= end]
+        
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)  
+
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_form(
         self, 
@@ -287,10 +297,13 @@ class EpiDocCorpus:
         set_relation=SetRelation.intersection
     ) -> EpiDocCorpus:
     
-        corpus = [doc for doc in self.docs
+        docs = [doc for doc in self.docs
             if set_relation(set(forms), doc.forms)]
+        
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)  
 
-        return EpiDocCorpus(corpus, folderpath=self.folderpath, fullpath=self.fullpath)
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_has_gap(
         self,
@@ -300,6 +313,9 @@ class EpiDocCorpus:
     
         docs = [doc for doc in self.docs
             if doc.has_gap(reasons=reasons) == has_gap]
+        
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)  
 
         return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
@@ -321,6 +337,9 @@ class EpiDocCorpus:
     
         docs = [doc for doc in self.docs
             if doc.has_supplied == has_supplied]
+        
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)  
 
         return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
     
@@ -331,10 +350,13 @@ class EpiDocCorpus:
         return self.filter_by_ids(ids=_str_range)
 
     def filter_by_ids(self, ids:list[str]) -> EpiDocCorpus:
-        _corpus = [doc for doc in self.docs
+        docs = [doc for doc in self.docs
             if doc.id in ids]
 
-        return EpiDocCorpus(_corpus, folderpath=self.folderpath, fullpath=self.fullpath)
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)  
+
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_languages(self, 
         langs:list[str], 
@@ -347,13 +369,13 @@ class EpiDocCorpus:
         Uses the 'textLang' element in the EpiDoc.
         """
 
-        corpus = [doc for doc in self.docs
+        docs = [doc for doc in self.docs
             if set_relation(set(langs), doc.get_lang_attr(language_attr))]
 
-        if corpus == []:
-            return EpiDocCorpus([], fullpath=None)
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)
         
-        return EpiDocCorpus(corpus, folderpath=self.folderpath, fullpath=self.fullpath)
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_lemmata(
         self, 
@@ -361,10 +383,13 @@ class EpiDocCorpus:
         set_relation=SetRelation.intersection
     ) -> EpiDocCorpus:
     
-        corpus = [doc for doc in self.docs
+        docs = [doc for doc in self.docs
             if set_relation(set(lemmata), doc.lemmata)]
 
-        return EpiDocCorpus(corpus, folderpath=self.folderpath, fullpath=self.fullpath)
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)  
+
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
     def filter_by_orig_place(
         self,
@@ -379,10 +404,13 @@ class EpiDocCorpus:
         :param set_relation: a value of SetRelation
         """
 
-        corpus = [doc for doc in self.docs
+        docs = [doc for doc in self.docs
             if set_relation(set(orig_places), set([doc.orig_place]))]
 
-        return EpiDocCorpus(corpus, folderpath=None)
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)  
+
+        return EpiDocCorpus(docs, folderpath=None)
 
     def filter_by_textclass(
         self, 
@@ -393,10 +421,13 @@ class EpiDocCorpus:
         # Convert input textclasses to their string representation
         _textclasses = list(map(str, textclasses))
     
-        corpus = [doc for doc in self.docs
+        docs = [doc for doc in self.docs
             if set_relation(set(_textclasses), doc.textclasses)]
 
-        return EpiDocCorpus(corpus, folderpath=self.folderpath, fullpath=self.fullpath)
+        if docs == []:
+            return EpiDocCorpus([], folderpath=None, fullpath=None)  
+
+        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
 
     @property
     def folderpath(self) -> Optional[str]:
