@@ -192,7 +192,7 @@ class EpiDocCorpus:
         return len(self.docs)
 
     @staticmethod
-    def _doc_to_xml_file(dstfolder:Optional[str], doc:EpiDoc, fullpath:bool) -> None:
+    def _doc_to_xml_file(dstfolder:Optional[str], doc:EpiDoc, fullpath:bool, create_folderpath:bool) -> None:
         
         "Writes out an EpiDoc object to an XML file"
 
@@ -200,7 +200,7 @@ class EpiDocCorpus:
             dst = FileInfo(
                 filepath = dstfolder + "/" + doc.id + ".xml", 
                 mode='w', 
-                create_folderpath=True,
+                create_folderpath=create_folderpath,
                 fullpath=fullpath
             )
             doc.to_xml_file(
@@ -551,8 +551,14 @@ class EpiDocCorpus:
         prettify_edition:bool=True,
         set_ids:bool=False,
         convert_ws_to_names:bool=True,
-        verbose=True,
+        verbose:bool=True,
+        create_folderpath:bool=False
     ) -> None:
+
+        """
+        Tokenizes the corpus and writes out the files 
+        to dstfolder.
+        """
 
         for doc in self.docs:
             if verbose: 
@@ -572,8 +578,12 @@ class EpiDocCorpus:
             if prettify_edition:
                 doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
             
-            
-            self._doc_to_xml_file(dstfolder, doc, fullpath=fullpath)
+            self._doc_to_xml_file(
+                dstfolder, 
+                doc, 
+                fullpath=fullpath, 
+                create_folderpath=create_folderpath
+            )
 
     @property
     def token_count(self) -> int:
