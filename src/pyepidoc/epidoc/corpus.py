@@ -34,11 +34,11 @@ class EpiDocCorpus:
                             f"{type(other)}; " 
                             "required: EpiDocCorpus")
 
-        if (self.fullpath != other.fullpath):
+        if self.fullpath != other.fullpath:
             if self.docs == []:
-                return other
+                return EpiDocCorpus(inpt=other.docs, folderpath=other.folderpath, fullpath=other.fullpath)
             elif other.docs == []:
-                return self
+                return EpiDocCorpus(inpt=self.docs, folderpath=self.folderpath, fullpath=self.fullpath)
             
             raise ValueError("Cannot resolve whether full path to corpus is given.")        
 
