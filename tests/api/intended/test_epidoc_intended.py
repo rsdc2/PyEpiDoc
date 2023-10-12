@@ -34,6 +34,11 @@ def test_collect_tokens():
     ]
 
 def test_collect_normalized():
+    """
+    Tests that tokens with <orig> / <reg> or <sic> / <corr> distinctions
+    are use the normalized version
+    """
+
     filepath = relative_filepaths['ISic000552']
     doc = EpiDoc(filepath, fullpath=False)
 
