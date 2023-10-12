@@ -5,7 +5,7 @@ from functools import cached_property
 from copy import deepcopy
 import re
 
-from lxml.etree import _Element, _Comment
+from lxml.etree import _Element, _Comment, _ElementUnicodeResult
 
 from ..xml import Namespace as ns
 from ..utils import maxone, remove_none, head
@@ -34,7 +34,7 @@ class Token(EpiDocElement):
     """
     
     def __str__(self) -> str:
-        stripped_form = re.sub(r'[·\,\.\;\:]', '', self.form.strip())
+        stripped_form = re.sub(r'[·\,\.\;\:]', '', self.normalized_form.strip())
 
         if self.type in [
             AtomicTokenType.Name.value, 
@@ -95,6 +95,15 @@ class Token(EpiDocElement):
 
         return ''.join([abbr.text for abbr in self.abbr_elems])
 
+    @property
+    def case(self) -> Optional[str]:
+        pos = self.pos
+        return pos[7] if pos else None
+
+    @property
+    def charset(self) -> str:
+        return "latin" if set(self.form) - A_TO_Z_SET == set() else "other"
+
     def convert_to_name(self, inplace=True) -> Token:
         """
         Converts the containing token tag, 
@@ -121,15 +130,6 @@ class Token(EpiDocElement):
         
         token_copy = Token(deepcopy(self._e))
         return token_copy.convert_to_name(True)
-
-    @property
-    def case(self) -> Optional[str]:
-        pos = self.pos
-        return pos[7] if pos else None
-
-    @property
-    def charset(self) -> str:
-        return "latin" if set(self.form) - A_TO_Z_SET == set() else "other"
 
     @property
     def expans(self) -> list[Expan]:
@@ -162,6 +162,16 @@ class Token(EpiDocElement):
     def lemma(self, value:str):
         self.set_attrib('lemma', value)
         
+    @cached_property
+    def normalized_form(self) -> str:
+        """
+        Returns the normalized form of the token, i.e.
+        taking the text from <reg> not <orig>, <corr> not <sic>
+        """
+
+        normalized_text = self.xpath('descendant::text()[not(ancestor::ns:sic) and not(ancestor::ns:orig)]')
+        return ''.join([str(t) for t in normalized_text])
+
     @property
     def number(self) -> Optional[str]:
         """

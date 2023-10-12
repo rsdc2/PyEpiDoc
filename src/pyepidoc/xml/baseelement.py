@@ -518,6 +518,12 @@ class BaseElement(Showable):
         return []
 
     def xpath(self, xpathstr:str) -> list[_Element | _ElementUnicodeResult]:
+        """
+        Apply XPath expression to the current element, in which 
+        the prefix 'ns' corresponds to the namespace
+        "http://www.tei-c.org/ns/1.0"
+        """
+
         if self.e is None: 
             return []
 

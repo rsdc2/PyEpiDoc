@@ -6,6 +6,7 @@ import pytest
 
 relative_filepaths = {
     'ISic000001': 'api/files/single_files_untokenized/ISic000001.xml',
+    'ISic000552': 'api/files/single_files_tokenized/ISic000552.xml',
     'persName_nested': 'api/files/persName_nested.xml',
     'langs_1': 'api/files/langs_1.xml',
     'langs_2': 'api/files/langs_2.xml',
@@ -32,6 +33,14 @@ def test_collect_tokens():
         'VI'
     ]
 
+def test_collect_normalized():
+    filepath = relative_filepaths['ISic000552']
+    doc = EpiDoc(filepath, fullpath=False)
+
+    assert doc.tokens_list_str[0:2] == [
+        'Flamma', 
+        'secutor'
+    ]
 
 def test_expans():
     filepath = relative_filepaths['ISic000001']
