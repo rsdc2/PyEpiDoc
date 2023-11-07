@@ -25,6 +25,7 @@ class SubatomicTagType(EnumerableEnum):
     Subst = 'subst'
     C = 'c' # Character element
 
+
 class AtomicTokenType(EnumerableEnum):
     Name = 'name'
     AddName = 'addName'
