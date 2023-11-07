@@ -144,6 +144,8 @@ str_to_file(catina_funerary_ids, 'catina_funerary_ids_la.txt')
 
 ## Run the tests
 
+with ```pytest``` installed (the dev installation will do this for you):
+
 1. Navigate to the ```tests/``` folder. 
 
 2. To run all the tests:
@@ -152,13 +154,32 @@ str_to_file(catina_funerary_ids, 'catina_funerary_ids_la.txt')
     pytest
     ```
 
+If ```pytest``` is not available to the currently active version of Python, 
+it may be necessary to specify the Python executable with ```pytest``` 
+installed, e.g.:
+
+    ```
+    python3.10 -m pytest
+    ```
+
 ## Check the types
 
-To check the integrity of the type annotations:
+To check the integrity of the type annotations, 
+with ```mypy``` installed (the dev installation will
+do this for you):
 
 ```
 mypy src/pyepidoc
 ```
+
+If ```mypy``` is not available to the currently active version of Python, 
+it may be necessary to specify the Python executable with ```mypy``` 
+installed, e.g.:
+
+    ```
+    python3.10 -m mypy src/pyepidoc
+    ```
+
 
 ## Tokenizer behaviour
 
