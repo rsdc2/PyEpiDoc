@@ -10,7 +10,6 @@ def test_id_correct_expansion():
     assert y == ID
 
 
-
 def generate_isic_ids(max_doc_id=10, max_token_id=10):
     
     r1 = iter(range(0, max_doc_id))
