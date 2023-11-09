@@ -10,7 +10,7 @@ LOWERCASE = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n
 
 digits52_list = UPPERCASE + LOWERCASE
 
-digitsChars = {k: v for (k, v) in enumerate(digits52_list)}
+digits_dict = {52: {k: v for (k, v) in enumerate(digits52_list)}}
 
 
 def rev_digits(d:dict[int, str]) -> dict[str, int]:
@@ -54,7 +54,7 @@ def dec_to_base(dec:int, base:int) -> str:
         return ([q] if q < base else f(q)) + [r]
         
     l = f(dec)
-    return ''.join([digitsChars[item] for item in l])
+    return ''.join([digits_dict[base][item] for item in l])
 
 
 def base_to_dec(baseInpt:str, base:int) -> int:
@@ -65,7 +65,7 @@ def base_to_dec(baseInpt:str, base:int) -> int:
         if l == []:
             return acc
         
-        v = rev_digits(digitsChars)[l[0]] * base ** (len(l) - 1)
+        v = rev_digits(digits_dict[base])[l[0]] * base ** (len(l) - 1)
 
         return f(l[1:], acc + v)
     
