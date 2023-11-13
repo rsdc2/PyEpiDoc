@@ -89,8 +89,7 @@ class EpiDocCorpus:
         self,
         inpt: None,
         folderpath:Optional[str]=None,
-        head:Optional[int]=None,
-        fullpath:Optional[bool]=None
+        head:Optional[int]=None
     ):
         ...
 
@@ -98,13 +97,12 @@ class EpiDocCorpus:
         self, 
         inpt: EpiDocCorpus | list[EpiDoc] | str | None, 
         folderpath:Optional[str]=None,
-        head:Optional[int]=None,
-        fullpath:Optional[bool]=None
+        head:Optional[int]=None
     ):
         
         self._docs = None  
         self._head = head
-        self._fullpath = fullpath
+        self._fullpath 
 
         if type(inpt) is EpiDocCorpus:
             self._folderpath = inpt.folderpath
@@ -446,7 +444,15 @@ class EpiDocCorpus:
 
     @property
     def fullpath(self) -> Optional[bool]:
-        return self._fullpath
+        if self._folderpath is None:
+            return None
+
+        if os.name == 'nt' and len(self._folderpath) > 3 and self._folderpath[1:3] != ':\\':
+            raise ValueError('Fullpath specified, but path is not a path from root.')
+            
+        elif os.name == 'posix' and len(self._folderpath) > 0 and self._folderpath[0] not in ['/']:
+                raise ValueError('Fullpath specified, but path is not a path from root.')                    
+
 
     def get_doc_by_id(self, id:str) -> Optional[EpiDoc]:
         docs = self.filter_by_ids([id]).docs
