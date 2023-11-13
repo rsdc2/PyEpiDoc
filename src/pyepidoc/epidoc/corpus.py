@@ -304,7 +304,10 @@ class EpiDocCorpus:
         if docs == []:
             return EpiDocCorpus([], folderpath=None, fullpath=None)  
 
-        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
+        return EpiDocCorpus(
+            inpt=docs, 
+            folderpath=self.folderpath, 
+            fullpath=self.fullpath)
 
     def filter_by_has_gap(
         self,
@@ -428,7 +431,10 @@ class EpiDocCorpus:
         if docs == []:
             return EpiDocCorpus([], folderpath=None, fullpath=None)  
 
-        return EpiDocCorpus(docs, folderpath=self.folderpath, fullpath=self.fullpath)
+        return EpiDocCorpus(
+            inpt=docs, 
+            folderpath=self.folderpath, 
+            fullpath=self.fullpath)
 
     @property
     def folderpath(self) -> Optional[str]:
