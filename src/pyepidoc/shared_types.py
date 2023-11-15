@@ -40,8 +40,6 @@ class SetRelation(Enum):
     @staticmethod
     def propersubset(set1:set, set2:set | list) -> bool:
         result = set.issubset(set1, set2) and set(set1) != set(set2)
-        if result:
-            print('hello')
         return result
 
     subset = set.issubset
