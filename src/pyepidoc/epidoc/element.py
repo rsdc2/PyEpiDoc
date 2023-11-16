@@ -163,8 +163,8 @@ class EpiDocElement(BaseElement, Showable):
 
     def __init__(
         self, 
-        e:Optional[Union[_Element, EpiDocElement, BaseElement]] = None,
-        final_space:bool = False
+        e: Optional[_Element | EpiDocElement | BaseElement] = None,
+        final_space: bool = False
     ):
         error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
 
