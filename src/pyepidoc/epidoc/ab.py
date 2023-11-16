@@ -10,6 +10,7 @@ from .textpart import TextPart
 from .token import Token
 from .expan import Expan
 from .epidoc_types import (
+    IdCarrier,
     TokenCarrier, 
     AtomicTokenType, 
     CompoundTokenType,
@@ -101,6 +102,18 @@ class Ab(EpiDocElement):
         return [EpiDocElement(gap) for gap in self.get_desc('gap')]
 
     @property
+    def id_carriers(self) -> list[EpiDocElement]:
+
+        """
+        WordCarriers are XML elements that carry text fragments
+        either as element-internal text, or in their tails.
+        """
+        # breakpoint()
+        return [EpiDocElement(element) 
+                for element in self.desc_elems
+                if element.tag.name in IdCarrier]
+
+    @property
     def lang(self) -> Optional[str]:
         """
         :return: the @lang attribute from <ab>.
@@ -131,6 +144,18 @@ class Ab(EpiDocElement):
         return [EpiDocElement(lb) for lb in self.get_desc_elems_by_name(['lb'])]
 
     @property
+    def no_space(self) -> list[EpiDocElement]:
+        """
+        :return: a |list| of |Element|s that should not be separated by spaces.
+        """
+
+        return [EpiDocElement(item) for item 
+            in self.get_desc(
+                NoSpace.values() 
+            )
+        ]
+
+    @property
     def _proto_word_strs(self) -> list[str]:
 
         """
@@ -157,8 +182,8 @@ class Ab(EpiDocElement):
 
 
     def set_ids(self) -> None:
-        for wordcarrier in self.token_carriers:
-            wordcarrier.set_id()
+        for idcarrier in self.id_carriers:
+            idcarrier.set_id()
 
     @property
     def space_separated(self) -> list[EpiDocElement]:
@@ -174,18 +199,6 @@ class Ab(EpiDocElement):
                 if elem.next_sibling not in self.no_space]
     
     @property
-    def no_space(self) -> list[EpiDocElement]:
-        """
-        :return: a |list| of |Element|s that should not be separated by spaces.
-        """
-
-        return [EpiDocElement(item) for item 
-            in self.get_desc(
-                NoSpace.values() 
-            )
-        ]
-
-    @property
     def textparts(self) -> list[TextPart]:
         return [TextPart(part) for part in self.get_div_descendants('textpart')]
 
@@ -196,7 +209,6 @@ class Ab(EpiDocElement):
         WordCarriers are XML elements that carry text fragments
         either as element-internal text, or in their tails.
         """
-        # breakpoint()
         return [EpiDocElement(element) 
                 for element in self.desc_elems
                 if element.tag.name in TokenCarrier]

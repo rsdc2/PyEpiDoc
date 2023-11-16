@@ -113,6 +113,7 @@ class CompoundTokenType(EnumerableEnum):
     Cb = 'cb' # Column beginning
 
 
+# Elements that carry tokens, e.g. as internal or external text
 TokenCarrier = set(
     SubatomicTagType.values() 
     + AtomicTokenType.values() 
@@ -120,6 +121,15 @@ TokenCarrier = set(
     + CompoundTokenType.values() 
     + AlwaysSubsumableType.values() 
     + ['Comment']
+)
+
+
+# Elements that can carry @xml:id
+IdCarrier = set(
+    SubatomicTagType.values() 
+    + AtomicTokenType.values() 
+    + AtomicNonTokenType.values() 
+    + CompoundTokenType.values() 
 )
 
 
