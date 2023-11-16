@@ -1,54 +1,28 @@
-from typing import Optional, Sequence
-from os import getcwd
+from typing import Optional
+from pathlib import Path
 
 from .epidoc_types import (
     SpaceUnit
 )
 from .epidoc import EpiDoc
 from .corpus import EpiDocCorpus
-from .ab import Ab
-from .edition import Edition
-from .lb import Lb
-
-from ..file import FileInfo, FileMode
-from ..file.funcs import filepath_from_list
 from ..constants import *
-from ..utils import maxone, flatlist, head
 
 
 def tokenize(
-    src_folderpath:str, 
-    dst_folderpath:str, 
-    isic_ids:list[str],
-    space_words:bool,
-    set_ids:bool,
-    fullpath:bool=False
+    src_folderpath: str, 
+    dst_folderpath: str, 
+    isic_ids: list[str],
+    space_words: bool,
+    set_ids: bool
 ) -> None:
 
     # breakpoint()
     for filename in isic_ids:
-        if not fullpath:
-            src_filepath = filepath_from_list([getcwd(), src_folderpath], filename + ".xml")
-            dst_filepath = filepath_from_list([getcwd(), dst_folderpath], filename + ".xml")
-        else:
-            src_filepath = filepath_from_list([src_folderpath], filename + ".xml")
-            dst_filepath = filepath_from_list([dst_folderpath], filename + ".xml")
+        src = Path(src_folderpath) / Path(filename + '.xml')
+        dst = Path(dst_folderpath) / Path(filename + '.xml')
         
         # breakpoint()
-        src = FileInfo(
-            filepath=src_filepath, 
-            mode=FileMode.r, 
-            create_folderpath=False,
-            fullpath=True,
-        )
-
-        dst = FileInfo(
-            filepath=dst_filepath,
-            mode=FileMode.w, 
-            create_folderpath=False,
-            fullpath=True
-        )
-
         doc = EpiDoc(src)
         doc.tokenize()
         
@@ -60,22 +34,16 @@ def tokenize(
         doc.convert_ws_to_names()
         doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
 
-        doc.to_xml_file(
-            dst.full_filepath,
-            verbose=True,
-            create_folderpath=False,
-            fullpath=True
-        )
+        doc.to_xml_file(dst.absolute())
 
 
 def tokenize_corpus(
     src_folderpath:str, 
     dst_folderpath:str, 
-    fullpath:bool,
-    head:Optional[int]=None
+    fullpath:bool
 ) -> None:
-    corpus = EpiDocCorpus(src_folderpath, head=head)
-    corpus.tokenize_to_folder(dstfolder=dst_folderpath, fullpath=fullpath)
+    corpus = EpiDocCorpus(src_folderpath)
+    corpus.tokenize_to_folder(dstfolder=dst_folderpath)
 
 
 def set_ids(
@@ -85,26 +53,8 @@ def set_ids(
     fullpath=False
 ):
     for filename in ids:
-        if fullpath == False:
-            src_filepath = filepath_from_list([getcwd(), src_folderpath], filename + ".xml")
-            dst_filepath = filepath_from_list([getcwd(), dst_folderpath], filename + ".xml")
-        else:
-            src_filepath = filepath_from_list([src_folderpath], filename + ".xml")
-            dst_filepath = filepath_from_list([dst_folderpath], filename + ".xml")
-
-        src = FileInfo(
-            filepath=src_filepath, 
-            mode=FileMode.r, 
-            create_folderpath=False,
-            fullpath=True
-        )
-
-        dst = FileInfo(
-            filepath=dst_filepath,
-            mode=FileMode.w, 
-            create_folderpath=False,
-            fullpath=True
-        )
+        src = Path(src_folderpath) / Path(filename + '.xml')
+        dst = Path(dst_folderpath) / Path(filename + '.xml')
 
         doc = EpiDoc(src)
         doc.set_ids()
@@ -112,9 +62,4 @@ def set_ids(
         doc.convert_ws_to_names()
         doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
 
-        doc.to_xml_file(
-            dst.full_filepath,
-            verbose=True,
-            create_folderpath=False,
-            fullpath=True
-        )
+        doc.to_xml_file(dst.absolute())

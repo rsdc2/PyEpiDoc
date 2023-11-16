@@ -1,10 +1,11 @@
 from pyepidoc.epidoc.scripts import tokenize
 from pyepidoc.epidoc.epidoc import EpiDoc
-from pyepidoc.file import FileInfo, FileMode
+from pyepidoc.file import FileMode
 from pyepidoc.file.funcs import filepath_from_list
 
 import os
 import pytest
+from pathlib import Path
 
 
 tests = [
@@ -64,17 +65,12 @@ tests = [
 ]
 
 
-def remove_file(filepath:str, fullpath:bool):
+def remove_file(filepath: str):
 
     try:
-        tokenized_f = FileInfo(
-            filepath=filepath,
-            mode = FileMode.r,
-            fullpath=fullpath,
-            error_on_not_exist=False
-        )
-        if tokenized_f.exists:
-            os.remove(tokenized_f.full_filepath)
+        tokenized_f = Path(filepath)
+        if tokenized_f.exists():
+            os.remove(tokenized_f.absolute())
 
     except FileExistsError:
         pass
@@ -96,7 +92,7 @@ def get_path_vars(tokenize_type:str) -> tuple[str, str, str, str, str, str]:
             benchmark_filepath)
 
 
-def tokenize_epidoc(tokenize_type:str) -> tuple[EpiDoc, EpiDoc]:
+def tokenize_epidoc(tokenize_type: str) -> tuple[EpiDoc, EpiDoc]:
     (filename, 
             untokenized_folderpath, 
             tokenized_folderpath, 
@@ -105,32 +101,19 @@ def tokenize_epidoc(tokenize_type:str) -> tuple[EpiDoc, EpiDoc]:
             benchmark_filepath) = get_path_vars(tokenize_type)
 
     # Remove old output file if exists
-    remove_file(tokenized_filepath, fullpath=False)
-
+    remove_file(tokenized_filepath)
+    
     # Tokenize the files
     tokenize(
         src_folderpath=untokenized_folderpath, 
         dst_folderpath=tokenized_folderpath,
         isic_ids=[tokenize_type],
         space_words=True,
-        set_ids=False,
-        fullpath=False
+        set_ids=False
     )
-
-    tokenized_f = FileInfo(
-        filepath=tokenized_filepath,
-        mode = FileMode.r,
-        fullpath=False
-    )
-
-    benchmark_f = FileInfo(
-        filepath=benchmark_filepath,
-        mode = FileMode.r,
-        fullpath=False
-    )
-
-    tokenized_epidoc = EpiDoc(tokenized_f)
-    tokenized_benchmark = EpiDoc(benchmark_f)
+    
+    tokenized_epidoc = EpiDoc(tokenized_filepath)
+    tokenized_benchmark = EpiDoc(benchmark_filepath)
 
     return tokenized_epidoc, tokenized_benchmark
 

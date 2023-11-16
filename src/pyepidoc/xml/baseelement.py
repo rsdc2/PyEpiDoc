@@ -48,7 +48,11 @@ class BaseElement(Showable):
             raise TypeError(f"Other element is of type {type(other)}.")
 
         if len(self.id_internal) != len(other.id_internal):
-            return self._compare_equal_length_ids(self.id_internal, other.id_internal, operator.gt)
+            return self._compare_equal_length_ids(
+                self.id_internal, 
+                other.id_internal, 
+                operator.gt
+            )
 
         return self.id_internal[-1] > other.id_internal[-1]
 
@@ -418,7 +422,7 @@ class BaseElement(Showable):
         return self._e.tail if self._e is not None else ''
 
     @tail.setter
-    def tail(self, value:str):
+    def tail(self, value: str):
         if self._e is None:
             return
 

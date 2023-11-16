@@ -6,6 +6,7 @@ from typing import (
     overload, 
     Sequence
 )
+from pathlib import Path
 
 from lxml import etree 
 from lxml.etree import ( 
@@ -17,15 +18,12 @@ from lxml.etree import (
     _ProcessingInstruction
 )
 
-from ..file import FileInfo
 from ..constants import NS, XMLNS
 from .baseelement import BaseElement
 
 
 class DocRoot:    
-    _e: Optional[_Element] = None
-    _file: Optional[FileInfo] = None
-    _roottree: Optional[_ElementTree] = None
+    _e: _Element
 
     def __bytes__(self) -> bytes:
         """
@@ -45,39 +43,38 @@ class DocRoot:
         return declaration + processing_instructions + b_str
 
     @overload
-    def __init__(self, inpt:FileInfo, fullpath=False):
+    def __init__(self, inpt:Path):
         ...
 
     @overload
-    def __init__(self, inpt:str, fullpath=False):
+    def __init__(self, inpt:str):
         """
         :param inpt: str containing the filepath of the EpiDoc XML file.
         """
         ...
 
     @overload
-    def __init__(self, inpt:_ElementTree, fullpath=False):
+    def __init__(self, inpt:_ElementTree):
         ...
 
-    def __init__(self, inpt:FileInfo | str | _ElementTree, fullpath=False):
-        if type(inpt) is FileInfo:
-            self._file = inpt
-            self._e = None
+    def __init__(self, inpt: Path | str | _ElementTree):
+        if isinstance(inpt, Path):
+            if not inpt.exists():
+                breakpoint()
+                raise FileExistsError(f'File {inpt.absolute()} does not exist')
+            self._e = self._e_from_file(inpt)
             return
-        elif type(inpt) is _ElementTree:
+        elif isinstance(inpt, _ElementTree):
             self._e = inpt.getroot()
-            self._roottree = inpt
-            self._file = None
             return
-        elif type(inpt) is str:
-            self._file = FileInfo(
-                filepath=inpt, 
-                fullpath=fullpath,
-            )
-            self._e = None
+        elif isinstance(inpt, str):
+            p = Path(inpt)
+            if not p.exists():
+                raise FileExistsError(f'File {p.absolute()} does not exist')
+            self._e = self._e_from_file(p)
             return
         
-        raise TypeError(f"input is of type {type(inpt)}, but should be either FileInfo, _ElementTree or str.")
+        raise TypeError(f"input is of type {type(inpt)}, but should be either Path, _ElementTree or str.")
 
     @staticmethod
     def _clean_text(text:str):
@@ -117,27 +114,26 @@ class DocRoot:
         return [BaseElement(item) for item in self.e.iterdescendants()
                  if isinstance(item, _Element)]
 
+    def _e_from_file(self, filepath: Path) -> _Element:
+
+        """
+        Reads the root element from file and returns self._e
+        """
+
+        try:
+            self._roottree:_ElementTree = etree.parse(
+                source=filepath.absolute(), 
+                parser=None
+            )
+            return self._roottree.getroot()
+        
+        except XMLSyntaxError:
+            print(f'XML syntax error in {filepath.absolute()}')
+            return _Element()
+
     @property
     def e(self) -> _Element:
-        if self._e is None:
-            if self._file is None: 
-                raise TypeError("self._file is None")
-
-            try:
-                self._roottree:_ElementTree = etree.parse(self._file.full_filepath, parser=None)
-                self._e = self._roottree.getroot()
-
-                return self._e
-            
-            except XMLSyntaxError:
-                print(f'XML syntax error in {self._file.filename}')
-                return _Element()
-        
         return self._e
-
-    @property
-    def file(self) -> Optional[FileInfo]:
-        return self._file
 
     def get_desc(self, 
         elemnames:Union[list[str], str], 

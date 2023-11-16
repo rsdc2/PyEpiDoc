@@ -11,7 +11,7 @@ def test_load_corpus_local():
     from a non-existent local folder
     """
     with pytest.raises(FileExistsError):
-        _ = EpiDocCorpus('api/files/non_existent_folder', fullpath=False)
+        _ = EpiDocCorpus('api/files/non_existent_folder')
 
 
 def test_load_corpus_root():
@@ -21,7 +21,7 @@ def test_load_corpus_root():
     """
 
     with pytest.raises(FileExistsError):
-        _ = EpiDocCorpus(os.getcwd() + '/api/files/non_existent_folder', fullpath=True)
+        _ = EpiDocCorpus(os.getcwd() + '/api/files/non_existent_folder')
 
 
 def test_write_corpus_root():
@@ -30,12 +30,7 @@ def test_write_corpus_root():
     Tests that raises a file exists error if tries to write to a non-existent folder
     without the create_folderpath parameter having been set to True
     """
-    corpus = EpiDocCorpus(
-        inpt=os.getcwd() + '/' + corpus_folderpath,
-        head=None,
-        fullpath=True
-    )
+    corpus = EpiDocCorpus(inpt=os.getcwd() + '/' + corpus_folderpath)
 
     with pytest.raises(FileExistsError):
-        corpus.tokenize_to_folder(os.getcwd() + '/' + corpus_folderpath + '/nonexistent_folder', 
-                                  fullpath=True)
+        corpus.tokenize_to_folder(os.getcwd() + '/' + corpus_folderpath + '/nonexistent_folder')

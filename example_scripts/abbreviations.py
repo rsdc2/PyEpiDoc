@@ -11,7 +11,7 @@ from pyepidoc.displayutils import show_elems
 
 corpus_path = '' # insert path to your corpus here 
 
-corpus = EpiDocCorpus(corpus_path, fullpath=True)
+corpus = EpiDocCorpus(corpus_path)
 
 abbreviations = [expan for expan in corpus.expans]
 print('Total abbreviations in I.Sicily corpus: ', len(abbreviations))

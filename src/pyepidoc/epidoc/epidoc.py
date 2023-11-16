@@ -1,11 +1,11 @@
 from __future__ import annotations
-from typing import Optional, Union, Literal
+from typing import Optional, Union, Literal, overload
 from lxml.etree import _Element, _ElementUnicodeResult 
+from pathlib import Path
 
 from .element import EpiDocElement, BaseElement
 from ..xml.docroot import DocRoot
 from ..utils import flatlist, maxone, listfilter, head
-from ..file import FileInfo, FileMode
 
 from .edition import Edition
 from .expan import Expan
@@ -470,29 +470,42 @@ class EpiDoc(DocRoot):
 
         return textlang
 
+    @overload   
     def to_xml_file(
         self, 
-        dst:str, 
-        verbose=True, 
-        create_folderpath=False,
-        fullpath=False
+        dst: Path, 
+        verbose=True
+    ) -> None:
+        ...
+
+    @overload
+    def to_xml_file(
+        self,
+        dst: str
+    ) -> None:
+        ...
+
+    def to_xml_file(
+        self, 
+        dst: Path | str, 
+        verbose=True
     ) -> None:
         
         """
         Writes out the XML to file
         """
+        if isinstance(dst, Path):
+            p = dst
+        else:
+            p = Path(dst)
 
-        dst_fileinfo = FileInfo(
-            filepath=dst,
-            mode=FileMode.w,
-            create_folderpath=create_folderpath,
-            fullpath=fullpath
-        )
+        if not p.parent.exists():
+            raise FileExistsError(f'Directory {p.parent.absolute()} does not exist.')
 
         if verbose: 
             print(f'Writing {self.id}...')
         
-        with open(dst_fileinfo.full_filepath, 'wb') as f:
+        with open(dst, 'wb') as f:
             f.write(bytes(self))
 
     @property

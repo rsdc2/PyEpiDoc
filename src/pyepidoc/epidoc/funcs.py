@@ -11,8 +11,6 @@ from .ab import Ab
 from .edition import Edition
 from .lb import Lb
 
-from ..file import FileInfo
-from ..file.funcs import filepath_from_list
 from ..constants import *
 from ..utils import maxone, flatlist, head
 
