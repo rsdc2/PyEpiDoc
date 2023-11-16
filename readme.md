@@ -217,7 +217,7 @@ XML comments should now be handled correctly, and reproduced in new files.
 
 PyEpiDoc depends on [lxml](https://lxml.de/) ([BSD](https://github.com/lxml/lxml/blob/master/LICENSE.txt)). 
 Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) ([MIT](https://github.com/python/mypy/blob/master/LICENSE)) 
-and [pytest](https://docs.pytest.org/en/7.4.x/) ([MIT](https://github.com/pytest-dev/pytest/blob/main/LICENSE)).
+and [pytest](https://docs.pytest.org/en/7.4.x/) ([MIT](https://github.com/pytest-dev/pytest/blob/main/LICENSE)). Licenses for these dependencies are included in the `LICENSES` directory.
 
 
 ## Acknowledgements
