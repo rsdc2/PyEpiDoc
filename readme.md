@@ -199,7 +199,6 @@ The token will be subsumed into a neighbouring ```<w>``` token regardless of the
 
 The PyEpiDoc package has three subpackages:
 
-- ```file``` containing modules for file handling;
 - ```base``` containing modules with base classes for EpiDoc XML handling;
 - ```epidoc``` containing modules for handling EpiDoc specific XML nodes, e.g. ```<ab>```, ```<w>``` etc.
 
