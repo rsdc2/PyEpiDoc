@@ -60,7 +60,6 @@ class DocRoot:
     def __init__(self, inpt: Path | str | _ElementTree):
         if isinstance(inpt, Path):
             if not inpt.exists():
-                breakpoint()
                 raise FileExistsError(f'File {inpt.absolute()} does not exist')
             self._e = self._e_from_file(inpt)
             return
