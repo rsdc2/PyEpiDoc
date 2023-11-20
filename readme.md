@@ -1,8 +1,7 @@
 # PyEpiDoc
 
 PyEpiDoc is a Python (>=3.9) library for parsing and interacting with [TEI](https://tei-c.org/) XML
-[EpiDoc](https://epidoc.stoa.org/) files. It has been tested on Python 3.9.16 on Linux (Ubuntu) 
-with both ```venv``` and ```--user``` installations, and a Python 3.10.0 ```venv``` on Windows. 
+[EpiDoc](https://epidoc.stoa.org/) files. It has been tested on Python 3.9 on Linux (Ubuntu).
 It should work on later Python versions.
 
 PyEpiDoc has been designed for use, in the first instance, 
@@ -200,8 +199,7 @@ The token will be subsumed into a neighbouring ```<w>``` token regardless of the
 
 The PyEpiDoc package has three subpackages:
 
-- ```file``` containing modules for file handling;
-- ```base``` containing modules with base classes for EpiDoc XML handling;
+- ```xml``` containing modules with base classes for EpiDoc XML handling;
 - ```epidoc``` containing modules for handling EpiDoc specific XML nodes, e.g. ```<ab>```, ```<w>``` etc.
 
 In addition ```utils.py``` provides general utility functions, in particular for handling Python 
