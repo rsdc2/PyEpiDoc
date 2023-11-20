@@ -39,8 +39,7 @@ def tokenize(
 
 def tokenize_corpus(
     src_folderpath:str, 
-    dst_folderpath:str, 
-    fullpath:bool
+    dst_folderpath:str
 ) -> None:
     corpus = EpiDocCorpus(src_folderpath)
     corpus.tokenize_to_folder(dstfolder=dst_folderpath)
@@ -49,8 +48,7 @@ def tokenize_corpus(
 def set_ids(
     src_folderpath:str, 
     dst_folderpath:str, 
-    ids:list[str],
-    fullpath=False
+    ids:list[str]
 ):
     for filename in ids:
         src = Path(src_folderpath) / Path(filename + '.xml')
