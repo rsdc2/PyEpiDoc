@@ -86,6 +86,7 @@ class EpiDocCorpus:
         if isinstance(inpt, list):
             if inpt == []:
                 self._docs = []
+                return
 
             if isinstance(inpt[0], EpiDoc):
                 inpt = cast(list[EpiDoc], inpt)
