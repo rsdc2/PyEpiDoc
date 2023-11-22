@@ -458,10 +458,10 @@ class BaseElement(Showable):
 
     @staticmethod
     def _clean_text(text:str):
-        return text.strip()\
-            .replace('\n', '')\
-            .replace(' ', '')\
-            .replace('\t', '')
+        return (text.strip()
+            .replace('\n', '')
+            .replace(' ', '')
+            .replace('\t', ''))
 
     @staticmethod
     def _compile_attribs(attribs:Optional[dict[str, str]]) -> str:
