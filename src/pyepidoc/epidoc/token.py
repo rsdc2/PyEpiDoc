@@ -104,26 +104,6 @@ class Token(EpiDocElement):
     def charset(self) -> str:
         return "latin" if set(self.form) - A_TO_Z_SET == set() else "other"
 
-    def _clean_text(self, text: str):
-        # const ancestorXpaths = tagNames.reduce(
-        #     (ancestors:string, tagName:string) => {
-        #         return ancestors.concat(`local-name()="${tagName}" or `)
-        #     }, ''
-        # )
-
-        # // TODO improve this code
-        # const xpathStr = Str.concat(ancestorXpaths)("parent::*[descendant::text()[not(ancestor::*[") 
-
-        # const xpathStr_ = Str.substring(0)(xpathStr.length - 4)(xpathStr) + "])]]/descendant::text()"
-        
-        # return XML.xpath(xpathStr_)(text).unpack([]).length !== 0
-
-
-        return (text.strip()
-            .replace('\n', '')
-            .replace(' ', '')
-            .replace('\t', ''))
-
     def convert_to_name(self, inplace=True) -> Token:
         """
         Converts the containing token tag, 
@@ -173,14 +153,6 @@ class Token(EpiDocElement):
         """
 
         return self._clean_text(self.text_desc)
-    
-    @property
-    def form_normalised(self) -> str:
-        """
-        Return the form normalised to be consistent with the output
-        of the Syntax Treebank Annotator
-        """
-        return ''.join(self._e.xpath('.//text()'))
         
     @property
     def lemma(self) -> Optional[str]:
@@ -196,8 +168,12 @@ class Token(EpiDocElement):
         Returns the normalized form of the token, i.e.
         taking the text from <reg> not <orig>, <corr> not <sic>
         """
+        non_ancestors = ['sic', 'orig', 'del', 'g']
 
-        normalized_text = self.xpath('descendant::text()[not(ancestor::ns:sic) and not(ancestor::ns:orig)]')
+        ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
+                                 for ancestor in non_ancestors])
+
+        normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
         return ''.join([str(t) for t in normalized_text])
 
     @property
