@@ -23,6 +23,16 @@ class SubatomicTagType(EnumerableEnum):
     C = 'c' # Character element
 
 
+# Elements that contain text that would not be 
+# included in a normalized form of the text
+class TextNotIncludedType(EnumerableEnum):
+    Del = 'del'
+    Surplus = 'surplus'
+    Orig = 'orig'
+    Sic = 'sic'
+    G = 'g'
+
+
 class AtomicTokenType(EnumerableEnum):
     Name = 'name'
     AddName = 'addName'
@@ -118,6 +128,15 @@ TokenCarrier = set(
     + CompoundTokenType.values() 
     + AlwaysSubsumableType.values() 
     + ['Comment']
+)
+
+
+# Elements that 
+TextCarrier = set(
+    SubatomicTagType.values() 
+    + AtomicTokenType.values() 
+    + CompoundTokenType.values() 
+    + AlwaysSubsumableType.values()
 )
 
 
