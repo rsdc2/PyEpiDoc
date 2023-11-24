@@ -34,7 +34,11 @@ class Token(EpiDocElement):
     """
     
     def __str__(self) -> str:
-        stripped_form = re.sub(r'[·\,\.\;\:]|\s+', '', self.normalized_form.strip()).replace('\n', '').replace('\t', '')
+        stripped_form = re.sub(
+            r'[·\,\.\;\:]|\s+', 
+            '', 
+            self.normalized_form.strip()
+            ).replace('\n', '').replace('\t', '')
 
         if self.type in [
             AtomicTokenType.Name.value, 
