@@ -61,7 +61,8 @@ tests = [
     'supplied_with_num',
     'surplus_1',
     'unclear_1',
-    'unclear_2'
+    'unclear_2', 
+    'unclear_3'
 ]
 
 

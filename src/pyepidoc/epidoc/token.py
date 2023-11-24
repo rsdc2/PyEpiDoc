@@ -153,6 +153,15 @@ class Token(EpiDocElement):
         """
 
         return self._clean_text(self.text_desc)
+
+    @property
+    def form_normalized(self) -> str:
+        """
+        Returns the normalized form of the token, i.e.
+        taking the text from <reg> not <orig>, <corr> not <sic>;
+        also excludes text from <g> and <del> elements
+        """
+        return self.normalized_form
         
     @property
     def lemma(self) -> Optional[str]:
@@ -166,15 +175,16 @@ class Token(EpiDocElement):
     def normalized_form(self) -> str:
         """
         Returns the normalized form of the token, i.e.
-        taking the text from <reg> not <orig>, <corr> not <sic>
+        taking the text from <reg> not <orig>, <corr> not <sic>;
+        also excludes text from <g> and <del> elements
         """
-        non_ancestors = ['sic', 'orig', 'del', 'g']
+        non_ancestors = ['sic', 'orig', 'del', 'g', 'surplus']
 
         ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                  for ancestor in non_ancestors])
 
         normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
-        return ''.join([str(t) for t in normalized_text])
+        return self._clean_text(''.join([str(t) for t in normalized_text]))
 
     @property
     def number(self) -> Optional[str]:
