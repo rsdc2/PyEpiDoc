@@ -20,7 +20,7 @@ from pyepidoc.shared_types import SetRelation
 from ..utils import head
 
 from ..xml import BaseElement
-from ..utils import update, flatlist, flatten
+from ..utils import update_set_inplace, flatlist, flatten
 from ..constants import XMLNS
 
 from .ab import Ab

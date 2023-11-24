@@ -1,4 +1,5 @@
 from __future__ import annotations
+from copy import deepcopy
 
 """
 This file provides generic utility functions especially for handling
@@ -60,11 +61,6 @@ def top(l:Sequence[T], length:Optional[int]=10) -> Sequence[T]:
         return l[0:length]
 
     return l
-
-
-def update(set1:set, set2:set):
-    set1.update(set2)
-    return set1
 
 
 def remove_none(l:list[Optional[T]]) -> list[T]:
@@ -162,3 +158,17 @@ def default_str(str_or_none:Optional[str]):
     raise TypeError('str_or_none must be str or None.')
 
 
+def update_set_copy(s1: set, s2: set) -> set:
+    """
+    Updates *s1* with *s2* and returns a deep copy of the 
+    updated set.
+    """
+    s1_ = deepcopy(s1)
+    s2_ = deepcopy(s2)
+    s1_.update(s2_)
+    return s1_
+
+
+def update_set_inplace(set1: set, set2: set):
+    set1.update(set2)
+    return set1

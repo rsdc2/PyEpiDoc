@@ -65,6 +65,7 @@ tests = [
     'unclear_3'
 ]
 
+# tests = ['del_2']
 
 def remove_file(filepath: str):
 

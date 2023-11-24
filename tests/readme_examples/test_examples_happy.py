@@ -31,8 +31,11 @@ def test_tokenize_example():
 
     tokenized_doc = EpiDoc("readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
     tokenized_benchmark = EpiDoc("readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")
-
-    assert [str(word) for word in tokenized_doc.tokens] == [str(word) for word in tokenized_benchmark.tokens]
-    assert [word.xml_byte_str for word in tokenized_doc.tokens] == [word.xml_byte_str for word in tokenized_benchmark.tokens]
-    assert [word.xml_byte_str for word in tokenized_doc.compound_words] == [word.xml_byte_str for word in tokenized_benchmark.compound_words]
-    assert [edition.xml_byte_str for edition in tokenized_doc.editions()] == [edition.xml_byte_str for edition in tokenized_benchmark.editions()]
+    try:
+        # breakpoint()
+        assert [str(word) for word in tokenized_doc.tokens] == [str(word) for word in tokenized_benchmark.tokens]
+        assert [word.xml_byte_str for word in tokenized_doc.tokens] == [word.xml_byte_str for word in tokenized_benchmark.tokens]
+        assert [word.xml_byte_str for word in tokenized_doc.compound_words] == [word.xml_byte_str for word in tokenized_benchmark.compound_words]
+        assert [edition.xml_byte_str for edition in tokenized_doc.editions()] == [edition.xml_byte_str for edition in tokenized_benchmark.editions()]
+    except AssertionError as e:
+        raise e

@@ -21,7 +21,7 @@ from pyepidoc.shared_types import SetRelation
 from ..utils import head
 
 from ..xml import BaseElement
-from ..utils import update, flatlist, flatten
+from ..utils import update_set_inplace, flatlist, flatten, update_set_copy
 from ..constants import XMLNS
 
 
@@ -226,8 +226,6 @@ class Ab(EpiDocElement):
             acc_desc: set[EpiDocElement], 
             tokenables: list[EpiDocElement]
         ) -> list[list[EpiDocElement]]:
-            
-            # breakpoint()
 
             if tokenables == []:
                 return acc
@@ -239,13 +237,23 @@ class Ab(EpiDocElement):
 
             new_acc = acc + [element.next_no_spaces]
 
-            next_no_spaces_desc = [element_.desc_elems for element_ in element.next_no_spaces] + [element.next_no_spaces]
-            next_no_spaces_desc_flat = [EpiDocElement(item) for item in flatten(next_no_spaces_desc)]
-            new_acc_desc = update(acc_desc, set(next_no_spaces_desc_flat))
+            next_no_spaces_desc = [element_.desc_elems 
+                                   for element_ in element.next_no_spaces] + [element.next_no_spaces]
+            next_no_spaces_desc_flat = [EpiDocElement(item) 
+                                        for item in flatten(next_no_spaces_desc)]
             
-            # breakpoint()
-
-            return get_word_carrier_sequences(new_acc, new_acc_desc, tokenables[1:])
+            # NB this doesn't work if use 'update_set_copy'
+            # TODO: work out why
+            new_acc_desc = update_set_inplace(
+                acc_desc, 
+                set(next_no_spaces_desc_flat)
+            )
+        
+            return get_word_carrier_sequences(
+                new_acc, 
+                new_acc_desc, 
+                tokenables[1:]
+            )
 
         def remove_subsets(
             acc:list[list[EpiDocElement]], 
@@ -259,13 +267,11 @@ class Ab(EpiDocElement):
             
             return acc + [sequence]
 
-        # breakpoint()
         tokencarrier_sequences = get_word_carrier_sequences(
             acc=[], 
             acc_desc=set(), 
             tokenables=self.token_carriers
         )
-        # breakpoint()
         
         return reduce(remove_subsets, tokencarrier_sequences, [])
 

@@ -10,6 +10,7 @@ from typing import (
     overload
 )
 
+from ..utils import update_set_copy
 from ..shared_types import Showable, ExtendableSeq
 from ..xml.baseelement import BaseElement
 
@@ -464,8 +465,8 @@ class EpiDocElement(BaseElement, Showable):
             if self.tag.name in AtomicNonTokenType.values():
                 return [self.tail_completer]
 
-
-            return self._internal_tokens[:-1] + [maxoneT(self._internal_tokens[-1:], '') + self.tail_completer]
+            return self._internal_tokens[:-1] + \
+                [maxoneT(self._internal_tokens[-1:], '') + self.tail_completer]
             
         return []
 
@@ -509,8 +510,8 @@ class EpiDocElement(BaseElement, Showable):
             for child in _e.getchildren():
                 _e.remove(child)
 
-            children_with_new_tails = list(map(remove_newlines_from_tail, children))     
-            children_with_new_text = list(map(remove_newlines_from_text, children_with_new_tails))
+            children_with_new_tails = map(remove_newlines_from_tail, children)    
+            children_with_new_text = map(remove_newlines_from_text, children_with_new_tails)
 
             for child in children_with_new_text:
                 _e.append(child)
@@ -524,11 +525,27 @@ class EpiDocElement(BaseElement, Showable):
             def handle_compound_token(p:_Element) -> EpiDocElement:
                 return EpiDocElement.w_factory(parent=p)
             
-            def handle_subatomic_tags(subelement:_Element) -> EpiDocElement:
-                # Check that does not contain any atomic tokens
-                # If so, does not surround in an atomic token tag
-                if AtomicTokenType.value_set().intersection(EpiDocElement(subelement).desc_elem_name_set) != set():
+            def handle_subatomic_tags(subelement: _Element) -> EpiDocElement:
+                # Check that does not contain atomic tags
+                # If it does, tokenizer does not surround in an atomic tag
+
+                atomic_token_set = AtomicTokenType.value_set()
+                atomic_non_token_set = AtomicNonTokenType.value_set()
+                name_set = EpiDocElement(subelement).desc_elem_name_set
+
+                if atomic_token_set.intersection(name_set) != set():
+                    # i.e. there is at least one subtoken that is an atomic token
                     w = EpiDocElement(subelement) 
+                
+                elif name_set - atomic_non_token_set == set() and \
+                    name_set != set() and \
+                    subelement.tail in [None, '']:
+
+                    # i.e. subelements are only atomic non-tokens, with no
+                    # external text
+                    
+                    w = EpiDocElement(subelement)
+
                 else:
                     # Surround in Atomic token tag
                     w = EpiDocElement.w_factory(subelements=[subelement])
@@ -975,11 +992,14 @@ class EpiDocElement(BaseElement, Showable):
             for e in subelements:
                 new_g.append(e)
 
-            g_elem = EpiDocElement(new_g, final_space=True) # Final space because result of a split operation
+            # Final space because result of a split operation
+            g_elem = EpiDocElement(new_g, final_space=True) 
+
             return g_elem
 
         elif prototoken is None and parent is not None:
-            children:list[_Element] = [deepcopy(e) for e in parent.getchildren()] 
+            children:list[_Element] = [deepcopy(e) 
+                                       for e in parent.getchildren()] 
             new_parent:_Element = deepcopy(parent)
             
             # Remove text and children from new_parent
@@ -995,20 +1015,20 @@ class EpiDocElement(BaseElement, Showable):
             for e in children:
                 new_e = deepcopy(e)
                 new_e.tail = None   # type: ignore
-                tag = ns.remove_ns(e.tag)
+                localname = ns.remove_ns(e.tag)
 
-                if tag in AtomicTokenType.values() + AtomicNonTokenType.values():
+                if localname in AtomicTokenType.values() + AtomicNonTokenType.values():
                     new_parent.append(new_e)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
-                elif tag in SubatomicTagType.values(): # e.g. <expan>
+                elif localname in SubatomicTagType.values(): # e.g. <expan>
                     tagname = ns.give_ns('w', ns=NS)
                     new_w = etree.Element(tagname, None, None)
                     new_w.append(new_e)
                     new_parent.append(new_w)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
-                elif tag in CompoundTokenType.values(): # e.g. <persName>, <orgName>
+                elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>
                     new_w_elem = EpiDocElement.w_factory(parent=new_e)
                     if new_w_elem.e is not None:
                         new_parent.append(new_w_elem.e)
