@@ -19,7 +19,6 @@ class SubatomicTagType(EnumerableEnum):
     Choice = 'choice'   # Choice always contained by an atomic word type, but never smaller than that, so not like others in this category
     Hi = 'hi' # can also contain atomic token types
     Surplus = 'surplus'
-    # Link = 'link'
     Subst = 'subst'
     C = 'c' # Character element
 
