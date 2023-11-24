@@ -801,8 +801,6 @@ class EpiDocElement(BaseElement, Showable):
         if type(other) is not EpiDocElement: 
             return False
         
-        # breakpoint()
-
         matches = list(filter(
             self._subsume_filterfunc(head=self, dep=other),
             SubsumableRels)
