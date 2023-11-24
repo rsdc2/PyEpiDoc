@@ -104,6 +104,26 @@ class Token(EpiDocElement):
     def charset(self) -> str:
         return "latin" if set(self.form) - A_TO_Z_SET == set() else "other"
 
+    def _clean_text(self, text: str):
+        # const ancestorXpaths = tagNames.reduce(
+        #     (ancestors:string, tagName:string) => {
+        #         return ancestors.concat(`local-name()="${tagName}" or `)
+        #     }, ''
+        # )
+
+        # // TODO improve this code
+        # const xpathStr = Str.concat(ancestorXpaths)("parent::*[descendant::text()[not(ancestor::*[") 
+
+        # const xpathStr_ = Str.substring(0)(xpathStr.length - 4)(xpathStr) + "])]]/descendant::text()"
+        
+        # return XML.xpath(xpathStr_)(text).unpack([]).length !== 0
+
+
+        return (text.strip()
+            .replace('\n', '')
+            .replace(' ', '')
+            .replace('\t', ''))
+
     def convert_to_name(self, inplace=True) -> Token:
         """
         Converts the containing token tag, 
@@ -124,7 +144,7 @@ class Token(EpiDocElement):
         
         if inplace:
             if self.text_desc == self.text_desc.capitalize() and self.text_desc not in PUNCTUATION:
-                self._e.tag = ns.give_ns('name', NS)
+                self._e.tag = ns.give_ns('name', NS)    # type: ignore
 
             return self
         
@@ -153,6 +173,14 @@ class Token(EpiDocElement):
         """
 
         return self._clean_text(self.text_desc)
+    
+    @property
+    def form_normalised(self) -> str:
+        """
+        Return the form normalised to be consistent with the output
+        of the Syntax Treebank Annotator
+        """
+        return ''.join(self._e.xpath('.//text()'))
         
     @property
     def lemma(self) -> Optional[str]:
@@ -189,25 +217,30 @@ class Token(EpiDocElement):
 
     @pos.setter
     def pos(self, value:str):
-        """Sets the part of speech (POS) attribute of the 
-        token."""
+        """
+        Sets the part of speech (POS) attribute of the 
+        token.
+        """
         self.set_attrib('pos', value)
 
     def remove_element_internal_whitespace(self) -> _Element:
         
-        """Remove all internal whitespace from word element, in place, except for comments."""
+        """
+        Remove all internal whitespace from word element, in place, 
+        except for comments.
+        """
 
         def _remove_whitespace_from_child(elem:_Element) -> _Element:
 
-            for child in list(elem):
+            for child in elem.getchildren():
                 if not isinstance(child, _Comment):
                     if child.text is not None:
                         child.text = child.text.strip()
                     if child.tail is not None:
                         child.tail = child.tail.strip()
 
-            if len(list(elem)) > 0:
-                return _remove_whitespace_from_child(child)
+                if len(child.getchildren()) > 0:
+                    child = _remove_whitespace_from_child(child) 
 
             return elem
         

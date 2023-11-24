@@ -35,7 +35,7 @@ class BaseElement(Showable):
     """
     Provides basic XML navigation services, but nothing specific to EpiDoc.
     """
-    _e: _Element | None
+    _e: _Element
 
     def __eq__(self, other) -> bool:
         if type(other) is not BaseElement and not issubclass(type(other), BaseElement):
@@ -64,20 +64,21 @@ class BaseElement(Showable):
         )
 
     @overload
-    def __init__(self, e: Optional[_Element]=None):
+    def __init__(self, e: BaseElement):
+        ...
+
+    @overload
+    def __init__(self, e: _Element):
         """
         :param e: lxml |_Element|; |_Comment| is subclass of |_Element|
         """
         ...
 
-    @overload
-    def __init__(self, e: Optional[BaseElement]=None):
-        ...
-
-    def __init__(self, e:Optional[Union[_Element, BaseElement]]=None):
-        error_msg = f'Expected type is _Element or BaseElement type or None. Actual type is {type(e)}.'
+    def __init__(self, e:Union[_Element, BaseElement]):
+        error_msg = (f'Expected type is _Element or BaseElement '
+                     f'type or None. Actual type is {type(e)}.')
         
-        if not isinstance(e, (_Element, BaseElement)) and e is not None:
+        if not isinstance(e, (_Element, BaseElement)):
             raise TypeError(error_msg)
 
         if isinstance(e, _Element):
@@ -102,26 +103,19 @@ class BaseElement(Showable):
     def __str__(self) -> str:
         return self.__repr__()
 
-    def _equalize_id_length(
-        self, 
-        id1:list[int], 
-        id2:list[int]
-    ) -> tuple[list[int], list[int]]:
-        
-        if len(id1) == len(id2):
-            return (id1, id2)
+    def _clean_text(self, text: str):
+        return (text.strip()
+            .replace('\n', '')
+            .replace(' ', '')
+            .replace('\t', ''))
 
-        if len(id1) > len(id2):
-            newid1 = id1[:len(id2)-1]
-            return (newid1, id2)
-
-        if len(id2) > len(id1):
-            newid2 = id2[:len(id1)-1]
-            return (id1, newid2)
-
-        raise ValueError()
-
-
+    @staticmethod
+    def _compile_attribs(attribs:Optional[dict[str, str]]) -> str:
+        if attribs is None:
+            return ''
+        return '[' + ''.join([f"@{k}='{attribs[k]}'" 
+                              for k in attribs]) + ']'
+    
     def _compare_equal_length_ids(
         self, 
         id1:list[int], 
@@ -196,12 +190,31 @@ class BaseElement(Showable):
         return {'name': self.tag.name, 'ns': self.tag.ns, 'attrs': self._e.attrib}
 
     @property
-    def e(self) -> Optional[_Element]:
+    def e(self) -> _Element:
         return self._e
 
     @property
     def e_type(self) -> type:
         return type(self._e)
+
+    def _equalize_id_length(
+        self, 
+        id1:list[int], 
+        id2:list[int]
+    ) -> tuple[list[int], list[int]]:
+        
+        if len(id1) == len(id2):
+            return (id1, id2)
+
+        if len(id1) > len(id2):
+            newid1 = id1[:len(id2)-1]
+            return (newid1, id2)
+
+        if len(id2) > len(id1):
+            newid2 = id2[:len(id1)-1]
+            return (id1, newid2)
+
+        raise ValueError()
 
     @property
     def first_child(self) -> Optional[BaseElement]:
@@ -426,7 +439,7 @@ class BaseElement(Showable):
         if self._e is None:
             return
 
-        self._e.tail = value
+        self._e.tail = value    # type: ignore
 
     @property
     def text(self) -> str:
@@ -443,7 +456,7 @@ class BaseElement(Showable):
         if self._e is None:
             return
 
-        self._e.text = value
+        self._e.text = value    # type: ignore
 
     @property
     def text_desc(self) -> str:
@@ -455,19 +468,6 @@ class BaseElement(Showable):
     def text_desc_compressed_whitespace(self) -> str:
         pattern = r'[\t\s\n]+'
         return re.sub(pattern, ' ', self.text_desc)
-
-    @staticmethod
-    def _clean_text(text:str):
-        return (text.strip()
-            .replace('\n', '')
-            .replace(' ', '')
-            .replace('\t', ''))
-
-    @staticmethod
-    def _compile_attribs(attribs:Optional[dict[str, str]]) -> str:
-        if attribs is None:
-            return ''
-        return '[' + ''.join([f"@{k}='{attribs[k]}'" for k in attribs]) + ']'
 
     @property
     def xml_byte_str(self) -> bytes:

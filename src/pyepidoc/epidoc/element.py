@@ -15,7 +15,6 @@ from ..xml.baseelement import BaseElement
 
 from copy import deepcopy
 from functools import reduce, cached_property
-import operator
 import re
 
 from lxml import etree 
@@ -37,10 +36,8 @@ from .epidoc_types import (
     CompoundTokenType, 
     AtomicNonTokenType,
     SubatomicTagType,
-    AlwaysSubsumableType,
     AlwaysSubsumable
 )
-from ..xml.docroot import DocRoot
 from . import ids
 from ..utils import maxone, maxoneT, head, last
 
@@ -92,8 +89,8 @@ class EpiDocElement(BaseElement, Showable):
                 return [EpiDocElement(self_e, other._final_space)]
 
             if self._subsumable_by(other):
-                self_e.tail = other.text
-                other_e.text = ''
+                self_e.tail = other.text    # type: ignore
+                other_e.text = ''   # type: ignore
                 other_e.insert(0, self_e)
                 
                 return [EpiDocElement(other_e)]
@@ -121,7 +118,7 @@ class EpiDocElement(BaseElement, Showable):
                 if not self.right_bound or first_child.tag.name in AlwaysSubsumable:
                     if self._can_subsume(first_child):
 
-                        for child in list(other_e):
+                        for child in other_e.getchildren():
                             self_e.append(child)
                         return [EpiDocElement(self_e, other._final_space)]
 
@@ -131,7 +128,7 @@ class EpiDocElement(BaseElement, Showable):
             if (tail is None or tail == '') and last_child is not None:
                 if not self.right_bound or last_child.tag.name in AlwaysSubsumable:
                     if other._can_subsume(last_child):
-                        for child in list(other_e):
+                        for child in other_e.getchildren():
                             self_e.append(child)
                         return [EpiDocElement(self_e, other._final_space)]
             
@@ -140,7 +137,7 @@ class EpiDocElement(BaseElement, Showable):
     @overload
     def __init__(
         self, 
-        e:Optional[_Element] = None,
+        e: EpiDocElement,
         final_space:bool = False
     ):
         ...
@@ -148,7 +145,7 @@ class EpiDocElement(BaseElement, Showable):
     @overload
     def __init__(
         self, 
-        e:Optional[EpiDocElement] = None,
+        e: BaseElement,
         final_space:bool = False
     ):
         ...
@@ -156,14 +153,14 @@ class EpiDocElement(BaseElement, Showable):
     @overload
     def __init__(
         self, 
-        e:Optional[BaseElement] = None,
+        e: _Element,
         final_space:bool = False
     ):
         ...
 
     def __init__(
         self, 
-        e: Optional[_Element | EpiDocElement | BaseElement] = None,
+        e: _Element | EpiDocElement | BaseElement,
         final_space: bool = False
     ):
         error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
@@ -177,8 +174,6 @@ class EpiDocElement(BaseElement, Showable):
             self._e = e.e
         elif isinstance(e, BaseElement):
             self._e = e.e
-        elif e is None:
-            self._e = None
 
         self._final_space = final_space
 
@@ -248,10 +243,10 @@ class EpiDocElement(BaseElement, Showable):
             return self
 
         if self._e.tail is None:
-            self._e.tail = ' '
+            self._e.tail = ' ' # type: ignore
             return self
         
-        self._e.tail = self._e.tail + ' '
+        self._e.tail = self._e.tail + ' '   # type: ignore
         return self
 
     @property
@@ -317,7 +312,7 @@ class EpiDocElement(BaseElement, Showable):
         return {'name': self.tag.name, 'ns': self.tag.ns, 'attrs': self._e.attrib}
 
     @property
-    def e(self) -> Optional[_Element]:
+    def e(self) -> _Element:
         return self._e
 
     @property
@@ -497,7 +492,7 @@ class EpiDocElement(BaseElement, Showable):
                     return child
 
                 tail:str = child.tail
-                child.tail = re.sub(r'[\n\s\t]+', ' ', tail)
+                child.tail = re.sub(r'[\n\s\t]+', ' ', tail)    # type: ignore
                 return child
 
             def remove_newlines_from_text(child: _Element) -> _Element:
@@ -505,13 +500,13 @@ class EpiDocElement(BaseElement, Showable):
                     return child
 
                 text:str = child.text
-                child.text = re.sub(r'[\n\s\t]+', ' ', text)
+                child.text = re.sub(r'[\n\s\t]+', ' ', text) # type: ignore
                 return child
 
             _e = deepcopy(e)
-            children:list[_Element] = [deepcopy(child) for child in list(e)]
+            children:list[_Element] = [deepcopy(child) for child in e.getchildren()]
             
-            for child in list(_e):
+            for child in _e.getchildren():
                 _e.remove(child)
 
             children_with_new_tails = list(map(remove_newlines_from_tail, children))     
@@ -544,7 +539,7 @@ class EpiDocElement(BaseElement, Showable):
                 return w
             
             _e = deepcopy(e)
-            _e.tail = self.tail_completer
+            _e.tail = self.tail_completer   # type: ignore
             _element = EpiDocElement(_e)
             if _element.e is None:
                 return []
@@ -555,7 +550,7 @@ class EpiDocElement(BaseElement, Showable):
                     return [EpiDocElement(_e, final_space=True)]
 
                 if len(internalprotowords) == 1:
-                    _e.tail = ''
+                    _e.tail = ''    # type: ignore
                     elems = EpiDocElement(_e) + EpiDocElement.w_factory(internalprotowords[0])
 
                     # Make sure there is a bound to the right if there are multiple tokens in the tail
@@ -588,7 +583,7 @@ class EpiDocElement(BaseElement, Showable):
 
             elif _element.tag.name == "Comment":
                 comment = deepcopy(_element.e)
-                comment.tail = ""
+                comment.tail = ""   # type: ignore
 
                 return [EpiDocElement(comment)]
 
@@ -730,7 +725,7 @@ class EpiDocElement(BaseElement, Showable):
 
         if self.tag.name in AtomicNonTokenType.values():
             _e = deepcopy(self._e)
-            _e.tail = None
+            _e.tail = None  # type: ignore
             return EpiDocElement(_e)
         
         return None
@@ -945,7 +940,7 @@ class EpiDocElement(BaseElement, Showable):
         if self._e is None:
             return
 
-        self._e.text = value
+        self._e.text = value    # type: ignore
 
     @staticmethod
     def w_factory(
@@ -976,7 +971,7 @@ class EpiDocElement(BaseElement, Showable):
             new_g = etree.Element(tagname, nsmap=None, attrib=None)
 
             if prototoken: 
-                new_g.text = prototoken
+                new_g.text = prototoken # type: ignore
                 new_g.set('ref', '#interpunct')
 
             for e in subelements:
@@ -993,7 +988,7 @@ class EpiDocElement(BaseElement, Showable):
             for child in new_parent.getchildren():
                 new_parent.remove(child)
 
-            new_parent.text = None
+            new_parent.text = None  # type: ignore
         
             # Handle the text content of new_parent
             new_parent = append_tail_or_text(parent.text, new_parent)
@@ -1001,7 +996,7 @@ class EpiDocElement(BaseElement, Showable):
             # Handle children of new_parent
             for e in children:
                 new_e = deepcopy(e)
-                new_e.tail = None
+                new_e.tail = None   # type: ignore
                 tag = ns.remove_ns(e.tag)
 
                 if tag in AtomicTokenType.values() + AtomicNonTokenType.values():
@@ -1026,7 +1021,7 @@ class EpiDocElement(BaseElement, Showable):
             if prototoken: 
                 tagname = ns.give_ns('w', ns=NS)
                 new_w = etree.Element(tagname, None, None)
-                new_w.text = prototoken
+                new_w.text = prototoken # type: ignore
             else:
                 new_w = etree.Element(ns.give_ns('w', ns=NS), None, None)
  
