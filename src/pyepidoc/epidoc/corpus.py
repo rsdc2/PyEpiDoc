@@ -29,8 +29,8 @@ class EpiDocCorpus:
 
     _docs: Generator[EpiDoc, None, None] | list[EpiDoc]
 
-    def __add__(self, other:EpiDocCorpus) -> EpiDocCorpus:
-        
+    def __add__(self, other: EpiDocCorpus) -> EpiDocCorpus:
+
         if not isinstance(other, EpiDocCorpus):
             raise TypeError("Cannot append: item to "
                             "be appended is of type "
