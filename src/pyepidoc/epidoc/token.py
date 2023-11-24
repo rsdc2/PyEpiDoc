@@ -127,7 +127,9 @@ class Token(EpiDocElement):
             return self
         
         if inplace:
-            if self.text_desc == self.text_desc.capitalize() and self.text_desc not in PUNCTUATION:
+            if self.text_desc == self.text_desc.capitalize() and \
+                self.text_desc not in PUNCTUATION:
+                
                 self._e.tag = ns.give_ns('name', NS)    # type: ignore
 
             return self
