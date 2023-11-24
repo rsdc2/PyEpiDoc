@@ -1,6 +1,14 @@
 from __future__ import annotations
-from typing import Optional, Sequence, overload, cast, Literal
+from typing import (
+    Optional, 
+    Sequence, 
+    overload, 
+    cast, 
+    Literal, 
+    Generator
+)
 from functools import cached_property
+from itertools import chain
 from pathlib import Path
 
 from .epidoc import EpiDoc
@@ -9,7 +17,7 @@ from .expan import Expan
 from .epidoc_types import SpaceUnit, TextClass
 from pyepidoc.shared_types import SetRelation
 
-from ..utils import maxone, flatlist, top, head, tail
+from ..utils import maxone, top, head, tail
 
 
 class EpiDocCorpus:
@@ -19,7 +27,7 @@ class EpiDocCorpus:
     (i.e. more than one) EpiDoc files.
     """
 
-    _docs: list[EpiDoc]
+    _docs: Generator[EpiDoc, None, None] | list[EpiDoc]
 
     def __add__(self, other:EpiDocCorpus) -> EpiDocCorpus:
         if not isinstance(other, EpiDocCorpus):
@@ -77,6 +85,17 @@ class EpiDocCorpus:
         inpt: EpiDocCorpus | list[EpiDoc] | str | Path
     ):
 
+        def _handle_fp(_p: Path) -> None:
+
+            if not _p.exists():
+                raise FileExistsError(f'Directory {inpt} does not exist.')
+            
+            if not _p.is_dir():
+                raise FileExistsError(f'Path {inpt} is not a directory.')
+
+            self._docs = (EpiDoc(fp) for fp in _p.iterdir()
+                          if fp.suffix == '.xml')
+
         # inpt is an EpiDocCorpus
         if isinstance(inpt, EpiDocCorpus):
             self._docs = inpt.docs
@@ -96,31 +115,11 @@ class EpiDocCorpus:
 
         # inpt is a path
         elif isinstance(inpt, str):
-            p = Path(inpt)
-
-            if not p.exists():
-                raise FileExistsError(f'Directory {inpt} does not exist.')
-            
-            if not p.is_dir():
-                raise FileExistsError(f'Path {inpt} is not a directory.')
-
-            filepaths = [str(fp) for fp in p.iterdir()]
-            self._docs = [EpiDoc(fp) for fp in filepaths]
-
+            _handle_fp(Path(inpt))
             return
 
         elif isinstance(inpt, Path):
-            p = inpt
-
-            if not p.exists():
-                raise FileExistsError(f'Directory {inpt} does not exist.')
-            
-            if not p.is_dir():
-                raise FileExistsError(f'Path {inpt} is not a directory.')
-
-            filepaths = [str(fp) for fp in p.iterdir()]
-            self._docs = [EpiDoc(fp) for fp in filepaths]
-
+            _handle_fp(inpt)
             return
         
         raise TypeError("Invalid input type.")
@@ -183,28 +182,15 @@ class EpiDocCorpus:
 
     @cached_property
     def docs(self) -> list[EpiDoc]:
-        return self._docs
+        return list(self._docs)
     
     @cached_property
     def empty_corpus(self) -> EpiDocCorpus:
         return EpiDocCorpus([])
 
-    # def epidoc(self, filename:str) -> EpiDoc:
-    #     if self.folderpath is None:
-    #         filepath = filename
-    #     else:
-    #         filepath = filepath_from_list([self.folderpath], filename)
-        
-    #     file = FileInfo(
-    #         filepath=filepath, 
-    #         mode=FileMode.r
-    #     )
-    #     _epidoc = EpiDoc(file)
-    #     return _epidoc
-
     @property
     def expans(self) -> list[Expan]:
-        return flatlist([doc.expans for doc in self.docs])
+        return list(chain(*[doc.expans for doc in self.docs]))
 
     def filter_by_dateafter(self, start:int) -> EpiDocCorpus:
         docs = [doc for doc in self.docs
@@ -461,7 +447,7 @@ class EpiDocCorpus:
         to dstfolder.
         """
 
-        for doc in self.docs:
+        for doc in sorted(self.docs, key=lambda doc: doc.id):
             if verbose: 
                 print('Tokenizing', doc.id)
 
@@ -490,7 +476,7 @@ class EpiDocCorpus:
 
     @property
     def tokens(self) -> list[Token]:
-        return flatlist([doc.tokens for doc in self.docs])
+        return list(chain(*[doc.tokens for doc in self.docs]))
     
     def top(self, length=10) -> EpiDocCorpus:
         return EpiDocCorpus(list(top(self.docs, length)))
