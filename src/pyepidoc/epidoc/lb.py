@@ -16,7 +16,7 @@ class Lb(EpiDocElement):
         type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
         node_name_err_msg = f'Element must be <lb>. Element is {EpiDocElement(e).local_name}.'
 
-        if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None:
+        if type(e) not in [_Element, EpiDocElement, BaseElement]:
             raise TypeError(type_err_msg)
 
         if type(e) is _Element:
