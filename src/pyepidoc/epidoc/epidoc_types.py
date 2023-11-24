@@ -1,9 +1,7 @@
 from __future__ import annotations
-from typing import Optional, TypeVar, Union, MutableSequence, Generic
+from typing import TypeVar
 from enum import Enum
-import operator
 from ..shared_types import EnumerableEnum
-
 
 T = TypeVar('T')
 
