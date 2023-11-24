@@ -25,12 +25,13 @@ class SubatomicTagType(EnumerableEnum):
 
 # Elements that contain text that would not be 
 # included in a normalized form of the text
-class TextNotIncludedType(EnumerableEnum):
+class TextNotIncludedType(EnumerableEnum):  
     Del = 'del'
     Surplus = 'surplus'
     Orig = 'orig'
     Sic = 'sic'
     G = 'g'
+    Am = 'am'
 
 
 class AtomicTokenType(EnumerableEnum):
@@ -122,7 +123,7 @@ class CompoundTokenType(EnumerableEnum):
 
 # Elements that carry tokens, e.g. as internal or external text
 TokenCarrier = set(
-    SubatomicTagType.values() 
+      SubatomicTagType.values() 
     + AtomicTokenType.values() 
     + AtomicNonTokenType.values() 
     + CompoundTokenType.values() 
