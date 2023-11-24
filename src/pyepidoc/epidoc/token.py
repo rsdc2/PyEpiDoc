@@ -17,7 +17,8 @@ from .expan import Expan
 from .epidoc_types import (
     CompoundTokenType, 
     AtomicTokenType,
-    PUNCTUATION
+    PUNCTUATION,
+    TextNotIncludedType
 )
 
 
@@ -181,7 +182,7 @@ class Token(EpiDocElement):
         taking the text from <reg> not <orig>, <corr> not <sic>;
         also excludes text from <g>, <surplus> and <del> elements
         """
-        non_ancestors = ['sic', 'orig', 'del', 'g', 'surplus']
+        non_ancestors = TextNotIncludedType.values()
 
         ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                  for ancestor in non_ancestors])
