@@ -184,6 +184,10 @@ class EpiDocCorpus:
     @cached_property
     def docs(self) -> list[EpiDoc]:
         return list(self._docs)
+
+    @cached_property
+    def docs_dict(self) -> dict[str, EpiDoc]:
+        return {doc.id: doc for doc in self.docs}
     
     @cached_property
     def empty_corpus(self) -> EpiDocCorpus:
@@ -257,10 +261,7 @@ class EpiDocCorpus:
         return self.filter_by_ids(ids=_str_range)
 
     def filter_by_ids(self, ids:list[str]) -> EpiDocCorpus:
-        docs = [doc for doc in self.docs
-            if doc.id in ids]
-
-        return EpiDocCorpus(docs)
+        return EpiDocCorpus([self.docs_dict[id] for id in ids])
 
     def filter_by_languages(self, 
         langs:list[str], 
