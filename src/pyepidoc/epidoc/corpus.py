@@ -268,6 +268,7 @@ class EpiDocCorpus:
         set_relation=SetRelation.intersection,
         language_attr:Literal['langs'] | Literal['div_langs']='langs'
     ) -> EpiDocCorpus:
+        
         """
         Returns a copy of the corpus filtered by the 
         languages provided in the 'langs' parameter.
