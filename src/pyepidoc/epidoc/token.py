@@ -163,7 +163,7 @@ class Token(EpiDocElement):
         """
         Returns the normalized form of the token, i.e.
         taking the text from <reg> not <orig>, <corr> not <sic>;
-        also excludes text from <g> and <del> elements
+        also excludes text from <g>, <surplus> and <del> elements
         """
         return self.normalized_form
         
@@ -180,7 +180,7 @@ class Token(EpiDocElement):
         """
         Returns the normalized form of the token, i.e.
         taking the text from <reg> not <orig>, <corr> not <sic>;
-        also excludes text from <g> and <del> elements
+        also excludes text from <g>, <surplus> and <del> elements
         """
         non_ancestors = ['sic', 'orig', 'del', 'g', 'surplus']
 
