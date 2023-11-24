@@ -131,13 +131,13 @@ TokenCarrier = set(
 )
 
 
-# Elements that 
+# Elements that carry text to be included in normalized edition
 TextCarrier = set(
     SubatomicTagType.values() 
     + AtomicTokenType.values() 
     + CompoundTokenType.values() 
     + AlwaysSubsumableType.values()
-)
+) - set(TextNotIncludedType.values())
 
 
 # Elements that can carry @xml:id
