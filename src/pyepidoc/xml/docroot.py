@@ -33,11 +33,11 @@ class DocRoot:
         declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
         processing_instructions = (self.processing_instructions_str + '\n').encode("utf-8")
 
-        b_str = etree.tostring(
+        b_str = etree.tostring( 
             self.e, 
-            pretty_print=True, 
-            encoding='utf-8', 
-            xml_declaration=False
+            pretty_print=True,      # type: ignore
+            encoding='utf-8',       # type: ignore
+            xml_declaration=False   # type: ignore
         )
 
         return declaration + processing_instructions + b_str
@@ -102,7 +102,7 @@ class DocRoot:
         if self.e is None:
             return []
         
-        return [item for item in self.e.iterdescendants()
+        return [item for item in self.e.iterdescendants(tag=None)
                  if isinstance(item, _Comment)]
 
     @property
@@ -110,7 +110,7 @@ class DocRoot:
         if self.e is None:
             return []
         
-        return [BaseElement(item) for item in self.e.iterdescendants()
+        return [BaseElement(item) for item in self.e.iterdescendants(tag=None)
                  if isinstance(item, _Element)]
 
     def _e_from_file(self, filepath: Path) -> _Element:

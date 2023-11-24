@@ -21,7 +21,7 @@ class Expan(EpiDocElement):
     """
 
     def __init__(self, e:Optional[_Element]=None):
-        if type(e) is not _Element and e is not None:
+        if type(e) is not _Element:
             raise TypeError('e should be _Element type or None.')
 
         self._e = e

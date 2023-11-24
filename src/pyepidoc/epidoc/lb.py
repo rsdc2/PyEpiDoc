@@ -12,7 +12,7 @@ class Lb(EpiDocElement):
     Provides services for <lb> ('line break') elements.
     """
 
-    def __init__(self, e: _Element | EpiDocElement | BaseElement | None = None):
+    def __init__(self, e: _Element | EpiDocElement | BaseElement):
         type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
         node_name_err_msg = f'Element must be <lb>. Element is {EpiDocElement(e).local_name}.'
 
@@ -33,7 +33,7 @@ class Lb(EpiDocElement):
         
         content = ''.join([
             "n: ",
-            self.n, 
+            self.n if self.n is not None else 'None', 
             f"{f', break: {self.break_value}' if self.break_value is not None else ''}"
         ])
 
