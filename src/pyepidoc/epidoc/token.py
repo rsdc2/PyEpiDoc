@@ -242,8 +242,3 @@ class Token(EpiDocElement):
     @property
     def type(self) -> str:
         return self.tag.name
-
-    # @property
-    # def word_info(self) -> TokenInfo:
-    #     return TokenInfo(self.lemma, self.morphology)
-
