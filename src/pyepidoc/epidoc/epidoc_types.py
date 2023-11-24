@@ -132,7 +132,7 @@ TokenCarrier = set(
 
 
 # Elements that carry text to be included in normalized edition
-TextCarrier = set(
+NormalizedTextCarrier = set(
     SubatomicTagType.values() 
     + AtomicTokenType.values() 
     + CompoundTokenType.values() 
