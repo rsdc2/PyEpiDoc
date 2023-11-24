@@ -82,7 +82,7 @@ class EpiDocCorpus:
 
     def __init__(
         self, 
-        inpt: EpiDocCorpus | list[EpiDoc] | str | Path
+        inpt: EpiDocCorpus | list[EpiDoc] | str | Path 
     ):
 
         def _handle_fp(_p: Path) -> None:
