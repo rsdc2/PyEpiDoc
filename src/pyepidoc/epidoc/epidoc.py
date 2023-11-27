@@ -524,7 +524,15 @@ class EpiDoc(DocRoot):
     def token_count(self) -> int:
         return len(self.tokens)
 
-    def tokenize(self, verbose=True) -> EpiDoc:
+    def tokenize(
+        self, 
+        add_space_between_words:bool=True,
+        prettify_edition:bool=True,
+        set_ids:bool=False,
+        convert_ws_to_names:bool=False,
+        verbose:bool=True
+    ) -> EpiDoc:
+        
         """
         Tokenizes the EpiDoc document in place.
         """
@@ -534,6 +542,18 @@ class EpiDoc(DocRoot):
 
         for edition in self.editions():
             edition.tokenize()
+
+        if add_space_between_words:
+            self.space_tokens()
+        
+        if convert_ws_to_names:
+            self.convert_ws_to_names()
+
+        if set_ids:
+            self.set_ids()
+            
+        if prettify_edition:
+            self.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
 
         return self
 
