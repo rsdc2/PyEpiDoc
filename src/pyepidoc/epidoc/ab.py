@@ -388,7 +388,23 @@ class Ab(EpiDocElement):
     @property
     def tokens_list_str(self) -> list[str]:
         return [str(token) for token in self.tokens]
+    
+    @property
+    def tokens_normalized(self) -> list[Token]:
 
+        """
+        Returns list of tokens of the <ab>.
+        If the normalised form is an empty string,
+        does not include the token.
+        """
+
+        return [Token(word) for word 
+            in self.get_desc(
+                AtomicTokenType.values() 
+            )
+            if Token(word).form_normalized != ''
+        ]
+    
     @property
     def tokens_str(self) -> str:
         return ' '.join(self.tokens_list_str)

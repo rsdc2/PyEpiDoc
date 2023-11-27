@@ -335,7 +335,19 @@ class Edition(EpiDocElement):
     @property
     def tokens_list_str(self) -> list[str]:
         return [str(token) for token in self.tokens]
-                
+    
+    @property
+    def tokens_normalized(self) -> list[Token]:
+
+        """
+        Returns list of tokens of the <div type="edition">.
+        If the normalised form is an empty string,
+        does not include the token.
+        """
+
+        return list(chain(*[ab.tokens_normalized 
+                            for ab in self.abs]))
+
     @property
     def tokens_str(self) -> str:
         return ' '.join(self.tokens_list_str)

@@ -2,10 +2,11 @@ from __future__ import annotations
 from typing import Optional, Union, Literal, overload
 from lxml.etree import _Element, _ElementUnicodeResult 
 from pathlib import Path
+from itertools import chain
 
 from .element import EpiDocElement, BaseElement
 from ..xml.docroot import DocRoot
-from ..utils import flatlist, maxone, listfilter, head
+from ..utils import maxone, listfilter, head
 
 from .edition import Edition
 from .expan import Expan
@@ -163,8 +164,8 @@ class EpiDoc(DocRoot):
         Returns a list of abbreviated items (including both abbreviation and expansion)
         """
         
-        return flatlist([edition.expans 
-                         for edition in self.editions()])
+        return list(chain(*[edition.expans 
+                         for edition in self.editions()]))
 
     def expans_by_type(self, abbr_type:Optional[AbbrType]) -> list[Expan]:
         """
@@ -194,7 +195,7 @@ class EpiDoc(DocRoot):
     @property
     def gaps(self) -> list[EpiDocElement]:
         items = [edition.gaps for edition in self.editions()]
-        return [item for item in flatlist(items)]
+        return [item for item in list(chain(*items))]
 
     def get_lang_attr(self, lang_attr:Literal['div_langs'] | Literal['langs']) -> set[str]:
         if lang_attr == 'div_langs':
@@ -423,8 +424,8 @@ class EpiDoc(DocRoot):
             edition.space_tokens()
 
     @property
-    def supplied(self) -> list[EpiDocElement]:
-        return flatlist([edition.supplied for edition in self.editions()])
+    def supplied(self) -> list[BaseElement]:
+        return list(chain(*[edition.supplied for edition in self.editions()]))
 
     @property
     def tei(self) -> Optional[_Element]:
@@ -528,12 +529,26 @@ class EpiDoc(DocRoot):
     @property
     def tokens(self) -> list[Token]:
         tokens = [token for edition in self.editions()
-            for token in edition.tokens]
+                    for token in edition.tokens]
         return tokens
 
     @property
     def tokens_list_str(self) -> list[str]:
-        return flatlist([edition.tokens_list_str for edition in self.editions()])
+        return list(chain(*[edition.tokens_list_str 
+                            for edition in self.editions()]))
+
+    
+    @property
+    def tokens_normalized(self) -> list[Token]:
+
+        """
+        Returns list of tokens of the <div type="edition">.
+        If the normalised form is an empty string,
+        does not include the token.
+        """
+
+        return list(chain(*[edition.tokens_normalized 
+                            for edition in self.editions()]))
 
     @property
     def tokens_str(self) -> str:
@@ -545,4 +560,5 @@ class EpiDoc(DocRoot):
 
     @property
     def w_tokens(self) -> list[Token]:
-        return flatlist([edition.w_tokens for edition in self.editions()])
+        return list(chain(*[edition.w_tokens 
+                            for edition in self.editions()]))
