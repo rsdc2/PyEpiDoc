@@ -197,7 +197,11 @@ class EpiDoc(DocRoot):
         items = [edition.gaps for edition in self.editions()]
         return [item for item in list(chain(*items))]
 
-    def get_lang_attr(self, lang_attr:Literal['div_langs'] | Literal['langs']) -> set[str]:
+    def get_lang_attr(
+            self, 
+            lang_attr: Literal['div_langs'] | Literal['langs']
+        ) -> set[str]:
+        
         if lang_attr == 'div_langs':
             return self.div_langs
         
@@ -206,7 +210,8 @@ class EpiDoc(DocRoot):
         
         raise ValueError(f'Invalid lang_attr {lang_attr}')
 
-    def has_gap(self, reasons:list[str]=[]) -> bool:
+    def has_gap(self, reasons: list[str]=[]) -> bool:
+
         """
         Returns True if the document contains a <gap> element with a reason
         contained in the "reasons" attribute.
@@ -401,6 +406,12 @@ class EpiDoc(DocRoot):
         number=4, 
         verbose=True
     ) -> None:
+
+        """
+        Prettify the xml of the <div type="edition"> element; this
+        cannot be done automatically using lxml since this element
+        will have @xml:space="preserve".
+        """
     
         if verbose: 
             print(f'Prettifying {self.id}...')
@@ -536,7 +547,6 @@ class EpiDoc(DocRoot):
     def tokens_list_str(self) -> list[str]:
         return list(chain(*[edition.tokens_list_str 
                             for edition in self.editions()]))
-
     
     @property
     def tokens_normalized(self) -> list[Token]:
