@@ -1,11 +1,8 @@
 from __future__ import annotations
 from typing import Union, Optional
-from ..utils import remove_none
-
-from .filetypes import FilePath, FileMode
 import os
 
-def filepath(folderpath:str, filename:str) -> str:
+def filepath(folderpath: str, filename: str) -> str:
     if folderpath == '' or folderpath is None:
         return filename
     
@@ -14,8 +11,8 @@ def filepath(folderpath:str, filename:str) -> str:
 
 
 def filepath_from_list(
-    folder_list:list[str], 
-    filename:Optional[Union[str, list]]=None
+    folder_list: list[str], 
+    filename: Optional[Union[str, list]]=None
 ) -> str:
 
     # folder_list_with_no_none = remove_none(folder_list)
@@ -32,7 +29,7 @@ def filepath_from_list(
     return output_str
 
 
-def str_to_file(s:str, filepath:str, fullpath:bool=False):
+def str_to_file(s: str, filepath: str, fullpath: bool=False):
 
     """
     Saves string s to file at path filepath.
