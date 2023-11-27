@@ -455,19 +455,27 @@ class EpiDocCorpus:
             if verbose: 
                 print('Tokenizing', doc.id)
 
-            doc.tokenize()
+            doc.tokenize(
+                prettify_edition=prettify_edition, 
+                add_space_between_words=add_space_between_words, 
+                set_ids=set_ids, 
+                convert_ws_to_names=convert_ws_to_names, 
+                verbose=verbose
+            )
             
-            if add_space_between_words:
-                doc.space_tokens()
+            # TODO: replace following with parameters in tokenize method
             
-            if convert_ws_to_names:
-                doc.convert_ws_to_names()
+            # if add_space_between_words:
+            #     doc.space_tokens()
+            
+            # if convert_ws_to_names:
+            #     doc.convert_ws_to_names()
 
-            if set_ids:
-                doc.set_ids()
+            # if set_ids:
+            #     doc.set_ids()
                 
-            if prettify_edition:
-                doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
+            # if prettify_edition:
+            #     doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
             
             self._doc_to_xml_file(
                 dstfolder, 
