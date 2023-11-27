@@ -112,7 +112,7 @@ class EpiDoc(DocRoot):
     def distributor(self) -> Optional[str]:
 
         """
-        IRT does not use <authority>
+        IRT (Tripolitania) does not use <authority>
         """
         if self.publication_stmt is None:
             return None
