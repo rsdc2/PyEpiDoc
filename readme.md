@@ -95,21 +95,14 @@ from pyepidoc import EpiDoc
 # Load the EpiDoc file
 doc = EpiDoc("examples/ISic000032_untokenized.xml")
 
-# Tokenize the edition
+# Tokenize the edition with default settings
 doc.tokenize()
-
-# Prettify the <div type="edition"> XML
-doc.prettify_edition()
-
-# Add spaces between tokens
-doc.add_space_between_tokens()
 
 # Print list of tokens
 print('Tokens: ', doc.tokens_list_str)
 
 # Save the results to a new XML file
-# Creates the folderpath if it does not exist
-doc.to_xml("examples/ISic000032_tokenized.xml", create_folderpath=True)
+doc.to_xml_file("examples/ISic000032_tokenized.xml")
 ```
 
 ### Corpus level analysis
