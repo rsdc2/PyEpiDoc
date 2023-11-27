@@ -15,7 +15,8 @@ from .epidoc_types import (
     AtomicTokenType, 
     CompoundTokenType,
     SpaceSeparated,
-    NoSpace
+    NoSpace,
+    TextNotIncludedType
 )
 from pyepidoc.shared_types import SetRelation
 from ..utils import head
@@ -398,11 +399,17 @@ class Ab(EpiDocElement):
         does not include the token.
         """
 
-        return [Token(word) for word 
+        def parent_name_set(elem: _Element) -> set[str]:
+            parent_names = [parent.local_name 
+                            for parent in Token(elem).parents]
+            return set(parent_names)
+        
+        return [Token(token_elem) for token_elem 
             in self.get_desc(
                 AtomicTokenType.values() 
             )
-            if Token(word).form_normalized != ''
+            if Token(token_elem).form_normalized != '' and \
+                parent_name_set(token_elem).intersection(TextNotIncludedType.value_set()) == set()
         ]
     
     @property
