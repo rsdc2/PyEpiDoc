@@ -247,7 +247,8 @@ class EpiDocElement(BaseElement, Showable):
             self._e.tail = ' ' # type: ignore
             return self
 
-        if self._e.tail == ' ':
+        if set(self._e.tail) == {' '}:
+            self._e.tail = ' '  # type: ignore
             return self
         
         self._e.tail = self._e.tail + ' '   # type: ignore
