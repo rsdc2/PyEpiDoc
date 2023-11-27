@@ -130,7 +130,8 @@ class EpiDocCorpus:
 
     @property
     def datemin(self) -> int:
-        not_afters = [doc.not_after for doc in self.docs if doc.not_after is not None]
+        not_afters = [doc.not_after 
+                      for doc in self.docs if doc.not_after is not None]
         dates = [doc.date for doc in self.docs if doc.date is not None]
 
         return min(not_afters + dates)
