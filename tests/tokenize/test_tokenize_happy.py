@@ -53,6 +53,7 @@ tests = [
     'gap2',
     'gap3',
     'gap4',
+    'name_inside_choice',
     'no_lb',
     'supplied_1',
     'supplied_2',
