@@ -40,7 +40,40 @@ from .epidoc_types import (
     AlwaysSubsumable
 )
 from . import ids
-from ..utils import maxone, maxoneT, head, last
+from ..utils import maxoneT, head, last
+
+
+def tokenize_subatomtic_tags(subelement: _Element) -> EpiDocElement:
+    # Check that does not contain atomic tags
+    # If it does, tokenizer does not surround in an atomic tag
+
+    atomic_token_set = AtomicTokenType.value_set()
+    atomic_non_token_set = AtomicNonTokenType.value_set()
+    name_set = EpiDocElement(subelement).desc_elem_name_set
+
+    # breakpoint()
+    if atomic_token_set.intersection(name_set) != set():
+        # i.e. there is at least one subtoken that is an atomic token
+        w = EpiDocElement(subelement) 
+    
+    elif name_set - atomic_non_token_set == set() and \
+        name_set != set() and \
+        subelement.tail in [None, '']:
+
+        # i.e. subelements are only atomic non-tokens, with no
+        # external text
+        
+        w = EpiDocElement(subelement)
+
+    else:
+        # Surround in Atomic token tag
+        w = EpiDocElement.w_factory(subelements=[subelement])
+
+    if subelement.tail is not None and subelement.tail[-1] in ' ':
+        w._final_space = True
+    
+    return w
+
 
 
 class EpiDocElement(BaseElement, Showable):    
@@ -312,9 +345,13 @@ class EpiDocElement(BaseElement, Showable):
     @property
     def dict_desc(self) -> dict:
         if self._e is None:
-            return {'name': self.tag.name, 'ns': self.tag.ns, 'attrs': dict()}
+            return {'name': self.tag.name, 
+                    'ns': self.tag.ns, 
+                    'attrs': dict()}
 
-        return {'name': self.tag.name, 'ns': self.tag.ns, 'attrs': self._e.attrib}
+        return {'name': self.tag.name, 
+                'ns': self.tag.ns, 
+                'attrs': self._e.attrib}
 
     @property
     def e(self) -> _Element:
@@ -529,36 +566,6 @@ class EpiDocElement(BaseElement, Showable):
             def handle_compound_token(p:_Element) -> EpiDocElement:
                 return EpiDocElement.w_factory(parent=p)
             
-            def handle_subatomic_tags(subelement: _Element) -> EpiDocElement:
-                # Check that does not contain atomic tags
-                # If it does, tokenizer does not surround in an atomic tag
-
-                atomic_token_set = AtomicTokenType.value_set()
-                atomic_non_token_set = AtomicNonTokenType.value_set()
-                name_set = EpiDocElement(subelement).desc_elem_name_set
-
-                breakpoint()
-                if atomic_token_set.intersection(name_set) != set():
-                    # i.e. there is at least one subtoken that is an atomic token
-                    w = EpiDocElement(subelement) 
-                
-                elif name_set - atomic_non_token_set == set() and \
-                    name_set != set() and \
-                    subelement.tail in [None, '']:
-
-                    # i.e. subelements are only atomic non-tokens, with no
-                    # external text
-                    
-                    w = EpiDocElement(subelement)
-
-                else:
-                    # Surround in Atomic token tag
-                    w = EpiDocElement.w_factory(subelements=[subelement])
-
-                if e.tail is not None and e.tail[-1] in ' ':
-                    w._final_space = True
-                
-                return w
             
             _e = deepcopy(e)
             _e.tail = self.tail_completer   # type: ignore
@@ -595,13 +602,13 @@ class EpiDocElement(BaseElement, Showable):
                 elif len(potential_subtokens) == len(_element.tokenized_children):
                     return [_element] # i.e. do nothing because there is nothing to tokenize
                 else:
-                    return [handle_subatomic_tags(subelement=_e)]
+                    return [tokenize_subatomtic_tags(subelement=_e)]
 
             elif _element.tag.name in CompoundTokenType.values():
                 return [handle_compound_token(p=_element.e)]
             
             elif _element.tag.name in SubatomicTagType.values():
-                return [handle_subatomic_tags(subelement=_e)]
+                return [tokenize_subatomtic_tags(subelement=_e)]
 
             elif _element.tag.name == "Comment":
                 comment = deepcopy(_element.e)
@@ -1018,24 +1025,21 @@ class EpiDocElement(BaseElement, Showable):
 
             # Handle children of new_parent
             for e in children:
-                new_e = deepcopy(e)
-                new_e.tail = None   # type: ignore
+                e_without_tail = deepcopy(e)
+                e_without_tail.tail = None   # type: ignore
                 localname = ns.remove_ns(e.tag)
 
                 if localname in AtomicTokenType.values() + AtomicNonTokenType.values():
-                    new_parent.append(new_e)
+                    new_parent.append(e_without_tail)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
                 elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>
-                    breakpoint()
-                    tagname = ns.give_ns('w', ns=NS)
-                    new_w = etree.Element(tagname, None, None)
-                    new_w.append(new_e)
+                    new_w = tokenize_subatomtic_tags(e_without_tail).e
                     new_parent.append(new_w)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
                 elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>
-                    new_w_elem = EpiDocElement.w_factory(parent=new_e)
+                    new_w_elem = EpiDocElement.w_factory(parent=e_without_tail)
                     if new_w_elem.e is not None:
                         new_parent.append(new_w_elem.e)
                         new_parent = append_tail_or_text(e.tail, new_parent)
