@@ -537,6 +537,7 @@ class EpiDocElement(BaseElement, Showable):
                 atomic_non_token_set = AtomicNonTokenType.value_set()
                 name_set = EpiDocElement(subelement).desc_elem_name_set
 
+                breakpoint()
                 if atomic_token_set.intersection(name_set) != set():
                     # i.e. there is at least one subtoken that is an atomic token
                     w = EpiDocElement(subelement) 
@@ -1025,7 +1026,8 @@ class EpiDocElement(BaseElement, Showable):
                     new_parent.append(new_e)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
-                elif localname in SubatomicTagType.values(): # e.g. <expan>
+                elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>
+                    breakpoint()
                     tagname = ns.give_ns('w', ns=NS)
                     new_w = etree.Element(tagname, None, None)
                     new_w.append(new_e)
@@ -1059,7 +1061,8 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [child for child in self.child_elems
-            if child.local_name in AtomicTokenType.values() or child.tag.name == "Comment"]
+            if child.local_name in AtomicTokenType.values() or \
+                child.tag.name == "Comment"]
 
     @property
     def token_elements(self) -> list[EpiDocElement]:

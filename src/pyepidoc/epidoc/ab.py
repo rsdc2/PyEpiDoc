@@ -303,14 +303,12 @@ class Ab(EpiDocElement):
 
         token_carriers = flatten(self._token_carrier_sequences)
         token_carriers_sorted = sorted(token_carriers)
-        # breakpoint()
         
         def _redfunc(
                 acc:list[EpiDocElement], 
                 element:EpiDocElement
                 ) -> list[EpiDocElement]:
             
-            # breakpoint()
             if element._join_to_next:
                 if acc == []:
                     return element.token_elements

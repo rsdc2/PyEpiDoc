@@ -109,6 +109,7 @@ class ContainerType(EnumerableEnum):
 
 class CompoundTokenType(EnumerableEnum):
     PersName = 'persName'
+    # Choice = 'choice'
     PlaceName = 'placeName'
     RoleName = 'roleName'
     OrgName = 'orgName'
