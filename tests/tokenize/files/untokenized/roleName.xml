@@ -4,7 +4,7 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
     <text> <!-- ISic000007 -->
         <body>
-            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+            <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
                     <roleName><expan><abbr>co</abbr><ex>n</ex><abbr>s</abbr><ex>ule</ex></expan> <g ref="#interpunct">·</g> <expan><abbr>desig</abbr><ex>nato</ex></expan></roleName>
                 </ab>

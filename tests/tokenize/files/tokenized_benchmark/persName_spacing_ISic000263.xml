@@ -4,7 +4,7 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
     <text>
         <body>
-            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+            <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
                     <lb n="1"/><persName type="attested"><name type="praenomen"><expan><abbr>M</abbr><ex>arco</ex></expan></name> <g ref="#interpunct">·</g> <name type="nomen">Aemilio</name> <g ref="#interpunct">·</g> <persName type="attested"><name type="libertinatio"><expan><abbr>M</abbr><ex>arci</ex></expan></name></persName> <g ref="#interpunct">·</g> <w><expan><abbr>l</abbr><ex>iberto</ex></expan></w> <g ref="#interpunct">·</g> 
                     <lb n="2"/><name type="cognomen">Antho</name></persName> <g ref="#interpunct">·</g>

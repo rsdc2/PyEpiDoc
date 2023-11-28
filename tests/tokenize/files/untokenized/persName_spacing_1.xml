@@ -4,7 +4,7 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
     <text> <!-- made up -->
         <body>
-            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+            <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
                     <lb n="1"/><persName><name>Maximus</name> <name>Decimus</name> <name>Meridius</name></persName> <persName><name>Robertus</name></persName>
                 </ab>

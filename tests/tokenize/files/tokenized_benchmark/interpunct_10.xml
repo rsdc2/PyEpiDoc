@@ -2,7 +2,7 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
     <text> <!-- ISic001308-->
         <body>
-            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+            <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
                     <lb n="2"/><w>Κορνήλιος</w> <g ref="#interpunct">·</g> <name>Ἀγα</name>
                 </ab>

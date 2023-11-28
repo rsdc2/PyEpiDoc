@@ -4,7 +4,7 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
     <text> <!--ISic000017-->
         <body>
-            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+            <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
                     <w><del rend="erasure"><supplied reason="lost"><expan><abbr>L</abbr><ex>ucio</ex></expan></supplied></del></w> <name><del><supplied reason="lost">Septimio</supplied></del></name> <name><del><supplied reason="lost">Getae</supplied></del></name> <w><del><supplied reason="lost"><expan><abbr>nobiliss</abbr><ex>imo</ex></expan></supplied></del></w> <name><del><supplied reason="lost"><expan><abbr>Caes</abbr><ex>ari</ex></expan></supplied></del></name>
                 </ab>

@@ -4,7 +4,7 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
     <text>  <!--From ISic004475-->
         <body>
-            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+            <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
                     <persName><choice xml:id="GGNeE"><reg><name>Petrus</name></reg><orig><name>Peterus</name></orig></choice></persName> 
                 </ab>

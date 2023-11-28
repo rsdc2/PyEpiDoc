@@ -2,7 +2,7 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
     <text> <!-- ISic000394-->
         <body>
-            <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
+            <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
                     <lb n="2"/><w>in</w> <w>pace</w> <foreign xml:lang="grc"><name><expan><abbr><hi rend="supraline">Χρί</hi></abbr><ex>στι</ex></expan></name></foreign> 
                     <lb n="3"/><w>quiescit</w> <w>qui</w> <w>vixit</w>
