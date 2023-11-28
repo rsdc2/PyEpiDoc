@@ -184,7 +184,7 @@ class EpiDocCorpus:
 
     @cached_property
     def docs(self) -> list[EpiDoc]:
-        return list(self._docs)
+        return list(sorted(self._docs, key=lambda doc: doc.id))
 
     @cached_property
     def docs_dict(self) -> dict[str, EpiDoc]:
