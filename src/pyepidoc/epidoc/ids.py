@@ -33,8 +33,8 @@ def insert_fixed_strs(id:str) -> str:
     """
     Insert ISic and '-' for an I.Sicily token ID 
     """
-    padded = id.rjust(10, '0')
-    return 'ISic' + padded[:-4] + '-' + padded[-4:]
+    padded = id.rjust(11, '0')
+    return 'ISic' + padded[:-5] + '-' + padded[-5:]
 
 
 def dec_to_base(dec:int, base:int) -> str:
@@ -81,3 +81,11 @@ def decompress(id:str, base:int) -> str:
     """Decompresses an I.Sicily ID from base 'base' to base 10"""
     expanded = str(base_to_dec(id, base))
     return insert_fixed_strs(expanded)
+
+
+if __name__ == '__main__':
+    x = compress('ISic099999-99999', 52)
+    y = decompress('zzzzzz', 52)
+
+    print(x, y)
+    x = compress('ISic001174-10000', 52)
