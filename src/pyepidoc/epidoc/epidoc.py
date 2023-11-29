@@ -274,6 +274,12 @@ class EpiDoc(DocRoot):
 
         return idno_elem.text
 
+
+    @property
+    def id_carriers(self) -> list[EpiDocElement]:
+        return list(chain(*[edition.id_carriers 
+                            for edition in self.editions()]))
+
     @property
     def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 

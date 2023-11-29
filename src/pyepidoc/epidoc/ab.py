@@ -181,7 +181,6 @@ class Ab(EpiDocElement):
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
 
-
     def set_ids(self) -> None:
         for idcarrier in self.id_carriers:
             idcarrier.set_id()

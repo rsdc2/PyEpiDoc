@@ -232,6 +232,11 @@ class Edition(EpiDocElement):
         return [EpiDocElement(gap) for gap in self.get_desc('gap')]
 
     @property
+    def id_carriers(self) -> list[EpiDocElement]:
+        return list(chain(*[ab.id_carriers 
+                            for ab in self.abs]))
+
+    @property
     def lang(self):
         return self.get_attrib('lang', XMLNS)
 

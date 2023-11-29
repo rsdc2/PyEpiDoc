@@ -12,12 +12,13 @@ from itertools import chain
 from pathlib import Path
 
 from .epidoc import EpiDoc
+from .element import EpiDocElement
 from .token import Token
 from .expan import Expan
 from .epidoc_types import SpaceUnit, TextClass
 from pyepidoc.shared_types import SetRelation
 
-from ..utils import maxone, top, head, tail
+from ..utils import maxone, top
 
 
 class EpiDocCorpus:
@@ -338,6 +339,10 @@ class EpiDocCorpus:
         
         return docs[0]
 
+    @property
+    def id_carriers(self) -> list[EpiDocElement]:
+        return list(chain(*[doc.id_carriers for doc in self.docs]))
+
     @cached_property
     def ids(self) -> list[Optional[str]]:
         return [doc.id for doc in self.docs]
@@ -427,6 +432,21 @@ class EpiDocCorpus:
     @cached_property
     def textclasses(self) -> set[str]:
         return set([textclass for doc in self.docs for textclass in doc.textclasses])
+
+    def test_token_ids_unique(self, verbose: bool=False) -> bool:
+        """
+        Returns True if all token ids in the corpus
+        are unique
+        """
+
+        ids = list(map(lambda token: token.id_xml or '', self.id_carriers))
+        id_set = list(set(ids))
+
+        if verbose:
+            print('Total id carrying tokens: ', len(ids))
+            print('Total unique ids: ', len(id_set))
+
+        return len(ids) == len(id_set)
 
     def to_txt(self, dst: str) -> None:
         """
