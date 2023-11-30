@@ -99,8 +99,3 @@ if __name__ == '__main__':
     y = compress(decompress('ψψψψψ', 87), 87)
     z = decompress('ψψψψψ', 87)
     print(x, z)
-    # print(x)
-    # # y = decompress('Azzzzz', 52)
-
-    # print(x, y)
-    # x = compress('ISic001174-10000', 52)
