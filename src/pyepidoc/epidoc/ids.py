@@ -5,15 +5,25 @@ I also found these articles helpful: https://iq.opengenus.org/convert-decimal-to
 https://stackoverflow.com/questions/6692183/python-integer-to-base-32-hex-aka-triacontakaidecimal last accessed 2023-11-14
 """
 
+import base64
+
 UPPERCASE = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 LOWERCASE = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+LCASEGREEK = list('βδζηθλμνξπστφχψ')
+UCASEGREEK = list('ΓΔΘΛΞΠΣΦΨΩ')
+DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+digits52 = UPPERCASE + LOWERCASE
+digits62 = DIGITS + digits52
+digits87 = DIGITS + UPPERCASE + LOWERCASE + UCASEGREEK + LCASEGREEK
 
-digits52_list = UPPERCASE + LOWERCASE
 
-digits_dict = {52: {k: v for (k, v) in enumerate(digits52_list)}}
+digits_dict = {52: {k: v for (k, v) in enumerate(digits52)}, 
+               62: {k: v for (k, v) in enumerate(digits62)},
+               89: {k: v for (k, v) in enumerate(digits87)}}
+# digits_62_dict = {62: {k: v for (k, v) in enumerate(digits62_list)}}
 
 
-def rev_digits(d:dict[int, str]) -> dict[str, int]:
+def rev_digits(d: dict[int, str]) -> dict[str, int]:
     """
     Reverses a dictionary of digits to decimal equivalents
     """
@@ -21,7 +31,7 @@ def rev_digits(d:dict[int, str]) -> dict[str, int]:
     return {v: k for k, v in d.items()}
 
 
-def remove_fixed_strs(id:str) -> int:
+def remove_fixed_strs(id: str) -> int:
     """
     Strips ISic and '-' from an I.Sicily token ID
     """
@@ -29,7 +39,7 @@ def remove_fixed_strs(id:str) -> int:
     return int(id.replace('-', '').replace('ISic', ''))
 
 
-def insert_fixed_strs(id:str) -> str:
+def insert_fixed_strs(id: str) -> str:
     """
     Insert ISic and '-' for an I.Sicily token ID 
     """
@@ -37,7 +47,7 @@ def insert_fixed_strs(id:str) -> str:
     return 'ISic' + padded[:-5] + '-' + padded[-5:]
 
 
-def dec_to_base(dec:int, base:int) -> str:
+def dec_to_base(dec: int, base: int) -> str:
     """
     Convert a decimal number to a number of base 'base'.
     This works by recursively dividing the quotient by
@@ -47,7 +57,7 @@ def dec_to_base(dec:int, base:int) -> str:
     in the new base number.
     """
 
-    def f(i:int) -> list[int]:
+    def f(i: int) -> list[int]:
         q = i // base
         r = i % base
 
@@ -57,11 +67,11 @@ def dec_to_base(dec:int, base:int) -> str:
     return ''.join([digits_dict[base][item] for item in l])
 
 
-def base_to_dec(baseInpt:str, base:int) -> int:
+def base_to_dec(base_inpt: str, base: int) -> int:
     
     """Convert a string of base 'base' to a base 10 integer"""
     
-    def f(l:list[str], acc:int) -> int:
+    def f(l: list[str], acc: int) -> int:
         if l == []:
             return acc
         
@@ -69,24 +79,29 @@ def base_to_dec(baseInpt:str, base:int) -> int:
 
         return f(l[1:], acc + v)
     
-    return f(list(baseInpt), 0)
+    return f(list(base_inpt), 0)
+ 
 
-
-def compress(id:str, base:int) -> str:
+def compress(id: str, base: int) -> str:
     """Compresses an I.Sicily ID to base 'base'"""
-    return dec_to_base(remove_fixed_strs(id), base).rjust(5, 'A')
+    zero = digits_dict[base][0]
+    return dec_to_base(remove_fixed_strs(id), base).rjust(5, zero)
 
 
-def decompress(id:str, base:int) -> str:
+def decompress(id: str, base: int) -> str:
     """Decompresses an I.Sicily ID from base 'base' to base 10"""
     expanded = str(base_to_dec(id, base))
     return insert_fixed_strs(expanded)
 
 
 if __name__ == '__main__':
-    x = compress('ISic099999-99999', 52)
-    y = decompress('GZBBBB', 52)
-    # y = decompress('Azzzzz', 52)
+    x = compress('ISic037000-01000', 89)
+    x = compress('ISic000001-01000', 89)
+    y = compress(decompress('ψψψψψ', 89), 89)
+    z = decompress('ψψψψψ', 89)
+    print(x, z)
+    # print(x)
+    # # y = decompress('Azzzzz', 52)
 
-    print(x, y)
+    # print(x, y)
     # x = compress('ISic001174-10000', 52)
