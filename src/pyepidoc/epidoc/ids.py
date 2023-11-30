@@ -19,8 +19,7 @@ digits87 = DIGITS + UPPERCASE + LOWERCASE + UCASEGREEK + LCASEGREEK
 
 digits_dict = {52: {k: v for (k, v) in enumerate(digits52)}, 
                62: {k: v for (k, v) in enumerate(digits62)},
-               89: {k: v for (k, v) in enumerate(digits87)}}
-# digits_62_dict = {62: {k: v for (k, v) in enumerate(digits62_list)}}
+               87: {k: v for (k, v) in enumerate(digits87)}}
 
 
 def rev_digits(d: dict[int, str]) -> dict[str, int]:
@@ -95,10 +94,10 @@ def decompress(id: str, base: int) -> str:
 
 
 if __name__ == '__main__':
-    x = compress('ISic037000-01000', 89)
-    x = compress('ISic000001-01000', 89)
-    y = compress(decompress('ψψψψψ', 89), 89)
-    z = decompress('ψψψψψ', 89)
+    x = compress('ISic037000-01000', 87)
+    x = compress('ISic021474-83647', 87)
+    y = compress(decompress('ψψψψψ', 87), 87)
+    z = decompress('ψψψψψ', 87)
     print(x, z)
     # print(x)
     # # y = decompress('Azzzzz', 52)
