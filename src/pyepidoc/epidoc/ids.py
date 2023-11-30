@@ -85,7 +85,8 @@ def decompress(id:str, base:int) -> str:
 
 if __name__ == '__main__':
     x = compress('ISic099999-99999', 52)
-    y = decompress('zzzzzz', 52)
+    y = decompress('GZBBBB', 52)
+    # y = decompress('Azzzzz', 52)
 
     print(x, y)
-    x = compress('ISic001174-10000', 52)
+    # x = compress('ISic001174-10000', 52)
