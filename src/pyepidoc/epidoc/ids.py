@@ -110,5 +110,5 @@ if __name__ == '__main__':
     x = compress('ISic000001-00001', 87)
     x = decompress('ψψψψψ', 77)
     # x = decompress('ωωωωω', 100)
-    x = decompress('zzzzz', 62)
+    x = decompress('ωωωω', 100)
     print(x)
