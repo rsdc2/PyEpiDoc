@@ -9,17 +9,24 @@ import base64
 
 UPPERCASE = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 LOWERCASE = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-LCASEGREEK = list('βδζηθλμνξπστφχψ')
-UCASEGREEK = list('ΓΔΘΛΞΠΣΦΨΩ')
+
+LCASEGREEK1 = list('βδζηθλμνξπστφχψ')
+UCASEGREEK1 = list('ΓΔΘΛΞΠΣΦΨΩ')
+LCASEGREEK2 = list('αβγδεζηθικλμνξοπρστυφχψω')
+UCASEGREEK2 = list('ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ')
+
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 digits52 = UPPERCASE + LOWERCASE
 digits62 = DIGITS + digits52
-digits87 = DIGITS + UPPERCASE + LOWERCASE + UCASEGREEK + LCASEGREEK
-
+digits87 = DIGITS + UPPERCASE + LOWERCASE + UCASEGREEK1 + LCASEGREEK1
+digits77 = UPPERCASE + LOWERCASE + UCASEGREEK1 + LCASEGREEK1
+digits100 = UPPERCASE + LOWERCASE + UCASEGREEK2 + LCASEGREEK2
 
 digits_dict = {52: {k: v for (k, v) in enumerate(digits52)}, 
                62: {k: v for (k, v) in enumerate(digits62)},
-               87: {k: v for (k, v) in enumerate(digits87)}}
+               87: {k: v for (k, v) in enumerate(digits87)},
+               77: {k: v for (k, v) in enumerate(digits77)},
+               100: {k: v for (k, v) in enumerate(digits100)}}
 
 
 def rev_digits(d: dict[int, str]) -> dict[str, int]:
@@ -94,8 +101,14 @@ def decompress(id: str, base: int) -> str:
 
 
 if __name__ == '__main__':
-    x = compress('ISic037000-01000', 87)
-    x = compress('ISic021474-83647', 87)
-    y = compress(decompress('ψψψψψ', 87), 87)
-    z = decompress('ψψψψψ', 87)
-    print(x, z)
+    # x = compress('ISic037000-01000', 87)
+    # x = compress('ISic021474-83647', 87)
+    # y = compress(decompress('ψψψψψ', 87), 87)
+    # z = decompress('ψψψψψ', 87)
+    # print(x, z)
+
+    x = compress('ISic000001-00001', 87)
+    x = decompress('ψψψψψ', 77)
+    # x = decompress('ωωωωω', 100)
+    x = decompress('zzzzz', 62)
+    print(x)
