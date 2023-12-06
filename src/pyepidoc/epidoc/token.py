@@ -154,6 +154,7 @@ class Token(EpiDocElement):
     def form(self) -> str:
         """
         Returns the full form, including any abbreviation expansion.
+        Compare @normalized_form
         """
 
         return self._clean_text(self.text_desc)
@@ -166,6 +167,17 @@ class Token(EpiDocElement):
         also excludes text from <g>, <surplus> and <del> elements
         """
         return self.normalized_form
+    
+    @property
+    def leiden_plus(self) -> str:
+        """
+        Returns the form per Leiden conventions, i.e. with
+        abbreviations expanded with brackets.
+        Interpunts are indicated with middle dot;
+        line breaks are indicated with vertical bar |
+        """
+
+        
         
     @property
     def lemma(self) -> Optional[str]:
@@ -180,7 +192,8 @@ class Token(EpiDocElement):
         """
         Returns the normalized form of the token, i.e.
         taking the text from <reg> not <orig>, <corr> not <sic>;
-        also excludes text from <g>, <surplus> and <del> elements
+        also excludes text from <g>, <surplus> and <del> elements.
+        Compare @form
         """
         non_ancestors = TextNotIncludedType.values()
 
