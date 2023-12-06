@@ -14,7 +14,8 @@ relative_filepaths = {
     'line_1': 'api/files/line_1.xml',
     'line_2': 'api/files/line_2.xml',
     'gap': 'api/files/gap.xml',
-    'comma': 'api/files/comma.xml'
+    'comma': 'api/files/comma.xml',
+    'leiden': 'api/files/leiden.xml'
 }
 
 line_2_output = 'api/files/line_2_output.xml'
@@ -46,6 +47,21 @@ def test_collect_normalized():
         'Flamma', 
         'secutor'
     ]
+
+
+def test_leiden_plus_text():
+    """
+    Tests that collects the leiden plus text of a 
+    token correctly
+    """
+
+    fp = relative_filepaths['leiden']
+    doc = EpiDoc(fp)
+
+    leiden_strs = [token.leiden_plus_form for token in doc.tokens]
+
+    assert leiden_strs[0] == '| · Dis · '
+
 
 def test_expans():
     filepath = relative_filepaths['ISic000001']

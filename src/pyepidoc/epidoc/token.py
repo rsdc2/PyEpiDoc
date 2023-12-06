@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from typing import Optional, Sequence
-from functools import cached_property
+from functools import cached_property, reduce
 from copy import deepcopy
 import re
 
 from lxml.etree import _Element, _Comment, _ElementUnicodeResult
 
 from ..xml import Namespace as ns
-from ..utils import maxone, remove_none, head
+from ..utils import maxone, remove_none, head, local_name
 from ..constants import NS, XMLNS, A_TO_Z_SET
 from .element import EpiDocElement
 from ..xml.baseelement import BaseElement
@@ -169,16 +169,49 @@ class Token(EpiDocElement):
         return self.normalized_form
     
     @property
-    def leiden_plus(self) -> str:
+    def leiden_plus_form(self) -> str:
         """
         Returns the form per Leiden conventions, i.e. with
         abbreviations expanded with brackets.
         Interpunts are indicated with middle dot;
-        line breaks are indicated with vertical bar |
+        line breaks are indicated with vertical bar '|'
         """
 
+        def string_rep(e: _Element | _ElementUnicodeResult) -> str:
+            if local_name(e) == 'g':
+                return ' · '
+            if local_name(e) == 'lb':
+                return '|'
+            return ''
+
+        def get_next_non_text(
+                acc: list[_Element | _ElementUnicodeResult],
+                node: _Element | _ElementUnicodeResult
+            ) -> list[_Element | _ElementUnicodeResult]:
+            
+            if acc != []:
+                last = acc[-1]
+                if type(last) is _ElementUnicodeResult:
+                    if str(last).strip() not in ['', '·']:
+                        return acc 
+                
+                if local_name(acc[-1]) in ['w', 'name', 'persName']:
+                    return acc
+            
+            return acc + [node]
+
+        preceding = reversed([e for e in self.preceding_nodes_in_edition])
+        following = [e for e in self.following_nodes_in_edition]
+
+        preceding_upto_text = \
+            reversed(reduce(get_next_non_text, preceding, []))
+        following_upto_text = reduce(get_next_non_text, following, [])
         
-        
+        prec_text = ''.join(map(string_rep, preceding_upto_text))
+        following_text = ''.join(map(string_rep, following_upto_text))
+
+        return prec_text + self.form + following_text        
+
     @property
     def lemma(self) -> Optional[str]:
         return self.get_attrib('lemma')

@@ -411,6 +411,19 @@ class EpiDocElement(BaseElement, Showable):
         return self.internal_token_elements[0]
 
     @property
+    def following_nodes_in_edition(self) -> list[_Element]:
+
+        """
+        Returns any preceding or ancestor |_Element| whose
+        ancestor is an edition.
+        """
+
+        return self._e.xpath(
+            'following::node()[ancestor::x:div[@type="edition"]]', 
+            namespaces={"x": NS}
+        )
+
+    @property
     def gaps(self) -> list[EpiDocElement]:
         return [EpiDocElement(gap) for gap in self.get_desc('gap')]
     
@@ -781,6 +794,20 @@ class EpiDocElement(BaseElement, Showable):
             raise TypeError('Parent is of incorrect type.')
 
     @property
+    def preceding_nodes_in_edition(
+        self) -> list[_Element | _ElementUnicodeResult]:
+
+        """
+        Returns any preceding or ancestor |_Element| or 
+        |_ElementUnicodeResult| whose ancestor is an edition.
+        """
+
+        return self._e.xpath(
+            'preceding::node()[ancestor::x:div[@type="edition"]]', 
+            namespaces={"x": NS}
+        )
+
+    @property
     def preceding_or_ancestor_in_edition(self) -> list[_Element]:
 
         """
@@ -791,8 +818,13 @@ class EpiDocElement(BaseElement, Showable):
         if self._e is None:
             return []
 
-        return self._e.xpath('preceding::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) \
-            + self._e.xpath('ancestor::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) 
+        return self._e.xpath(
+            'preceding::*[ancestor::x:div[@type="edition"]]', 
+            namespaces={"x": NS}
+        ) + self._e.xpath(
+            'ancestor::*[ancestor::x:div[@type="edition"]]', 
+            namespaces={"x": NS}
+        ) 
 
     @property
     def _prototokens(self) -> list[str]:

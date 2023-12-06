@@ -1,5 +1,6 @@
 from __future__ import annotations
 from copy import deepcopy
+from lxml.etree import _Element, _ElementUnicodeResult
 
 """
 This file provides generic utility functions especially for handling
@@ -95,6 +96,7 @@ def maxone(
     # Only one item in list
     return lst[0]
 
+
 def head(
     lst:list[T],
     defaultval:Optional[T]=None,
@@ -156,6 +158,16 @@ def default_str(str_or_none:Optional[str]):
         return str_or_none
     
     raise TypeError('str_or_none must be str or None.')
+
+
+def local_name(node: _Element | _ElementUnicodeResult) -> str:
+    """
+    Return the local name of a node
+    """
+    if type(node) is _ElementUnicodeResult:
+        return '#text'
+    
+    return str(node.xpath('local-name(.)'))
 
 
 def update_set_copy(s1: set, s2: set) -> set:
