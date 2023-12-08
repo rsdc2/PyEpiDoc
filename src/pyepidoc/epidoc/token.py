@@ -202,36 +202,29 @@ class Token(EpiDocElement):
                 return '|'
             return ''
 
-        def get_next_non_text(final_non_text_names: list[str], ignore: list[str]) -> Callable[[list[Node], Node], list[Node]]:
+        def get_next_non_text(
+                acc: list[Node],
+                node: Node
+            ) -> list[Node]:
 
-            def _get_next_non_text(
-                    acc: list[Node],
-                    node: Node
-                ) -> list[Node]:
+            if acc != []:
+                last = acc[-1]
 
-                if acc != []:
-                    last = acc[-1]
-
-                    if type(last) is _ElementUnicodeResult:
-                        if str(last).strip() not in ['', '·']:
-                            return acc 
-                    
-                    if local_name(node) in ignore:
-                        return acc + [_ElementUnicodeResult('[ignore]')]
-
-                    if local_name(acc[-1]) in final_non_text_names + ['w', 'name', 'persName']:
-                        return acc
+                if type(last) is _ElementUnicodeResult:
+                    if str(last).strip() not in ['', '·']:
+                        return acc 
                 
-                return acc + [node]
+                if local_name(last) in ['lb', 'w', 'name', 'persName']:
+                    return acc
             
-            return _get_next_non_text
+            return acc + [node]
 
         preceding = reversed([e for e in self.preceding_nodes_in_edition])
         following = [e for e in self.following_nodes_in_edition]
 
         preceding_upto_text: list[Node] = \
-            list(reversed(reduce(get_next_non_text([], ['lb']), preceding, list[Node]()))) # type: ignore
-        following_upto_text: list[Node] = reduce(get_next_non_text(['lb'], []), following, [])
+            list(reversed(reduce(get_next_non_text, preceding, list[Node]()))) # type: ignore
+        following_upto_text: list[Node] = reduce(get_next_non_text, following, [])
         
         prec_text = ''.join(map(string_rep, preceding_upto_text)).replace('[ignore]', '')
         following_text = ''.join(map(string_rep, following_upto_text))
