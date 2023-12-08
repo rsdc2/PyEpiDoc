@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional, Sequence, Union, Reversible
+from typing import (
+    Optional, 
+    Sequence, 
+    Union, 
+    Reversible,
+    Callable
+)
 from functools import cached_property, reduce
 from copy import deepcopy
 import re
@@ -175,7 +181,11 @@ class Token(EpiDocElement):
         Returns the form per Leiden conventions, i.e. with
         abbreviations expanded with brackets
         """
-        return ''.join([expan.leiden for expan in self.expans])
+        expans_form = ''.join([expan.leiden for expan in self.expans])
+        if expans_form == '':
+            return self.form
+    
+        return expans_form
 
     @property
     def leiden_plus_form(self) -> str:
@@ -192,30 +202,38 @@ class Token(EpiDocElement):
                 return '|'
             return ''
 
-        def get_next_non_text(
-                acc: list[Node],
-                node: Node
-            ) -> list[Node]:
-            
-            if acc != []:
-                last = acc[-1]
-                if type(last) is _ElementUnicodeResult:
-                    if str(last).strip() not in ['', '·']:
-                        return acc 
+        def get_next_non_text(final_non_text_names: list[str], ignore: list[str]) -> Callable[[list[Node], Node], list[Node]]:
+
+            def _get_next_non_text(
+                    acc: list[Node],
+                    node: Node
+                ) -> list[Node]:
+
+                if acc != []:
+                    last = acc[-1]
+
+                    if type(last) is _ElementUnicodeResult:
+                        if str(last).strip() not in ['', '·']:
+                            return acc 
+                    
+                    if local_name(node) in ignore:
+                        return acc + [_ElementUnicodeResult('[ignore]')]
+
+                    if local_name(acc[-1]) in final_non_text_names + ['w', 'name', 'persName']:
+                        return acc
                 
-                if local_name(acc[-1]) in ['w', 'name', 'persName']:
-                    return acc
+                return acc + [node]
             
-            return acc + [node]
+            return _get_next_non_text
 
         preceding = reversed([e for e in self.preceding_nodes_in_edition])
         following = [e for e in self.following_nodes_in_edition]
 
         preceding_upto_text: list[Node] = \
-            list(reversed(reduce(get_next_non_text, preceding, list[Node]()))) # type: ignore
-        following_upto_text: list[Node] = reduce(get_next_non_text, following, [])
+            list(reversed(reduce(get_next_non_text([], ['lb']), preceding, list[Node]()))) # type: ignore
+        following_upto_text: list[Node] = reduce(get_next_non_text(['lb'], []), following, [])
         
-        prec_text = ''.join(map(string_rep, preceding_upto_text))
+        prec_text = ''.join(map(string_rep, preceding_upto_text)).replace('[ignore]', '')
         following_text = ''.join(map(string_rep, following_upto_text))
 
         return prec_text + self.leiden_form + following_text        
