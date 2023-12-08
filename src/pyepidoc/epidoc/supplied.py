@@ -4,6 +4,16 @@ from .utils import (
     children_nodes_leiden_str
 )
 
+from .am import Am
+from .ex import Ex
+from .abbr import Abbr
+
+element_classes: dict[str, type] = {
+    'abbr': Abbr,
+    'am': Am,
+    'ex': Ex
+}
+
 class Supplied(EpiDocElement):
     """
     Provides services for abbreviation expansions 
@@ -23,6 +33,6 @@ class Supplied(EpiDocElement):
         
         return ''.join([
             '[',
-            children_nodes_leiden_str(self.e),
+            children_nodes_leiden_str(self.e, element_classes),
             ']'
         ])
