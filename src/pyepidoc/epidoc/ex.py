@@ -1,4 +1,3 @@
-from typing import Optional
 from lxml.etree import _Element
 from .element import EpiDocElement
 
@@ -9,9 +8,9 @@ class Ex(EpiDocElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e:Optional[_Element]=None):
-        if type(e) is not _Element and e is not None:
-            raise TypeError('e should be _Element type or None.')
+    def __init__(self, e: _Element):
+        if type(e) is not _Element:
+            raise TypeError('e should be of type _Element.')
 
         self._e = e
 

@@ -42,37 +42,23 @@ class Expan(EpiDocElement):
         return f"Expan({content})"
 
     def __str__(self) -> str:
-        objs = [self.abbr_ex_or_am(elem) for elem in self.desc_elems
-            if elem.local_name in ['ex', 'abbr']]
-
-        return ''.join([str(obj) for obj in objs])
+        return self.leiden
 
     @property
     def abbr(self) -> list[Abbr]:
         return [Abbr(elem.e) for elem in self.abbr_elems]        
 
     @property
-    def as_element(self) -> EpiDocElement:
-        return EpiDocElement(self.e)
-
-    @property
-    def first_abbr(self) -> Optional[Abbr]:
-        return head(self.abbr)
-
-    @property
     def abbr_count(self) -> int:
         return len(self.abbr_elems)
 
-    @property
-    def am(self) -> list[Am]:
-        return flatlist([abbr.am for abbr in self.abbr])
-
-    @property
-    def am_count(self) -> int:
-        return len(self.am_elems)
-
     @staticmethod
     def abbr_ex_or_am(elem: BaseElement) -> Optional[Union[Abbr, Ex, Am]]:
+
+        """
+        Returns an |Ex|, |Abbr| or |Am| object according 
+        to the tag of "elem"
+        """
 
         element_classes: dict[str, type] = {
             'ex': Ex,
@@ -108,8 +94,23 @@ class Expan(EpiDocElement):
                 elif last_child_type is Ex:
                     return AbbrType.contraction_with_suspension
 
-
         return AbbrType.unknown
+
+    @property
+    def am(self) -> list[Am]:
+        return flatlist([abbr.am for abbr in self.abbr])
+
+    @property
+    def am_count(self) -> int:
+        return len(self.am_elems)
+    
+    @property
+    def as_element(self) -> EpiDocElement:
+        return EpiDocElement(self.e)
+
+    @property
+    def first_abbr(self) -> Optional[Abbr]:
+        return head(self.abbr)
 
     @property
     def ex_count(self) -> int:
@@ -117,5 +118,18 @@ class Expan(EpiDocElement):
 
     @property
     def ex(self) -> list[Ex]:
-        return [Ex(elem.e) for elem in self.ex_elems]        
+        return [Ex(elem.e) for elem in self.ex_elems]
 
+    @property
+    def leiden(self) -> str:
+        
+        """
+        Returns a Leiden-formatted string representation
+        of the <expan> element
+        """
+
+        abbr_objs = [self.abbr_ex_or_am(elem) 
+                     for elem in self.desc_elems
+                     if elem.local_name in ['ex', 'abbr']]
+
+        return ''.join([str(obj) for obj in abbr_objs])

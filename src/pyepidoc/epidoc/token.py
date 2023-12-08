@@ -170,11 +170,18 @@ class Token(EpiDocElement):
         return self.normalized_form
     
     @property
-    def leiden_plus_form(self) -> str:
+    def leiden_form(self) -> str:
         """
         Returns the form per Leiden conventions, i.e. with
-        abbreviations expanded with brackets.
-        Interpunts are indicated with middle dot;
+        abbreviations expanded with brackets
+        """
+        return ''.join([expan.leiden for expan in self.expans])
+
+    @property
+    def leiden_plus_form(self) -> str:
+        """
+        Returns the Leiden form, with 
+        interpunts indicated by middle dot;
         line breaks are indicated with vertical bar '|'
         """
 
@@ -211,7 +218,7 @@ class Token(EpiDocElement):
         prec_text = ''.join(map(string_rep, preceding_upto_text))
         following_text = ''.join(map(string_rep, following_upto_text))
 
-        return prec_text + self.form + following_text        
+        return prec_text + self.leiden_form + following_text        
 
     @property
     def lemma(self) -> Optional[str]:
