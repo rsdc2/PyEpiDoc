@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Union, Reversible
 from functools import cached_property, reduce
 from copy import deepcopy
 import re
@@ -21,6 +21,7 @@ from .epidoc_types import (
     TextNotIncludedType
 )
 
+Node = Union[_Element, _ElementUnicodeResult]
 
 class Token(EpiDocElement):
 
@@ -177,17 +178,17 @@ class Token(EpiDocElement):
         line breaks are indicated with vertical bar '|'
         """
 
-        def string_rep(e: _Element | _ElementUnicodeResult) -> str:
-            if local_name(e) == 'g':
+        def string_rep(n: Node) -> str:
+            if local_name(n) == 'g':
                 return ' · '
-            if local_name(e) == 'lb':
+            if local_name(n) == 'lb':
                 return '|'
             return ''
 
         def get_next_non_text(
-                acc: list[_Element | _ElementUnicodeResult],
-                node: _Element | _ElementUnicodeResult
-            ) -> list[_Element | _ElementUnicodeResult]:
+                acc: list[Node],
+                node: Node
+            ) -> list[Node]:
             
             if acc != []:
                 last = acc[-1]
@@ -203,9 +204,9 @@ class Token(EpiDocElement):
         preceding = reversed([e for e in self.preceding_nodes_in_edition])
         following = [e for e in self.following_nodes_in_edition]
 
-        preceding_upto_text = \
-            reversed(reduce(get_next_non_text, preceding, []))
-        following_upto_text = reduce(get_next_non_text, following, [])
+        preceding_upto_text: list[Node] = \
+            list(reversed(reduce(get_next_non_text, preceding, list[Node]()))) # type: ignore
+        following_upto_text: list[Node] = reduce(get_next_non_text, following, [])
         
         prec_text = ''.join(map(string_rep, preceding_upto_text))
         following_text = ''.join(map(string_rep, following_upto_text))
