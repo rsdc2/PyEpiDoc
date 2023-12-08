@@ -102,6 +102,8 @@ def lang(elem: EpiDocElement) -> Optional[str]:
 
 def line(elem:EpiDocElement) -> Optional[Lb]:
     lb = elem.lb_in_preceding_or_ancestor
+    
     if lb is None:
         return None
-    return Lb(elem.lb_in_preceding_or_ancestor)
+    
+    return Lb(lb)

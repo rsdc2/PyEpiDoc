@@ -14,10 +14,12 @@ import re
 from lxml.etree import _Element, _Comment, _ElementUnicodeResult
 
 from ..xml import Namespace as ns
-from ..utils import maxone, remove_none, head, local_name
+from ..xml.utils import local_name
+from ..utils import maxone, remove_none, head
 from ..constants import NS, XMLNS, A_TO_Z_SET
-from .element import EpiDocElement
 from ..xml.baseelement import BaseElement
+
+from .element import EpiDocElement
 
 from .expan import Expan
 from .epidoc_types import (
@@ -26,6 +28,8 @@ from .epidoc_types import (
     PUNCTUATION,
     TextNotIncludedType
 )
+
+from .utils import leiden_str
 
 Node = Union[_Element, _ElementUnicodeResult]
 

@@ -1,6 +1,5 @@
 from pyepidoc.epidoc.scripts import tokenize
 from pyepidoc.epidoc.epidoc import EpiDoc
-from pyepidoc.file import FileMode
 from pyepidoc.file.funcs import filepath_from_list
 
 import os

@@ -27,7 +27,7 @@ from ..shared_types import Tag
 from .namespace import Namespace as ns
 
 from ..constants import NS, XMLNS, SubsumableRels
-from ..utils import maxone, maxoneT, head, last
+from ..utils import maxone
 
 
 class BaseElement(Showable):    
@@ -131,12 +131,16 @@ class BaseElement(Showable):
         return op(equal_id1[-1], equal_id2[-1])
 
     @property
-    def children(self) -> Sequence[BaseElement]:
+    def child_elements(self) -> Sequence[BaseElement]:
         if self._e is None:
             return []
             
         _children: list[_Element] = self._e.getchildren()
         return [BaseElement(child) for child in _children]
+
+    @property
+    def child_nodes(self) -> list[_Element | _ElementUnicodeResult]:
+        return self.xpath('child::node()')
 
     @property
     def depth(self) -> int:
@@ -218,17 +222,17 @@ class BaseElement(Showable):
 
     @property
     def first_child(self) -> Optional[BaseElement]:
-        if self.children == []:
+        if self.child_elements == []:
             return None
         
-        return self.children[0]
+        return self.child_elements[0]
 
     @property
     def last_child(self) -> Optional[BaseElement]:
-        if self.children == []:
+        if self.child_elements == []:
             return None
         
-        return self.children[-1]
+        return self.child_elements[-1]
 
     def get_attrib(
         self, 

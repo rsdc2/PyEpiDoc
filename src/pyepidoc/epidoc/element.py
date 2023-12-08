@@ -10,7 +10,6 @@ from typing import (
     overload
 )
 
-from ..utils import update_set_copy
 from ..shared_types import Showable, ExtendableSeq
 from ..xml.baseelement import BaseElement
 
@@ -333,7 +332,7 @@ class EpiDocElement(BaseElement, Showable):
 
     @property
     def child_elems(self) -> list[EpiDocElement]:
-        return [EpiDocElement(child) for child in self.children]
+        return [EpiDocElement(child) for child in self.child_elements]
     
     @property
     def depth(self) -> int:
@@ -343,13 +342,13 @@ class EpiDocElement(BaseElement, Showable):
             if type(parent.parent) is EpiDocElement])
 
     @property
-    def dict_desc(self) -> dict:
+    def dict_desc(self) -> dict[str, str | dict]:
         if self._e is None:
-            return {'name': self.tag.name, 
+            return {'name': self.local_name, 
                     'ns': self.tag.ns, 
                     'attrs': dict()}
 
-        return {'name': self.tag.name, 
+        return {'name': self.local_name, 
                 'ns': self.tag.ns, 
                 'attrs': self._e.attrib}
 
@@ -364,7 +363,8 @@ class EpiDocElement(BaseElement, Showable):
         as a |list| of |Element|.
         """
 
-        return [EpiDocElement(ex) for ex in self.get_desc_elems_by_name('ex')]
+        return [EpiDocElement(ex) 
+                for ex in self.get_desc_elems_by_name('ex')]
 
     @property
     def expan_elems(self) -> Sequence[EpiDocElement]:
@@ -676,6 +676,17 @@ class EpiDocElement(BaseElement, Showable):
             return None
 
         return last(get_preceding_lb(self))
+
+    @property
+    def leiden_elems(self) -> Sequence[EpiDocElement]:
+        """
+        Return all abbreviation expansions 
+        (i.e. abbreviation, expansion, supplied, gap) 
+        as a |list| of |Element|.
+        """
+
+        return [EpiDocElement(expan) 
+                for expan in self.get_desc_elems_by_name(['expan', 'supplied', 'gap'])]
 
     @property
     def next_no_spaces(self) -> list[EpiDocElement]:
