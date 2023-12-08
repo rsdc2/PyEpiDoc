@@ -11,7 +11,11 @@ from functools import cached_property, reduce
 from copy import deepcopy
 import re
 
-from lxml.etree import _Element, _Comment, _ElementUnicodeResult
+from lxml.etree import (
+    _Element, 
+    _Comment, 
+    _ElementUnicodeResult
+)
 
 from ..xml import Namespace as ns
 from ..xml.utils import local_name
@@ -20,6 +24,15 @@ from ..constants import NS, XMLNS, A_TO_Z_SET
 from ..xml.baseelement import BaseElement
 
 from .element import EpiDocElement
+from .utils import (
+    children_nodes_leiden_str, 
+    children_elems_leiden_str
+)
+
+from .abbr import Abbr
+from .ex import Ex
+from .supplied import Supplied
+from .am import Am
 
 from .expan import Expan
 from .epidoc_types import (
@@ -29,9 +42,17 @@ from .epidoc_types import (
     TextNotIncludedType
 )
 
-from .utils import leiden_str
 
 Node = Union[_Element, _ElementUnicodeResult]
+
+element_classes: dict[str, type] = {
+    'abbr': Abbr,
+    'am': Am,
+    'ex': Ex, 
+    'supplied': Supplied,
+    'expan': Expan
+    # '#text': str
+}
 
 class Token(EpiDocElement):
 
@@ -185,11 +206,12 @@ class Token(EpiDocElement):
         Returns the form per Leiden conventions, i.e. with
         abbreviations expanded with brackets
         """
-        expans_form = ''.join([expan.leiden for expan in self.expans])
-        if expans_form == '':
-            return self.form
+        # expans_form = ''.join([expan.leiden for expan in self.expans])
+        # if expans_form == '':
+        #     return self.form
     
-        return expans_form
+        # return expans_form
+        return children_nodes_leiden_str(self.e, element_classes)
 
     @property
     def leiden_plus_form(self) -> str:

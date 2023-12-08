@@ -12,9 +12,9 @@ from .element import EpiDocElement
 from .ex import Ex
 from .abbr import Abbr
 from .am import Am
+
 from .epidoc_types import AbbrType
-from .utils import children_elems_leiden_str
-from .utils_ import cls_from_elem
+from .utils import children_elems_leiden_str, cls_from_elem
 
 from .am import Am
 from .ex import Ex

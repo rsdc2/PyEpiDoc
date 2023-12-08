@@ -59,7 +59,7 @@ def test_leiden_plus_text():
     doc = EpiDoc(fp)
 
     leiden_strs = [token.leiden_plus_form for token in doc.tokens]
-
+    
     assert leiden_strs[0] == '| · Dis · '
 
 
