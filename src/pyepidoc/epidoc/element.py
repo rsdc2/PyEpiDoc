@@ -689,9 +689,10 @@ class EpiDocElement(BaseElement, Showable):
                 for expan in self.get_desc_elems_by_name([
                     'abbr',
                     'ex',
-                    'expan',
+                    # 'expan',
                     'gap', 
-                    'supplied'
+                    'supplied',
+                    'g'
                 ])]
 
     @property
