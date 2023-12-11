@@ -14,17 +14,19 @@ from .abbr import Abbr
 from .am import Am
 
 from .epidoc_types import AbbrType
-from .utils import children_elems_leiden_str, cls_from_elem
+from .utils import leiden_str_from_children, callable_from_elem
 
+from .abbr import Abbr
 from .am import Am
 from .ex import Ex
-from .abbr import Abbr
+from .lb import Lb
 from .supplied import Supplied
 
 element_classes: dict[str, type] = {
     'abbr': Abbr,
     'am': Am,
     'ex': Ex,
+    'lb': Lb,
     'supplied': Supplied
 }
 
@@ -80,7 +82,7 @@ class Expan(EpiDocElement):
         if len(self.abbr) > 1:
 
             if self.last_child is not None:
-                last_child_type = type(cls_from_elem(self.last_child.e, element_classes))
+                last_child_type = type(callable_from_elem(self.last_child.e, element_classes))
                 
                 if last_child_type is Abbr:
                     return AbbrType.contraction
@@ -121,4 +123,4 @@ class Expan(EpiDocElement):
         of the <expan> element
         """
 
-        return children_elems_leiden_str(self.e, element_classes)
+        return leiden_str_from_children(self.e, element_classes, 'element')

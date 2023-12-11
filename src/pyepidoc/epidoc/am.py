@@ -13,9 +13,9 @@ class Am(EpiDocElement):
 
     def __str__(self) -> str:
         return ''.join([
-            '[',
-            self.text_desc_compressed_whitespace.strip(),
-            ']',
+            '(',
+            ''.join(map(str, self.leiden_elems)),
+            ')',
             f"{'' if self.tail is None else self.tail.strip()}"
         ])
 

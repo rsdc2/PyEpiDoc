@@ -1,17 +1,26 @@
 from __future__ import annotations
 
 from typing import Optional
-from .element import EpiDocElement
+
 from ..utils import head
+
+from .element import EpiDocElement
 from .am import Am
+from .utils import leiden_str_from_children
+
+
+element_classes: dict[str, type] = {
+    'am': Am
+}
 
 
 class Abbr(EpiDocElement):    
     def __str__(self) -> str:
-        ams = [Am(elem.e) for elem in self.desc_elems
-            if elem.local_name == 'am']
-
-        return self.text_desc.strip() + ''.join([str(am) for am in ams])
+        return leiden_str_from_children(
+            self.e,
+            element_classes,
+            'node'
+        )
 
     @property
     def am(self) -> list[Am]:

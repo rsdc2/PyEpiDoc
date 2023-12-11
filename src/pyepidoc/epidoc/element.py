@@ -686,7 +686,13 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(expan) 
-                for expan in self.get_desc_elems_by_name(['expan', 'supplied', 'gap'])]
+                for expan in self.get_desc_elems_by_name([
+                    'abbr',
+                    'ex',
+                    'expan',
+                    'gap', 
+                    'supplied'
+                ])]
 
     @property
     def next_no_spaces(self) -> list[EpiDocElement]:

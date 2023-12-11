@@ -24,17 +24,18 @@ from ..constants import NS, XMLNS, A_TO_Z_SET
 from ..xml.baseelement import BaseElement
 
 from .element import EpiDocElement
-from .utils import (
-    children_nodes_leiden_str, 
-    children_elems_leiden_str
-)
+from .utils import leiden_str_from_children
 
 from .abbr import Abbr
-from .ex import Ex
-from .supplied import Supplied
 from .am import Am
-
+from .del_elem import Del
+from .ex import Ex
 from .expan import Expan
+from .g import G
+from .gap import Gap
+from .lb import Lb
+from .supplied import Supplied
+
 from .epidoc_types import (
     CompoundTokenType, 
     AtomicTokenType,
@@ -42,16 +43,18 @@ from .epidoc_types import (
     TextNotIncludedType
 )
 
-
 Node = Union[_Element, _ElementUnicodeResult]
 
-element_classes: dict[str, type] = {
+elem_classes: dict[str, type] = {
     'abbr': Abbr,
     'am': Am,
     'ex': Ex, 
-    'supplied': Supplied,
-    'expan': Expan
-    # '#text': str
+    'del': Del,
+    'expan': Expan,
+    'g': G,
+    'gap': Gap,
+    'lb': Lb,
+    'supplied': Supplied
 }
 
 class Token(EpiDocElement):
@@ -206,12 +209,8 @@ class Token(EpiDocElement):
         Returns the form per Leiden conventions, i.e. with
         abbreviations expanded with brackets
         """
-        # expans_form = ''.join([expan.leiden for expan in self.expans])
-        # if expans_form == '':
-        #     return self.form
-    
-        # return expans_form
-        return children_nodes_leiden_str(self.e, element_classes)
+
+        return leiden_str_from_children(self.e, elem_classes, 'node')
 
     @property
     def leiden_plus_form(self) -> str:
@@ -222,10 +221,11 @@ class Token(EpiDocElement):
         """
 
         def string_rep(n: Node) -> str:
-            if local_name(n) == 'g':
-                return ' · '
-            if local_name(n) == 'lb':
-                return '|'
+            ln = local_name(n)
+
+            if ln in ['g', 'lb', 'gap']:
+                return str(elem_classes[ln](n))
+            
             return ''
 
         def get_next_non_text(

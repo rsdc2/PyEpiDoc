@@ -249,9 +249,18 @@ class BaseElement(Showable):
 
         return self._e.attrib.get(ns().give_ns(attribname, namespace), None)
 
+    # def get_child_elems_by_name(
+    #         self,
+    #         elem_names:Union[list[str], str], 
+    #         attribs:Optional[dict[str, str]]=None
+    #         ) -> list[BaseElement]:
+        
+    #     return [BaseElement() 
+    #         for child in self._e.chil]
+
     def get_desc_elems_by_name(self, 
-        elem_names:Union[list[str], str], 
-        attribs:Optional[dict[str, str]]=None
+        elem_names: Union[list[str], str], 
+        attribs: Optional[dict[str, str]]=None
     ) -> list[BaseElement]:
 
         return [BaseElement(desc) 

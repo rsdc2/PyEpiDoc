@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from typing import Literal
+import re
+from re import Pattern
+
 from lxml.etree import _Element, _ElementUnicodeResult
 from pyepidoc.xml.utils import local_name
 
@@ -10,38 +14,39 @@ def leiden_str(elem: _Element, classes: dict[str, type]) -> str:
     of the children of param:elem
     """
 
-    return str(cls_from_elem(elem, classes))
-
-
-def children_elems_leiden_str(
-        elem: _Element, 
-        classes: dict[str, type]) -> str:
-
-    objs = [cls_from_elem(elem, classes) 
-                 for elem in elem.getchildren()
-                 if local_name(elem) in classes.keys()]
-    # breakpoint()
-    return ''.join([str(obj) for obj in objs])
+    return str(callable_from_elem(elem, classes))
 
 
 def get_text(elem: _Element | _ElementUnicodeResult) -> str:
     if type(elem) is _ElementUnicodeResult:
-        return str(elem)
+        s = str(elem)
+    else: 
+        s = ''.join(map(str, elem.xpath('.//text()'))) 
+
+    return re.sub(r'[\n\t]|\s+', '', s)
+
+
+def leiden_str_from_children(
+        parent: _Element,
+        classes: dict[str, type],
+        child_type: Literal['element', 'node']) -> str:
+
+    """
+    Return a Leiden string from a parent element.
+
+    param:child_type sets whether or not the children are elements or
+    nodes (where nodes include text content)
+    """
     
-    return ''.join(map(str, elem.xpath('.//text()')))
+    xpath_str = 'child::node()' if child_type == 'node' else 'child::*'
 
-
-def children_nodes_leiden_str(
-        elem: _Element, 
-        classes: dict[str, type]) -> str:
-
-    objs = [classes.get(local_name(elem), get_text)(elem)
-                 for elem in elem.xpath('child::node()')]
-    # breakpoint()
+    objs = [classes.get(local_name(child), get_text)(child) 
+                 for child in parent.xpath(xpath_str)]
+    
     return ''.join([str(obj) for obj in objs])
 
 
-def cls_from_elem(
+def callable_from_elem(
             elem: _Element | _ElementUnicodeResult,
             classes: dict[str, type]
         ) -> str | None:

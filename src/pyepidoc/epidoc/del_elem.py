@@ -2,18 +2,14 @@ from lxml.etree import _Element
 from .element import EpiDocElement
 from .utils import leiden_str_from_children
 
-from .abbr import Abbr
-from .am import Am
-from .ex import Ex
+from .expan import Expan
 
 element_classes: dict[str, type] = {
-    'abbr': Abbr,
-    'am': Am,
-    'ex': Ex
+    'expan': Expan
 }
 
 
-class Supplied(EpiDocElement):
+class Del(EpiDocElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.
@@ -25,13 +21,13 @@ class Supplied(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'supplied':
+        if self.local_name != 'del':
             raise TypeError('Element should be <supplied>.')
 
     def __str__(self) -> str:
         
         return ''.join([
-            '[',
+            '⟦',
             leiden_str_from_children(self.e, element_classes, 'node'),
-            ']'
+            '⟧'
         ])
