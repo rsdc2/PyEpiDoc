@@ -5,17 +5,20 @@ from typing import Optional
 from ..utils import head
 
 from .element import EpiDocElement
-from .am import Am
 from .utils import leiden_str_from_children
-
-
-element_classes: dict[str, type] = {
-    'am': Am
-}
+from .am import Am
+from .lb import Lb
 
 
 class Abbr(EpiDocElement):    
     def __str__(self) -> str:
+        from .unclear import Unclear
+
+        element_classes: dict[str, type] = {
+            'am': Am,
+            'lb': Lb,
+            'unclear': Unclear
+        }
         return leiden_str_from_children(
             self.e,
             element_classes,
