@@ -35,6 +35,7 @@ from .g import G
 from .gap import Gap
 from .lb import Lb
 from .supplied import Supplied
+from .surplus import Surplus
 
 from .epidoc_types import (
     CompoundTokenType, 
@@ -54,7 +55,8 @@ elem_classes: dict[str, type] = {
     'g': G,
     'gap': Gap,
     'lb': Lb,
-    'supplied': Supplied
+    'supplied': Supplied,
+    'surplus': Surplus
 }
 
 class Token(EpiDocElement):
