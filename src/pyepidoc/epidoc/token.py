@@ -287,8 +287,7 @@ class Token(EpiDocElement):
         :return: |str| or None containing the grammatical number of the token
         """
 
-        pos = self.pos
-        return pos[2] if pos else None
+        return self.pos[2] if self.pos else None
 
     @property
     def pos(self) -> Optional[str]:
