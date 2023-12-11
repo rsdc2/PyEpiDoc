@@ -325,6 +325,9 @@ class Edition(EpiDocElement):
 
     @property
     def tokens(self) -> list[Token]:
+        # TODO: at the moment a <num> inside a <w> will generate two tokens
+        # Fix: use xpath to remove any items with a token as a parent
+
         return [Token(word) for word 
             in self.get_desc(
                 AtomicTokenType.values() 

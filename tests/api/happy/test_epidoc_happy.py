@@ -15,7 +15,8 @@ relative_filepaths = {
     'line_2': 'api/files/line_2.xml',
     'gap': 'api/files/gap.xml',
     'comma': 'api/files/comma.xml',
-    'leiden': 'api/files/leiden.xml'
+    'leiden': 'api/files/leiden.xml',
+    'abbr': 'api/files/abbr.xml'
 }
 
 line_2_output = 'api/files/line_2_output.xml'
@@ -73,6 +74,22 @@ def test_expans():
     assert len(edition.expan_elems) == 3
 
 
+def test_abbr_forms():
+    fp = relative_filepaths['abbr']
+
+    doc = EpiDoc(fp)
+    edition = head(doc.editions())
+
+    assert edition != None
+
+    token = edition.tokens[0]
+
+    assert token.normalized_form == 'IIviro'
+    assert token.leiden_form == 'IIvir(o)'
+    assert token.leiden_plus_form == '|IIvir(o)'
+    
+
+
 def test_langs():
     """
     Tests that the collecting of language information happens in the correct way.
@@ -80,36 +97,64 @@ def test_langs():
 
     doc_1 = EpiDoc(relative_filepaths['langs_1'])
 
+    expan_1 = head(doc_1.expans)
+    token_1 = head(doc_1.tokens)
+    assert expan_1 is not None and token_1 is not None
+
     assert doc_1.langs == ['la', 'grc']
-    assert lang(head(doc_1.expans)) == 'la'
-    assert lang(head(doc_1.tokens)) == 'grc'
+    assert lang(expan_1) == 'la'
+    assert lang(token_1) == 'grc'
 
     doc_2 = EpiDoc(relative_filepaths['langs_2'])
-    assert lang(head(doc_2.expans)) == 'la'
-    assert lang(head(doc_2.tokens)) == 'grc'
+    expan_2 = head(doc_2.expans)
+    token_2 = head(doc_2.tokens)
+    assert expan_2 is not None and token_2 is not None
+
+    assert lang(expan_2) == 'la'
+    assert lang(token_2) == 'grc'
 
     doc_3 = EpiDoc(relative_filepaths['langs_3'])
-    assert lang(head(doc_3.expans)) == 'la'
-    assert lang(head(doc_3.tokens)) == 'grc'
+    expan_3 = head(doc_3.expans)
+    token_3 = head(doc_3.tokens)
+    assert expan_3 is not None and token_3 is not None
+
+    assert lang(expan_3) == 'la'
+    assert lang(token_3) == 'grc'
 
 
 def test_lines():
     doc_1 = EpiDoc(relative_filepaths['line_1'])
 
     token = head(doc_1.tokens)
-    assert line(token).n == '1'
+    assert token is not None
+
+    l1 = line(token)
+    assert l1 is not None
+    assert l1.n == '1'
 
     supplied = head(token.supplied)
-    assert line(supplied).n == '1'
+    assert supplied is not None
+    
+    l2 = line(supplied)
+    assert l2 is not None
+
+    assert l2.n == '1'
 
     doc_2 = EpiDoc(relative_filepaths['line_2'])
     token = head(doc_2.tokens)
+    assert token is not None
 
-    assert line(token).n == '1'
+    l3 = line(token)
+    assert l3 is not None
+
+    assert l3.n == '1'
     
     second_token = doc_2.tokens[1]
     assert second_token.text_desc == 'ambulavit'
-    assert line(second_token).n == '2'
+
+    l4 = line(second_token)
+    assert l4 is not None
+    assert l4.n == '2'
 
 
 def test_gaps():
