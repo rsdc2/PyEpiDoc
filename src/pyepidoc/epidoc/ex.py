@@ -2,8 +2,6 @@ from lxml.etree import _Element
 from .element import EpiDocElement
 
 
-
-
 class Ex(EpiDocElement):
     """
     Provides services for abbreviation expansions 
