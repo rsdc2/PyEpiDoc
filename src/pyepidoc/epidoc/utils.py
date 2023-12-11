@@ -39,16 +39,12 @@ def leiden_str_from_children(
     nodes (where nodes include text content)
     """
     
-    child_str = 'child::node()' if child_type == 'node' else 'child::*'
-
     non_ancestors = RegTextType.values()
-
+    child_str = 'child::node()' if child_type == 'node' else 'child::*'
     ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                 for ancestor in non_ancestors])
     
     xpath_str = f'{child_str}[{ancestors_str}]'
-
-    # breakpoint()
 
     children: list[_Element | _ElementUnicodeResult] = \
         [child for child in parent.xpath(xpath_str, namespaces={'ns': NS})]
