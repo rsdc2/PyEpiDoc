@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from typing import Iterable
 from lxml.etree import _Element, _ElementUnicodeResult
 
 
@@ -12,3 +12,17 @@ def local_name(node: _Element | _ElementUnicodeResult) -> str:
         return '#text'
     
     return str(node.xpath('local-name(.)'))
+
+
+# def filter_by_non_ancestors(
+#         node: _Element | _ElementUnicodeResult,
+#         non_ancestors: Iterable[str]):
+
+#     if type(node) is _Element:
+
+#         ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
+#                                     for ancestor in non_ancestors])
+
+#         normalized_text = node.xpath(f'descendant::text()[{ancestors_str}]')
+#         return self._clean_text(''.join([str(t) for t in normalized_text]))    
+    

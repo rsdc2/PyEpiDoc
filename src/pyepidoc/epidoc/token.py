@@ -3,9 +3,7 @@ from __future__ import annotations
 from typing import (
     Optional, 
     Sequence, 
-    Union, 
-    Reversible,
-    Callable
+    Union
 )
 from functools import cached_property, reduce
 from copy import deepcopy
@@ -28,6 +26,7 @@ from .utils import leiden_str_from_children
 
 from .abbr import Abbr
 from .am import Am
+from .choice import Choice
 from .del_elem import Del
 from .ex import Ex
 from .expan import Expan
@@ -42,7 +41,8 @@ from .epidoc_types import (
     CompoundTokenType, 
     AtomicTokenType,
     PUNCTUATION,
-    TextNotIncludedType
+    OrigTextType,
+    RegTextType
 )
 
 Node = Union[_Element, _ElementUnicodeResult]
@@ -50,6 +50,7 @@ Node = Union[_Element, _ElementUnicodeResult]
 elem_classes: dict[str, type] = {
     'abbr': Abbr,
     'am': Am,
+    'choice': Choice,
     'ex': Ex, 
     'del': Del,
     'expan': Expan,
@@ -274,10 +275,10 @@ class Token(EpiDocElement):
         """
         Returns the normalized form of the token, i.e.
         taking the text from <reg> not <orig>, <corr> not <sic>;
-        also excludes text from <g>, <surplus> and <del> elements.
-        Compare @form
+        also excludes text from <g>.
+        Compare @form and @orig_form
         """
-        non_ancestors = TextNotIncludedType.values()
+        non_ancestors = OrigTextType.values()
 
         ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                  for ancestor in non_ancestors])
@@ -292,6 +293,22 @@ class Token(EpiDocElement):
         """
 
         return self.pos[2] if self.pos else None
+
+    @cached_property
+    def orig_form(self) -> str:
+        """
+        Returns the normalized form of the token, i.e.
+        taking the text from <reg> not <orig>, <corr> not <sic>;
+        also excludes text from <g>.
+        Compare @form and @normalized_form
+        """
+        non_ancestors = RegTextType.values()
+
+        ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
+                                 for ancestor in non_ancestors])
+
+        normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
+        return self._clean_text(''.join([str(t) for t in normalized_text]))
 
     @property
     def pos(self) -> Optional[str]:

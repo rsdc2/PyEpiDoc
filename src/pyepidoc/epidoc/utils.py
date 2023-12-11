@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import Literal
 import re
-from re import Pattern
 
 from lxml.etree import _Element, _ElementUnicodeResult
 from pyepidoc.xml.utils import local_name
+from pyepidoc.epidoc.epidoc_types import OrigTextType, RegTextType
+from pyepidoc.constants import NS
 
 
 def leiden_str(elem: _Element, classes: dict[str, type]) -> str:
@@ -14,7 +15,7 @@ def leiden_str(elem: _Element, classes: dict[str, type]) -> str:
     of the children of param:elem
     """
 
-    return str(callable_from_elem(elem, classes))
+    return str(callable_from_localname(elem, classes))
 
 
 def get_text(elem: _Element | _ElementUnicodeResult) -> str:
@@ -38,15 +39,27 @@ def leiden_str_from_children(
     nodes (where nodes include text content)
     """
     
-    xpath_str = 'child::node()' if child_type == 'node' else 'child::*'
+    child_str = 'child::node()' if child_type == 'node' else 'child::*'
+
+    non_ancestors = RegTextType.values()
+
+    ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
+                                for ancestor in non_ancestors])
+    
+    xpath_str = f'{child_str}[{ancestors_str}]'
+
+    # breakpoint()
+
+    children: list[_Element | _ElementUnicodeResult] = \
+        [child for child in parent.xpath(xpath_str, namespaces={'ns': NS})]
 
     objs = [classes.get(local_name(child), get_text)(child) 
-                 for child in parent.xpath(xpath_str)]
+            for child in children]
     
     return ''.join([str(obj) for obj in objs])
 
 
-def callable_from_elem(
+def callable_from_localname(
             elem: _Element | _ElementUnicodeResult,
             classes: dict[str, type]
         ) -> str | None:

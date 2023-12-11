@@ -14,7 +14,7 @@ from .abbr import Abbr
 from .am import Am
 
 from .epidoc_types import AbbrType
-from .utils import leiden_str_from_children, callable_from_elem
+from .utils import leiden_str_from_children, callable_from_localname
 
 
 class Expan(EpiDocElement):
@@ -69,7 +69,7 @@ class Expan(EpiDocElement):
         if len(self.abbr) > 1:
 
             if self.last_child is not None:
-                last_child_type = type(callable_from_elem(self.last_child.e, self.element_classes))
+                last_child_type = type(callable_from_localname(self.last_child.e, self.element_classes))
                 
                 if last_child_type is Abbr:
                     return AbbrType.contraction
