@@ -16,19 +16,6 @@ from .am import Am
 from .epidoc_types import AbbrType
 from .utils import leiden_str_from_children, callable_from_elem
 
-from .abbr import Abbr
-from .am import Am
-from .ex import Ex
-from .lb import Lb
-from .supplied import Supplied
-
-element_classes: dict[str, type] = {
-    'abbr': Abbr,
-    'am': Am,
-    'ex': Ex,
-    'lb': Lb,
-    'supplied': Supplied
-}
 
 class Expan(EpiDocElement):
 
@@ -82,7 +69,7 @@ class Expan(EpiDocElement):
         if len(self.abbr) > 1:
 
             if self.last_child is not None:
-                last_child_type = type(callable_from_elem(self.last_child.e, element_classes))
+                last_child_type = type(callable_from_elem(self.last_child.e, self.element_classes))
                 
                 if last_child_type is Abbr:
                     return AbbrType.contraction
@@ -108,6 +95,24 @@ class Expan(EpiDocElement):
         return head(self.abbr)
 
     @property
+    def element_classes(self) -> dict[str, type]:
+        from .abbr import Abbr
+        from .am import Am
+        from .ex import Ex
+        from .lb import Lb
+        from .supplied import Supplied
+
+        element_classes: dict[str, type] = {
+            'abbr': Abbr,
+            'am': Am,
+            'ex': Ex,
+            'lb': Lb,
+            'supplied': Supplied
+        }
+
+        return element_classes
+
+    @property
     def ex_count(self) -> int:
         return len(self.ex_elems)
 
@@ -123,4 +128,4 @@ class Expan(EpiDocElement):
         of the <expan> element
         """
 
-        return leiden_str_from_children(self.e, element_classes, 'element')
+        return leiden_str_from_children(self.e, self.element_classes, 'element')

@@ -2,16 +2,6 @@ from lxml.etree import _Element
 from .element import EpiDocElement
 from .utils import leiden_str_from_children
 
-from .abbr import Abbr
-from .am import Am
-from .ex import Ex
-
-element_classes: dict[str, type] = {
-    'abbr': Abbr,
-    'am': Am,
-    'ex': Ex
-}
-
 
 class Supplied(EpiDocElement):
     """
@@ -29,6 +19,20 @@ class Supplied(EpiDocElement):
             raise TypeError('Element should be <supplied>.')
 
     def __str__(self) -> str:
+        
+        from .abbr import Abbr
+        from .am import Am
+        from .ex import Ex
+        from .expan import Expan
+        from .role_name import RoleName
+
+        element_classes: dict[str, type] = {
+            'abbr': Abbr,
+            'am': Am,
+            'ex': Ex,
+            'expan': Expan,
+            'roleName': RoleName
+        }
         
         return ''.join([
             '[',
