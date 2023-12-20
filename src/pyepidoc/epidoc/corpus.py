@@ -15,7 +15,7 @@ from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .token import Token
 from .expan import Expan
-from .epidoc_types import SpaceUnit, TextClass
+from .epidoc_types import TextClass
 from pyepidoc.shared_types import SetRelation
 
 from ..utils import maxone, top
@@ -199,14 +199,14 @@ class EpiDocCorpus:
     def expans(self) -> list[Expan]:
         return list(chain(*[doc.expans for doc in self.docs]))
 
-    def filter_by_dateafter(self, start:int) -> EpiDocCorpus:
+    def filter_by_dateafter(self, start: int) -> EpiDocCorpus:
         docs = [doc for doc in self.docs
             if (doc.not_before is not None and doc.not_before >= start) 
             or (doc.date is not None and doc.date >= start)]
 
         return EpiDocCorpus(docs)
 
-    def filter_by_daterange(self, start:int, end:int) -> EpiDocCorpus:
+    def filter_by_daterange(self, start: int, end: int) -> EpiDocCorpus:
         docs = [doc for doc in self.docs
             if doc.not_before is not None and doc.not_after is not None
             and doc.not_before >= start and doc.not_after <= end]
@@ -215,7 +215,7 @@ class EpiDocCorpus:
 
     def filter_by_form(
         self, 
-        forms:list[str], 
+        forms: list[str], 
         set_relation=SetRelation.intersection
     ) -> EpiDocCorpus:
     
