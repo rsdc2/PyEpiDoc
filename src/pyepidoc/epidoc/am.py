@@ -12,10 +12,11 @@ class Am(EpiDocElement):
     """
 
     def __str__(self) -> str:
+
         return ''.join([
-            '(',
-            ''.join(map(str, self.leiden_elems)),
-            ')',
+            '{',
+            self.text_desc_compressed_whitespace,
+            '}',
             f"{'' if self.tail is None else self.tail.strip()}"
         ])
 
