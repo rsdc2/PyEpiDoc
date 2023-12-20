@@ -39,9 +39,11 @@ class Abbr(EpiDocElement):
 
     @property
     def first_char(self) -> Optional[str]:
-        if len(self.text_desc_compressed_whitespace.strip()) > 0:   
-            # .strip() is used to exclude cases where there is text, but is whitespace
-            return self.text_desc_compressed_whitespace[0]
+        # .strip() is used to exclude cases where there 
+        # is text, but is whitespace
+        text = self.text_desc_compressed_whitespace.strip()
+        if len(text) > 0:   
+            return text[0]
 
         return None
 
