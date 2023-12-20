@@ -489,8 +489,10 @@ class BaseElement(Showable):
         return etree.tostring(self._e)
     
     def get_desc(self, 
-        elemnames:Union[list[str], str], 
-        attribs:Optional[dict[str, str]]=None
+        elemnames: Union[list[str], str], 
+        attribs: Optional[dict[str, str]]=None,
+        ns_prefix: str="ns:",
+        namespace: str=NS
     ) -> list[_Element]:
 
         if self.e is None: 
@@ -502,11 +504,11 @@ class BaseElement(Showable):
         else:
             raise TypeError("elemnames has incorrect type.")
 
-        xpathstr = ' | '.join([f".//ns:{elemname}" + self._compile_attribs(attribs) for elemname in _elemnames])
+        xpathstr = ' | '.join([f".//{ns_prefix}{elemname}" + self._compile_attribs(attribs) for elemname in _elemnames])
 
         xpathRes = (self
             .e
-            .xpath(xpathstr, namespaces={'ns': NS})
+            .xpath(xpathstr, namespaces={'ns': namespace})
         )
 
         if type(xpathRes) is list:

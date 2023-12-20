@@ -21,7 +21,7 @@ class Abbr(EpiDocElement):
             'lb': Lb,
             'unclear': Unclear
         }
-        
+
         return leiden_str_from_children(
             self.e,
             element_classes,
@@ -52,6 +52,13 @@ class Abbr(EpiDocElement):
 
     @property
     def is_multiplicative(self) -> bool:
+
+        """
+        Returns true if the abbreviation is multiplicative
+        i.e. where there is a repetition of one or more
+        abbreviation markers
+        """
+
         if self.first_am is None:
             return False
 

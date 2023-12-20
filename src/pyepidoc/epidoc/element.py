@@ -235,8 +235,7 @@ class EpiDocElement(BaseElement, Showable):
         Return all abbreviation elements as a |list| of |Element|.
         """
 
-        return [EpiDocElement(abbr) for abbr in self.get_desc_elems_by_name('abbr') 
-            if abbr.text is not None]
+        return [EpiDocElement(abbr) for abbr in self.get_desc_elems_by_name('abbr')]
         
     @property
     def has_abbr(self) -> bool:

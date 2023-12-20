@@ -124,6 +124,10 @@ class Expan(EpiDocElement):
         return [Ex(elem.e) for elem in self.ex_elems]
 
     @property
+    def is_multiplicative(self) -> bool:
+        return self.abbr_type == AbbrType.multiplication
+
+    @property
     def leiden(self) -> str:
         
         """
