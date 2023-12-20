@@ -14,7 +14,7 @@ from .abbr import Abbr
 from .am import Am
 
 from .epidoc_types import AbbrType
-from .utils import leiden_str_from_children, callable_from_localname
+from .utils import leiden_str_from_children, callable_from_localname, local_name
 
 
 class Expan(EpiDocElement):
@@ -30,8 +30,9 @@ class Expan(EpiDocElement):
 
         self._e = e
 
-        if self.tag.name != 'expan':
-            raise TypeError('Element should be of type <expan>.')
+        if local_name(e) != 'expan':
+            raise TypeError(f'Element should be of type <expan>, '
+                            f'but is of type <{local_name(e)}>.')
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail

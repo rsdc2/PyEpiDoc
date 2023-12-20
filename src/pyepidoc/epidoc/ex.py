@@ -1,5 +1,6 @@
 from lxml.etree import _Element
 from .element import EpiDocElement
+from pyepidoc.epidoc.utils import local_name
 
 
 class Ex(EpiDocElement):
@@ -14,8 +15,10 @@ class Ex(EpiDocElement):
 
         self._e = e
 
-        if self.tag.name != 'ex':
-            raise TypeError('Element should be of type <ex>.')
+        if local_name(e) != 'ex':
+            raise TypeError(f'Element should be of type <ex>, '
+                            f'but is of type <{local_name(e)}>.')
+
 
     def __str__(self) -> str:
         return ''.join([
