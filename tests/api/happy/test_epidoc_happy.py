@@ -1,4 +1,8 @@
-from pyepidoc.epidoc.epidoc import EpiDoc
+from lxml.etree import _Element
+from lxml import etree
+
+from pyepidoc.epidoc.epidoc import EpiDoc, Token, Expan
+from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.utils import head
 from pyepidoc.epidoc.funcs import lang, line
 
@@ -88,6 +92,17 @@ def test_abbr_forms():
     assert token.leiden_form == 'IIvir(o)'
     assert token.leiden_plus_form == '|IIvir(o)'
     
+
+def test_am():
+    """
+    Tests that <am> within <expan> is represented correctly
+    as a string
+    """
+    # from ISic000481
+    xmlstr = "<expan><abbr>A<am>A</am>u<am>u</am>g<am>g</am></abbr><ex>ustorum</ex></expan>"
+    elem = etree.fromstring(xmlstr)
+    token = Expan(elem)
+    assert str(token) == r"A{A}U{U}G{G}ustorum"
 
 
 def test_langs():
