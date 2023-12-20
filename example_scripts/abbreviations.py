@@ -9,14 +9,18 @@ from pyepidoc.epidoc.funcs import lang, owner_doc
 from pyepidoc.utils import top, listfilter
 from pyepidoc.displayutils import show_elems
 
-corpus_path = '' # insert path to your corpus here 
+MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
+MASTER_FORKED_PATH = '/data/ISicily/ISicily-forked/ISicily/inscriptions/'
+
+corpus_path = MASTER_PATH # insert path to your corpus here 
 
 corpus = EpiDocCorpus(corpus_path)
 
 abbreviations = [expan for expan in corpus.expans]
 print('Total abbreviations in I.Sicily corpus: ', len(abbreviations))
 
-suspensions = [abbr for abbr in abbreviations if abbr.abbr_type == AbbrType.suspension]
+suspensions = [abbr for abbr in abbreviations 
+               if abbr.abbr_type == AbbrType.suspension]
 print('Total suspensions in corpus: ', len(suspensions))
 
 latin_susp = [susp for susp in suspensions 
@@ -41,7 +45,8 @@ print(show_elems(top(suspensions, 10)))
 doc000001 = owner_doc(suspensions[0])
 print(doc000001.edition_text)
 
-contractions = [abbr for abbr in abbreviations if abbr.abbr_type == AbbrType.contraction]
+contractions = [abbr for abbr in abbreviations 
+                if abbr.abbr_type == AbbrType.contraction]
 print('Total contractions in corpus: ', len(contractions))
 
 latin_contractions = [contraction for contraction in contractions 
@@ -54,7 +59,7 @@ print('of which Greek: ', len(greek_contractions))
 
 other_contractions = [contraction for contraction in contractions 
     if lang(contraction) not in ['grc', 'la']]
-print('of which Greek: ', len(other_contractions))
+print('of which other: ', len(other_contractions))
 
 top_10_contractions = [contraction for contraction in top(contractions, 10)]
 

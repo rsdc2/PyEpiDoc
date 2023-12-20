@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .element import EpiDocElement
+from pyepidoc.epidoc.utils import descendant_text
 from typing import Optional
 
 class Am(EpiDocElement):    
@@ -16,14 +17,15 @@ class Am(EpiDocElement):
         return ''.join([
             '{',
             self.text_desc_compressed_whitespace,
-            '}',
-            f"{'' if self.tail is None else self.tail.strip()}"
+            '}'
         ])
 
     @property
     def first_char(self) -> Optional[str]:
-        if len(self.text_desc_compressed_whitespace.strip()) > 0:
-            # .strip() is used to exclude cases where there is text, but is whitespace
-            return self.text_desc_compressed_whitespace[0]
+        # .strip() is used to exclude cases where there is text, 
+        # but is whitespace
+        text = self.text_desc_compressed_whitespace.strip()
+        if len(text) > 0:
+            return text[0]
 
         return None

@@ -100,6 +100,7 @@ class Expan(EpiDocElement):
         from .abbr import Abbr
         from .am import Am
         from .ex import Ex
+        from .hi import Hi
         from .lb import Lb
         from .supplied import Supplied
 
@@ -107,6 +108,7 @@ class Expan(EpiDocElement):
             'abbr': Abbr,
             'am': Am,
             'ex': Ex,
+            'hi': Hi, 
             'lb': Lb,
             'supplied': Supplied
         }

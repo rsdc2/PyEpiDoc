@@ -4,9 +4,22 @@ from typing import Literal
 import re
 
 from lxml.etree import _Element, _ElementUnicodeResult
+from lxml import etree
 from pyepidoc.xml.utils import local_name
+from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.epidoc.epidoc_types import OrigTextType, RegTextType
 from pyepidoc.constants import NS
+
+
+def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[BaseElement]):
+    """
+    Returns the string representation of the element specified in 
+    "epidoc_elem_type"
+    """
+    elem = etree.fromstring(xml, None)
+    epidoc_elem = epidoc_elem_type(elem)
+    return str(epidoc_elem)
 
 
 def leiden_str(elem: _Element, classes: dict[str, type]) -> str:
@@ -18,7 +31,11 @@ def leiden_str(elem: _Element, classes: dict[str, type]) -> str:
     return str(callable_from_localname(elem, classes))
 
 
-def get_text(elem: _Element | _ElementUnicodeResult) -> str:
+def descendant_text(elem: _Element | _ElementUnicodeResult) -> str:
+    """
+    Returns descendant text
+    """
+
     if type(elem) is _ElementUnicodeResult:
         s = str(elem)
     else: 
@@ -48,10 +65,7 @@ def leiden_str_from_children(
 
     children: list[_Element | _ElementUnicodeResult] = \
         [child for child in parent.xpath(xpath_str, namespaces={'ns': NS})]
-
-    objs = [classes.get(local_name(child), get_text)(child) 
-            for child in children]
-    
+    objs = [classes.get(local_name(child), descendant_text)(child) for child in children]
     return ''.join([str(obj) for obj in objs])
 
 

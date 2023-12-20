@@ -13,12 +13,15 @@ from .lb import Lb
 class Abbr(EpiDocElement):    
     def __str__(self) -> str:
         from .unclear import Unclear
+        from .hi import Hi
 
         element_classes: dict[str, type] = {
             'am': Am,
+            'hi': Hi,
             'lb': Lb,
             'unclear': Unclear
         }
+        
         return leiden_str_from_children(
             self.e,
             element_classes,

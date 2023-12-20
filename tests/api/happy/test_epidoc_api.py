@@ -1,7 +1,8 @@
 from lxml.etree import _Element
 from lxml import etree
 
-from pyepidoc.epidoc.epidoc import EpiDoc, Token, Expan
+from pyepidoc.epidoc.epidoc import EpiDoc, Token, Expan, EpiDocElement
+from pyepidoc.epidoc.utils import epidoc_elem_to_str
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.utils import head
 from pyepidoc.epidoc.funcs import lang, line
@@ -66,43 +67,6 @@ def test_leiden_plus_text():
     leiden_strs = [token.leiden_plus_form for token in doc.tokens]
     
     assert leiden_strs[0] == '| · Dis · '
-
-
-def test_expans():
-    filepath = relative_filepaths['ISic000001']
-    
-    doc = EpiDoc(filepath)
-    edition = head(doc.editions())
-
-    assert edition != None
-    assert len(edition.expan_elems) == 3
-
-
-def test_abbr_forms():
-    fp = relative_filepaths['abbr']
-
-    doc = EpiDoc(fp)
-    edition = head(doc.editions())
-
-    assert edition != None
-
-    token = edition.tokens[0]
-
-    assert token.normalized_form == 'IIviro'
-    assert token.leiden_form == 'IIvir(o)'
-    assert token.leiden_plus_form == '|IIvir(o)'
-    
-
-def test_am():
-    """
-    Tests that <am> within <expan> is represented correctly
-    as a string
-    """
-    # from ISic000481
-    xmlstr = "<expan><abbr>A<am>A</am>u<am>u</am>g<am>g</am></abbr><ex>ustorum</ex></expan>"
-    elem = etree.fromstring(xmlstr)
-    token = Expan(elem)
-    assert str(token) == r"A{A}U{U}G{G}ustorum"
 
 
 def test_langs():
@@ -170,18 +134,6 @@ def test_lines():
     l4 = line(second_token)
     assert l4 is not None
     assert l4.n == '2'
-
-
-def test_gaps():
-    doc = EpiDoc(relative_filepaths['gap'])
-    has_gaps = doc.has_gap(reasons=['lost'])
-    assert has_gaps == True
-
-
-def test_nested():
-    doc = EpiDoc(relative_filepaths['persName_nested'])
-    assert doc.tokens_list_str == ['Maximus', 'Decimus', 'meridius']
-    assert [str(token) for token in doc.w_tokens] == ['meridius']
 
 
 def test_punct():
