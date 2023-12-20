@@ -10,3 +10,5 @@ def test_get_descendant_text():
     elem = etree.fromstring(xmlstr, None)
 
     assert descendant_text(elem) == "AAu"
+
+
