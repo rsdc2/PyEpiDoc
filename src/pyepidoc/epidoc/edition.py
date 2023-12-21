@@ -125,9 +125,9 @@ def prettify(
 
     def prettify_closing_tags(elements:Sequence[BaseElement]) -> None:
         for element in elements:
-            if element.children == []:
+            if element.child_elements == []:
                 continue
-            lastchild = element.children[-1]
+            lastchild = element.child_elements[-1]
             lastchild.tail = ''.join([
                 default_str(lastchild.tail).strip(),
                 "\n",
@@ -325,6 +325,9 @@ class Edition(EpiDocElement):
 
     @property
     def tokens(self) -> list[Token]:
+        # TODO: at the moment a <num> inside a <w> will generate two tokens
+        # Fix: use xpath to remove any items with a token as a parent
+
         return [Token(word) for word 
             in self.get_desc(
                 AtomicTokenType.values() 

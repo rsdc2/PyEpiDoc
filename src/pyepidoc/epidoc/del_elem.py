@@ -1,9 +1,15 @@
 from lxml.etree import _Element
 from .element import EpiDocElement
-from pyepidoc.epidoc.utils import local_name
+from .utils import leiden_str_from_children
+
+from .expan import Expan
+
+element_classes: dict[str, type] = {
+    'expan': Expan
+}
 
 
-class Ex(EpiDocElement):
+class Del(EpiDocElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.
@@ -15,14 +21,13 @@ class Ex(EpiDocElement):
 
         self._e = e
 
-        if local_name(e) != 'ex':
-            raise TypeError(f'Element should be of type <ex>, '
-                            f'but is of type <{local_name(e)}>.')
-
+        if self.local_name != 'del':
+            raise TypeError('Element should be <supplied>.')
 
     def __str__(self) -> str:
+        
         return ''.join([
-            '(',
-            self.text_desc_compressed_whitespace,
-            ')'
+            '⟦',
+            leiden_str_from_children(self.e, element_classes, 'node'),
+            '⟧'
         ])

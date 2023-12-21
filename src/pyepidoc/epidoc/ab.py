@@ -16,7 +16,7 @@ from .epidoc_types import (
     CompoundTokenType,
     SpaceSeparated,
     NoSpace,
-    TextNotIncludedType
+    OrigTextType
 )
 from pyepidoc.shared_types import SetRelation
 from ..utils import head
@@ -327,7 +327,8 @@ class Ab(EpiDocElement):
                     return new_first + acc[1:]
 
                 # Don't sum the whole sequence every time
-                # On multiple passes, information on bounding left and right appears to get lost
+                # On multiple passes, information on bounding left 
+                # and right appears to get lost
                 return reduce(
                     sumfunc, 
                     reversed(element.token_elements + acc[:1]), 
@@ -406,7 +407,7 @@ class Ab(EpiDocElement):
                 AtomicTokenType.values() 
             )
             if Token(token_elem).form_normalized != '' and \
-                parent_name_set(token_elem).intersection(TextNotIncludedType.value_set()) == set()
+                parent_name_set(token_elem).intersection(OrigTextType.value_set()) == set()
         ]
     
     @property

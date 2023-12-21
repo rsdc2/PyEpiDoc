@@ -38,6 +38,9 @@ class Lb(EpiDocElement):
         ])
 
         return f"Lb({content})"
+    
+    def __str__(self) -> str:
+        return '|'
 
     @property
     def break_value(self) -> Optional[str]:

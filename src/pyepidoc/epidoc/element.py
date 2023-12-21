@@ -10,7 +10,6 @@ from typing import (
     overload
 )
 
-from ..utils import update_set_copy
 from ..shared_types import Showable, ExtendableSeq
 from ..xml.baseelement import BaseElement
 
@@ -29,7 +28,7 @@ from lxml.etree import (
 
 from ..xml.namespace import Namespace as ns
 
-from ..constants import NS, XMLNS, SubsumableRels
+from ..constants import TEINS, XMLNS, SubsumableRels
 from ..shared_types import Tag
 from .epidoc_types import (
     whitespace, 
@@ -236,8 +235,7 @@ class EpiDocElement(BaseElement, Showable):
         Return all abbreviation elements as a |list| of |Element|.
         """
 
-        return [EpiDocElement(abbr) for abbr in self.get_desc_elems_by_name('abbr') 
-            if abbr.text is not None]
+        return [EpiDocElement(abbr) for abbr in self.get_desc_elems_by_name('abbr')]
         
     @property
     def has_abbr(self) -> bool:
@@ -333,7 +331,7 @@ class EpiDocElement(BaseElement, Showable):
 
     @property
     def child_elems(self) -> list[EpiDocElement]:
-        return [EpiDocElement(child) for child in self.children]
+        return [EpiDocElement(child) for child in self.child_elements]
     
     @property
     def depth(self) -> int:
@@ -343,13 +341,13 @@ class EpiDocElement(BaseElement, Showable):
             if type(parent.parent) is EpiDocElement])
 
     @property
-    def dict_desc(self) -> dict:
+    def dict_desc(self) -> dict[str, str | dict]:
         if self._e is None:
-            return {'name': self.tag.name, 
+            return {'name': self.local_name, 
                     'ns': self.tag.ns, 
                     'attrs': dict()}
 
-        return {'name': self.tag.name, 
+        return {'name': self.local_name, 
                 'ns': self.tag.ns, 
                 'attrs': self._e.attrib}
 
@@ -364,7 +362,8 @@ class EpiDocElement(BaseElement, Showable):
         as a |list| of |Element|.
         """
 
-        return [EpiDocElement(ex) for ex in self.get_desc_elems_by_name('ex')]
+        return [EpiDocElement(ex) 
+                for ex in self.get_desc_elems_by_name('ex')]
 
     @property
     def expan_elems(self) -> Sequence[EpiDocElement]:
@@ -409,6 +408,19 @@ class EpiDocElement(BaseElement, Showable):
             return None
         
         return self.internal_token_elements[0]
+
+    @property
+    def following_nodes_in_edition(self) -> list[_Element]:
+
+        """
+        Returns any preceding or ancestor |_Element| whose
+        ancestor is an edition.
+        """
+
+        return self._e.xpath(
+            'following::node()[ancestor::x:div[@type="edition"]]', 
+            namespaces={"x": TEINS}
+        )
 
     @property
     def gaps(self) -> list[EpiDocElement]:
@@ -469,7 +481,7 @@ class EpiDocElement(BaseElement, Showable):
         if self._e is None:
             return ""
 
-        xpathres = self._e.xpath(f'preceding::x:idno[@type="filename"]', namespaces={"x": NS}) 
+        xpathres = self._e.xpath(f'preceding::x:idno[@type="filename"]', namespaces={"x": TEINS}) 
         
         if type(xpathres) is not list:
             raise TypeError("XPath result is not a list.")
@@ -665,6 +677,24 @@ class EpiDocElement(BaseElement, Showable):
         return last(get_preceding_lb(self))
 
     @property
+    def leiden_elems(self) -> Sequence[EpiDocElement]:
+        """
+        Return all abbreviation expansions 
+        (i.e. abbreviation, expansion, supplied, gap) 
+        as a |list| of |Element|.
+        """
+
+        return [EpiDocElement(expan) 
+                for expan in self.get_desc_elems_by_name([
+                    'abbr',
+                    'ex',
+                    # 'expan',
+                    'gap', 
+                    'supplied',
+                    'g'
+                ])]
+
+    @property
     def next_no_spaces(self) -> list[EpiDocElement]:
 
         """Returns a list of the next |Element|s not 
@@ -677,7 +707,7 @@ class EpiDocElement(BaseElement, Showable):
             if isinstance(next_elem, EpiDocElement):
                 if next_elem.e is None:
                     return False
-                if next_elem.e.tag == ns.give_ns('lb', NS):
+                if next_elem.e.tag == ns.give_ns('lb', TEINS):
                     if next_elem.e.attrib.get('break') == 'no':
                         return True
                 if next_elem.tag.name == "Comment":
@@ -781,6 +811,20 @@ class EpiDocElement(BaseElement, Showable):
             raise TypeError('Parent is of incorrect type.')
 
     @property
+    def preceding_nodes_in_edition(
+        self) -> list[_Element | _ElementUnicodeResult]:
+
+        """
+        Returns any preceding or ancestor |_Element| or 
+        |_ElementUnicodeResult| whose ancestor is an edition.
+        """
+
+        return self._e.xpath(
+            'preceding::node()[ancestor::x:div[@type="edition"]]', 
+            namespaces={"x": TEINS}
+        )
+
+    @property
     def preceding_or_ancestor_in_edition(self) -> list[_Element]:
 
         """
@@ -791,8 +835,13 @@ class EpiDocElement(BaseElement, Showable):
         if self._e is None:
             return []
 
-        return self._e.xpath('preceding::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) \
-            + self._e.xpath('ancestor::*[ancestor::x:div[@type="edition"]]', namespaces={"x": NS}) 
+        return self._e.xpath(
+            'preceding::*[ancestor::x:div[@type="edition"]]', 
+            namespaces={"x": TEINS}
+        ) + self._e.xpath(
+            'ancestor::*[ancestor::x:div[@type="edition"]]', 
+            namespaces={"x": TEINS}
+        ) 
 
     @property
     def _prototokens(self) -> list[str]:
@@ -994,7 +1043,7 @@ class EpiDocElement(BaseElement, Showable):
 
         # Handle interpuncts
         if prototoken is not None and prototoken.strip() in ['·', '·', '❦', '∙']:
-            tagname = ns.give_ns('g', ns=NS)
+            tagname = ns.give_ns('g', ns=TEINS)
             new_g = etree.Element(tagname, nsmap=None, attrib=None)
 
             if prototoken: 
@@ -1047,11 +1096,11 @@ class EpiDocElement(BaseElement, Showable):
             return EpiDocElement(new_parent, final_space=True)
         else:
             if prototoken: 
-                tagname = ns.give_ns('w', ns=NS)
+                tagname = ns.give_ns('w', ns=TEINS)
                 new_w = etree.Element(tagname, None, None)
                 new_w.text = prototoken # type: ignore
             else:
-                new_w = etree.Element(ns.give_ns('w', ns=NS), None, None)
+                new_w = etree.Element(ns.give_ns('w', ns=TEINS), None, None)
  
             for child in subelements:
                 new_w.append(child)

@@ -1,17 +1,32 @@
 from __future__ import annotations
 
 from typing import Optional
-from .element import EpiDocElement
+
 from ..utils import head
+
+from .element import EpiDocElement
+from .utils import leiden_str_from_children
 from .am import Am
+from .lb import Lb
 
 
 class Abbr(EpiDocElement):    
     def __str__(self) -> str:
-        ams = [Am(elem.e) for elem in self.desc_elems
-            if elem.local_name == 'am']
+        from .unclear import Unclear
+        from .hi import Hi
 
-        return self.text_desc.strip() + ''.join([str(am) for am in ams])
+        element_classes: dict[str, type] = {
+            'am': Am,
+            'hi': Hi,
+            'lb': Lb,
+            'unclear': Unclear
+        }
+
+        return leiden_str_from_children(
+            self.e,
+            element_classes,
+            'node'
+        )
 
     @property
     def am(self) -> list[Am]:
@@ -26,21 +41,53 @@ class Abbr(EpiDocElement):
         return head(self.am)
 
     @property
-    def first_char(self) -> Optional[str]:
-        if len(self.text_desc_compressed_whitespace.strip()) > 0:   
-            # .strip() is used to exclude cases where there is text, but is whitespace
-            return self.text_desc_compressed_whitespace[0]
+    def first_non_am_char(self) -> Optional[str]:
+        child_text_nodes = self.xpath('descendant::text()[not(ancestor::ns:am)]')
 
-        return None
+        text = ''.join(map(str, child_text_nodes))
+        
+        if text == '':
+            return None
+        
+        return text[0]
+
+    @property
+    def last_non_am_char_before_am(self) -> Optional[str]:
+        child_text_nodes = self.xpath('descendant::text()[not(ancestor::ns:am) and following-sibling::ns:am]')
+
+        text = ''.join(map(str, child_text_nodes))
+        
+        if text == '':
+            return None
+        
+        return text[-1]
 
     @property
     def is_multiplicative(self) -> bool:
+
+        """
+        Returns true if the abbreviation is multiplicative
+        i.e. where there is a repetition of one or more
+        abbreviation markers
+        """
+
         if self.first_am is None:
             return False
+        
+        if self.first_non_am_char is None:
+            return False
+        
+        if self.first_am.first_char is None:
+            return False
 
-        if self.first_char == self.first_am.first_char:
-            if self.first_char is not None:
-                return True
+        if self.first_non_am_char.lower() == self.first_am.first_char.lower():
+            return True
+        
+        if self.last_non_am_char_before_am is None:
+            return False
+            
+        if self.last_non_am_char_before_am.lower() == self.first_am.first_char.lower():
+            return True
             
         return False
         

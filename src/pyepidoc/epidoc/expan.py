@@ -1,16 +1,20 @@
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import Optional, Literal, cast
+from itertools import chain
+
 from lxml.etree import _Element
 
-from ..xml.baseelement import BaseElement
+from ..utils import head
+
 from .element import EpiDocElement
-from ..utils import head, flatlist
 
 from .ex import Ex
 from .abbr import Abbr
 from .am import Am
+
 from .epidoc_types import AbbrType
+from .utils import leiden_str_from_children, callable_from_localname, local_name
 
 
 class Expan(EpiDocElement):
@@ -26,8 +30,9 @@ class Expan(EpiDocElement):
 
         self._e = e
 
-        if self.tag.name != 'expan':
-            raise TypeError('Element should be of type <expan>.')
+        if local_name(e) != 'expan':
+            raise TypeError(f'Element should be of type <expan>, '
+                            f'but is of type <{local_name(e)}>.')
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
@@ -42,80 +47,167 @@ class Expan(EpiDocElement):
         return f"Expan({content})"
 
     def __str__(self) -> str:
-        objs = [self.abbr_ex_or_am(elem) for elem in self.desc_elems
-            if elem.local_name in ['ex', 'abbr']]
-
-        return ''.join([str(obj) for obj in objs])
+        return self.leiden
 
     @property
-    def abbr(self) -> list[Abbr]:
+    def abbrs(self) -> list[Abbr]:
+        """
+        Returns a list of <abbr> Elements
+        """
         return [Abbr(elem.e) for elem in self.abbr_elems]        
-
-    @property
-    def as_element(self) -> EpiDocElement:
-        return EpiDocElement(self.e)
-
-    @property
-    def first_abbr(self) -> Optional[Abbr]:
-        return head(self.abbr)
 
     @property
     def abbr_count(self) -> int:
         return len(self.abbr_elems)
 
     @property
+    def abbr_types(self) -> list[AbbrType]:
+        abbr_types = []
+
+        if self.is_multiplicative:
+            abbr_types.append(AbbrType.multiplication)  
+
+        if self.is_suspension:
+            abbr_types.append(AbbrType.suspension)
+
+        if self.is_contraction:
+            abbr_types.append(AbbrType.contraction)
+
+        if self.is_contraction_with_suspension:
+            abbr_types.append(AbbrType.contraction_with_suspension)
+
+        return abbr_types
+
+    @property
     def am(self) -> list[Am]:
-        return flatlist([abbr.am for abbr in self.abbr])
+        return list(chain(*[abbr.am for abbr in self.abbrs]))
 
     @property
     def am_count(self) -> int:
         return len(self.am_elems)
-
-    @staticmethod
-    def abbr_ex_or_am(elem: BaseElement) -> Optional[Union[Abbr, Ex, Am]]:
-
-        element_classes: dict[str, type] = {
-            'ex': Ex,
-            'abbr': Abbr,
-            'am': Am
-        }
-
-        tag = elem.local_name
-        cls = element_classes.get(tag, None)
-
-        if cls is None:
-            return None
-
-        return cls(elem.e)
+    
+    @property
+    def as_element(self) -> EpiDocElement:
+        return EpiDocElement(self.e)
 
     @property
-    def abbr_type(self) -> AbbrType:
+    def first_abbr(self) -> Optional[Abbr]:
+        return head(self.abbrs)
 
-        if self.first_abbr is not None:
-            if self.first_abbr.is_multiplicative:
-                return AbbrType.multiplication  
+    @property
+    def element_classes(self) -> dict[str, type]:
+        from .abbr import Abbr
+        from .am import Am
+        from .ex import Ex
+        from .hi import Hi
+        from .lb import Lb
+        from .supplied import Supplied
 
-        if len(self.abbr) == 1 and len(self.ex) == 1:
-            return AbbrType.suspension
+        element_classes: dict[str, type] = {
+            'abbr': Abbr,
+            'am': Am,
+            'ex': Ex,
+            'hi': Hi, 
+            'lb': Lb,
+            'supplied': Supplied
+        }
 
-        if len(self.abbr) > 1:
-
-            if self.last_child is not None:
-                last_child_type = type(self.abbr_ex_or_am(self.last_child))
-                
-                if last_child_type is Abbr:
-                    return AbbrType.contraction
-                elif last_child_type is Ex:
-                    return AbbrType.contraction_with_suspension
-
-
-        return AbbrType.unknown
+        return element_classes
 
     @property
     def ex_count(self) -> int:
         return len(self.ex_elems)
 
     @property
-    def ex(self) -> list[Ex]:
-        return [Ex(elem.e) for elem in self.ex_elems]        
+    def exs(self) -> list[Ex]:
+        return [Ex(elem.e) for elem in self.ex_elems]
 
+    def _desc_text_node_parent(self, position: str) -> Optional[_Element]:
+        xpath = f'descendant::text()[position()={position}]/parent::*'
+        result = head(self.xpath(xpath))
+        if result is None:
+            return None
+        return cast(_Element, result)
+
+    def _desc_textnode_is_desc_of(self, position: str, localname: str) -> bool:
+        desc_text_parent_xpath = f'descendant::text()[position()={position}]/parent::*'
+        desc_text_parent_of_abbr_xpath = (f'descendant::text()[position()={position}][ancestor::ns:{localname}]/'
+                                          f'parent::*')
+              
+        desc_text_parent_result = self.xpath(desc_text_parent_xpath)
+        desc_text_parent_of_abbr_result = self.xpath(desc_text_parent_of_abbr_xpath)
+
+        if desc_text_parent_result == []:
+            return False
+        
+        if desc_text_parent_of_abbr_result == []:
+            return False
+        
+        return self.xpath(desc_text_parent_of_abbr_xpath)[0] == \
+            self.xpath(desc_text_parent_xpath)[0]
+
+    @property
+    def is_contraction(self) -> bool:
+        """
+        Returns True if:
+            - There is more than one <abbr>
+            - The first descendant text node is a descendant of <abbr>
+            - The last descendant text node is a descendant of <abbr>
+            - The first descendant text node is not a descendant of <am>
+            - These two <abbr> nodes are not the same 
+        """
+
+        if self.abbr_count < 2:
+            return False
+        
+        return self._desc_textnode_is_desc_of('1', 'abbr') and \
+            self._desc_textnode_is_desc_of('last()', 'abbr') and \
+            not self._desc_textnode_is_desc_of('1', 'am') and \
+            not (self._desc_text_node_parent('1') == self._desc_text_node_parent('last()'))
+    
+    @property
+    def is_contraction_with_suspension(self) -> bool:
+        """
+        Returns True if:
+            - There is more than one <abbr> 
+            - There is more than one <ex>
+            - The first descendant text node is a descendant of <abbr>
+            - The last descendant text node is a descendant of <ex>
+            - The first descendant text node is not a descendant of <am>
+        """
+
+        if self.abbr_count < 2 or self.ex_count < 2:
+            return False
+        
+        return self._desc_textnode_is_desc_of('1', 'abbr') and \
+            self._desc_textnode_is_desc_of('last()', 'ex') and \
+            not self._desc_textnode_is_desc_of('1', 'am')
+    
+    @property
+    def is_multiplicative(self) -> bool:
+        return any([abbr.is_multiplicative for abbr in self.abbrs])
+
+    @property
+    def is_suspension(self) -> bool:
+        return len(self.abbrs) == 1 and len(self.exs) == 1
+
+    @property
+    def last_desc_text_node(self) -> str:
+        xpath = 'descendant::text()[position()=last()]'
+        return ''.join(map(str, self.xpath(xpath)))
+
+    def last_desc_textnode_is_desc_of(self, localname: str) -> bool:
+        first_desc_of_abbr_xpath = (f'descendant::text()[ancestor::ns:{localname}]/'
+                                    f'parent::*')
+
+        return self.xpath_float(first_desc_of_abbr_xpath) == 0.0
+
+    @property
+    def leiden(self) -> str:
+        
+        """
+        Returns a Leiden-formatted string representation
+        of the <expan> element
+        """
+
+        return leiden_str_from_children(self.e, self.element_classes, 'element')

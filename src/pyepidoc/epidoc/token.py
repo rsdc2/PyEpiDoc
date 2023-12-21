@@ -1,26 +1,66 @@
 from __future__ import annotations
 
-from typing import Optional, Sequence
-from functools import cached_property
+from typing import (
+    Optional, 
+    Sequence, 
+    Union
+)
+from functools import cached_property, reduce
 from copy import deepcopy
 import re
 
-from lxml.etree import _Element, _Comment, _ElementUnicodeResult
+from lxml.etree import (
+    _Element, 
+    _Comment, 
+    _ElementUnicodeResult
+)
 
 from ..xml import Namespace as ns
+from ..xml.utils import local_name
 from ..utils import maxone, remove_none, head
-from ..constants import NS, XMLNS, A_TO_Z_SET
-from .element import EpiDocElement
+from ..constants import TEINS, XMLNS, A_TO_Z_SET
 from ..xml.baseelement import BaseElement
 
+from .element import EpiDocElement
+from .utils import leiden_str_from_children
+
+from .abbr import Abbr
+from .am import Am
+from .choice import Choice
+from .del_elem import Del
+from .ex import Ex
 from .expan import Expan
+from .g import G
+from .gap import Gap
+from .lb import Lb
+from .supplied import Supplied
+from .surplus import Surplus
+from .unclear import Unclear
+
 from .epidoc_types import (
     CompoundTokenType, 
     AtomicTokenType,
     PUNCTUATION,
-    TextNotIncludedType
+    OrigTextType,
+    RegTextType
 )
 
+Node = Union[_Element, _ElementUnicodeResult]
+
+elem_classes: dict[str, type] = {
+    'abbr': Abbr,
+    'am': Am,
+    'choice': Choice,
+    'ex': Ex, 
+    'del': Del,
+    'expan': Expan,
+    'g': G,
+    'gap': Gap,
+    'lb': Lb,
+    'supplied': Supplied,
+    'surplus': Surplus,
+    'unclear': Unclear
+}
 
 class Token(EpiDocElement):
 
@@ -128,7 +168,7 @@ class Token(EpiDocElement):
             if self.text_desc == self.text_desc.capitalize() and \
                 self.text_desc not in PUNCTUATION:
 
-                self._e.tag = ns.give_ns('name', NS)    # type: ignore
+                self._e.tag = ns.give_ns('name', TEINS)    # type: ignore
 
             return self
         
@@ -154,6 +194,7 @@ class Token(EpiDocElement):
     def form(self) -> str:
         """
         Returns the full form, including any abbreviation expansion.
+        Compare @normalized_form
         """
 
         return self._clean_text(self.text_desc)
@@ -166,7 +207,61 @@ class Token(EpiDocElement):
         also excludes text from <g>, <surplus> and <del> elements
         """
         return self.normalized_form
+    
+    @property
+    def leiden_form(self) -> str:
+        """
+        Returns the form per Leiden conventions, i.e. with
+        abbreviations expanded with brackets
+        """
+
+        return leiden_str_from_children(self.e, elem_classes, 'node')
+
+    @property
+    def leiden_plus_form(self) -> str:
+        """
+        Returns the Leiden form, with 
+        interpunts indicated by middle dot;
+        line breaks are indicated with vertical bar '|'
+        """
+
+        def string_rep(n: Node) -> str:
+            ln = local_name(n)
+
+            if ln in ['g', 'lb', 'gap']:
+                return str(elem_classes[ln](n))
+            
+            return ''
+
+        def get_next_non_text(
+                acc: list[Node],
+                node: Node
+            ) -> list[Node]:
+
+            if acc != []:
+                last = acc[-1]
+
+                if type(last) is _ElementUnicodeResult:
+                    if str(last).strip() not in ['', '·']:
+                        return acc 
+                
+                if local_name(last) in ['lb', 'w', 'name', 'persName']:
+                    return acc
+            
+            return acc + [node]
+
+        preceding = reversed([e for e in self.preceding_nodes_in_edition])
+        following = [e for e in self.following_nodes_in_edition]
+
+        preceding_upto_text: list[Node] = \
+            list(reversed(reduce(get_next_non_text, preceding, list[Node]()))) # type: ignore
+        following_upto_text: list[Node] = reduce(get_next_non_text, following, [])
         
+        prec_text = ''.join(map(string_rep, preceding_upto_text))
+        following_text = ''.join(map(string_rep, following_upto_text))
+
+        return prec_text + self.leiden_form + following_text        
+
     @property
     def lemma(self) -> Optional[str]:
         return self.get_attrib('lemma')
@@ -180,9 +275,10 @@ class Token(EpiDocElement):
         """
         Returns the normalized form of the token, i.e.
         taking the text from <reg> not <orig>, <corr> not <sic>;
-        also excludes text from <g>, <surplus> and <del> elements
+        also excludes text from <g>.
+        Compare @form and @orig_form
         """
-        non_ancestors = TextNotIncludedType.values()
+        non_ancestors = OrigTextType.values()
 
         ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                  for ancestor in non_ancestors])
@@ -196,8 +292,23 @@ class Token(EpiDocElement):
         :return: |str| or None containing the grammatical number of the token
         """
 
-        pos = self.pos
-        return pos[2] if pos else None
+        return self.pos[2] if self.pos else None
+
+    @cached_property
+    def orig_form(self) -> str:
+        """
+        Returns the normalized form of the token, i.e.
+        taking the text from <reg> not <orig>, <corr> not <sic>;
+        also excludes text from <g>.
+        Compare @form and @normalized_form
+        """
+        non_ancestors = RegTextType.values()
+
+        ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
+                                 for ancestor in non_ancestors])
+
+        normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
+        return self._clean_text(''.join([str(t) for t in normalized_text]))
 
     @property
     def pos(self) -> Optional[str]:

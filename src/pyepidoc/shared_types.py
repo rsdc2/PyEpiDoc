@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import namedtuple
 from enum import Enum
-from typing import Sequence, TypeVar, Generic
+from typing import Sequence, TypeVar
 
 import abc
 import operator

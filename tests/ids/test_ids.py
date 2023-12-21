@@ -1,8 +1,9 @@
 from pyepidoc.epidoc.ids import *
 import random
 
+
 def test_id_correct_expansion():
-    ID = 'ISic999999-9999'
+    ID = 'ISic099999-99999' # 'ISic999999-9999'
     b = 52
     x = compress(ID, b)
     y = decompress(x, b)
@@ -10,21 +11,19 @@ def test_id_correct_expansion():
     assert y == ID
 
 
-def generate_isic_ids(max_doc_id=10, max_token_id=10):
+def generate_isic_ids(max_doc_id: int=10, max_token_id: int=10):
     
     r1 = iter(range(0, max_doc_id))
 
     for i in r1:
         r2 = iter(range(0, max_token_id))
         for j in r2:
-
-
             inscription_id = insert_fixed_strs(str(i) + str(j))
         
             yield inscription_id
 
 
-def full_circle(id:str, base:int):
+def full_circle(id: str, base: int):
     return decompress(compress(id, base), base)
 
 
