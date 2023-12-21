@@ -43,7 +43,8 @@ print('First 10 examples:')
 print(show_elems(top(suspensions, 10)))
 
 doc000001 = owner_doc(suspensions[0])
-print(doc000001.edition_text)
+if doc000001 is not None:
+    print(doc000001.edition_text)
 
 contractions = [abbr for abbr in abbreviations 
                 if abbr.abbr_type == AbbrType.contraction]
