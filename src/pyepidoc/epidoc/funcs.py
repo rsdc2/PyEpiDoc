@@ -1,5 +1,5 @@
 from typing import Optional, Sequence
-from os import getcwd
+from itertools import chain
 
 from .epidoc_types import (
     SpaceUnit
@@ -12,7 +12,7 @@ from .edition import Edition
 from .lb import Lb
 
 from ..constants import *
-from ..utils import maxone, flatlist, head
+from ..utils import maxone, head
 
 
 def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
@@ -78,8 +78,8 @@ def lang(elem: EpiDocElement) -> Optional[str]:
     """
 
     ab_ancestors = ancestor_abs(elem)
-    ab_langs = flatlist([ab.lang for ab in ab_ancestors 
-        if ab.lang is not None])
+    ab_langs = list(chain(*[ab.lang for ab in ab_ancestors 
+        if ab.lang is not None]))
 
     ab_lang = head(ab_langs, throw_if_more_than_one=False)
 

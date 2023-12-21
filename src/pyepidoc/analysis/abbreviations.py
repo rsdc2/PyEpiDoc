@@ -2,28 +2,33 @@
 Functions for analysing abbreviation distributions in 
 an EpiDoc corpus
 """
+from typing import Iterable
 from pyepidoc import EpiDocCorpus, EpiDoc
 from pyepidoc.epidoc.expan import Expan
 from pyepidoc.utils import contains
 from pyepidoc.shared_types import SetRelation
-
+from pyepidoc.epidoc.funcs import lang
+from copy import deepcopy
 
 # def filter_on(expan: Expan)
 
 
-def distribution(corpus: EpiDocCorpus) -> dict[str, int]:
+def distribution_from_corpus(corpus: EpiDocCorpus) -> dict[str, int]:
     """
     Provides statistics for the distribution of 
     abbreviations in an EpiDoc corpus.
     Returned as dict
     """
 
-    expans = corpus.expans
+    return distribution_from_expans(corpus.expans)
 
-    suspensions = filter(lambda expan: expan.is_suspension, expans)
-    contractions = filter(lambda expan: expan.is_contraction, expans)
-    contractions_with_suspension = filter(lambda expan: expan.is_contraction_with_suspension, expans)
-    multiplications = filter(lambda expan: expan.is_multiplicative, expans)
+
+
+def distribution_from_expans(expans: Iterable[Expan]) -> dict[str, int]:
+    suspensions = filter(lambda expan: expan.is_suspension, deepcopy(expans))
+    contractions = filter(lambda expan: expan.is_contraction, deepcopy(expans))
+    contractions_with_suspension = filter(lambda expan: expan.is_contraction_with_suspension, deepcopy(expans))
+    multiplications = filter(lambda expan: expan.is_multiplicative, deepcopy(expans))
 
     return {
         'suspensions': len(list(suspensions)),
@@ -33,23 +38,43 @@ def distribution(corpus: EpiDocCorpus) -> dict[str, int]:
     }
 
 
+
 def expans(corpus: EpiDocCorpus) -> list[str]:
     return list(map(str, corpus.expans))
 
 
-def overall_distribution(corpus: EpiDocCorpus) -> dict[str, dict[str, int]]:
+def overall_distribution_via_expans(corpus: EpiDocCorpus) -> dict[str, dict[str, int]]:
+    # latin = corpus.filter_by_languages(['la'])
+    # greek = corpus.filter_by_languages(['grc'])
+    # other = corpus.filter_by_languages(['la', 'grc'], SetRelation.disjoint)
+    expans = corpus.expans
+    latin_expans = filter(lambda expan: lang(expan) == 'la', deepcopy(expans))
+    # greek_expans = filter(lambda expan: lang(expan) == 'grc', deepcopy(expans))
+    # other_expans = filter(lambda expan: lang(expan) not in ['la', 'grc'], deepcopy(expans))
+
+    latin_stats = distribution_from_expans(latin_expans)
+    # greek_stats = distribution_from_expans(greek_expans)
+    # other_stats = distribution_from_expans(other_expans)
+
+    return {
+        # 'Greek': greek_stats,
+        'Latin': latin_stats,
+        # 'Other': other_stats
+    }
+
+
+def overall_distribution_via_corpus(corpus: EpiDocCorpus) -> dict[str, dict[str, int]]:
     latin = corpus.filter_by_languages(['la'])
     greek = corpus.filter_by_languages(['grc'])
     other = corpus.filter_by_languages(['la', 'grc'], SetRelation.disjoint)
 
-    latin_stats = distribution(latin)
-    greek_stats = distribution(greek)
-    other_stats = distribution(other)
+    latin_stats = distribution_from_corpus(latin)
+    greek_stats = distribution_from_corpus(greek)
+    other_stats = distribution_from_corpus(other)
 
     return {
         'Greek': greek_stats,
         'Latin': latin_stats,
         'Other': other_stats
     }
-
 

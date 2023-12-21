@@ -6,15 +6,24 @@ from pyepidoc.shared_types import SetRelation
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
 corpus_path = MASTER_PATH # insert path to your corpus here 
 
-if __name__ == '__main__':
+def print_overall_distribution():
     corpus = EpiDocCorpus(corpus_path)
+    print(overall_distribution_via_corpus(corpus))
 
-    greek = corpus.filter_by_languages(['grc'])
-    latin = corpus.filter_by_languages(['la'])
+
+def print_instances():
+    corpus = EpiDocCorpus(corpus_path)
+    # greek = corpus.filter_by_languages(['grc'])
+    # latin = corpus.filter_by_languages(['la'])
     other = corpus.filter_by_languages(['la', 'grc'], SetRelation.disjoint)
 
-    results = list(filter(lambda expan: expan, other.expans))
+    results = list(filter(lambda expan: expan, other.expans))        
     print(show_elems(results))
 
-    # print(overall_distribution(corpus))
+
+if __name__ == '__main__':
+
+    # print_overall_distribution()
+    print_instances()
+
     
