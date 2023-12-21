@@ -52,7 +52,7 @@ def test_suspensions(xmlstr: str):
 
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
-    assert expan.abbr_type == AbbrType.suspension
+    assert expan.abbr_types == AbbrType.suspension
 
 
 @pytest.mark.parametrize("xmlstr", contractions)
@@ -60,7 +60,7 @@ def test_contractions(xmlstr: str):
 
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
-    assert expan.abbr_type == AbbrType.contraction
+    assert expan.is_contraction
 
 
 @pytest.mark.parametrize("xmlstr", non_contractions)
@@ -68,11 +68,11 @@ def test_non_contractions(xmlstr: str):
 
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
-    assert expan.abbr_type != AbbrType.contraction
+    assert not expan.is_contraction
 
 
 def test_first_desc_node_is_desc_of_abbr():
     xml = '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
     elem = etree.fromstring(xml, None)
     expan = Expan(elem)
-    assert expan.first_desc_textnode_is_desc_of('abbr') == True
+    assert expan._desc_textnode_is_desc_of('1', 'abbr') == True

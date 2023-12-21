@@ -6,6 +6,7 @@ from pyepidoc.epidoc.abbr import Abbr
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.utils import head
+from pyepidoc.constants import TEINS
 
 
 relative_filepaths = {
@@ -101,7 +102,7 @@ def test_am_6():
     assert epidoc_elem_to_str(xmlstr, Expan) == r"d{d}(ominis)"
 
 
-def test_expans():
+def test_expans_1():
     filepath = relative_filepaths['ISic000001']
     
     doc = EpiDoc(filepath)
@@ -109,6 +110,35 @@ def test_expans():
 
     assert edition != None
     assert len(edition.expan_elems) == 3
+
+
+def test_expans_2():
+    xml = f'<expan xmlns="{TEINS}">Kal<abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
+    elem = etree.fromstring(xml, None)
+    expan = Expan(elem)
+    # breakpoint()
+    assert expan._desc_textnode_is_desc_of('1', 'expan')
+
+
+def test_expans_3():
+    xml = f'<expan xmlns="{TEINS}">Kal<abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
+    elem = etree.fromstring(xml, None)
+    expan = Expan(elem)
+    assert not expan._desc_textnode_is_desc_of('1', 'abbr')
+
+
+def test_expans_4():
+    xml = f'<expan xmlns="{TEINS}"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
+    elem = etree.fromstring(xml, None)
+    expan = Expan(elem)
+    assert expan._desc_textnode_is_desc_of('last()', 'abbr')    
+
+
+def test_expans_5():
+    xml = f'<expan xmlns="{TEINS}"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr>s</expan>'
+    elem = etree.fromstring(xml, None)
+    expan = Expan(elem)
+    assert not expan._desc_textnode_is_desc_of('last()', 'abbr')    
 
 
 def test_gaps():

@@ -14,4 +14,4 @@ def test_abbr():
     assert len(abbr.am) == 1
     assert abbr.first_am is not None
     assert abbr.is_multiplicative == True
-    assert expan.abbr_type == AbbrType.multiplication
+    assert expan.abbr_types == AbbrType.multiplication

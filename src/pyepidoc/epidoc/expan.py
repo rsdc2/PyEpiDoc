@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Literal, cast
 from itertools import chain
 
 from lxml.etree import _Element
@@ -61,25 +61,22 @@ class Expan(EpiDocElement):
         return len(self.abbr_elems)
 
     @property
-    def abbr_type(self) -> AbbrType:
+    def abbr_types(self) -> list[AbbrType]:
+        abbr_types = []
 
         if self.is_multiplicative:
-            return AbbrType.multiplication  
+            abbr_types.append(AbbrType.multiplication)  
 
         if self.is_suspension:
-            return AbbrType.suspension
+            abbr_types.append(AbbrType.suspension)
 
-        if len(self.abbrs) > 1:
+        if self.is_contraction:
+            abbr_types.append(AbbrType.contraction)
 
-            if self.last_child is not None:
-                last_child_type = type(callable_from_localname(self.last_child.e, self.element_classes))
-                
-                if last_child_type is Abbr:
-                    return AbbrType.contraction
-                elif last_child_type is Ex:
-                    return AbbrType.contraction_with_suspension
+        if self.is_contraction_with_suspension:
+            abbr_types.append(AbbrType.contraction_with_suspension)
 
-        return AbbrType.unknown
+        return abbr_types
 
     @property
     def am(self) -> list[Am]:
@@ -125,19 +122,29 @@ class Expan(EpiDocElement):
     def exs(self) -> list[Ex]:
         return [Ex(elem.e) for elem in self.ex_elems]
 
-    @property
-    def first_desc_text_node(self) -> str:
-        xpath = 'descendant::text()[position()=1]'
-        return ''.join(map(str, self.xpath(xpath)))
+    def _desc_text_node_parent(self, position: str) -> Optional[_Element]:
+        xpath = f'descendant::text()[position()={position}]/parent::*'
+        result = head(self.xpath(xpath))
+        if result is None:
+            return None
+        return cast(_Element, result)
 
-    def first_desc_textnode_is_desc_of(self, localname: str) -> bool:
-        first_desc_node_xpath = 'descendant::text()[position()=1]'
-        first_desc_of_abbr_xpath = f'descendant::text()[ancestor::ns:{localname}][position()=1]'
+    def _desc_textnode_is_desc_of(self, position: str, localname: str) -> bool:
+        desc_text_parent_xpath = f'descendant::text()[position()={position}]/parent::*'
+        desc_text_parent_of_abbr_xpath = (f'descendant::text()[position()={position}][ancestor::ns:{localname}]/'
+                                          f'parent::*')
+              
+        desc_text_parent_result = self.xpath(desc_text_parent_xpath)
+        desc_text_parent_of_abbr_result = self.xpath(desc_text_parent_of_abbr_xpath)
 
-        xpath = ' = '.join([first_desc_node_xpath, first_desc_of_abbr_xpath])
-
-        return self.xpath_bool(xpath)
-
+        if desc_text_parent_result == []:
+            return False
+        
+        if desc_text_parent_of_abbr_result == []:
+            return False
+        
+        return self.xpath(desc_text_parent_of_abbr_xpath)[0] == \
+            self.xpath(desc_text_parent_xpath)[0]
 
     @property
     def is_contraction(self) -> bool:
@@ -153,9 +160,29 @@ class Expan(EpiDocElement):
         if self.abbr_count < 2:
             return False
         
-        return self.first_desc_textnode_is_desc_of('abbr') and \
-            self.last_desc_textnode_is_desc_of('abbr') and \
-            not self.first_desc_textnode_is_desc_of('am')
+        return self._desc_textnode_is_desc_of('1', 'abbr') and \
+            self._desc_textnode_is_desc_of('last()', 'abbr') and \
+            not self._desc_textnode_is_desc_of('1', 'am') and \
+            not (self._desc_text_node_parent('1') == self._desc_text_node_parent('last()'))
+    
+    @property
+    def is_contraction_with_suspension(self) -> bool:
+        """
+        Returns True if:
+            - There is more than one <abbr>
+            - The first descendant text node is a descendant of <abbr>
+            - The last descendant text node is a descendant of <abbr>
+            - The first descendant text node is not a descendant of <am>
+            - These two <abbr> nodes are not the same 
+        """
+
+        if self.abbr_count < 2:
+            return False
+        
+        return self._desc_textnode_is_desc_of('1', 'abbr') and \
+            self._desc_textnode_is_desc_of('last()', 'abbr') and \
+            not self._desc_textnode_is_desc_of('1', 'am') and \
+            not (self._desc_text_node_parent('1') == self._desc_text_node_parent('last()'))
 
     @property
     def is_multiplicative(self) -> bool:
@@ -171,12 +198,10 @@ class Expan(EpiDocElement):
         return ''.join(map(str, self.xpath(xpath)))
 
     def last_desc_textnode_is_desc_of(self, localname: str) -> bool:
-        last_desc_node_xpath = 'descendant::text()[postion()=last()]'
-        last_desc_of_abbr_xpath = f'descendant::text()[ancestor::ns:{localname}][position()=last()]'
+        first_desc_of_abbr_xpath = (f'descendant::text()[ancestor::ns:{localname}]/'
+                                    f'parent::*')
 
-        xpath = ' = '.join([last_desc_node_xpath, last_desc_of_abbr_xpath])
-
-        return self.xpath_bool(xpath)
+        return self.xpath_float(first_desc_of_abbr_xpath) == 0.0
 
     @property
     def leiden(self) -> str:

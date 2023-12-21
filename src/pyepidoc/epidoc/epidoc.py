@@ -176,7 +176,7 @@ class EpiDoc(DocRoot):
             return self.expans
         
         return [expan for expan in self.expans 
-                if expan.abbr_type == abbr_type]
+                if expan.abbr_types == abbr_type]
                        
     @property
     def first_edition(self) -> Optional[Edition]:

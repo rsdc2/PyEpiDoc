@@ -21,6 +21,9 @@ T = TypeVar('T')
 U = TypeVar('U')
 V = TypeVar('V')
 
+def contains(iterable: Iterable[T], item: T) -> bool:
+    return item in iterable
+
 
 def is_xd(xd_list: list) -> bool:
     return any([type(item) is list for item in xd_list])
