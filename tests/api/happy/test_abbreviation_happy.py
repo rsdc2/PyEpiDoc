@@ -1,5 +1,6 @@
 from pyepidoc import EpiDoc
 from pyepidoc.epidoc.epidoc_types import AbbrType
+from pyepidoc.utils import contains
 
 def test_abbr():
     doc = EpiDoc('api/files/abbreviations/multiplication.xml')
@@ -14,4 +15,4 @@ def test_abbr():
     assert len(abbr.am) == 1
     assert abbr.first_am is not None
     assert abbr.is_multiplicative == True
-    assert expan.abbr_types == AbbrType.multiplication
+    assert contains(expan.abbr_types, AbbrType.multiplication)

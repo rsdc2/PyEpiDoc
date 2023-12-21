@@ -3,6 +3,7 @@ import pytest
 from pyepidoc.epidoc.abbr import Abbr
 from pyepidoc.epidoc.expan import Expan
 from pyepidoc.epidoc.epidoc_types import AbbrType
+from pyepidoc.utils import contains
 from lxml import etree
 
 
@@ -24,6 +25,10 @@ suspensions = [
 
 contractions = [
     '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
+]
+
+contractions_with_suspension = [
+    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>co</abbr><ex>n</ex><abbr>s</abbr><ex>ule</ex></expan>'
 ]
 
 non_contractions = [
@@ -52,7 +57,7 @@ def test_suspensions(xmlstr: str):
 
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
-    assert expan.abbr_types == AbbrType.suspension
+    assert contains(expan.abbr_types, AbbrType.suspension)
 
 
 @pytest.mark.parametrize("xmlstr", contractions)
@@ -69,6 +74,14 @@ def test_non_contractions(xmlstr: str):
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
     assert not expan.is_contraction
+
+
+@pytest.mark.parametrize("xmlstr", contractions_with_suspension)
+def test_contraction_with_suspension(xmlstr: str):
+
+    elem = etree.fromstring(xmlstr, None)
+    expan = Expan(elem)
+    assert expan.is_contraction_with_suspension
 
 
 def test_first_desc_node_is_desc_of_abbr():

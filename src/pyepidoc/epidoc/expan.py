@@ -169,21 +169,20 @@ class Expan(EpiDocElement):
     def is_contraction_with_suspension(self) -> bool:
         """
         Returns True if:
-            - There is more than one <abbr>
+            - There is more than one <abbr> 
+            - There is more than one <ex>
             - The first descendant text node is a descendant of <abbr>
-            - The last descendant text node is a descendant of <abbr>
+            - The last descendant text node is a descendant of <ex>
             - The first descendant text node is not a descendant of <am>
-            - These two <abbr> nodes are not the same 
         """
 
-        if self.abbr_count < 2:
+        if self.abbr_count < 2 or self.ex_count < 2:
             return False
         
         return self._desc_textnode_is_desc_of('1', 'abbr') and \
-            self._desc_textnode_is_desc_of('last()', 'abbr') and \
-            not self._desc_textnode_is_desc_of('1', 'am') and \
-            not (self._desc_text_node_parent('1') == self._desc_text_node_parent('last()'))
-
+            self._desc_textnode_is_desc_of('last()', 'ex') and \
+            not self._desc_textnode_is_desc_of('1', 'am')
+    
     @property
     def is_multiplicative(self) -> bool:
         return any([abbr.is_multiplicative for abbr in self.abbrs])
