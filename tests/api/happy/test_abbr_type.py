@@ -9,11 +9,13 @@ from lxml import etree
 multiplications = [
     '<expan xmlns="http://www.tei-c.org/ns/1.0"><hi rend="supraline"><abbr>d<am>d</am></abbr></hi><ex cert="low">ominis</ex></expan>',     # from ISic000501
     '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>d<am>d</am></abbr><ex>ominis</ex></expan>',
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr><am>d</am>d</abbr><ex>ominis</ex></expan>'
+    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr><am>d</am>d</abbr><ex>ominis</ex></expan>',
+    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>imp<am>p</am></abbr><ex>eratorum</ex></expan>',
+
 ]
 
 non_multiplications = [
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>d<am>d</am></abbr><ex>ominis</ex></expan>',
+    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr><am>Ͻ</am></abbr><ex>mulieris</ex></expan>',
 ]
 
 suspensions = [
@@ -26,6 +28,16 @@ def test_multiplicative(xmlstr: str):
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
     assert expan.is_multiplicative
+
+
+@pytest.mark.parametrize("xmlstr", non_multiplications)
+def test_non_multiplicative(xmlstr: str):
+
+    elem = etree.fromstring(xmlstr, None)
+    expan = Expan(elem)
+    assert not expan.is_multiplicative
+
+
 
 
 @pytest.mark.parametrize("xmlstr", suspensions)

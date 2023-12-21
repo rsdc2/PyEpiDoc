@@ -41,14 +41,26 @@ class Abbr(EpiDocElement):
         return head(self.am)
 
     @property
-    def first_char(self) -> Optional[str]:
-        # .strip() is used to exclude cases where there 
-        # is text, but is whitespace
-        text = self.text_desc_compressed_whitespace.strip()
-        if len(text) > 0:   
-            return text[0]
+    def first_non_am_char(self) -> Optional[str]:
+        child_text_nodes = self.xpath('descendant::text()[not(ancestor::ns:am)]')
 
-        return None
+        text = ''.join(map(str, child_text_nodes))
+        
+        if text == '':
+            return None
+        
+        return text[0]
+
+    @property
+    def last_non_am_char_before_am(self) -> Optional[str]:
+        child_text_nodes = self.xpath('descendant::text()[not(ancestor::ns:am) and following-sibling::ns:am]')
+
+        text = ''.join(map(str, child_text_nodes))
+        
+        if text == '':
+            return None
+        
+        return text[-1]
 
     @property
     def is_multiplicative(self) -> bool:
@@ -61,10 +73,21 @@ class Abbr(EpiDocElement):
 
         if self.first_am is None:
             return False
+        
+        if self.first_non_am_char is None:
+            return False
+        
+        if self.first_am.first_char is None:
+            return False
 
-        if self.first_char == self.first_am.first_char:
-            if self.first_char is not None:
-                return True
+        if self.first_non_am_char.lower() == self.first_am.first_char.lower():
+            return True
+        
+        if self.last_non_am_char_before_am is None:
+            return False
+            
+        if self.last_non_am_char_before_am.lower() == self.first_am.first_char.lower():
+            return True
             
         return False
         
