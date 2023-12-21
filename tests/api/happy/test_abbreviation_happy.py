@@ -7,10 +7,10 @@ def test_abbr():
     assert len(doc.expans) == 1
 
     expan = doc.expans[0]
-    assert len(expan.abbr) == 1
-    assert len(expan.ex) == 1
+    assert len(expan.abbrs) == 1
+    assert len(expan.exs) == 1
 
-    abbr = expan.abbr[0]
+    abbr = expan.abbrs[0]
     assert len(abbr.am) == 1
     assert abbr.first_am is not None
     assert abbr.is_multiplicative == True

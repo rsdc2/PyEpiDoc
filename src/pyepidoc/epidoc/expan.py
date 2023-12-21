@@ -50,7 +50,10 @@ class Expan(EpiDocElement):
         return self.leiden
 
     @property
-    def abbr(self) -> list[Abbr]:
+    def abbrs(self) -> list[Abbr]:
+        """
+        Returns a list of <abbr> Elements
+        """
         return [Abbr(elem.e) for elem in self.abbr_elems]        
 
     @property
@@ -60,14 +63,13 @@ class Expan(EpiDocElement):
     @property
     def abbr_type(self) -> AbbrType:
 
-        if self.first_abbr is not None:
-            if self.first_abbr.is_multiplicative:
-                return AbbrType.multiplication  
+        if self.is_multiplicative:
+            return AbbrType.multiplication  
 
-        if len(self.abbr) == 1 and len(self.ex) == 1:
+        if self.is_suspension:
             return AbbrType.suspension
 
-        if len(self.abbr) > 1:
+        if len(self.abbrs) > 1:
 
             if self.last_child is not None:
                 last_child_type = type(callable_from_localname(self.last_child.e, self.element_classes))
@@ -81,7 +83,7 @@ class Expan(EpiDocElement):
 
     @property
     def am(self) -> list[Am]:
-        return list(chain(*[abbr.am for abbr in self.abbr]))
+        return list(chain(*[abbr.am for abbr in self.abbrs]))
 
     @property
     def am_count(self) -> int:
@@ -93,7 +95,7 @@ class Expan(EpiDocElement):
 
     @property
     def first_abbr(self) -> Optional[Abbr]:
-        return head(self.abbr)
+        return head(self.abbrs)
 
     @property
     def element_classes(self) -> dict[str, type]:
@@ -120,12 +122,61 @@ class Expan(EpiDocElement):
         return len(self.ex_elems)
 
     @property
-    def ex(self) -> list[Ex]:
+    def exs(self) -> list[Ex]:
         return [Ex(elem.e) for elem in self.ex_elems]
 
     @property
+    def first_desc_text_node(self) -> str:
+        xpath = 'descendant::text()[position()=1]'
+        return ''.join(map(str, self.xpath(xpath)))
+
+    def first_desc_textnode_is_desc_of(self, localname: str) -> bool:
+        first_desc_node_xpath = 'descendant::text()[position()=1]'
+        first_desc_of_abbr_xpath = f'descendant::text()[ancestor::ns:{localname}][position()=1]'
+
+        xpath = ' = '.join([first_desc_node_xpath, first_desc_of_abbr_xpath])
+
+        return self.xpath_bool(xpath)
+
+
+    @property
+    def is_contraction(self) -> bool:
+        """
+        Returns True if:
+            - There is more than one <abbr>
+            - The first descendant text node is a descendant of <abbr>
+            - The last descendant text node is a descendant of <abbr>
+            - The first descendant text node is not a descendant of <am>
+            - These two <abbr> nodes are not the same 
+        """
+
+        if self.abbr_count < 2:
+            return False
+        
+        return self.first_desc_textnode_is_desc_of('abbr') and \
+            self.last_desc_textnode_is_desc_of('abbr') and \
+            not self.first_desc_textnode_is_desc_of('am')
+
+    @property
     def is_multiplicative(self) -> bool:
-        return self.abbr_type == AbbrType.multiplication
+        return any([abbr.is_multiplicative for abbr in self.abbrs])
+
+    @property
+    def is_suspension(self) -> bool:
+        return len(self.abbrs) == 1 and len(self.exs) == 1
+
+    @property
+    def last_desc_text_node(self) -> str:
+        xpath = 'descendant::text()[position()=last()]'
+        return ''.join(map(str, self.xpath(xpath)))
+
+    def last_desc_textnode_is_desc_of(self, localname: str) -> bool:
+        last_desc_node_xpath = 'descendant::text()[postion()=last()]'
+        last_desc_of_abbr_xpath = f'descendant::text()[ancestor::ns:{localname}][position()=last()]'
+
+        xpath = ' = '.join([last_desc_node_xpath, last_desc_of_abbr_xpath])
+
+        return self.xpath_bool(xpath)
 
     @property
     def leiden(self) -> str:

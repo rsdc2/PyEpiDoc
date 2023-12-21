@@ -18,7 +18,7 @@ from lxml.etree import (
     _ProcessingInstruction
 )
 
-from ..constants import NS, XMLNS
+from ..constants import TEINS, XMLNS
 from .baseelement import BaseElement
 
 
@@ -152,7 +152,7 @@ class DocRoot:
 
         xpathRes = (self
             .e
-            .xpath(xpathstr, namespaces={'ns': NS})
+            .xpath(xpathstr, namespaces={'ns': TEINS})
         )
 
         if type(xpathRes) is list:
@@ -170,12 +170,12 @@ class DocRoot:
             return []
 
         if not lang:
-            return cast(list[_Element], self.e.xpath(f".//ns:div[@type='{divtype}']", namespaces={'ns': NS}) )
+            return cast(list[_Element], self.e.xpath(f".//ns:div[@type='{divtype}']", namespaces={'ns': TEINS}) )
 
         elif lang:
             return cast(list[_Element], self.e.xpath(
                 f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
-                namespaces={'ns': NS, 'xml': XMLNS}) 
+                namespaces={'ns': TEINS, 'xml': XMLNS}) 
             )
         
         return []
@@ -227,4 +227,4 @@ class DocRoot:
             return []
 
         # NB the cast won't necessarily be correct for all test cases
-        return cast(list[Union[_Element,_ElementUnicodeResult]], self.e.xpath(xpathstr, namespaces={'ns': NS}))
+        return cast(list[Union[_Element,_ElementUnicodeResult]], self.e.xpath(xpathstr, namespaces={'ns': TEINS}))

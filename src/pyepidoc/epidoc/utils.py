@@ -9,7 +9,7 @@ from pyepidoc.xml.utils import local_name
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.epidoc.epidoc_types import OrigTextType, RegTextType
-from pyepidoc.constants import NS
+from pyepidoc.constants import TEINS
 
 
 def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[BaseElement]):
@@ -64,7 +64,7 @@ def leiden_str_from_children(
     xpath_str = f'{child_str}[{ancestors_str}]'
 
     children: list[_Element | _ElementUnicodeResult] = \
-        [child for child in parent.xpath(xpath_str, namespaces={'ns': NS})]
+        [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
     objs = [classes.get(local_name(child), descendant_text)(child) for child in children]
     return ''.join([str(obj) for obj in objs])
 

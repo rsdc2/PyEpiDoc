@@ -26,7 +26,7 @@ from ..shared_types import Tag
 
 from .namespace import Namespace as ns
 
-from ..constants import NS, XMLNS, SubsumableRels
+from ..constants import TEINS, XMLNS, SubsumableRels
 from ..utils import maxone
 
 
@@ -258,6 +258,34 @@ class BaseElement(Showable):
     #     return [BaseElement() 
     #         for child in self._e.chil]
 
+    def get_desc(self, 
+        elemnames: Union[list[str], str], 
+        attribs: Optional[dict[str, str]]=None,
+        ns_prefix: str="ns:",
+        namespace: str=TEINS
+    ) -> list[_Element]:
+
+        if self.e is None: 
+            return []
+        if type(elemnames) is str:
+            _elemnames = [elemnames]
+        elif type(elemnames) is list:
+            _elemnames = elemnames
+        else:
+            raise TypeError("elemnames has incorrect type.")
+
+        xpathstr = ' | '.join([f".//{ns_prefix}{elemname}" + self._compile_attribs(attribs) for elemname in _elemnames])
+
+        xpathRes = (self
+            .e
+            .xpath(xpathstr, namespaces={'ns': namespace})
+        )
+
+        if type(xpathRes) is list:
+            return cast(list[_Element], xpathRes)
+
+        raise TypeError('XPath result is of the wrong type.')
+
     def get_desc_elems_by_name(self, 
         elem_names: Union[list[str], str], 
         attribs: Optional[dict[str, str]]=None
@@ -265,15 +293,52 @@ class BaseElement(Showable):
 
         return [BaseElement(desc) 
             for desc in self.get_desc(elemnames=elem_names, attribs=attribs)]
+    
+    def get_div_descendants(
+        self, 
+        divtype: str, 
+        lang: Optional[str]=None
+    ) -> list[_Element]:
 
-    def get_first_parent_by_name(self, parent_tag_names:list[str]) -> Optional[BaseElement]:
+        if self.e is None: 
+            return []
+
+        if not lang:
+            return cast(list[_Element], self.e.xpath(f".//ns:div[@type='{divtype}']", namespaces={'ns': TEINS}) )
+
+        elif lang:
+            return cast(list[_Element], self.e.xpath(
+                f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
+                namespaces={'ns': TEINS, 'xml': XMLNS}) 
+            )
+        
+        return []
+
+    def get_first_parent_by_name(
+            self, 
+            parent_tag_names:list[str]) -> Optional[BaseElement]:
+
         return maxone(
             lst=self.get_parents_by_name(parent_tag_names), 
             defaultval=None, 
             throw_if_more_than_one=False
         )
+    
+    def get_first_desc_elem(self) -> Optional[BaseElement]:
+        """
+        Return the first descendant element
+        """
 
-    def get_parents_by_name(self,  parenttagnames:list[str]) -> Sequence[BaseElement]:
+        descs = cast(list[_Element], self.xpath("descendant::*", dict()))
+        if descs == []:
+            return None
+        
+        return BaseElement(descs[0])
+
+    def get_parents_by_name(
+            self,  
+            parenttagnames:list[str]) -> Sequence[BaseElement]:
+        
         return [parent for parent in self.parents 
             if parent.tag.name in parenttagnames]
 
@@ -488,63 +553,52 @@ class BaseElement(Showable):
             raise TypeError("Underlying element is None")
         return etree.tostring(self._e)
     
-    def get_desc(self, 
-        elemnames: Union[list[str], str], 
-        attribs: Optional[dict[str, str]]=None,
-        ns_prefix: str="ns:",
-        namespace: str=NS
-    ) -> list[_Element]:
-
-        if self.e is None: 
-            return []
-        if type(elemnames) is str:
-            _elemnames = [elemnames]
-        elif type(elemnames) is list:
-            _elemnames = elemnames
-        else:
-            raise TypeError("elemnames has incorrect type.")
-
-        xpathstr = ' | '.join([f".//{ns_prefix}{elemname}" + self._compile_attribs(attribs) for elemname in _elemnames])
-
-        xpathRes = (self
-            .e
-            .xpath(xpathstr, namespaces={'ns': namespace})
-        )
-
-        if type(xpathRes) is list:
-            return cast(list[_Element], xpathRes)
-
-        raise TypeError('XPath result is of the wrong type.')
-
-    def get_div_descendants(
-        self, 
-        divtype:str, 
-        lang:Optional[str]=None
-    ) -> list[_Element]:
-
-        if self.e is None: 
-            return []
-
-        if not lang:
-            return cast(list[_Element], self.e.xpath(f".//ns:div[@type='{divtype}']", namespaces={'ns': NS}) )
-
-        elif lang:
-            return cast(list[_Element], self.e.xpath(
-                f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
-                namespaces={'ns': NS, 'xml': XMLNS}) 
-            )
-        
-        return []
-
-    def xpath(self, xpathstr:str) -> list[_Element | _ElementUnicodeResult]:
+    def xpath(
+            self, 
+            xpathstr: str, 
+            namespaces: dict[str, str]={'ns': TEINS}
+            ) -> list[_Element | _ElementUnicodeResult]:
         """
         Apply XPath expression to the current element, in which 
         the prefix 'ns' corresponds to the namespace
         "http://www.tei-c.org/ns/1.0"
         """
 
-        if self.e is None: 
-            return []
+        result = self.e.xpath(xpathstr, namespaces=namespaces)
 
         # NB the cast won't necessarily be correct for all test cases
-        return cast(list[Union[_Element,_ElementUnicodeResult]], self.e.xpath(xpathstr, namespaces={'ns': NS}))
+        return list[Union[_Element,_ElementUnicodeResult]](result)
+    
+    def xpath_bool(
+            self, 
+            xpathstr: str, 
+            namespaces: dict[str, str]={'ns': TEINS}) -> bool:
+        
+        """
+        Returns the result of an xpath boolean evaluation.
+        Returns False if a boolean is not returned.
+        """
+
+        result = self.e.xpath(xpathstr, namespaces=namespaces)
+
+        if type(result) is bool:
+            return result
+    
+        return False
+    
+    def xpath_float(
+            self, 
+            xpathstr: str, 
+            namespaces: dict[str, str]={'ns': TEINS}) -> Optional[float]:
+        
+        """
+        Returns the result of an xpath boolean evaluation.
+        Returns False if a boolean is not returned.
+        """
+
+        result = self.e.xpath(xpathstr, namespaces=namespaces)
+
+        if type(result) is float:
+            return result
+    
+        return None

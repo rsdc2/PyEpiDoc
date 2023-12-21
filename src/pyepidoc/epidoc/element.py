@@ -28,7 +28,7 @@ from lxml.etree import (
 
 from ..xml.namespace import Namespace as ns
 
-from ..constants import NS, XMLNS, SubsumableRels
+from ..constants import TEINS, XMLNS, SubsumableRels
 from ..shared_types import Tag
 from .epidoc_types import (
     whitespace, 
@@ -419,7 +419,7 @@ class EpiDocElement(BaseElement, Showable):
 
         return self._e.xpath(
             'following::node()[ancestor::x:div[@type="edition"]]', 
-            namespaces={"x": NS}
+            namespaces={"x": TEINS}
         )
 
     @property
@@ -481,7 +481,7 @@ class EpiDocElement(BaseElement, Showable):
         if self._e is None:
             return ""
 
-        xpathres = self._e.xpath(f'preceding::x:idno[@type="filename"]', namespaces={"x": NS}) 
+        xpathres = self._e.xpath(f'preceding::x:idno[@type="filename"]', namespaces={"x": TEINS}) 
         
         if type(xpathres) is not list:
             raise TypeError("XPath result is not a list.")
@@ -707,7 +707,7 @@ class EpiDocElement(BaseElement, Showable):
             if isinstance(next_elem, EpiDocElement):
                 if next_elem.e is None:
                     return False
-                if next_elem.e.tag == ns.give_ns('lb', NS):
+                if next_elem.e.tag == ns.give_ns('lb', TEINS):
                     if next_elem.e.attrib.get('break') == 'no':
                         return True
                 if next_elem.tag.name == "Comment":
@@ -821,7 +821,7 @@ class EpiDocElement(BaseElement, Showable):
 
         return self._e.xpath(
             'preceding::node()[ancestor::x:div[@type="edition"]]', 
-            namespaces={"x": NS}
+            namespaces={"x": TEINS}
         )
 
     @property
@@ -837,10 +837,10 @@ class EpiDocElement(BaseElement, Showable):
 
         return self._e.xpath(
             'preceding::*[ancestor::x:div[@type="edition"]]', 
-            namespaces={"x": NS}
+            namespaces={"x": TEINS}
         ) + self._e.xpath(
             'ancestor::*[ancestor::x:div[@type="edition"]]', 
-            namespaces={"x": NS}
+            namespaces={"x": TEINS}
         ) 
 
     @property
@@ -1043,7 +1043,7 @@ class EpiDocElement(BaseElement, Showable):
 
         # Handle interpuncts
         if prototoken is not None and prototoken.strip() in ['·', '·', '❦', '∙']:
-            tagname = ns.give_ns('g', ns=NS)
+            tagname = ns.give_ns('g', ns=TEINS)
             new_g = etree.Element(tagname, nsmap=None, attrib=None)
 
             if prototoken: 
@@ -1096,11 +1096,11 @@ class EpiDocElement(BaseElement, Showable):
             return EpiDocElement(new_parent, final_space=True)
         else:
             if prototoken: 
-                tagname = ns.give_ns('w', ns=NS)
+                tagname = ns.give_ns('w', ns=TEINS)
                 new_w = etree.Element(tagname, None, None)
                 new_w.text = prototoken # type: ignore
             else:
-                new_w = etree.Element(ns.give_ns('w', ns=NS), None, None)
+                new_w = etree.Element(ns.give_ns('w', ns=TEINS), None, None)
  
             for child in subelements:
                 new_w.append(child)

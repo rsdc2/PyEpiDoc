@@ -18,7 +18,7 @@ from lxml.etree import (
 from ..xml import Namespace as ns
 from ..xml.utils import local_name
 from ..utils import maxone, remove_none, head
-from ..constants import NS, XMLNS, A_TO_Z_SET
+from ..constants import TEINS, XMLNS, A_TO_Z_SET
 from ..xml.baseelement import BaseElement
 
 from .element import EpiDocElement
@@ -168,7 +168,7 @@ class Token(EpiDocElement):
             if self.text_desc == self.text_desc.capitalize() and \
                 self.text_desc not in PUNCTUATION:
 
-                self._e.tag = ns.give_ns('name', NS)    # type: ignore
+                self._e.tag = ns.give_ns('name', TEINS)    # type: ignore
 
             return self
         
