@@ -78,8 +78,8 @@ def lang(elem: EpiDocElement) -> Optional[str]:
     """
 
     ab_ancestors = ancestor_abs(elem)
-    ab_langs = list(chain(*[ab.lang for ab in ab_ancestors 
-        if ab.lang is not None]))
+    ab_langs = [ab.lang for ab in ab_ancestors 
+        if ab.lang is not None]
 
     ab_lang = head(ab_langs, throw_if_more_than_one=False)
 

@@ -35,7 +35,7 @@ other_susp = [susp for susp in suspensions
     if lang(susp) not in ['grc', 'la']]
 print('of which other: ', len(other_susp))
 
-print(show_elems(other_susp))
+print(show_elems(top(other_susp, 10)))
 
 print('First 10 examples:')
 print(show_elems(top(suspensions, 10)))
