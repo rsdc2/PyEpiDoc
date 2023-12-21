@@ -1,15 +1,15 @@
 # Provides functions for showing elements
-from typing import Sequence
+from typing import Sequence, Iterable
 from .epidoc.funcs import doc_id, lang
 from .epidoc.element import EpiDocElement
 
 
 def show_elems(
-    elems:Sequence[EpiDocElement],
-    sep:str='\n', 
-    prefix:str='- ',
-    include_source_doc_ids:bool=True,
-    include_langs:bool=True
+    elems: Iterable[EpiDocElement],
+    sep: str='\n', 
+    prefix: str='- ',
+    include_source_doc_ids: bool=True,
+    include_langs: bool=True
 ) -> str:
 
     """
