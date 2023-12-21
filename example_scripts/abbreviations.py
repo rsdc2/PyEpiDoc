@@ -9,7 +9,10 @@ from pyepidoc.epidoc.funcs import lang, owner_doc
 from pyepidoc.utils import top, listfilter
 from pyepidoc.displayutils import show_elems
 
-corpus_path = '' # insert path to your corpus here 
+MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
+MASTER_FORKED_PATH = '/data/ISicily/ISicily-forked/ISicily/inscriptions/'
+
+corpus_path = MASTER_PATH # insert path to your corpus here 
 
 corpus = EpiDocCorpus(corpus_path)
 
