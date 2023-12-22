@@ -404,6 +404,11 @@ class EpiDocCorpus:
 
         return places
 
+    @property
+    def materialclasses(self) -> set[str]:
+        return set(chain(*[doc.materialclasses for doc in self.docs
+                    if doc.materialclasses != []]))
+
     def multilinguals(self, head:Optional[int]=None) -> list[EpiDoc]:
         return [doc for doc in self.docs if doc.is_multilingual]
 
@@ -432,11 +437,6 @@ class EpiDocCorpus:
     def size(self) -> int:
         return len(self.docs)
 
-    @cached_property
-    def textclasses(self) -> set[str]:
-        return set([textclass for doc in self.docs 
-                    for textclass in doc.textclasses])
-
     def test_token_ids_unique(self, verbose: bool=False) -> bool:
         """
         Returns True if all token ids in the corpus
@@ -451,6 +451,11 @@ class EpiDocCorpus:
             print('Total unique ids: ', len(id_set))
 
         return len(ids) == len(id_set)
+
+    @cached_property
+    def textclasses(self) -> set[str]:
+        return set([textclass for doc in self.docs 
+                    for textclass in doc.textclasses])
 
     def to_txt(self, dst: str) -> None:
         """

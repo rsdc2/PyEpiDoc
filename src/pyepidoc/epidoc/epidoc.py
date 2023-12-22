@@ -6,7 +6,7 @@ from itertools import chain
 
 from .element import EpiDocElement, BaseElement
 from ..xml.docroot import DocRoot
-from ..utils import maxone, listfilter, head
+from ..utils import maxone, listfilter, head, remove_none
 
 from .elements.edition import Edition
 from .elements.expan import Expan
@@ -353,14 +353,15 @@ class EpiDoc(DocRoot):
         return set(_lemmata)
 
     @property
-    def material_class(self) -> Optional[str]:
+    def materialclasses(self) -> list[str]:
 
-        material_e = maxone(self.get_desc('material'))
+        material_e = self.get_desc('material')
         
         if material_e is None:
-            return None
+            return []
         
-        return EpiDocElement(material_e).get_attrib('ana')
+        return remove_none([EpiDocElement(e).get_attrib('ana') 
+                            for e in material_e])
 
     @property
     def not_after(self) -> Optional[int]:
