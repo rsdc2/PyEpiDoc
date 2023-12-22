@@ -5,6 +5,7 @@ from ..utils import leiden_str_from_children
 from .orig import Orig
 from .reg import Reg
 
+
 class Choice(EpiDocElement):
     """
     Provides services for abbreviation expansions 

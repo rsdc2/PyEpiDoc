@@ -4,7 +4,7 @@ an EpiDoc corpus
 """
 from typing import Iterable
 from pyepidoc import EpiDocCorpus
-from pyepidoc.epidoc.expan import Expan
+from pyepidoc.epidoc.elements.expan import Expan
 from pyepidoc.classes import SetRelation
 from pyepidoc.epidoc.dom import lang
 
