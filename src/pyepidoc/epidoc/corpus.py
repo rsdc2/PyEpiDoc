@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import (
+    Callable,
+    Iterable,
     Optional, 
     Sequence, 
     overload, 
@@ -266,9 +268,9 @@ class EpiDocCorpus:
         return EpiDocCorpus([self.docs_dict[id] for id in ids])
 
     def filter_by_languages(self, 
-        langs:list[str], 
-        set_relation=SetRelation.intersection,
-        language_attr:Literal['langs'] | Literal['div_langs']='langs'
+        langs: list[str], 
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection,
+        language_attr: Literal['langs'] | Literal['div_langs']='langs'
     ) -> EpiDocCorpus:
         
         """

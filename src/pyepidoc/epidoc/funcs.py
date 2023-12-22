@@ -20,7 +20,7 @@ def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
     Returns a |Sequence| of |Ab|s containing an |Element|,
     starting with the ancestor closest to the |Element|
     """
-    return [Ab(elem) for elem in elem.parents 
+    return [Ab(elem) for elem in elem.ancestors 
         if elem.local_name == 'ab']
 
 
@@ -42,7 +42,7 @@ def ancestor_edition(elem: EpiDocElement) -> Optional[Edition]:
     Returns the |Edition| containing an element (if any).
     """
 
-    editions = [Edition(elem) for elem in elem.parents 
+    editions = [Edition(elem) for elem in elem.ancestors 
         if EpiDocElement(elem).is_edition]
 
     edition = maxone(
@@ -75,13 +75,15 @@ def lang(elem: EpiDocElement) -> Optional[str]:
     Returns the language of the element, based on 
     the language specified either in the 
     <div> or <ab> parent.
+    If neither of those specify the language, 
+    then reports the mainLang attribute
     """
 
     ab_ancestors = ancestor_abs(elem)
     ab_langs = [ab.lang for ab in ab_ancestors 
         if ab.lang is not None]
 
-    ab_lang = head(ab_langs, throw_if_more_than_one=False)
+    ab_lang = head(ab_langs, throw_if_more_than_one=True)
 
     if ab_lang is not None:
         return ab_lang
@@ -100,7 +102,7 @@ def lang(elem: EpiDocElement) -> Optional[str]:
     return doc.mainlang
     
 
-def line(elem:EpiDocElement) -> Optional[Lb]:
+def line(elem: EpiDocElement) -> Optional[Lb]:
     lb = elem.lb_in_preceding_or_ancestor
     
     if lb is None:

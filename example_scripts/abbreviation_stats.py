@@ -3,6 +3,7 @@ from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.displayutils import show_elems
 from pyepidoc.shared_types import SetRelation
 from pathlib import Path
+import timeit
 
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
 corpus_path = MASTER_PATH # insert path to your corpus here 
@@ -10,8 +11,12 @@ corpus_path = MASTER_PATH # insert path to your corpus here
 
 def print_overall_distribution():
     corpus = EpiDocCorpus(corpus_path)
-    print(overall_distribution_via_corpus(corpus))
+    
+    # print(timeit.timeit(lambda: overall_distribution_via_corpus(corpus), number=10))
 
+    print(overall_distribution_via_corpus(corpus))
+    # print(timeit.timeit(lambda: overall_distribution_via_expans(corpus), number=10))
+    print(overall_distribution_via_expans(corpus))
 
 def other():
     corpus = EpiDocCorpus(corpus_path)
@@ -39,7 +44,7 @@ def print_instances():
 
 if __name__ == '__main__':
 
-    # print_overall_distribution()
+    print_overall_distribution()
     # print_instances()
-    other()
+    # other()
     

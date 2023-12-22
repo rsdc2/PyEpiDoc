@@ -25,10 +25,10 @@ def distribution_from_corpus(corpus: EpiDocCorpus) -> dict[str, int]:
 
 
 def distribution_from_expans(expans: Iterable[Expan]) -> dict[str, int]:
-    suspensions = filter(lambda expan: expan.is_suspension, deepcopy(expans))
-    contractions = filter(lambda expan: expan.is_contraction, deepcopy(expans))
-    contractions_with_suspension = filter(lambda expan: expan.is_contraction_with_suspension, deepcopy(expans))
-    multiplications = filter(lambda expan: expan.is_multiplicative, deepcopy(expans))
+    suspensions = filter(lambda expan: expan.is_suspension, expans)
+    contractions = filter(lambda expan: expan.is_contraction, expans)
+    contractions_with_suspension = filter(lambda expan: expan.is_contraction_with_suspension, expans)
+    multiplications = filter(lambda expan: expan.is_multiplicative, expans)
 
     return {
         'suspensions': len(list(suspensions)),
@@ -44,22 +44,20 @@ def expans(corpus: EpiDocCorpus) -> list[str]:
 
 
 def overall_distribution_via_expans(corpus: EpiDocCorpus) -> dict[str, dict[str, int]]:
-    # latin = corpus.filter_by_languages(['la'])
-    # greek = corpus.filter_by_languages(['grc'])
-    # other = corpus.filter_by_languages(['la', 'grc'], SetRelation.disjoint)
-    expans = corpus.expans
-    latin_expans = filter(lambda expan: lang(expan) == 'la', deepcopy(expans))
-    # greek_expans = filter(lambda expan: lang(expan) == 'grc', deepcopy(expans))
-    # other_expans = filter(lambda expan: lang(expan) not in ['la', 'grc'], deepcopy(expans))
 
-    latin_stats = distribution_from_expans(latin_expans)
-    # greek_stats = distribution_from_expans(greek_expans)
-    # other_stats = distribution_from_expans(other_expans)
+    expans = corpus.expans
+    latin_expans = filter(lambda expan: lang(expan) == 'la', expans)
+    greek_expans = filter(lambda expan: lang(expan) == 'grc', expans)
+    other_expans = filter(lambda expan: lang(expan) not in ['la', 'grc'], expans)
+
+    latin_stats = distribution_from_expans(list(latin_expans))
+    greek_stats = distribution_from_expans(list(greek_expans))
+    other_stats = distribution_from_expans(list(other_expans))
 
     return {
-        # 'Greek': greek_stats,
+        'Greek': greek_stats,
         'Latin': latin_stats,
-        # 'Other': other_stats
+        'Other': other_stats
     }
 
 

@@ -399,7 +399,7 @@ class Ab(EpiDocElement):
 
         def parent_name_set(elem: _Element) -> set[str]:
             parent_names = [parent.local_name 
-                            for parent in Token(elem).parents]
+                            for parent in Token(elem).ancestors]
             return set(parent_names)
         
         return [Token(token_elem) for token_elem 

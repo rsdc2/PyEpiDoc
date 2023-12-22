@@ -337,7 +337,7 @@ class EpiDocElement(BaseElement, Showable):
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
-        return len([parent for parent in self.parents 
+        return len([parent for parent in self.ancestors 
             if type(parent.parent) is EpiDocElement])
 
     @property
@@ -849,7 +849,7 @@ class EpiDocElement(BaseElement, Showable):
 
     @property
     def root(self) -> BaseElement:
-        return self.parents[-1]
+        return self.ancestors[-1]
 
     @property
     def roottree(self) -> Optional[_ElementTree]:
