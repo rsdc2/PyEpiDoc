@@ -1,4 +1,5 @@
 from pyepidoc.analysis.abbreviations import *
+from pyepidoc.analysis.output import overall_analysis_to_csv
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.displayutils import show_elems
 from pyepidoc.shared_types import SetRelation
@@ -17,6 +18,11 @@ def print_overall_distribution():
     print(overall_distribution_via_corpus(corpus))
     # print(timeit.timeit(lambda: overall_distribution_via_expans(corpus), number=10))
     print(overall_distribution_via_expans(corpus))
+
+
+def write_overall_distribution():
+    overall_analysis_to_csv(EpiDocCorpus(corpus_path), 'example.csv')
+
 
 def other():
     corpus = EpiDocCorpus(corpus_path)
@@ -44,7 +50,8 @@ def print_instances():
 
 if __name__ == '__main__':
 
-    print_overall_distribution()
+    write_overall_distribution()
+    # print_overall_distribution()
     # print_instances()
     # other()
     

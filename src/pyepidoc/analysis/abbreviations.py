@@ -45,7 +45,16 @@ def expans(corpus: EpiDocCorpus) -> list[str]:
 
 def overall_distribution_via_expans(corpus: EpiDocCorpus) -> dict[str, dict[str, int]]:
 
+    """
+    First takes all the expans, and then filters by language
+    """
+    tokens = corpus.tokens
     expans = corpus.expans
+
+    latin_tokens = filter(lambda token: lang(token) == 'la', tokens)
+    greek_tokens = filter(lambda token: lang(token) == 'grc', tokens)
+    other_tokens = filter(lambda token: lang(token) not in ['la', 'grc'], tokens)
+
     latin_expans = filter(lambda expan: lang(expan) == 'la', expans)
     greek_expans = filter(lambda expan: lang(expan) == 'grc', expans)
     other_expans = filter(lambda expan: lang(expan) not in ['la', 'grc'], expans)
@@ -55,13 +64,16 @@ def overall_distribution_via_expans(corpus: EpiDocCorpus) -> dict[str, dict[str,
     other_stats = distribution_from_expans(list(other_expans))
 
     return {
-        'Greek': greek_stats,
-        'Latin': latin_stats,
-        'Other': other_stats
+        'Greek': {'tokens': len(list(greek_tokens)), **greek_stats},
+        'Latin': {'tokens': len(list(latin_tokens)), **latin_stats},
+        'Other': {'tokens': len(list(other_tokens)), **other_stats}
     }
 
 
 def overall_distribution_via_corpus(corpus: EpiDocCorpus) -> dict[str, dict[str, int]]:
+    """
+    First filters the corpus by languages, then counts expan types
+    """
     latin = corpus.filter_by_languages(['la'])
     greek = corpus.filter_by_languages(['grc'])
     other = corpus.filter_by_languages(['la', 'grc'], SetRelation.disjoint)
