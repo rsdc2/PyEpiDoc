@@ -1,3 +1,8 @@
+"""
+Functions for navigating the DOM from elements within 
+the document
+"""
+
 from typing import Optional, Sequence
 
 from .epidoc import EpiDoc

@@ -1,7 +1,7 @@
 
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.utils import head
-from pyepidoc.epidoc.funcs import lang, line
+from pyepidoc.epidoc.dom import lang, line
 
 import pytest
 

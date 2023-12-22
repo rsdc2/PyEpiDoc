@@ -6,7 +6,7 @@ from typing import Iterable
 from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.expan import Expan
 from pyepidoc.classes import SetRelation
-from pyepidoc.epidoc.funcs import lang
+from pyepidoc.epidoc.dom import lang
 
 
 def distribution_from_corpus(corpus: EpiDocCorpus) -> dict[str, int]:
