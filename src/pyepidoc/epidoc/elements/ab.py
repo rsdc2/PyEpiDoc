@@ -18,7 +18,7 @@ from ..enums import (
     NoSpace,
     OrigTextType
 )
-from pyepidoc.shared_types import SetRelation
+from pyepidoc.classes import SetRelation
 from ...xml import BaseElement
 from ...utils import update_set_inplace, flatlist, flatten, update_set_copy, head
 from ...constants import XMLNS

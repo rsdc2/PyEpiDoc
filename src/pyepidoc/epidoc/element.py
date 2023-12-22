@@ -10,7 +10,7 @@ from typing import (
     overload
 )
 
-from ..shared_types import Showable, ExtendableSeq
+from ..classes import Showable, ExtendableSeq
 from ..xml.baseelement import BaseElement
 
 from copy import deepcopy
@@ -29,7 +29,7 @@ from lxml.etree import (
 from ..xml.namespace import Namespace as ns
 
 from ..constants import TEINS, XMLNS, SubsumableRels
-from ..shared_types import Tag
+from ..classes import Tag
 from .enums import (
     whitespace, 
     AtomicTokenType, 

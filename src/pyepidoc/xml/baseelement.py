@@ -10,7 +10,7 @@ from typing import (
     overload
 )
 
-from ..shared_types import Showable, ExtendableSeq
+from ..classes import Showable, ExtendableSeq
 import operator
 import re
 
@@ -22,7 +22,7 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from ..shared_types import Tag
+from ..classes import Tag
 
 from .namespace import Namespace as ns
 

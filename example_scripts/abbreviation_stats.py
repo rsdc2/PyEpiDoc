@@ -9,7 +9,7 @@ from pyepidoc.analysis.utils.csv_ops import pivot_dict
 from pyepidoc.epidoc.enums import AbbrType, TextClass
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.displayutils import show_elems
-from pyepidoc.shared_types import SetRelation
+from pyepidoc.classes import SetRelation
 
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
 corpus_path = MASTER_PATH # insert path to your corpus here 
