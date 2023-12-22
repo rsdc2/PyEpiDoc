@@ -21,3 +21,4 @@ corpus
 out
 .vscode
 example.csv
+*lock*
