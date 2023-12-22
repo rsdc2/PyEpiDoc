@@ -1,5 +1,5 @@
-from pyepidoc.analysis.abbreviations import *
-from pyepidoc.analysis.output import overall_analysis_to_csv
+from pyepidoc.analysis.abbreviations.abbreviations import *
+from pyepidoc.analysis.abbreviations.output import overall_analysis_to_csv
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.displayutils import show_elems
 from pyepidoc.shared_types import SetRelation
