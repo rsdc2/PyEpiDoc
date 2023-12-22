@@ -353,6 +353,16 @@ class EpiDoc(DocRoot):
         return set(_lemmata)
 
     @property
+    def material_classes(self) -> Optional[str]:
+
+        material_e = maxone(self.get_desc('material'))
+        
+        if material_e is None:
+            return None
+        
+        return EpiDocElement(material_e).get_attrib('ana')
+
+    @property
     def not_after(self) -> Optional[int]:
         return self._get_daterange_attrib('notAfter-custom')
 
