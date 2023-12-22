@@ -3,7 +3,7 @@ import csv
 from pathlib import Path
 from .abbreviations import overall_distribution_via_expans 
 from pyepidoc import EpiDocCorpus
-from .csv_ops import pivot_dict
+from ..utils.csv_ops import pivot_dict
 
 
 def overall_analysis_to_csv(
