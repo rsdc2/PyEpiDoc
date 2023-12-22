@@ -17,7 +17,7 @@ from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .token import Token
 from .elements.expan import Expan
-from .epidoc_types import TextClass
+from .enums import TextClass
 from pyepidoc.shared_types import SetRelation
 
 from ..utils import maxone, top

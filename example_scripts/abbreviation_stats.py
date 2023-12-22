@@ -6,7 +6,7 @@ from pyepidoc.analysis.abbreviations.overall import *
 from pyepidoc.analysis.abbreviations.output import overall_analysis_to_csv, abbr_count_all_to_csvs
 from pyepidoc.analysis.abbreviations.instances import abbreviation_count, raw_abbreviations
 from pyepidoc.analysis.utils.csv_ops import pivot_dict
-from pyepidoc.epidoc.epidoc_types import AbbrType, TextClass
+from pyepidoc.epidoc.enums import AbbrType, TextClass
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.displayutils import show_elems
 from pyepidoc.shared_types import SetRelation

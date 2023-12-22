@@ -1,5 +1,5 @@
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.epidoc_types import AbbrType
+from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.utils import contains
 
 def test_abbr():

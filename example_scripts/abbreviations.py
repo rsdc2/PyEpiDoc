@@ -4,7 +4,7 @@ information about abbreviations from an EpiDoc corpus
 """
 
 from pyepidoc import EpiDoc, EpiDocCorpus
-from pyepidoc.epidoc.epidoc_types import AbbrType
+from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.epidoc.funcs import lang, owner_doc
 from pyepidoc.utils import top, contains, listfilter
 from pyepidoc.displayutils import show_elems

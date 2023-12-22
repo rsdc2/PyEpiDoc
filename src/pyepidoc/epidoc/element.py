@@ -30,7 +30,7 @@ from ..xml.namespace import Namespace as ns
 
 from ..constants import TEINS, XMLNS, SubsumableRels
 from ..shared_types import Tag
-from .epidoc_types import (
+from .enums import (
     whitespace, 
     AtomicTokenType, 
     CompoundTokenType, 

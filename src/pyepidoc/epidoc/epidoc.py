@@ -10,7 +10,7 @@ from ..utils import maxone, listfilter, head
 
 from .elements.edition import Edition
 from .elements.expan import Expan
-from .epidoc_types import (
+from .enums import (
     SpaceUnit,
     AbbrType
 )

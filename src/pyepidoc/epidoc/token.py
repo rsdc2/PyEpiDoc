@@ -37,7 +37,7 @@ from .elements.supplied import Supplied
 from .elements.surplus import Surplus
 from .elements.unclear import Unclear
 
-from .epidoc_types import (
+from .enums import (
     CompoundTokenType, 
     AtomicTokenType,
     PUNCTUATION,

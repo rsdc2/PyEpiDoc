@@ -13,7 +13,7 @@ from .ex import Ex
 from .abbr import Abbr
 from .am import Am
 
-from ..epidoc_types import AbbrType
+from ..enums import AbbrType
 from ..utils import leiden_str_from_children, callable_from_localname, local_name
 
 

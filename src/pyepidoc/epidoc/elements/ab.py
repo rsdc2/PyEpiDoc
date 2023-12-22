@@ -9,7 +9,7 @@ from ..element import EpiDocElement
 from .textpart import TextPart
 from ..token import Token
 from .expan import Expan
-from ..epidoc_types import (
+from ..enums import (
     IdCarrier,
     TokenCarrier, 
     AtomicTokenType, 

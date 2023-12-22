@@ -8,7 +8,7 @@ from lxml import etree
 from pyepidoc.xml.utils import local_name
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.xml.baseelement import BaseElement
-from pyepidoc.epidoc.epidoc_types import OrigTextType, RegTextType
+from pyepidoc.epidoc.enums import OrigTextType, RegTextType
 from pyepidoc.constants import TEINS
 
 

@@ -12,7 +12,7 @@ import re
 from ...xml import BaseElement
 from ...constants import XMLNS
 from ...utils import default_str
-from ...epidoc.epidoc_types import SpaceSeparated, NoSpace
+from ..enums import SpaceSeparated, NoSpace
 
 from ..element import EpiDocElement
 from .ab import Ab
@@ -22,7 +22,7 @@ from ..token import Token
 from .expan import Expan
 from .textpart import TextPart
 
-from ..epidoc_types import (
+from ..enums import (
     SpaceUnit, 
     TokenCarrier, 
     AtomicTokenType, 
