@@ -433,7 +433,8 @@ class EpiDocCorpus:
 
     @cached_property
     def textclasses(self) -> set[str]:
-        return set([textclass for doc in self.docs for textclass in doc.textclasses])
+        return set([textclass for doc in self.docs 
+                    for textclass in doc.textclasses])
 
     def test_token_ids_unique(self, verbose: bool=False) -> bool:
         """
