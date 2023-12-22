@@ -3,14 +3,10 @@ Functions for analysing abbreviation distributions in
 an EpiDoc corpus
 """
 from typing import Iterable
-from pyepidoc import EpiDocCorpus, EpiDoc
+from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.expan import Expan
-from pyepidoc.utils import contains
 from pyepidoc.shared_types import SetRelation
 from pyepidoc.epidoc.funcs import lang
-from copy import deepcopy
-
-# def filter_on(expan: Expan)
 
 
 def distribution_from_corpus(corpus: EpiDocCorpus) -> dict[str, int]:
@@ -21,7 +17,6 @@ def distribution_from_corpus(corpus: EpiDocCorpus) -> dict[str, int]:
     """
 
     return distribution_from_expans(corpus.expans)
-
 
 
 def distribution_from_expans(expans: Iterable[Expan]) -> dict[str, int]:
@@ -36,7 +31,6 @@ def distribution_from_expans(expans: Iterable[Expan]) -> dict[str, int]:
         'contractions_with_suspension': len(list(contractions_with_suspension)),
         'multiplations': len(list(multiplications))
     }
-
 
 
 def expans(corpus: EpiDocCorpus) -> list[str]:
@@ -87,4 +81,3 @@ def overall_distribution_via_corpus(corpus: EpiDocCorpus) -> dict[str, dict[str,
         'Latin': latin_stats,
         'Other': other_stats
     }
-
