@@ -346,8 +346,9 @@ class EpiDocCorpus:
         return list(chain(*[doc.id_carriers for doc in self.docs]))
 
     @cached_property
-    def ids(self) -> list[Optional[str]]:
-        return [doc.id for doc in self.docs]
+    def ids(self) -> list[str]:
+        return [doc.id for doc in self.docs
+                if doc.id is not None]
 
     @property
     def languages(self) -> set[str]:
