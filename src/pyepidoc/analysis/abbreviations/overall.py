@@ -29,7 +29,7 @@ def distribution_from_expans(expans: Iterable[Expan]) -> dict[str, int]:
         'suspensions': len(list(suspensions)),
         'contractions': len(list(contractions)),
         'contractions_with_suspension': len(list(contractions_with_suspension)),
-        'multiplations': len(list(multiplications))
+        'multiplications': len(list(multiplications))
     }
 
 

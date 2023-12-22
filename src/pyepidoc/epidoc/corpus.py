@@ -315,15 +315,15 @@ class EpiDocCorpus:
 
     def filter_by_textclass(
         self, 
-        textclasses:list[str | TextClass], 
-        set_relation=SetRelation.intersection
+        textclasses: list[str | TextClass], 
+        set_relation: Callable[[set[str], set[str]], bool]=SetRelation.intersection
     ) -> EpiDocCorpus:
 
         # Convert input textclasses to their string representation
         _textclasses = list(map(str, textclasses))
     
         docs = [doc for doc in self.docs
-            if set_relation(set(_textclasses), doc.textclasses)]
+            if set_relation(set(_textclasses), set(doc.textclasses))]
 
         return EpiDocCorpus(docs)
 

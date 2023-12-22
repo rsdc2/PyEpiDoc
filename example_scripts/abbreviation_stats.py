@@ -6,7 +6,7 @@ from pyepidoc.analysis.abbreviations.overall import *
 from pyepidoc.analysis.abbreviations.output import overall_analysis_to_csv, abbr_count_all_to_csvs
 from pyepidoc.analysis.abbreviations.instances import abbreviation_count, raw_abbreviations
 from pyepidoc.analysis.utils.csv_ops import pivot_dict
-from pyepidoc.epidoc.epidoc_types import AbbrType
+from pyepidoc.epidoc.epidoc_types import AbbrType, TextClass
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.displayutils import show_elems
 from pyepidoc.shared_types import SetRelation
@@ -26,12 +26,27 @@ def print_overall_distribution():
 
 
 def write_overall_distribution():
-    overall_analysis_to_csv(EpiDocCorpus(corpus_path), 'example.csv')
+    overall_analysis_to_csv(EpiDocCorpus(corpus_path), 'overall_distribution.csv')
+
+
+def write_overall_distribution_funerary():
+    corpus = EpiDocCorpus(corpus_path).filter_by_textclass([TextClass.Funerary])
+    overall_analysis_to_csv(corpus, 'overall_distribution_funerary.csv')
 
 
 def write_abbr_count_all():
     corpus = EpiDocCorpus(corpus_path)
     abbr_count_all_to_csvs(corpus=corpus)
+
+
+def write_abbr_count_funerary():
+    corpus = EpiDocCorpus(corpus_path).filter_by_textclass([TextClass.Funerary])
+    abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix='funerary_')
+
+
+def write_abbr_count_non_funerary():
+    corpus = EpiDocCorpus(corpus_path).filter_by_textclass([TextClass.Funerary], SetRelation.disjoint)
+    abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix='nonfunerary_')
 
 
 def other():
@@ -62,8 +77,9 @@ def print_instances():
 
 
 if __name__ == '__main__':
-    write_abbr_count_all()
-    # write_overall_distribution()
+    # write_abbr_count_all()
+    # write_overall_distribution_funerary()
+    write_abbr_count_non_funerary()
     # abbr_count('example.csv')
     # print_overall_distribution()
     # print_instances()

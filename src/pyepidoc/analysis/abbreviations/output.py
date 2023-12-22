@@ -57,6 +57,10 @@ def abbr_count_to_csv(
         key=lambda result: result['frequency'], reverse=True
     )
     
+    if len(sorted_list_dict) == 0:  # Abort if there are no records
+        print(f'Aborting with {fp} since there are no records.')
+        return 
+    
     fieldnames = list(sorted_list_dict[0].keys())
     csv_file = open(fp, mode='w')
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
@@ -67,7 +71,10 @@ def abbr_count_to_csv(
     csv_file.close()
 
 
-def abbr_count_all_to_csvs(corpus: EpiDocCorpus) -> None:
+def abbr_count_all_to_csvs(
+        corpus: EpiDocCorpus, 
+        output_filename_prefix: str='') -> None:
+    
     """
     Writes out frequency CSVs for all permutations
     """
@@ -85,7 +92,7 @@ def abbr_count_all_to_csvs(corpus: EpiDocCorpus) -> None:
     for lang in langs:
         for abbr_type in abbr_types:
             abbr_count_to_csv(
-                f'{lang}_{abbr_type.value}.csv', 
+                f'{output_filename_prefix}{lang}_{abbr_type.value}.csv', 
                 corpus=corpus, 
                 language=lang, 
                 abbr_type=abbr_type)
