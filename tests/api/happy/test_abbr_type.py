@@ -41,7 +41,7 @@ def test_multiplicative(xmlstr: str):
 
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
-    assert expan.is_multiplicative
+    assert expan.is_multiplication
 
 
 @pytest.mark.parametrize("xmlstr", non_multiplications)
@@ -49,7 +49,7 @@ def test_non_multiplicative(xmlstr: str):
 
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
-    assert not expan.is_multiplicative
+    assert not expan.is_multiplication
 
 
 @pytest.mark.parametrize("xmlstr", suspensions)

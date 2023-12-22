@@ -64,10 +64,10 @@ class Expan(EpiDocElement):
     def abbr_types(self) -> list[AbbrType]:
         abbr_types = []
 
-        if self.is_multiplicative:
+        if self.is_multiplication:
             abbr_types.append(AbbrType.multiplication)  
 
-        if self.is_suspension:
+        if self.is_suspension and not self.is_multiplication and not self.is_contraction_with_suspension:
             abbr_types.append(AbbrType.suspension)
 
         if self.is_contraction:
@@ -184,7 +184,7 @@ class Expan(EpiDocElement):
             not self._desc_textnode_is_desc_of('1', 'am')
     
     @property
-    def is_multiplicative(self) -> bool:
+    def is_multiplication(self) -> bool:
         return any([abbr.is_multiplicative for abbr in self.abbrs])
 
     @property

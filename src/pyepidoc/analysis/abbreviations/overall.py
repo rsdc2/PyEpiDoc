@@ -23,7 +23,7 @@ def distribution_from_expans(expans: Iterable[Expan]) -> dict[str, int]:
     suspensions = filter(lambda expan: expan.is_suspension, expans)
     contractions = filter(lambda expan: expan.is_contraction, expans)
     contractions_with_suspension = filter(lambda expan: expan.is_contraction_with_suspension, expans)
-    multiplications = filter(lambda expan: expan.is_multiplicative, expans)
+    multiplications = filter(lambda expan: expan.is_multiplication, expans)
 
     return {
         'suspensions': len(list(suspensions)),

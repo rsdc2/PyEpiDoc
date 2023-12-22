@@ -1,10 +1,15 @@
-from pyepidoc.analysis.abbreviations.abbreviations import *
+from pathlib import Path
+import timeit
+import csv
+
+from pyepidoc.analysis.abbreviations.overall import *
 from pyepidoc.analysis.abbreviations.output import overall_analysis_to_csv
+from pyepidoc.analysis.abbreviations.instances import abbreviation_count, raw_abbreviations
+from pyepidoc.analysis.utils.csv_ops import pivot_dict
+from pyepidoc.epidoc.epidoc_types import AbbrType
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.displayutils import show_elems
 from pyepidoc.shared_types import SetRelation
-from pathlib import Path
-import timeit
 
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
 corpus_path = MASTER_PATH # insert path to your corpus here 
@@ -48,9 +53,29 @@ def print_instances():
     print(show_elems(results))
 
 
+def abbr_count(fp: str):
+    corpus = EpiDocCorpus(corpus_path)
+    raw = raw_abbreviations(
+        corpus, 
+        abbr_type=AbbrType.suspension, 
+        language='la'
+    )
+    count = abbreviation_count(raw)
+    count_dict = {k: {'frequency': v['frequency'], 'isic_ids': v['isic_ids']} for k, v in count.items()}
+    list_dict = pivot_dict(count_dict)
+    list_dict = sorted(list_dict, key=lambda result: result['frequency'], reverse=True)
+    
+    fieldnames = list(list_dict[0].keys())
+    csv_file = open(fp, mode='w')
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(list_dict)
+
+
 if __name__ == '__main__':
 
-    write_overall_distribution()
+    # write_overall_distribution()
+    abbr_count('example.csv')
     # print_overall_distribution()
     # print_instances()
     # other()
