@@ -353,7 +353,7 @@ class EpiDoc(DocRoot):
         return set(_lemmata)
 
     @property
-    def material_classes(self) -> Optional[str]:
+    def material_class(self) -> Optional[str]:
 
         material_e = maxone(self.get_desc('material'))
         
