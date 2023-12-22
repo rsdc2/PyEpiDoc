@@ -56,7 +56,7 @@ def abbreviation_count(
     ) -> dict[str, CountResult]:
 
     def f(acc: dict[str, CountResult], item: RawResult) -> dict[str, CountResult]:
-        expansion = item['expansion']
+        expansion = item['expansion'].lower()
 
         if expansion in acc.keys():
             record = acc[expansion]

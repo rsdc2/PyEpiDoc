@@ -20,5 +20,5 @@ trial
 corpus
 out
 .vscode
-example.csv
+*.csv
 *lock*

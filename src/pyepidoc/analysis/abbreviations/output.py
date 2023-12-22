@@ -1,7 +1,10 @@
 from __future__ import annotations
 import csv
 from pathlib import Path
+from typing import Literal, Optional
 from .overall import overall_distribution_via_expans 
+from .instances import raw_abbreviations, abbreviation_count
+from pyepidoc.epidoc.epidoc_types import AbbrType
 from pyepidoc import EpiDocCorpus
 from ..utils.csv_ops import pivot_dict
 
@@ -26,3 +29,63 @@ def overall_analysis_to_csv(
     writer.writerows(list_dict)
 
     f.close()
+
+
+def abbr_count_to_csv(
+        fp: str, 
+        corpus: EpiDocCorpus, 
+        language: Optional[Literal['la', 'grc']]=None, 
+        abbr_type: Optional[AbbrType]=None
+    ) -> None:
+    
+    """
+    Writes abbreviation frequencies to CSV file
+    """
+    
+    raw = raw_abbreviations(
+        corpus, 
+        abbr_type=abbr_type, 
+        language=language
+    )
+    count = abbreviation_count(raw)
+    count_dict = {k: {'frequency': v['frequency'], 'isic_ids': v['isic_ids']} 
+                  for k, v in count.items()}
+    
+    list_dict = pivot_dict(count_dict)
+    sorted_list_dict = sorted(
+        list_dict, 
+        key=lambda result: result['frequency'], reverse=True
+    )
+    
+    fieldnames = list(sorted_list_dict[0].keys())
+    csv_file = open(fp, mode='w')
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+    print(f'Writing {fp}...')
+    writer.writeheader()
+    writer.writerows(sorted_list_dict)
+    csv_file.close()
+
+
+def abbr_count_all_to_csvs(corpus: EpiDocCorpus) -> None:
+    """
+    Writes out frequency CSVs for all permutations
+    """
+
+    abbr_types = [
+        AbbrType.suspension, 
+        AbbrType.contraction, 
+        AbbrType.contraction_with_suspension, 
+        AbbrType.multiplication
+    ]
+
+    Lang = Literal['la', 'grc']
+    langs = list[Lang](['la', 'grc'])
+
+    for lang in langs:
+        for abbr_type in abbr_types:
+            abbr_count_to_csv(
+                f'{lang}_{abbr_type.value}.csv', 
+                corpus=corpus, 
+                language=lang, 
+                abbr_type=abbr_type)
