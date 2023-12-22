@@ -2,7 +2,7 @@ from lxml import etree
 
 from pyepidoc.epidoc.utils import epidoc_elem_to_str
 from pyepidoc.epidoc.epidoc import EpiDoc, Expan
-from pyepidoc.epidoc.abbr import Abbr
+from pyepidoc.epidoc.elements.abbr import Abbr
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.utils import head

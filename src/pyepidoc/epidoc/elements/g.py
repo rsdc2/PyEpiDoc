@@ -1,11 +1,11 @@
 from lxml.etree import _Element
-from .element import EpiDocElement
+from ..element import EpiDocElement
 
 
-class Gap(EpiDocElement):
+class G(EpiDocElement):
     """
     Provides services for abbreviation expansions 
-    given in <gap> elements.
+    given in <ex> elements.
     """
 
     def __init__(self, e: _Element):
@@ -14,8 +14,8 @@ class Gap(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'gap':
-            raise TypeError('Element should be <gap>.')
+        if self.local_name != 'g':
+            raise TypeError('Element should be <g>.')
 
     def __str__(self) -> str:
-        return '[-?-]'
+        return ' · '

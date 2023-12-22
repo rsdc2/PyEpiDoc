@@ -5,16 +5,16 @@ from itertools import chain
 
 from lxml.etree import _Element
 
-from ..utils import head
+from ...utils import head
 
-from .element import EpiDocElement
+from ..element import EpiDocElement
 
 from .ex import Ex
 from .abbr import Abbr
 from .am import Am
 
-from .epidoc_types import AbbrType
-from .utils import leiden_str_from_children, callable_from_localname, local_name
+from ..epidoc_types import AbbrType
+from ..utils import leiden_str_from_children, callable_from_localname, local_name
 
 
 class Expan(EpiDocElement):

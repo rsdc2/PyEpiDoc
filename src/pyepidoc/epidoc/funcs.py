@@ -1,15 +1,10 @@
 from typing import Optional, Sequence
-from itertools import chain
 
-from .epidoc_types import (
-    SpaceUnit
-)
 from .epidoc import EpiDoc
-from .corpus import EpiDocCorpus
 from .element import EpiDocElement
-from .ab import Ab
-from .edition import Edition
-from .lb import Lb
+from .elements.ab import Ab
+from .elements.edition import Edition
+from .elements.lb import Lb
 
 from ..constants import *
 from ..utils import maxone, head

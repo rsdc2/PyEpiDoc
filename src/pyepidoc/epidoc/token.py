@@ -24,18 +24,18 @@ from ..xml.baseelement import BaseElement
 from .element import EpiDocElement
 from .utils import leiden_str_from_children
 
-from .abbr import Abbr
-from .am import Am
-from .choice import Choice
-from .del_elem import Del
-from .ex import Ex
-from .expan import Expan
-from .g import G
-from .gap import Gap
-from .lb import Lb
-from .supplied import Supplied
-from .surplus import Surplus
-from .unclear import Unclear
+from .elements.abbr import Abbr
+from .elements.am import Am
+from .elements.choice import Choice
+from .elements.del_elem import Del
+from .elements.ex import Ex
+from .elements.expan import Expan
+from .elements.g import G
+from .elements.gap import Gap
+from .elements.lb import Lb
+from .elements.supplied import Supplied
+from .elements.surplus import Surplus
+from .elements.unclear import Unclear
 
 from .epidoc_types import (
     CompoundTokenType, 

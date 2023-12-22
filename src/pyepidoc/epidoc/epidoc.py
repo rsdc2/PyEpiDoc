@@ -8,8 +8,8 @@ from .element import EpiDocElement, BaseElement
 from ..xml.docroot import DocRoot
 from ..utils import maxone, listfilter, head
 
-from .edition import Edition
-from .expan import Expan
+from .elements.edition import Edition
+from .elements.expan import Expan
 from .epidoc_types import (
     SpaceUnit,
     AbbrType

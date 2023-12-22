@@ -1,5 +1,5 @@
 from lxml.etree import _Element
-from .element import EpiDocElement
+from ..element import EpiDocElement
 from pyepidoc.epidoc.utils import local_name
 
 

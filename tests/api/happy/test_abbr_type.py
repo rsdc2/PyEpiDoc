@@ -1,7 +1,7 @@
 import pytest
 
-from pyepidoc.epidoc.abbr import Abbr
-from pyepidoc.epidoc.expan import Expan
+from pyepidoc.epidoc.elements.abbr import Abbr
+from pyepidoc.epidoc.elements.expan import Expan
 from pyepidoc.epidoc.epidoc_types import AbbrType
 from pyepidoc.utils import contains
 from lxml import etree

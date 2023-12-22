@@ -5,11 +5,11 @@ from copy import deepcopy
 from functools import reduce
 from lxml.etree import _Element 
 
-from .element import EpiDocElement
+from ..element import EpiDocElement
 from .textpart import TextPart
-from .token import Token
+from ..token import Token
 from .expan import Expan
-from .epidoc_types import (
+from ..epidoc_types import (
     IdCarrier,
     TokenCarrier, 
     AtomicTokenType, 
@@ -19,11 +19,9 @@ from .epidoc_types import (
     OrigTextType
 )
 from pyepidoc.shared_types import SetRelation
-from ..utils import head
-
-from ..xml import BaseElement
-from ..utils import update_set_inplace, flatlist, flatten, update_set_copy
-from ..constants import XMLNS
+from ...xml import BaseElement
+from ...utils import update_set_inplace, flatlist, flatten, update_set_copy, head
+from ...constants import XMLNS
 
 
 class Ab(EpiDocElement):

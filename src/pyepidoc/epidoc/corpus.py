@@ -16,7 +16,7 @@ from pathlib import Path
 from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .token import Token
-from .expan import Expan
+from .elements.expan import Expan
 from .epidoc_types import TextClass
 from pyepidoc.shared_types import SetRelation
 

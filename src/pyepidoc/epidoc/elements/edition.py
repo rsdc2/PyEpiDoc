@@ -9,20 +9,20 @@ from lxml.etree import _Element
 from typing import Optional, Sequence
 import re
 
-from ..xml import BaseElement
-from ..constants import XMLNS
-from ..utils import default_str, flatlist
-from ..epidoc.epidoc_types import SpaceSeparated, NoSpace
+from ...xml import BaseElement
+from ...constants import XMLNS
+from ...utils import default_str
+from ...epidoc.epidoc_types import SpaceSeparated, NoSpace
 
-from .element import EpiDocElement
+from ..element import EpiDocElement
 from .ab import Ab
 from .lg import Lg
 from .l import L
-from .token import Token
+from ..token import Token
 from .expan import Expan
 from .textpart import TextPart
 
-from .epidoc_types import (
+from ..epidoc_types import (
     SpaceUnit, 
     TokenCarrier, 
     AtomicTokenType, 
