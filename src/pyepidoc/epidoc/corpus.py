@@ -406,8 +406,11 @@ class EpiDocCorpus:
 
     @property
     def materialclasses(self) -> set[str]:
-        return set(chain(*[doc.materialclasses for doc in self.docs
-                    if doc.materialclasses != []]))
+        """
+        Set of material classes in the corpus
+        """
+
+        return set(chain(*[doc.materialclasses for doc in self.docs]))
 
     def multilinguals(self, head:Optional[int]=None) -> list[EpiDoc]:
         return [doc for doc in self.docs if doc.is_multilingual]

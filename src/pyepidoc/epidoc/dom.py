@@ -109,3 +109,16 @@ def line(elem: EpiDocElement) -> Optional[Lb]:
         return None
     
     return Lb(lb)
+
+
+def materialclasses(elem: EpiDocElement) -> list[str]:
+    """
+    Returns a list of the material classes of the owner
+    document
+    """
+
+    doc = owner_doc(elem)
+    if doc is None:
+        return []
+    
+    return doc.materialclasses

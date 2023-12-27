@@ -132,6 +132,11 @@ def test_lines():
     assert l4.n == '2'
 
 
+def test_materialclasses():
+    doc = EpiDoc(relative_filepaths['ISic000001'])
+    assert doc.materialclasses == ['#material.stone.marble']
+
+
 def test_punct():
     """
     Tests that comma is removed from string version of token
