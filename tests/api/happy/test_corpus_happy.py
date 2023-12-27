@@ -29,4 +29,7 @@ def test_load_corpus_root():
 def test_materialclasses():
     corpus = EpiDocCorpus(inpt=corpus_folderpath)
 
-    assert corpus.materialclasses == {'#material.stone.limestone', '#material.stone.marble'}
+    assert corpus.materialclasses == {
+        '#material.stone.limestone', 
+        '#material.stone.marble'
+    }
