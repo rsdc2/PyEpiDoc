@@ -29,9 +29,26 @@ def write_overall_distribution():
     overall_analysis_to_csv(EpiDocCorpus(corpus_path), 'overall_distribution.csv')
 
 
+def write_overall_distribution_stone():
+    overall_analysis_to_csv(
+        EpiDocCorpus(corpus_path).filter_by_materialclass(
+            ['#material.stone'], 'substring'), 
+            'overall_distribution_stone.csv'
+        )
+
+
 def write_overall_distribution_funerary():
     corpus = EpiDocCorpus(corpus_path).filter_by_textclass([TextClass.Funerary])
     overall_analysis_to_csv(corpus, 'overall_distribution_funerary.csv')
+
+
+def write_overall_distribution_stone_funerary():
+    overall_analysis_to_csv(
+        EpiDocCorpus(corpus_path)
+            .filter_by_materialclass(['#material.stone'], 'substring')
+            .filter_by_textclass([TextClass.Funerary]), 
+        filepath='overall_distribution_stone_funerary.csv'
+    )
 
 
 def write_abbr_count_all():
@@ -47,6 +64,20 @@ def write_abbr_count_funerary():
 def write_abbr_count_non_funerary():
     corpus = EpiDocCorpus(corpus_path).filter_by_textclass([TextClass.Funerary], SetRelation.disjoint)
     abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix='nonfunerary_')
+
+
+def write_abbr_count_stone_funerary():
+    corpus = (EpiDocCorpus(corpus_path)
+              .filter_by_textclass([TextClass.Funerary])
+              .filter_by_materialclass(['#material.stone'], 'substring'))
+    abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix='stone_funerary_')
+
+
+def write_abbr_count_stone_non_funerary():
+    corpus = (EpiDocCorpus(corpus_path)
+              .filter_by_textclass([TextClass.Funerary])
+              .filter_by_materialclass(['#material.stone'], 'substring'))
+    abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix='stone_nonfunerary_')
 
 
 def other():
@@ -79,7 +110,9 @@ def print_instances():
 if __name__ == '__main__':
     # write_abbr_count_all()
     # write_overall_distribution_funerary()
-    write_abbr_count_non_funerary()
+    # write_abbr_count_non_funerary()
+    # write_abbr_count_stone_funerary()
+    write_overall_distribution_stone_funerary()
     # abbr_count('example.csv')
     # print_overall_distribution()
     # print_instances()
