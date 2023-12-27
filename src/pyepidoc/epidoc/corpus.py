@@ -177,13 +177,13 @@ class EpiDocCorpus:
     def _doc_to_xml_file(dstfolder: str, doc: EpiDoc) -> None:
         
         "Writes out an EpiDoc object to an XML file"
+        dstfolder_path = Path(dstfolder)
+        if not dstfolder_path.exists():
+            raise FileExistsError(f'Folder {dstfolder} does not exist')
 
-        if dstfolder:
-            dst = Path(dstfolder) / Path(doc.id + '.xml')
-            if not dst.exists():
-                raise FileExistsError(f'Parent folder {dst} does not exist')
-            
-            doc.to_xml_file(dst.absolute())
+        dst = dstfolder_path / Path(doc.id + '.xml')
+        
+        doc.to_xml_file(dst.absolute())
 
     @cached_property
     def docs(self) -> list[EpiDoc]:

@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Iterable
 from lxml.etree import _Element, _ElementUnicodeResult
+from lxml import etree
+from copy import deepcopy
 
 
 def local_name(node: _Element | _ElementUnicodeResult) -> str:
@@ -12,6 +14,14 @@ def local_name(node: _Element | _ElementUnicodeResult) -> str:
         return '#text'
     
     return str(node.xpath('local-name(.)'))
+
+
+def remove_children(elem: _Element) -> _Element:
+    elem_ = deepcopy(elem)
+    for child in elem_.getchildren():
+        elem_.remove(child)
+
+    return elem_
 
 
 # def filter_by_non_ancestors(

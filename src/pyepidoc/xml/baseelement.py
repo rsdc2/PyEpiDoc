@@ -141,6 +141,10 @@ class BaseElement(Showable):
     @property
     def child_nodes(self) -> list[_Element | _ElementUnicodeResult]:
         return self.xpath('child::node()')
+    
+    @property
+    def children(self) -> Sequence[BaseElement]:
+        return self.child_elements
 
     @property
     def depth(self) -> int:

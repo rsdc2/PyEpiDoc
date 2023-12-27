@@ -1,10 +1,12 @@
 from pyepidoc.epidoc.scripts import tokenize
 from pyepidoc.epidoc.epidoc import EpiDoc
+from pyepidoc.epidoc.elements.ab import Ab
 from pyepidoc.file.funcs import filepath_from_list
 
 import os
 import pytest
 from pathlib import Path
+from lxml import etree
 
 
 tests = [
@@ -65,7 +67,7 @@ tests = [
     'unclear_3'
 ]
 
-# tests = ['del_2']
+
 
 def remove_file(filepath: str):
 
@@ -136,3 +138,40 @@ def test_tokenize_special_cases(tokenize_type:str):
     assert [word.xml_byte_str for word in tokenized_epidoc.tokens] == [word.xml_byte_str for word in tokenized_benchmark.tokens]
     assert [word.xml_byte_str for word in tokenized_epidoc.compound_words] == [word.xml_byte_str for word in tokenized_benchmark.compound_words]
     assert [edition.xml_byte_str for edition in tokenized_epidoc.editions()] == [edition.xml_byte_str for edition in tokenized_benchmark.editions()]
+
+
+xml_to_tokenize = [
+    ('<roleName type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</roleName>',
+     '<roleName type="civic" subtype="duumviralis"><w>d<hi rend="apex">u</hi>mviralium</w></roleName>'),
+
+    ('<roleName type="civic" subtype="duumviralis">duumviralium</roleName>',
+     '<roleName type="civic" subtype="duumviralis"><w>duumviralium</w></roleName>'),
+    
+    ('<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>',
+     '<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>'),
+    
+    ('d<hi rend="apex">u</hi>mviralium',
+     '<w>d<hi rend="apex">u</hi>mviralium</w>'),
+    
+    ('dominus',
+     '<w>dominus</w>')
+]
+
+@pytest.mark.parametrize("xml_pair", xml_to_tokenize)
+def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
+
+    def abify(s: str): return f'<ab xmlns="http://www.tei-c.org/ns/1.0">{s}</ab>'
+    xml_pair_abs = map(abify, xml_pair)
+
+    xml, tokenized_xml = xml_pair_abs
+    untokenized = Ab(etree.fromstring(xml, None))
+    tokenized_benchmark = Ab(etree.fromstring(tokenized_xml, None))
+
+    tokenized = untokenized.tokenize()
+
+    if tokenized is None:
+        return False
+    
+    # breakpoint()
+    assert tokenized_benchmark.tokens == tokenized.tokens
+    assert tokenized.tokens != []

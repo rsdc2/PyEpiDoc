@@ -40,17 +40,16 @@ from .enums import (
 )
 from . import ids
 from ..utils import maxoneT, head, last
+from pyepidoc.xml.utils import local_name, remove_children
 
-
-def tokenize_subatomtic_tags(subelement: _Element) -> EpiDocElement:
+def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     # Check that does not contain atomic tags
     # If it does, tokenizer does not surround in an atomic tag
 
     atomic_token_set = AtomicTokenType.value_set()
     atomic_non_token_set = AtomicNonTokenType.value_set()
     name_set = EpiDocElement(subelement).desc_elem_name_set
-
-    # breakpoint()
+    
     if atomic_token_set.intersection(name_set) != set():
         # i.e. there is at least one subtoken that is an atomic token
         w = EpiDocElement(subelement) 
@@ -614,13 +613,13 @@ class EpiDocElement(BaseElement, Showable):
                 elif len(potential_subtokens) == len(_element.tokenized_children):
                     return [_element] # i.e. do nothing because there is nothing to tokenize
                 else:
-                    return [tokenize_subatomtic_tags(subelement=_e)]
+                    return [tokenize_subatomic_tags(subelement=_e)]
 
             elif _element.tag.name in CompoundTokenType.values():
                 return [handle_compound_token(p=_element.e)]
             
             elif _element.tag.name in SubatomicTagType.values():
-                return [tokenize_subatomtic_tags(subelement=_e)]
+                return [tokenize_subatomic_tags(subelement=_e)]
 
             elif _element.tag.name == "Comment":
                 comment = deepcopy(_element.e)
@@ -1083,9 +1082,24 @@ class EpiDocElement(BaseElement, Showable):
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
                 elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>
-                    new_w = tokenize_subatomtic_tags(e_without_tail).e
-                    new_parent.append(new_w)
-                    new_parent = append_tail_or_text(e.tail, new_parent)                    
+                    if localname in CompoundTokenType.values(): # this is designed for <hi>
+                        tokenized = tokenize_subatomic_tags(e_without_tail)
+                        if EpiDocElement(new_parent).children == []:
+                            new_parent.append(tokenized.e)
+
+                        elif tokenized.first_child is None:
+                            new_parent.append(tokenized.e)
+                        else:
+                            new_e = tokenized.first_child.e 
+                            first_w = cast(_Element, new_parent.getchildren()[0])
+                            first_w.append(new_e)
+                            first_w.getchildren()[-1].tail = e.tail        
+
+                    else:
+                        new_w = tokenize_subatomic_tags(e_without_tail).e
+                        new_parent.append(new_w)
+                        new_parent = append_tail_or_text(e.tail, new_parent)              
+                    
 
                 elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>
                     new_w_elem = EpiDocElement.w_factory(parent=e_without_tail)

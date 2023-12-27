@@ -41,6 +41,7 @@ class RegTextType(EnumerableEnum):
 
 class AtomicTokenType(EnumerableEnum):
     Name = 'name'
+    # RoleName = 'roleName'
     AddName = 'addName'
     W = 'w'
     Num = 'num'
