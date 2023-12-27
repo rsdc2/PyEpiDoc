@@ -37,3 +37,18 @@ def test_materialclasses():
         '#material.stone.limestone', 
         '#material.stone.marble'
     }
+
+
+def test_filter_materialclasses():
+    """
+    Test filtering of material classes
+    """
+
+    corpus = EpiDocCorpus(inpt=corpus_folderpath)
+    filtered_corpus = corpus.filter_by_materialclass(['#material.stone'], 'substring')
+    assert filtered_corpus.doc_count == 2
+
+    corpus = EpiDocCorpus(inpt=corpus_folderpath)
+    filtered_corpus = corpus.filter_by_materialclass(['#material.stone.marble'], 'equal')
+    assert filtered_corpus.doc_count == 1
+    assert filtered_corpus.docs[0].id == 'ISic000001'

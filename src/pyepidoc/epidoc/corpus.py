@@ -295,6 +295,36 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(docs)
 
+    def filter_by_materialclass(
+        self, 
+        materialclasses: list[str], 
+        string_relation: Literal['equal', 'substring']
+    ) -> EpiDocCorpus:
+
+        """
+        Return a subcorpus where the material classes of each 
+        doc are either exactly equal to or contain at least 
+        one of the strings in *materialclasses*,
+        according to the value of the parameter *string_relation*
+        """
+#
+        def filterstr(s1: str, s2: str) -> bool:
+            if string_relation == 'equal':
+                return s1 == s2
+            
+            if string_relation == 'substring':
+                return s1 in s2
+        
+        docs = list[EpiDoc]()
+
+        for doc in self.docs:
+            for doc_material in doc.materialclasses:
+                for q_material in materialclasses:
+                    if filterstr(q_material, doc_material):
+                        docs.append(doc)
+
+        return EpiDocCorpus(docs)
+
     def filter_by_orig_place(
         self,
         orig_places:list[str],
