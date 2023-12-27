@@ -20,3 +20,4 @@ trial
 corpus
 out
 .vscode
+*.csv
