@@ -1081,16 +1081,16 @@ class EpiDocElement(BaseElement, Showable):
                     new_parent.append(e_without_tail)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
-                elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>
-                    if localname in CompoundTokenType.values(): # this is designed for <hi>
+                elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>, <hi>
+                    if localname in CompoundTokenType.values(): # this is designed for <hi>, which is also a compound token
                         tokenized = tokenize_subatomic_tags(e_without_tail)
                         if EpiDocElement(new_parent).children == []:
                             new_parent.append(tokenized.e)
 
-                        elif tokenized.first_child is None:
+                        elif tokenized.last_child is None:
                             new_parent.append(tokenized.e)
                         else:
-                            new_e = tokenized.first_child.e 
+                            new_e = tokenized.last_child.e 
                             first_w = cast(_Element, new_parent.getchildren()[0])
                             first_w.append(new_e)
                             first_w.getchildren()[-1].tail = e.tail        
