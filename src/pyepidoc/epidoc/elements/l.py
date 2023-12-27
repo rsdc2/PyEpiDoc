@@ -1,28 +1,9 @@
 from __future__ import annotations
-from typing import Optional, Sequence, cast
+from typing import Optional
 
-from copy import deepcopy
-from functools import reduce
 from lxml.etree import _Element 
-
-from .element import EpiDocElement
-from .textpart import TextPart
-from .token import Token
-from .expan import Expan
-from .epidoc_types import (
-    TokenCarrier, 
-    AtomicTokenType, 
-    CompoundTokenType,
-    SpaceSeparated,
-    NoSpace
-)
-from pyepidoc.shared_types import SetRelation
-from ..utils import head
-
-from ..xml import BaseElement
-from ..utils import update_set_inplace, flatlist, flatten
-from ..constants import XMLNS
-
+from ..element import EpiDocElement
+from ...xml import BaseElement
 from .ab import Ab
 
 

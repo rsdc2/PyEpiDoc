@@ -1,8 +1,8 @@
 import pytest
 
-from pyepidoc.epidoc.abbr import Abbr
-from pyepidoc.epidoc.expan import Expan
-from pyepidoc.epidoc.epidoc_types import AbbrType
+from pyepidoc.epidoc.elements.abbr import Abbr
+from pyepidoc.epidoc.elements.expan import Expan
+from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.utils import contains
 from lxml import etree
 
@@ -41,7 +41,7 @@ def test_multiplicative(xmlstr: str):
 
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
-    assert expan.is_multiplicative
+    assert expan.is_multiplication
 
 
 @pytest.mark.parametrize("xmlstr", non_multiplications)
@@ -49,7 +49,7 @@ def test_non_multiplicative(xmlstr: str):
 
     elem = etree.fromstring(xmlstr, None)
     expan = Expan(elem)
-    assert not expan.is_multiplicative
+    assert not expan.is_multiplication
 
 
 @pytest.mark.parametrize("xmlstr", suspensions)

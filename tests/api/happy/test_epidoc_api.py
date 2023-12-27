@@ -1,11 +1,7 @@
-from lxml.etree import _Element
-from lxml import etree
 
-from pyepidoc.epidoc.epidoc import EpiDoc, Token, Expan, EpiDocElement
-from pyepidoc.epidoc.utils import epidoc_elem_to_str
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.utils import head
-from pyepidoc.epidoc.funcs import lang, line
+from pyepidoc.epidoc.dom import lang, line
 
 import pytest
 
@@ -134,6 +130,11 @@ def test_lines():
     l4 = line(second_token)
     assert l4 is not None
     assert l4.n == '2'
+
+
+def test_materialclasses():
+    doc = EpiDoc(relative_filepaths['ISic000001'])
+    assert doc.materialclasses == ['#material.stone.marble']
 
 
 def test_punct():

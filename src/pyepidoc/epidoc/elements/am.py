@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .element import EpiDocElement
+from ..element import EpiDocElement
 from pyepidoc.epidoc.utils import descendant_text
 from typing import Optional
 

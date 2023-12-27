@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Optional
 
-from ..utils import head
+from ...utils import head
 
-from .element import EpiDocElement
-from .utils import leiden_str_from_children
+from ..element import EpiDocElement
+from ..utils import leiden_str_from_children
 from .am import Am
 from .lb import Lb
 

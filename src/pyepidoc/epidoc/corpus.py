@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import (
+    Callable,
+    Iterable,
     Optional, 
     Sequence, 
     overload, 
@@ -14,9 +16,9 @@ from pathlib import Path
 from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .token import Token
-from .expan import Expan
-from .epidoc_types import TextClass
-from pyepidoc.shared_types import SetRelation
+from .elements.expan import Expan
+from .enums import TextClass
+from pyepidoc.classes import SetRelation
 
 from ..utils import maxone, top
 
@@ -266,9 +268,9 @@ class EpiDocCorpus:
         return EpiDocCorpus([self.docs_dict[id] for id in ids])
 
     def filter_by_languages(self, 
-        langs:list[str], 
-        set_relation=SetRelation.intersection,
-        language_attr:Literal['langs'] | Literal['div_langs']='langs'
+        langs: list[str], 
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection,
+        language_attr: Literal['langs'] | Literal['div_langs']='langs'
     ) -> EpiDocCorpus:
         
         """
@@ -313,15 +315,15 @@ class EpiDocCorpus:
 
     def filter_by_textclass(
         self, 
-        textclasses:list[str | TextClass], 
-        set_relation=SetRelation.intersection
+        textclasses: list[str | TextClass], 
+        set_relation: Callable[[set[str], set[str]], bool]=SetRelation.intersection
     ) -> EpiDocCorpus:
 
         # Convert input textclasses to their string representation
         _textclasses = list(map(str, textclasses))
     
         docs = [doc for doc in self.docs
-            if set_relation(set(_textclasses), doc.textclasses)]
+            if set_relation(set(_textclasses), set(doc.textclasses))]
 
         return EpiDocCorpus(docs)
 
@@ -344,8 +346,9 @@ class EpiDocCorpus:
         return list(chain(*[doc.id_carriers for doc in self.docs]))
 
     @cached_property
-    def ids(self) -> list[Optional[str]]:
-        return [doc.id for doc in self.docs]
+    def ids(self) -> list[str]:
+        return [doc.id for doc in self.docs
+                if doc.id is not None]
 
     @property
     def languages(self) -> set[str]:
@@ -401,6 +404,14 @@ class EpiDocCorpus:
 
         return places
 
+    @property
+    def materialclasses(self) -> set[str]:
+        """
+        Set of material classes in the corpus
+        """
+
+        return set(chain(*[doc.materialclasses for doc in self.docs]))
+
     def multilinguals(self, head:Optional[int]=None) -> list[EpiDoc]:
         return [doc for doc in self.docs if doc.is_multilingual]
 
@@ -429,10 +440,6 @@ class EpiDocCorpus:
     def size(self) -> int:
         return len(self.docs)
 
-    @cached_property
-    def textclasses(self) -> set[str]:
-        return set([textclass for doc in self.docs for textclass in doc.textclasses])
-
     def test_token_ids_unique(self, verbose: bool=False) -> bool:
         """
         Returns True if all token ids in the corpus
@@ -447,6 +454,11 @@ class EpiDocCorpus:
             print('Total unique ids: ', len(id_set))
 
         return len(ids) == len(id_set)
+
+    @cached_property
+    def textclasses(self) -> set[str]:
+        return set([textclass for doc in self.docs 
+                    for textclass in doc.textclasses])
 
     def to_txt(self, dst: str) -> None:
         """

@@ -10,7 +10,7 @@ from typing import (
     overload
 )
 
-from ..shared_types import Showable, ExtendableSeq
+from ..classes import Showable, ExtendableSeq
 import operator
 import re
 
@@ -22,7 +22,7 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from ..shared_types import Tag
+from ..classes import Tag
 
 from .namespace import Namespace as ns
 
@@ -146,7 +146,7 @@ class BaseElement(Showable):
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
-        return len([parent for parent in self.parents 
+        return len([parent for parent in self.ancestors 
             if type(parent.parent) is BaseElement])
 
     @property
@@ -339,7 +339,7 @@ class BaseElement(Showable):
             self,  
             parenttagnames:list[str]) -> Sequence[BaseElement]:
         
-        return [parent for parent in self.parents 
+        return [parent for parent in self.ancestors 
             if parent.tag.name in parenttagnames]
 
     def has_attrib(self, attribname:str) -> bool:
@@ -419,7 +419,7 @@ class BaseElement(Showable):
             raise TypeError('Parent is of incorrect type.')
 
     @property
-    def parents(self) -> ExtendableSeq[BaseElement]:
+    def ancestors(self) -> ExtendableSeq[BaseElement]:
 
         """
         Returns an |ExtendableSeq| of parent |Element|
@@ -464,7 +464,7 @@ class BaseElement(Showable):
 
     @property
     def root(self) -> BaseElement:
-        return self.parents[-1]
+        return self.ancestors[-1]
 
     @property
     def roottree(self) -> Optional[_ElementTree]:

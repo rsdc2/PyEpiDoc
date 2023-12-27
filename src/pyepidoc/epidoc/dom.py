@@ -1,18 +1,18 @@
-from typing import Optional, Sequence
-from os import getcwd
+"""
+Functions for navigating the DOM from elements within 
+the document
+"""
 
-from .epidoc_types import (
-    SpaceUnit
-)
+from typing import Optional, Sequence
+
 from .epidoc import EpiDoc
-from .corpus import EpiDocCorpus
 from .element import EpiDocElement
-from .ab import Ab
-from .edition import Edition
-from .lb import Lb
+from .elements.ab import Ab
+from .elements.edition import Edition
+from .elements.lb import Lb
 
 from ..constants import *
-from ..utils import maxone, flatlist, head
+from ..utils import maxone, head
 
 
 def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
@@ -20,7 +20,7 @@ def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
     Returns a |Sequence| of |Ab|s containing an |Element|,
     starting with the ancestor closest to the |Element|
     """
-    return [Ab(elem) for elem in elem.parents 
+    return [Ab(elem) for elem in elem.ancestors 
         if elem.local_name == 'ab']
 
 
@@ -42,7 +42,7 @@ def ancestor_edition(elem: EpiDocElement) -> Optional[Edition]:
     Returns the |Edition| containing an element (if any).
     """
 
-    editions = [Edition(elem) for elem in elem.parents 
+    editions = [Edition(elem) for elem in elem.ancestors 
         if EpiDocElement(elem).is_edition]
 
     edition = maxone(
@@ -75,13 +75,15 @@ def lang(elem: EpiDocElement) -> Optional[str]:
     Returns the language of the element, based on 
     the language specified either in the 
     <div> or <ab> parent.
+    If neither of those specify the language, 
+    then reports the mainLang attribute
     """
 
     ab_ancestors = ancestor_abs(elem)
-    ab_langs = flatlist([ab.lang for ab in ab_ancestors 
-        if ab.lang is not None])
+    ab_langs = [ab.lang for ab in ab_ancestors 
+        if ab.lang is not None]
 
-    ab_lang = head(ab_langs, throw_if_more_than_one=False)
+    ab_lang = head(ab_langs, throw_if_more_than_one=True)
 
     if ab_lang is not None:
         return ab_lang
@@ -100,10 +102,23 @@ def lang(elem: EpiDocElement) -> Optional[str]:
     return doc.mainlang
     
 
-def line(elem:EpiDocElement) -> Optional[Lb]:
+def line(elem: EpiDocElement) -> Optional[Lb]:
     lb = elem.lb_in_preceding_or_ancestor
     
     if lb is None:
         return None
     
     return Lb(lb)
+
+
+def materialclasses(elem: EpiDocElement) -> list[str]:
+    """
+    Returns a list of the material classes of the owner
+    document
+    """
+
+    doc = owner_doc(elem)
+    if doc is None:
+        return []
+    
+    return doc.materialclasses

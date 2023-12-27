@@ -1,9 +1,9 @@
 from lxml.etree import _Element
-from .element import EpiDocElement
-from .utils import leiden_str_from_children
+from ..element import EpiDocElement
+from ..utils import leiden_str_from_children
 
 
-class RoleName(EpiDocElement):
+class Reg(EpiDocElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.
@@ -15,8 +15,8 @@ class RoleName(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'roleName':
-            raise TypeError('Element should be <roleName>.')
+        if self.local_name != 'reg':
+            raise TypeError('Element should be <reg>.')
 
     def __str__(self) -> str:
         

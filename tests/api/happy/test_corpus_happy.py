@@ -24,3 +24,12 @@ def test_load_corpus_root():
 
     assert corpus.doc_count == 2
     assert corpus.token_count > 0
+
+
+def test_materialclasses():
+    corpus = EpiDocCorpus(inpt=corpus_folderpath)
+
+    assert corpus.materialclasses == {
+        '#material.stone.limestone', 
+        '#material.stone.marble'
+    }

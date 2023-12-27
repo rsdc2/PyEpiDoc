@@ -10,7 +10,7 @@ from typing import (
     overload
 )
 
-from ..shared_types import Showable, ExtendableSeq
+from ..classes import Showable, ExtendableSeq
 from ..xml.baseelement import BaseElement
 
 from copy import deepcopy
@@ -29,8 +29,8 @@ from lxml.etree import (
 from ..xml.namespace import Namespace as ns
 
 from ..constants import TEINS, XMLNS, SubsumableRels
-from ..shared_types import Tag
-from .epidoc_types import (
+from ..classes import Tag
+from .enums import (
     whitespace, 
     AtomicTokenType, 
     CompoundTokenType, 
@@ -337,7 +337,7 @@ class EpiDocElement(BaseElement, Showable):
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
-        return len([parent for parent in self.parents 
+        return len([parent for parent in self.ancestors 
             if type(parent.parent) is EpiDocElement])
 
     @property
@@ -849,7 +849,7 @@ class EpiDocElement(BaseElement, Showable):
 
     @property
     def root(self) -> BaseElement:
-        return self.parents[-1]
+        return self.ancestors[-1]
 
     @property
     def roottree(self) -> Optional[_ElementTree]:

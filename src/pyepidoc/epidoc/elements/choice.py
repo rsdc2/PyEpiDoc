@@ -1,9 +1,12 @@
 from lxml.etree import _Element
-from .element import EpiDocElement
-from .utils import leiden_str_from_children
+from ..element import EpiDocElement
+from ..utils import leiden_str_from_children
+
+from .orig import Orig
+from .reg import Reg
 
 
-class Orig(EpiDocElement):
+class Choice(EpiDocElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.
@@ -15,15 +18,17 @@ class Orig(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'orig':
-            raise TypeError('Element should be <orig>.')
+        if self.local_name != 'choice':
+            raise TypeError('Element should be <choice>.')
 
     def __str__(self) -> str:
         
         from .expan import Expan
 
         element_classes: dict[str, type] = {
-            'expan': Expan
+            'expan': Expan,
+            'orig': Orig,
+            'reg': Reg
         }
         
         return leiden_str_from_children(self.e, element_classes, 'node')

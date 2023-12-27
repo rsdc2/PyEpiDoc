@@ -1,6 +1,6 @@
 from lxml.etree import _Element
-from .element import EpiDocElement
-from .utils import leiden_str_from_children
+from ..element import EpiDocElement
+from ..utils import leiden_str_from_children
 
 from .abbr import Abbr
 from .am import Am
@@ -13,10 +13,10 @@ element_classes: dict[str, type] = {
 }
 
 
-class Unclear(EpiDocElement):
+class Surplus(EpiDocElement):
     """
     Provides services for abbreviation expansions 
-    given in <unclear> elements.
+    given in <ex> elements.
     """
 
     def __init__(self, e: _Element):
@@ -25,11 +25,13 @@ class Unclear(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'unclear':
-            raise TypeError('Element should be <unclear>.')
+        if self.local_name != 'surplus':
+            raise TypeError('Element should be <surplus>.')
 
     def __str__(self) -> str:
         
         return ''.join([
-            ''.join(map(lambda char: char + '\u0323', leiden_str_from_children(self.e, element_classes, 'node')))
+            '{',
+            leiden_str_from_children(self.e, element_classes, 'node'),
+            '}'
         ])

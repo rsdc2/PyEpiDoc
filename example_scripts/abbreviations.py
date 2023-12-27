@@ -4,14 +4,12 @@ information about abbreviations from an EpiDoc corpus
 """
 
 from pyepidoc import EpiDoc, EpiDocCorpus
-from pyepidoc.epidoc.epidoc_types import AbbrType
-from pyepidoc.epidoc.funcs import lang, owner_doc
+from pyepidoc.epidoc.enums import AbbrType
+from pyepidoc.epidoc.dom import lang, owner_doc
 from pyepidoc.utils import top, contains, listfilter
 from pyepidoc.displayutils import show_elems
 
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
-MASTER_FORKED_PATH = '/data/ISicily/ISicily-forked/ISicily/inscriptions/'
-
 corpus_path = MASTER_PATH # insert path to your corpus here 
 
 corpus = EpiDocCorpus(corpus_path)
@@ -37,7 +35,7 @@ other_susp = [susp for susp in suspensions
     if lang(susp) not in ['grc', 'la']]
 print('of which other: ', len(other_susp))
 
-print(show_elems(other_susp))
+print(show_elems(top(other_susp, 10)))
 
 print('First 10 examples:')
 print(show_elems(top(suspensions, 10)))

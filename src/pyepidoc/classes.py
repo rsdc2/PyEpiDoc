@@ -34,16 +34,24 @@ class ExtendableSeq(Sequence[_T]):
 
 class SetRelation(Enum):
     @staticmethod
-    def intersection(set1:set, set2:set) -> bool:
+    def intersection(set1: set[_T], set2: set[_T]) -> bool:
         return not set.isdisjoint(set1, set2)
         
     @staticmethod
-    def propersubset(set1:set, set2:set | list) -> bool:
+    def propersubset(set1: set, set2: set | list) -> bool:
         return set.issubset(set1, set2) and set(set1) != set(set2)
 
-    subset = set.issubset
-    equal = set.__eq__
-    disjoint = set.isdisjoint
+    @staticmethod
+    def disjoint(set1: set[_T], set2: set[_T]) -> bool:
+        return set.isdisjoint(set1, set2)
+    
+    @staticmethod
+    def subset(set1: set[_T], set2: set[_T]) -> bool:
+        return set.issubset(set1, set2)
+    
+    @staticmethod
+    def eq(set1: set[_T], set2: set[_T]) -> bool:
+        return set1 == set2
 
 
 class GtLtRelation(Enum):

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from .element import EpiDocElement
-from ..xml.baseelement import BaseElement
+from ..element import EpiDocElement
+from ...xml.baseelement import BaseElement
 from typing import Optional, Union
 from lxml.etree import _Element 
 

@@ -1,7 +1,7 @@
 from typing import Optional
 from pathlib import Path
 
-from .epidoc_types import (
+from .enums import (
     SpaceUnit
 )
 from .epidoc import EpiDoc

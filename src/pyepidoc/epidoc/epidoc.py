@@ -6,11 +6,11 @@ from itertools import chain
 
 from .element import EpiDocElement, BaseElement
 from ..xml.docroot import DocRoot
-from ..utils import maxone, listfilter, head
+from ..utils import maxone, listfilter, head, remove_none
 
-from .edition import Edition
-from .expan import Expan
-from .epidoc_types import (
+from .elements.edition import Edition
+from .elements.expan import Expan
+from .enums import (
     SpaceUnit,
     AbbrType
 )
@@ -351,6 +351,17 @@ class EpiDoc(DocRoot):
             if word.lemma is not None]
 
         return set(_lemmata)
+
+    @property
+    def materialclasses(self) -> list[str]:
+
+        material_e = self.get_desc('material')
+        
+        if material_e is None:
+            return []
+        
+        return remove_none([EpiDocElement(e).get_attrib('ana') 
+                            for e in material_e])
 
     @property
     def not_after(self) -> Optional[int]:
