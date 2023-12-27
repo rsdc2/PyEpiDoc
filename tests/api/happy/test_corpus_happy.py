@@ -27,6 +27,10 @@ def test_load_corpus_root():
 
 
 def test_materialclasses():
+    """
+    Test identification of material classes
+    """
+
     corpus = EpiDocCorpus(inpt=corpus_folderpath)
 
     assert corpus.materialclasses == {
