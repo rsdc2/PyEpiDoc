@@ -17,12 +17,12 @@ from lxml.etree import (
 
 from ..xml import Namespace as ns
 from ..xml.utils import localname
-from ..utils import maxone, remove_none, head, to_upper, to_lower
+from ..utils import maxone, remove_none, head, to_lower
 from ..constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
 from ..xml.baseelement import BaseElement
 
 from .element import EpiDocElement
-from .utils import leiden_str_from_children
+from .utils import leiden_str_from_children, descendant_atomic_tokens
 
 from .elements.abbr import Abbr
 from .elements.am import Am
@@ -360,6 +360,17 @@ class Token(EpiDocElement):
 
         chars = set(self.normalized_form.lower())
         return chars.issubset(set(map(to_lower, ROMAN_NUMERAL_CHARS)))
+
+    @property
+    def tokens(self) -> list[Token]:
+        """
+        Return a list of tokens in the <ab> element.
+        If tokens are nested, returns the outermost token,
+        e.g. with a <num> element within a <w> element, 
+        only the <w> is returned.
+        """
+
+        return list(map(Token, descendant_atomic_tokens(self)))
 
     @property
     def type(self) -> str:

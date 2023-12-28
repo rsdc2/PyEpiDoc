@@ -7,8 +7,9 @@ from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
 from pyepidoc.xml.utils import localname
 from pyepidoc.xml.baseelement import BaseElement
-from pyepidoc.epidoc.enums import RegTextType
+from pyepidoc.epidoc.enums import RegTextType, AtomicTokenType
 from pyepidoc.constants import TEINS
+from pyepidoc.epidoc.element import EpiDocElement
 
 
 def callable_from_localname(
@@ -38,17 +39,16 @@ def callable_from_localname(
     return elem_cls(elem)
 
 
-def descendant_atomic_tokens() 
-        desc_tokens = [Token(word) 
-                       for word 
-                       in self.get_desc(AtomicTokenType.values())]
+def descendant_atomic_tokens(elem: EpiDocElement) -> list[EpiDocElement]:
+    desc_tokens = map(EpiDocElement, elem.get_desc(AtomicTokenType.values()))
 
-        return [token for token 
-            in desc_tokens
-            if set([ancestor.local_name 
-                    for ancestor in token.ancestors_excl_self])
-                        .isdisjoint(AtomicTokenType.value_set()) 
-        ]
+    return [token for token 
+        in desc_tokens
+        if set([ancestor.local_name 
+                for ancestor in token.ancestors_excl_self])
+                    .isdisjoint(AtomicTokenType.value_set()) 
+    ]
+
 
 def descendant_text(elem: _Element | _ElementUnicodeResult) -> str:
     """

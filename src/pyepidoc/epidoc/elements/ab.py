@@ -23,6 +23,7 @@ from pyepidoc.classes import SetRelation
 from ...xml import BaseElement
 from ...utils import update_set_inplace, head
 from ...constants import XMLNS
+from pyepidoc.epidoc.utils import descendant_atomic_tokens
 
 
 class Ab(EpiDocElement):
@@ -385,16 +386,8 @@ class Ab(EpiDocElement):
         e.g. with a <num> element within a <w> element, 
         only the <w> is returned.
         """
-        desc_tokens = [Token(word) 
-                       for word 
-                       in self.get_desc(AtomicTokenType.values())]
 
-        return [token for token 
-            in desc_tokens
-            if set([ancestor.local_name 
-                    for ancestor in token.ancestors_excl_self])
-                        .isdisjoint(AtomicTokenType.value_set()) 
-        ]
+        return list(map(Token, descendant_atomic_tokens(self)))
     
     @property
     def tokens_list_str(self) -> list[str]:
