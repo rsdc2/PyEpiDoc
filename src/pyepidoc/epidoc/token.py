@@ -88,7 +88,9 @@ class Token(EpiDocElement):
             return stripped_form.capitalize()
         
         # Capitalize Roman numerals only
-        if self.local_name == 'num' and self.charset == 'latin' and self.roman_numeral_chars_only:
+        if self.local_name == 'num' and \
+              self.charset == 'latin' and \
+                  self.roman_numeral_chars_only:
             return stripped_form.upper()
         
         return stripped_form.lower()
