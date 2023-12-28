@@ -25,13 +25,14 @@ def test_collect_tokens():
     doc = EpiDoc(filepath)
 
     assert doc.tokens_list_str == [
-        'dis', 
+        'Dis', 
         'manibus', 
         'Zethi', 
         'vixit', 
         'annis', 
         'VI'
     ]
+
 
 def test_collect_normalized():
     """

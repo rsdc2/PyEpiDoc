@@ -30,19 +30,19 @@ class Num(EpiDocElement):
     
     @property
     def normalized_form(self) -> str:
-        # from .expan import Expan
+        from .expan import Expan
 
-        # element_classes: dict[str, type] = {
-        #     'expan': Expan
-        # }
+        element_classes: dict[str, type] = {
+            'expan': Expan
+        }
         
-        # normalized_str = normalized_str_from_children(
-        #     self.e, 
-        #     element_classes, 
-        #     'node'
-        # )
-        # breakpoint()
+        normalized_str = normalized_str_from_children(
+            self.e, 
+            element_classes, 
+            'node'
+        )
+        
         if self.charset == 'latin' and self.roman_numeral_chars_only:
-            return self.text_desc_compressed_whitespace.upper()
+            return normalized_str.upper()
         
-        return self.text_desc_compressed_whitespace
+        return normalized_str

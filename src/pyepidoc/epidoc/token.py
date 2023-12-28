@@ -82,25 +82,27 @@ class Token(EpiDocElement):
     """
     
     def __str__(self) -> str:
-        stripped_form = re.sub(
-            r'[·\,\.\;\:]|\s+', 
-            '', 
-            self.normalized_form.strip()
-            ).replace('\n', '').replace('\t', '')
+        # breakpoint()
+        # stripped_form = re.sub(
+        #     r'[·\,\.\;\:]|\s+', 
+        #     '', 
+        #     self.normalized_form.strip()
+        #     ).replace('\n', '').replace('\t', '')
 
-        if self.type in [
-            AtomicTokenType.Name.value, 
-            CompoundTokenType.PersName.value
-        ]:
-            return stripped_form.capitalize()
+        # if self.type in [
+        #     AtomicTokenType.Name.value, 
+        #     CompoundTokenType.PersName.value
+        # ]:
+        #     return stripped_form.capitalize()
         
-        # Capitalize Roman numerals only
-        if self.local_name == 'num' and \
-              self.charset == 'latin' and \
-                  self.roman_numeral_chars_only:
-            return stripped_form.upper()
+        # # Capitalize Roman numerals only
+        # if self.local_name == 'num' and \
+        #       self.charset == 'latin' and \
+        #           self.roman_numeral_chars_only:
+        #     return stripped_form.upper()
         
-        return stripped_form.lower()
+        # return stripped_form.lower()
+        return self.normalized_form
 
     @cached_property
     def ab_or_div_parents(self) -> Sequence[BaseElement]:
@@ -274,17 +276,9 @@ class Token(EpiDocElement):
         also excludes text from <g>.
         Compare @form and @orig_form
         """
-        # non_ancestors = OrigTextType.values()
-
-        # ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
-        #                          for ancestor in non_ancestors])
-
-        # normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
-        # return self._clean_text(''.join([str(t) for t in normalized_text])
         
         if self.local_name == 'num':
             return Num(self.e).normalized_form
-            # return 'Num'
         
         return normalized_str_from_children(self.e, elem_classes, 'node')
 

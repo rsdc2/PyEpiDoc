@@ -13,7 +13,7 @@ def test_tokens_example():
     tokens = doc.tokens
     tokens_str = ' '.join([str(token) for token in tokens])
 
-    assert tokens_str == 'dis manibus Zethi vixit annis VI'
+    assert tokens_str == 'Dis manibus Zethi vixit annis VI'
 
 
 def test_tokenize_example():
