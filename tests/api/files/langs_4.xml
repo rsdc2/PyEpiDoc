@@ -76,7 +76,7 @@
                         </altIdentifier>
                     </msIdentifier>
                     <msContents>
-                        <textLang mainLang="la" otherLangs="grc">Latin with Greek</textLang>
+                        <textLang mainLang="la">Latin</textLang>
                     </msContents>
                     <physDesc>
                         <objectDesc>
@@ -199,9 +199,6 @@
     <text>
         <body>
             <div type="edition" xml:space="preserve">
-                <ab xml:lang="grc">
-                    <lb n="1"/><w>ἀ</w> ὠ
-                </ab>
                 <ab>
                     <lb n="2"/>Ausanius
                     <lb n="3"/>diaconus
