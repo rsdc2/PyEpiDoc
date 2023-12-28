@@ -1,8 +1,22 @@
 from __future__ import annotations
-from typing import Iterable
+from pyepidoc.constants import TEINS
 from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
 from copy import deepcopy
+
+
+def abify(s: str): 
+    """
+    Enclose a string in <ab> tags 
+    """
+    return f'<ab xmlns="{TEINS}">{s}</ab>'
+
+
+def elem_from_str(xml: str) -> _Element:
+    """
+    Return an lxml _Element from a string
+    """
+    return etree.fromstring(xml, None)
 
 
 def localname(node: _Element | _ElementUnicodeResult) -> str:
@@ -24,11 +38,7 @@ def remove_children(elem: _Element) -> _Element:
     return elem_
 
 
-def elem_from_str(xml: str) -> _Element:
-    """
-    Return an lxml _Element from a string
-    """
-    return etree.fromstring(xml, None)
+
 
 
 
