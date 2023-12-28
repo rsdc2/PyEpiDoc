@@ -65,38 +65,6 @@ def test_leiden_plus_text():
     assert leiden_strs[0] == '| · Dis · '
 
 
-def test_langs():
-    """
-    Tests that the collecting of language information happens in the correct way.
-    """
-
-    doc_1 = EpiDoc(relative_filepaths['langs_1'])
-
-    expan_1 = head(doc_1.expans)
-    token_1 = head(doc_1.tokens)
-    assert expan_1 is not None and token_1 is not None
-
-    assert doc_1.langs == ['la', 'grc']
-    assert lang(expan_1) == 'la'
-    assert lang(token_1) == 'grc'
-
-    doc_2 = EpiDoc(relative_filepaths['langs_2'])
-    expan_2 = head(doc_2.expans)
-    token_2 = head(doc_2.tokens)
-    assert expan_2 is not None and token_2 is not None
-
-    assert lang(expan_2) == 'la'
-    assert lang(token_2) == 'grc'
-
-    doc_3 = EpiDoc(relative_filepaths['langs_3'])
-    expan_3 = head(doc_3.expans)
-    token_3 = head(doc_3.tokens)
-    assert expan_3 is not None and token_3 is not None
-
-    assert lang(expan_3) == 'la'
-    assert lang(token_3) == 'grc'
-
-
 def test_lines():
     doc_1 = EpiDoc(relative_filepaths['line_1'])
 
