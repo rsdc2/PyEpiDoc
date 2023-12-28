@@ -11,6 +11,58 @@ from pyepidoc.epidoc.enums import RegTextType
 from pyepidoc.constants import TEINS
 
 
+def callable_from_localname(
+            elem: _Element | _ElementUnicodeResult,
+            classes: dict[str, type]
+        ) -> str | None:
+
+    """
+    Returns an object according 
+    to the tag of param:elem
+    """
+
+    if type(elem) is _ElementUnicodeResult:
+        return str(elem)
+    
+    if type(elem) is _Element:
+        elem_cls = classes.get(localname(elem), None)
+
+    else:
+        raise TypeError(f'Element is of type {type(elem)}: '
+                        f'should be either _Element '
+                         'or _ElementUnicodeResult')
+
+    if elem_cls is None:
+        return None
+
+    return elem_cls(elem)
+
+
+def descendant_atomic_tokens() 
+        desc_tokens = [Token(word) 
+                       for word 
+                       in self.get_desc(AtomicTokenType.values())]
+
+        return [token for token 
+            in desc_tokens
+            if set([ancestor.local_name 
+                    for ancestor in token.ancestors_excl_self])
+                        .isdisjoint(AtomicTokenType.value_set()) 
+        ]
+
+def descendant_text(elem: _Element | _ElementUnicodeResult) -> str:
+    """
+    Returns descendant text
+    """
+
+    if type(elem) is _ElementUnicodeResult:
+        s = str(elem)
+    else: 
+        s = ''.join(map(str, elem.xpath('.//text()'))) 
+
+    return re.sub(r'[\n\t]|\s+', '', s)
+
+
 def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[BaseElement]):
     """
     Returns the string representation of the element specified in 
@@ -28,19 +80,6 @@ def leiden_str(elem: _Element, classes: dict[str, type]) -> str:
     """
 
     return str(callable_from_localname(elem, classes))
-
-
-def descendant_text(elem: _Element | _ElementUnicodeResult) -> str:
-    """
-    Returns descendant text
-    """
-
-    if type(elem) is _ElementUnicodeResult:
-        s = str(elem)
-    else: 
-        s = ''.join(map(str, elem.xpath('.//text()'))) 
-
-    return re.sub(r'[\n\t]|\s+', '', s)
 
 
 def leiden_str_from_children(
@@ -70,28 +109,3 @@ def leiden_str_from_children(
     return ''.join([str(obj) for obj in objs])
 
 
-def callable_from_localname(
-            elem: _Element | _ElementUnicodeResult,
-            classes: dict[str, type]
-        ) -> str | None:
-
-    """
-    Returns an object according 
-    to the tag of param:elem
-    """
-
-    if type(elem) is _ElementUnicodeResult:
-        return str(elem)
-    
-    if type(elem) is _Element:
-        elem_cls = classes.get(localname(elem), None)
-
-    else:
-        raise TypeError(f'Element is of type {type(elem)}: '
-                        f'should be either _Element '
-                         'or _ElementUnicodeResult')
-
-    if elem_cls is None:
-        return None
-
-    return elem_cls(elem)
