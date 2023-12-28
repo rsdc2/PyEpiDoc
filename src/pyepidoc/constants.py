@@ -16,6 +16,8 @@ RIGHT_BRACE:str = '\u007d'
 WHITESPACE:list = [' ', '\n']
 WHITESPACE_RE = r'(\s+)'
 
+ROMAN_NUMERAL_CHARS = {'I', 'V', 'X', 'C', 'D'}
+
 SubsumableRels = [
     {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'c', 'ns': TEINS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'Comment', 'ns': '', 'attrs': dict()}},

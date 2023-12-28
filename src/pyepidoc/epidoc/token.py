@@ -18,7 +18,7 @@ from lxml.etree import (
 from ..xml import Namespace as ns
 from ..xml.utils import localname
 from ..utils import maxone, remove_none, head
-from ..constants import TEINS, XMLNS, A_TO_Z_SET
+from ..constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
 from ..xml.baseelement import BaseElement
 
 from .element import EpiDocElement
@@ -88,7 +88,7 @@ class Token(EpiDocElement):
             return stripped_form.capitalize()
         
         # Capitalize Roman numerals only
-        if self.local_name == 'num' and self.charset == 'latin':
+        if self.local_name == 'num' and self.charset == 'latin' and self.roman_numeral_chars_only:
             return stripped_form.upper()
         
         return stripped_form.lower()
@@ -331,7 +331,7 @@ class Token(EpiDocElement):
         except for comments.
         """
 
-        def _remove_whitespace_from_child(elem:_Element) -> _Element:
+        def _remove_whitespace_from_child(elem: _Element) -> _Element:
 
             for child in elem.getchildren():
                 if not isinstance(child, _Comment):
@@ -349,6 +349,15 @@ class Token(EpiDocElement):
             raise TypeError("Underlying element is None")
 
         return _remove_whitespace_from_child(self._e)
+
+    @property
+    def roman_numeral_chars_only(self) -> bool:
+        """
+        Returns True if form contains only Roman numerical chararacters
+        """
+
+        chars = set(self.normalized_form)
+        return chars.issubset(ROMAN_NUMERAL_CHARS)
 
     @property
     def type(self) -> str:
