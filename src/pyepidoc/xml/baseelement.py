@@ -150,7 +150,7 @@ class BaseElement(Showable):
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
-        return len([parent for parent in self.ancestors 
+        return len([parent for parent in self.ancestors_incl_self 
             if type(parent.parent) is BaseElement])
 
     @property
@@ -343,7 +343,7 @@ class BaseElement(Showable):
             self,  
             parenttagnames:list[str]) -> Sequence[BaseElement]:
         
-        return [parent for parent in self.ancestors 
+        return [parent for parent in self.ancestors_incl_self 
             if parent.tag.name in parenttagnames]
 
     def has_attrib(self, attribname:str) -> bool:
@@ -423,10 +423,10 @@ class BaseElement(Showable):
             raise TypeError('Parent is of incorrect type.')
 
     @property
-    def ancestors(self) -> ExtendableSeq[BaseElement]:
+    def ancestors_incl_self(self) -> ExtendableSeq[BaseElement]:
 
         """
-        Returns an |ExtendableSeq| of parent |Element|
+        Returns an |ExtendableSeq| of parent |BaseElement|
         ordered by closest parent to furthest parent.
         """
 
@@ -441,6 +441,13 @@ class BaseElement(Showable):
 
         init_list = cast(ExtendableSeq[BaseElement], []) 
         return _climb(acc=init_list, element=self)
+
+    @property
+    def ancestors_excl_self(self) -> ExtendableSeq[BaseElement]:
+        ancestors = self.ancestors_incl_self
+        if len(ancestors) > 0:
+            return cast(ExtendableSeq[BaseElement], ancestors[1:])
+        return cast(ExtendableSeq[BaseElement], [])
 
     @property
     def previous_sibling(self) -> Optional[BaseElement]:
@@ -468,7 +475,7 @@ class BaseElement(Showable):
 
     @property
     def root(self) -> BaseElement:
-        return self.ancestors[-1]
+        return self.ancestors_incl_self[-1]
 
     @property
     def roottree(self) -> Optional[_ElementTree]:

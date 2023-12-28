@@ -3,6 +3,7 @@ from typing import Optional, Sequence, cast
 
 from copy import deepcopy
 from functools import reduce
+from itertools import chain
 from lxml.etree import _Element 
 
 from ..element import EpiDocElement
@@ -20,7 +21,7 @@ from ..enums import (
 )
 from pyepidoc.classes import SetRelation
 from ...xml import BaseElement
-from ...utils import update_set_inplace, flatlist, flatten, update_set_copy, head
+from ...utils import update_set_inplace, head
 from ...constants import XMLNS
 
 
@@ -162,11 +163,13 @@ class Ab(EpiDocElement):
         can be tokenized within the <ab/> element.
         """
 
-        token_carriers = flatten(self._token_carrier_sequences)
+        token_carriers = chain(*self._token_carrier_sequences)
         token_carriers_sorted = sorted(token_carriers)
 
         def _redfunc(acc:list[str], element:EpiDocElement) -> list[str]:
-            if element.text is None and element.tail_completer is None and element._tail_prototokens == []:
+            if element.text is None and \
+                element.tail_completer is None and \
+                    element._tail_prototokens == []:
                 return acc
         
             if element._join_to_next:
@@ -238,7 +241,7 @@ class Ab(EpiDocElement):
             next_no_spaces_desc = [element_.desc_elems 
                                    for element_ in element.next_no_spaces] + [element.next_no_spaces]
             next_no_spaces_desc_flat = [EpiDocElement(item) 
-                                        for item in flatten(next_no_spaces_desc)]
+                                        for item in chain(*next_no_spaces_desc)]
             
             # NB this doesn't work if use 'update_set_copy'
             # TODO: work out why
@@ -298,7 +301,7 @@ class Ab(EpiDocElement):
             if self.e is not None and token.e is not None:
                 self.e.insert(0, token.e)
 
-        token_carriers = flatten(self._token_carrier_sequences)
+        token_carriers = chain(*self._token_carrier_sequences)
         token_carriers_sorted = sorted(token_carriers)
         
         def _redfunc(
@@ -376,10 +379,12 @@ class Ab(EpiDocElement):
 
     @property
     def tokens(self) -> list[Token]:
+
+        desc_elems = self.get_desc(AtomicTokenType.values())
+        breakpoint()
         return [Token(word) for word 
-            in self.get_desc(
-                AtomicTokenType.values() 
-            )
+            in desc_elems
+            # if set([ancestor.local_name for ancestor in Token(word).ancestors]).isdisjoint(AtomicTokenType.value_set()) 
         ]
     
     @property
@@ -397,7 +402,7 @@ class Ab(EpiDocElement):
 
         def parent_name_set(elem: _Element) -> set[str]:
             parent_names = [parent.local_name 
-                            for parent in Token(elem).ancestors]
+                            for parent in Token(elem).ancestors_incl_self]
             return set(parent_names)
         
         return [Token(token_elem) for token_elem 

@@ -161,7 +161,7 @@ xml_to_tokenize = [
 @pytest.mark.parametrize("xml_pair", xml_to_tokenize)
 def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
 
-    xml_pair_abs = map(abify, xml_pair)
+    xml_pair_abs = tuple(map(abify, xml_pair))
 
     xml, tokenized_xml = xml_pair_abs
     untokenized = Ab(etree.fromstring(xml, None))
