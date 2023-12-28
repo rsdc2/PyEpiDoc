@@ -17,7 +17,7 @@ from lxml.etree import (
 
 from ..xml import Namespace as ns
 from ..xml.utils import localname
-from ..utils import maxone, remove_none, head
+from ..utils import maxone, remove_none, head, to_upper, to_lower
 from ..constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
 from ..xml.baseelement import BaseElement
 
@@ -358,8 +358,8 @@ class Token(EpiDocElement):
         Returns True if form contains only Roman numerical chararacters
         """
 
-        chars = set(self.normalized_form)
-        return chars.issubset(ROMAN_NUMERAL_CHARS)
+        chars = set(self.normalized_form.lower())
+        return chars.issubset(set(map(to_lower, ROMAN_NUMERAL_CHARS)))
 
     @property
     def type(self) -> str:
