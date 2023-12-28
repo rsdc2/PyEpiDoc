@@ -17,5 +17,6 @@ class G(EpiDocElement):
         if self.local_name != 'g':
             raise TypeError('Element should be <g>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         return ' · '

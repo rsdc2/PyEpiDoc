@@ -110,7 +110,7 @@ def leiden_str_from_children(
     objs = [classes.get(localname(child), descendant_text)(child) 
             for child in children]
 
-    return ''.join([str(obj) for obj in objs])
+    return ''.join([obj.leiden_form if hasattr(obj, 'leiden_form') else str(obj) for obj in objs])
 
 
 def normalized_str_from_children(

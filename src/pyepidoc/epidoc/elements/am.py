@@ -12,14 +12,6 @@ class Am(EpiDocElement):
     last accessed 2023-04-13.
     """
 
-    def __str__(self) -> str:
-
-        return ''.join([
-            '{',
-            self.text_desc_compressed_whitespace,
-            '}'
-        ])
-
     @property
     def first_char(self) -> Optional[str]:
         # .strip() is used to exclude cases where there is text, 
@@ -29,3 +21,12 @@ class Am(EpiDocElement):
             return text[0]
 
         return None
+
+    @property
+    def leiden_form(self) -> str:
+
+        return ''.join([
+            '{',
+            self.text_desc_compressed_whitespace,
+            '}'
+        ])

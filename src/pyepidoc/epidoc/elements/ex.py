@@ -20,7 +20,8 @@ class Ex(EpiDocElement):
                             f'but is of type <{localname(e)}>.')
 
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         return ''.join([
             '(',
             self.text_desc_compressed_whitespace,

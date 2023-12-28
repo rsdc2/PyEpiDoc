@@ -342,7 +342,7 @@ class Edition(EpiDocElement):
     
     @property
     def tokens_list_str(self) -> list[str]:
-        return [str(token) for token in self.tokens]
+        return [token.normalized_form for token in self.tokens]
     
     @property
     def tokens_normalized(self) -> list[Token]:

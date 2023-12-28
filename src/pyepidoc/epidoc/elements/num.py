@@ -18,7 +18,8 @@ class Num(EpiDocElement):
         if self.local_name != 'num':
             raise TypeError('Element should be <num>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         from .expan import Expan
 

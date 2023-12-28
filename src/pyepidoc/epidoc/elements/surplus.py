@@ -28,7 +28,8 @@ class Surplus(EpiDocElement):
         if self.local_name != 'surplus':
             raise TypeError('Element should be <surplus>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         return ''.join([
             '{',

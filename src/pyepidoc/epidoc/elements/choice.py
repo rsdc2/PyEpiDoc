@@ -23,7 +23,8 @@ class Choice(EpiDocElement):
         if self.local_name != 'choice':
             raise TypeError('Element should be <choice>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         from .expan import Expan
 

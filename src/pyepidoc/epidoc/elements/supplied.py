@@ -18,7 +18,8 @@ class Supplied(EpiDocElement):
         if self.local_name != 'supplied':
             raise TypeError('Element should be <supplied>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         from .abbr import Abbr
         from .am import Am

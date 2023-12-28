@@ -82,26 +82,8 @@ class Token(EpiDocElement):
     """
     
     def __str__(self) -> str:
+        # raise AttributeError
         # breakpoint()
-        # stripped_form = re.sub(
-        #     r'[·\,\.\;\:]|\s+', 
-        #     '', 
-        #     self.normalized_form.strip()
-        #     ).replace('\n', '').replace('\t', '')
-
-        # if self.type in [
-        #     AtomicTokenType.Name.value, 
-        #     CompoundTokenType.PersName.value
-        # ]:
-        #     return stripped_form.capitalize()
-        
-        # # Capitalize Roman numerals only
-        # if self.local_name == 'num' and \
-        #       self.charset == 'latin' and \
-        #           self.roman_numeral_chars_only:
-        #     return stripped_form.upper()
-        
-        # return stripped_form.lower()
         return self.normalized_form
 
     @cached_property
@@ -227,7 +209,7 @@ class Token(EpiDocElement):
             ln = localname(n)
 
             if ln in ['g', 'lb', 'gap']:
-                return str(elem_classes[ln](n))
+                return elem_classes[ln](n).leiden_form
             
             return ''
 

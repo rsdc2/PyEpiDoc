@@ -39,12 +39,13 @@ class Lb(EpiDocElement):
 
         return f"Lb({content})"
     
-    def __str__(self) -> str:
-        return '|'
-    
     @property
     def break_value(self) -> Optional[str]:
         return self.get_attrib('break')
+
+    @property
+    def leiden_form(self) -> str:
+        return '|'
 
     @property
     def line_elems(self):

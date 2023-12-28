@@ -18,7 +18,8 @@ class Sic(EpiDocElement):
         if self.local_name != 'sic':
             raise TypeError('Element should be <sic>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         from .expan import Expan
 

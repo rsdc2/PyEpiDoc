@@ -20,8 +20,8 @@ class Hi(EpiDocElement):
             raise TypeError(f'Element should be of type <hi>, '
                             f'but is of type <{localname(e)}>.')
 
-
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         from .expan import Expan
         from .abbr import Abbr
         from .ex import Ex

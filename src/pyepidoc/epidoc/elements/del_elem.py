@@ -24,7 +24,8 @@ class Del(EpiDocElement):
         if self.local_name != 'del':
             raise TypeError('Element should be <supplied>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         return ''.join([
             '⟦',

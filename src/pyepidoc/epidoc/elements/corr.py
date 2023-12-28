@@ -18,7 +18,8 @@ class Corr(EpiDocElement):
         if self.local_name != 'corr':
             raise TypeError('Element should be <corr>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         from .expan import Expan
 

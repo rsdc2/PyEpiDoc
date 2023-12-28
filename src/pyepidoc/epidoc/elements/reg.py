@@ -18,7 +18,8 @@ class Reg(EpiDocElement):
         if self.local_name != 'reg':
             raise TypeError('Element should be <reg>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         from .expan import Expan
 

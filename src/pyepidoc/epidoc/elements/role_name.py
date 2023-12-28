@@ -18,7 +18,8 @@ class RoleName(EpiDocElement):
         if self.local_name != 'roleName':
             raise TypeError('Element should be <roleName>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         
         from .expan import Expan
 

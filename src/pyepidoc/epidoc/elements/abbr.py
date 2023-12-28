@@ -52,17 +52,6 @@ class Abbr(EpiDocElement):
         return text[0]
 
     @property
-    def last_non_am_char_before_am(self) -> Optional[str]:
-        child_text_nodes = self.xpath('descendant::text()[not(ancestor::ns:am) and following-sibling::ns:am]')
-
-        text = ''.join(map(str, child_text_nodes))
-        
-        if text == '':
-            return None
-        
-        return text[-1]
-
-    @property
     def is_multiplicative(self) -> bool:
 
         """
@@ -90,6 +79,36 @@ class Abbr(EpiDocElement):
             return True
             
         return False
+
+    @property
+    def last_non_am_char_before_am(self) -> Optional[str]:
+        child_text_nodes = self.xpath('descendant::text()[not(ancestor::ns:am) and following-sibling::ns:am]')
+
+        text = ''.join(map(str, child_text_nodes))
+        
+        if text == '':
+            return None
+        
+        return text[-1]
+
+    @property
+    def leiden_form(self) -> str:
+        from .unclear import Unclear
+        from .hi import Hi
+
+        element_classes: dict[str, type] = {
+            'am': Am,
+            'hi': Hi,
+            'lb': Lb,
+            'unclear': Unclear
+        }
+
+        return leiden_str_from_children(
+            self.e,
+            element_classes,
+            'node'
+        )
+
         
     @property
     def normalized_form(self) -> str:

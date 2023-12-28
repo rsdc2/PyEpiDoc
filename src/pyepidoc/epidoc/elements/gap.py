@@ -17,5 +17,6 @@ class Gap(EpiDocElement):
         if self.local_name != 'gap':
             raise TypeError('Element should be <gap>.')
 
-    def __str__(self) -> str:
+    @property
+    def leiden_form(self) -> str:
         return '[-?-]'
