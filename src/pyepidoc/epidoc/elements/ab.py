@@ -379,12 +379,21 @@ class Ab(EpiDocElement):
 
     @property
     def tokens(self) -> list[Token]:
+        """
+        Return a list of tokens in the <ab> element.
+        If tokens are nested, returns the outermost token,
+        e.g. with a <num> element within a <w> element, 
+        only the <w> is returned.
+        """
+        desc_tokens = [Token(word) 
+                       for word 
+                       in self.get_desc(AtomicTokenType.values())]
 
-        desc_elems = self.get_desc(AtomicTokenType.values())
-        breakpoint()
-        return [Token(word) for word 
-            in desc_elems
-            # if set([ancestor.local_name for ancestor in Token(word).ancestors]).isdisjoint(AtomicTokenType.value_set()) 
+        return [token for token 
+            in desc_tokens
+            if set([ancestor.local_name 
+                    for ancestor in token.ancestors_excl_self])
+                        .isdisjoint(AtomicTokenType.value_set()) 
         ]
     
     @property
