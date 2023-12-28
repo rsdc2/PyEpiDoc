@@ -118,11 +118,19 @@ def tail(
 
 
 def last(
-    lst:list[T],
-    defaultval:Optional[T]=None,
-    throw_if_more_than_one:bool=False
+    lst: list[T],
+    defaultval: Optional[T]=None,
+    throw_if_more_than_one: bool=False
 ):
     return maxone(lst, defaultval, throw_if_more_than_one, len(lst) - 1)
+
+
+def to_lower(s: str) -> str:
+    return s.lower()
+
+
+def to_upper(s: str) -> str:
+    return s.upper()
 
 
 def maxoneT(
