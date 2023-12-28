@@ -41,7 +41,7 @@ class Lb(EpiDocElement):
     
     def __str__(self) -> str:
         return '|'
-
+    
     @property
     def break_value(self) -> Optional[str]:
         return self.get_attrib('break')
@@ -61,3 +61,7 @@ class Lb(EpiDocElement):
         """
 
         return self.get_attrib('n')
+
+    @property
+    def normalized_form(self) -> str:
+        return ''

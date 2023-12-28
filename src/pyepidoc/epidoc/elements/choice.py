@@ -1,6 +1,6 @@
 from lxml.etree import _Element
 from ..element import EpiDocElement
-from ..utils import leiden_str_from_children
+from ..utils import leiden_str_from_children, normalized_str_from_children
 
 from .orig import Orig
 from .reg import Reg
@@ -11,7 +11,7 @@ from .corr import Corr
 class Choice(EpiDocElement):
     """
     Provides services for abbreviation expansions 
-    given in <ex> elements.
+    given in <choice> elements.
     """
 
     def __init__(self, e: _Element):
@@ -36,3 +36,17 @@ class Choice(EpiDocElement):
         }
         
         return leiden_str_from_children(self.e, element_classes, 'node')
+    
+    @property
+    def normalized_form(self) -> str:
+        from .expan import Expan
+
+        element_classes: dict[str, type] = {
+            'expan': Expan,
+            'orig': Orig,
+            'reg': Reg,
+            'sic': Sic,
+            'corr': Corr
+        }        
+        # breakpoint()
+        return normalized_str_from_children(self.e, element_classes, 'node')

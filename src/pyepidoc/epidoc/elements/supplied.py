@@ -1,6 +1,6 @@
 from lxml.etree import _Element
 from ..element import EpiDocElement
-from ..utils import leiden_str_from_children
+from ..utils import leiden_str_from_children, normalized_str_from_children
 
 
 class Supplied(EpiDocElement):
@@ -39,3 +39,7 @@ class Supplied(EpiDocElement):
             leiden_str_from_children(self.e, element_classes, 'node'),
             ']'
         ])
+    
+    @property
+    def normalized_form(self) -> str:
+        return normalized_str_from_children(self.e, dict(), 'node')

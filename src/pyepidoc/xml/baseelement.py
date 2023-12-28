@@ -104,6 +104,10 @@ class BaseElement(Showable):
         return self.__repr__()
 
     def _clean_text(self, text: str):
+
+        """
+        Remove newline, space and tab characters 
+        """
         return (text.strip()
             .replace('\n', '')
             .replace(' ', '')

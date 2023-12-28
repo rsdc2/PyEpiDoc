@@ -1,6 +1,6 @@
 from lxml.etree import _Element
 from ..element import EpiDocElement
-from ..utils import leiden_str_from_children
+from ..utils import leiden_str_from_children, normalized_str_from_children
 
 
 class Corr(EpiDocElement):
@@ -27,3 +27,7 @@ class Corr(EpiDocElement):
         }
         
         return leiden_str_from_children(self.e, element_classes, 'node')
+    
+    @property
+    def normalized_form(self) -> str:
+        return self.text_desc_compressed_whitespace

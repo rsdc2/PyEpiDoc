@@ -22,8 +22,11 @@ from ..constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
 from ..xml.baseelement import BaseElement
 
 from .element import EpiDocElement
-from .utils import leiden_str_from_children, descendant_atomic_tokens
-
+from .utils import (
+    leiden_str_from_children, 
+    normalized_str_from_children,
+    descendant_atomic_tokens
+)
 from .elements.abbr import Abbr
 from .elements.am import Am
 from .elements.choice import Choice
@@ -33,9 +36,11 @@ from .elements.expan import Expan
 from .elements.g import G
 from .elements.gap import Gap
 from .elements.lb import Lb
+from .elements.num import Num
 from .elements.supplied import Supplied
 from .elements.surplus import Surplus
 from .elements.unclear import Unclear
+from .elements.w import W
 
 from .enums import (
     CompoundTokenType, 
@@ -57,9 +62,11 @@ elem_classes: dict[str, type] = {
     'g': G,
     'gap': Gap,
     'lb': Lb,
+    'num': Num,
     'supplied': Supplied,
     'surplus': Surplus,
-    'unclear': Unclear
+    'unclear': Unclear,
+    'w': W
 }
 
 class Token(EpiDocElement):
@@ -147,10 +154,6 @@ class Token(EpiDocElement):
         pos = self.pos
         return pos[7] if pos else None
 
-    @property
-    def charset(self) -> str:
-        return "latin" if set(self.form) - A_TO_Z_SET == set() else "other"
-
     def convert_to_name(self, inplace=True) -> Token:
         """
         Converts the containing token tag, 
@@ -191,15 +194,6 @@ class Token(EpiDocElement):
         """
 
         return head(self.expans)
-
-    @cached_property
-    def form(self) -> str:
-        """
-        Returns the full form, including any abbreviation expansion.
-        Compare @normalized_form
-        """
-
-        return self._clean_text(self.text_desc)
 
     @property
     def form_normalized(self) -> str:
@@ -280,13 +274,19 @@ class Token(EpiDocElement):
         also excludes text from <g>.
         Compare @form and @orig_form
         """
-        non_ancestors = OrigTextType.values()
+        # non_ancestors = OrigTextType.values()
 
-        ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
-                                 for ancestor in non_ancestors])
+        # ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
+        #                          for ancestor in non_ancestors])
 
-        normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
-        return self._clean_text(''.join([str(t) for t in normalized_text]))
+        # normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
+        # return self._clean_text(''.join([str(t) for t in normalized_text])
+        
+        if self.local_name == 'num':
+            return Num(self.e).normalized_form
+            # return 'Num'
+        
+        return normalized_str_from_children(self.e, elem_classes, 'node')
 
     @property
     def number(self) -> Optional[str]:
@@ -351,15 +351,6 @@ class Token(EpiDocElement):
             raise TypeError("Underlying element is None")
 
         return _remove_whitespace_from_child(self._e)
-
-    @property
-    def roman_numeral_chars_only(self) -> bool:
-        """
-        Returns True if form contains only Roman numerical chararacters
-        """
-
-        chars = set(self.normalized_form.lower())
-        return chars.issubset(set(map(to_lower, ROMAN_NUMERAL_CHARS)))
 
     @property
     def tokens(self) -> list[Token]:

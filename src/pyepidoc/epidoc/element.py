@@ -28,7 +28,11 @@ from lxml.etree import (
 
 from ..xml.namespace import Namespace as ns
 
-from ..constants import TEINS, XMLNS, SubsumableRels
+from ..constants import (A_TO_Z_SET, 
+                         TEINS, 
+                         XMLNS, 
+                         SubsumableRels,
+                         ROMAN_NUMERAL_CHARS)
 from ..classes import Tag
 from .enums import (
     whitespace, 
@@ -39,7 +43,7 @@ from .enums import (
     AlwaysSubsumable
 )
 from . import ids
-from ..utils import maxoneT, head, last
+from ..utils import maxoneT, head, last, to_lower
 from pyepidoc.xml.utils import localname, remove_children
 
 def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
@@ -234,8 +238,23 @@ class EpiDocElement(BaseElement, Showable):
         Return all abbreviation elements as a |list| of |Element|.
         """
 
-        return [EpiDocElement(abbr) for abbr in self.get_desc_elems_by_name('abbr')]
+        return [EpiDocElement(abbr) 
+                for abbr in self.get_desc_elems_by_name('abbr')]
         
+    @property
+    def charset(self) -> str:
+        return "latin" if set(self.form) - A_TO_Z_SET == set() \
+            else "other"
+    
+    @cached_property
+    def form(self) -> str:
+        """
+        Returns the full form, including any abbreviation expansion.
+        Compare @normalized_form
+        """
+
+        return self._clean_text(self.text_desc)
+
     @property
     def has_abbr(self) -> bool:
         """
@@ -302,31 +321,6 @@ class EpiDocElement(BaseElement, Showable):
             
         return True
 
-    @property
-    def right_bound(self) -> bool:
-        """
-        Return False if self or last child is <lb break='no'>, otherwise return True.
-        Last child only counted if the last child has no tail.
-        Used for element addition in __add__ method.
-        """
-
-        if self.local_name == 'lb' and self.get_attrib('break') == 'no':
-            return False
-        
-        if self.local_name == "Commment":
-            return False
-
-        last_child = last(self.child_elems)
-        if last_child is not None and (last_child.tail == '' or last_child.tail is None):
-            if  last_child.local_name == 'lb' and last_child.get_attrib('break') == 'no':
-                return False
-
-        if self.e is None:
-            return False
-        
-        return self._final_space == True or self.e.tail == ' '
-
-        # return self._final_space
 
     @property
     def child_elems(self) -> list[EpiDocElement]:
@@ -772,6 +766,14 @@ class EpiDocElement(BaseElement, Showable):
         """
         return self.gaps == []
 
+    # @property
+    # def normalized_form(self) -> str:
+    #     """
+    #     Default normalized string representation is simply
+    #     str(self). To be overridden by subclasses.
+    #     """
+    #     return 'default_normalized_form'
+
     @property
     def nospace_till_next_element(self) -> bool:
         return self._tail_prototokens == [] and not self.final_tailtoken_boundary
@@ -845,6 +847,39 @@ class EpiDocElement(BaseElement, Showable):
     @property
     def _prototokens(self) -> list[str]:
         return self._internal_prototokens + self._tail_prototokens
+
+    @property
+    def right_bound(self) -> bool:
+        """
+        Return False if self or last child is <lb break='no'>, otherwise return True.
+        Last child only counted if the last child has no tail.
+        Used for element addition in __add__ method.
+        """
+
+        if self.local_name == 'lb' and self.get_attrib('break') == 'no':
+            return False
+        
+        if self.local_name == "Commment":
+            return False
+
+        last_child = last(self.child_elems)
+        if last_child is not None and (last_child.tail == '' or last_child.tail is None):
+            if  last_child.local_name == 'lb' and last_child.get_attrib('break') == 'no':
+                return False
+
+        if self.e is None:
+            return False
+        
+        return self._final_space == True or self.e.tail == ' '
+
+    @property
+    def roman_numeral_chars_only(self) -> bool:
+        """
+        Returns True if form contains only Roman numerical chararacters
+        """
+
+        chars = set(self.form.lower())
+        return chars.issubset(set(map(to_lower, ROMAN_NUMERAL_CHARS)))
 
     @property
     def root(self) -> BaseElement:

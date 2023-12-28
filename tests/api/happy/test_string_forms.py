@@ -17,12 +17,12 @@ tests = [
 
 
 @pytest.mark.parametrize(['xml', 'tokens'], tests)
-def test_string_forms(xml: str, tokens: list[str]):
+def test_normalized_string_forms(xml: str, tokens: list[str]):
     """
     Tests token strings correct
     """
 
     ab = Ab(elem_from_str(abify(xml)))
-    assert ab.tokens_list_str == tokens
+    assert ab.tokens_list_normalized_str == tokens
 
 

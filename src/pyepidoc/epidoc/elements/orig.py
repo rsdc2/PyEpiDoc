@@ -27,3 +27,7 @@ class Orig(EpiDocElement):
         }
         
         return leiden_str_from_children(self.e, element_classes, 'node')
+    
+    @property
+    def normalized_form(self) -> str:
+        return ''

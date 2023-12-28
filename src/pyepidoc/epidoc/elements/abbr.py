@@ -91,3 +91,6 @@ class Abbr(EpiDocElement):
             
         return False
         
+    @property
+    def normalized_form(self) -> str:
+        return self.text_desc_compressed_whitespace

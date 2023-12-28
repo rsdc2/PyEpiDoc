@@ -3,10 +3,10 @@ from ..element import EpiDocElement
 from ..utils import leiden_str_from_children, normalized_str_from_children
 
 
-class Sic(EpiDocElement):
+class Num(EpiDocElement):
     """
     Provides services for abbreviation expansions 
-    given in <ex> elements.
+    given in <num> elements.
     """
 
     def __init__(self, e: _Element):
@@ -15,8 +15,8 @@ class Sic(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'sic':
-            raise TypeError('Element should be <sic>.')
+        if self.local_name != 'num':
+            raise TypeError('Element should be <num>.')
 
     def __str__(self) -> str:
         
@@ -30,4 +30,19 @@ class Sic(EpiDocElement):
     
     @property
     def normalized_form(self) -> str:
-        return ''
+        # from .expan import Expan
+
+        # element_classes: dict[str, type] = {
+        #     'expan': Expan
+        # }
+        
+        # normalized_str = normalized_str_from_children(
+        #     self.e, 
+        #     element_classes, 
+        #     'node'
+        # )
+        # breakpoint()
+        if self.charset == 'latin' and self.roman_numeral_chars_only:
+            return self.text_desc_compressed_whitespace.upper()
+        
+        return self.text_desc_compressed_whitespace

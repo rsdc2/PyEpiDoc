@@ -1,13 +1,17 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, cast
 import re
 
 from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
 from pyepidoc.xml.utils import localname
 from pyepidoc.xml.baseelement import BaseElement
-from pyepidoc.epidoc.enums import RegTextType, AtomicTokenType
+from pyepidoc.epidoc.enums import (
+    OrigTextType, 
+    RegTextType, 
+    AtomicTokenType
+)
 from pyepidoc.constants import TEINS
 from pyepidoc.epidoc.element import EpiDocElement
 
@@ -109,3 +113,31 @@ def leiden_str_from_children(
     return ''.join([str(obj) for obj in objs])
 
 
+def normalized_str_from_children(
+        parent: _Element,
+        classes: dict[str, type],
+        child_type: Literal['element', 'node']) -> str:
+
+    """
+    Return a normalized string from a parent element.
+
+    param:child_type sets whether or not the children are elements or
+    nodes (where nodes include text content)
+    """
+    
+    non_ancestors = OrigTextType.values()
+    child_str = 'child::node()' if child_type == 'node' else 'child::*'
+    ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
+                                for ancestor in non_ancestors])
+    
+    xpath_str = f'{child_str}[{ancestors_str}]'
+    
+    children: list[_Element | _ElementUnicodeResult] = \
+        [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
+    objs = cast(list[EpiDocElement], [classes.get(localname(child), descendant_text)(child) 
+            for child in children])
+    
+    s = ''.join([obj.normalized_form 
+                 if hasattr(obj, 'normalized_form') 
+                 else str(obj) for obj in objs])
+    return re.sub(r'[·\,\.\;\:]|\s+', '', s)

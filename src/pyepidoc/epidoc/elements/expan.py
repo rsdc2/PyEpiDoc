@@ -14,7 +14,10 @@ from .abbr import Abbr
 from .am import Am
 
 from ..enums import AbbrType
-from ..utils import leiden_str_from_children, callable_from_localname, localname
+from ..utils import (leiden_str_from_children, 
+                     callable_from_localname, 
+                     localname,
+                     normalized_str_from_children)
 
 
 class Expan(EpiDocElement):
@@ -47,7 +50,7 @@ class Expan(EpiDocElement):
         return f"Expan({content})"
 
     def __str__(self) -> str:
-        return self.leiden
+        return self.leiden_str
 
     @property
     def abbrs(self) -> list[Abbr]:
@@ -203,11 +206,23 @@ class Expan(EpiDocElement):
         return self.xpath_float(first_desc_of_abbr_xpath) == 0.0
 
     @property
-    def leiden(self) -> str:
+    def leiden_str(self) -> str:
         
         """
         Returns a Leiden-formatted string representation
         of the <expan> element
         """
 
-        return leiden_str_from_children(self.e, self.element_classes, 'element')
+        return leiden_str_from_children(
+            self.e, 
+            self.element_classes, 
+            'element'
+        )
+    
+    @property
+    def normalized_form(self) -> str:
+        return normalized_str_from_children(
+            self.e, 
+            self.element_classes, 
+            'element'
+        )
