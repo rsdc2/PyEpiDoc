@@ -4,19 +4,25 @@ correct Leiden plus text
 """
 
 import pytest
-from lxml import etree
 from pyepidoc.epidoc.token import Token
+from pyepidoc.xml.utils import elem_from_str
+from pyepidoc.constants import TEINS
 
 tests = [
-    ('<w><choice><sic>que</sic><corr>quae</corr></choice></w>',
+    (f'<w xmlns="{TEINS}"><choice><sic>que</sic><corr>quae</corr></choice></w>',
      'que',
      'quae')
 ]
 
-@pytest.mark.parametrize(['test'], tests)
-def test_corr_sic(test: tuple[str, str, str]):
-    xml, sic, corr = test
+@pytest.mark.parametrize(['xml', 'sic', 'corr'], tests)
+def test_corr(xml: str, sic: str, corr: str):
 
-    e = etree.fromstring(xml, None)
-    
-    w = Token(xml)
+    w = Token(elem_from_str(xml))
+    assert w.normalized_form == corr
+
+
+@pytest.mark.parametrize(['xml', 'sic', 'corr'], tests)
+def test_sic(xml: str, sic: str, corr: str):
+
+    w = Token(elem_from_str(xml))
+    assert w.leiden_plus_form == sic

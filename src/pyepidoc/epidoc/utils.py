@@ -61,10 +61,12 @@ def leiden_str_from_children(
                                 for ancestor in non_ancestors])
     
     xpath_str = f'{child_str}[{ancestors_str}]'
-
+    
     children: list[_Element | _ElementUnicodeResult] = \
         [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
-    objs = [classes.get(localname(child), descendant_text)(child) for child in children]
+    objs = [classes.get(localname(child), descendant_text)(child) 
+            for child in children]
+
     return ''.join([str(obj) for obj in objs])
 
 
