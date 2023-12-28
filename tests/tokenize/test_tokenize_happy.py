@@ -2,6 +2,7 @@ from pyepidoc.epidoc.scripts import tokenize
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.elements.ab import Ab
 from pyepidoc.file.funcs import filepath_from_list
+from pyepidoc.xml.utils import abify
 
 import os
 import pytest
@@ -160,7 +161,6 @@ xml_to_tokenize = [
 @pytest.mark.parametrize("xml_pair", xml_to_tokenize)
 def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
 
-    def abify(s: str): return f'<ab xmlns="http://www.tei-c.org/ns/1.0">{s}</ab>'
     xml_pair_abs = map(abify, xml_pair)
 
     xml, tokenized_xml = xml_pair_abs
