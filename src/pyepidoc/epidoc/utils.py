@@ -5,7 +5,7 @@ import re
 
 from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
-from pyepidoc.xml.utils import local_name
+from pyepidoc.xml.utils import localname
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.epidoc.enums import RegTextType
 from pyepidoc.constants import TEINS
@@ -64,7 +64,7 @@ def leiden_str_from_children(
 
     children: list[_Element | _ElementUnicodeResult] = \
         [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
-    objs = [classes.get(local_name(child), descendant_text)(child) for child in children]
+    objs = [classes.get(localname(child), descendant_text)(child) for child in children]
     return ''.join([str(obj) for obj in objs])
 
 
@@ -82,7 +82,7 @@ def callable_from_localname(
         return str(elem)
     
     if type(elem) is _Element:
-        elem_cls = classes.get(local_name(elem), None)
+        elem_cls = classes.get(localname(elem), None)
 
     else:
         raise TypeError(f'Element is of type {type(elem)}: '

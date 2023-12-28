@@ -14,7 +14,7 @@ from .abbr import Abbr
 from .am import Am
 
 from ..enums import AbbrType
-from ..utils import leiden_str_from_children, callable_from_localname, local_name
+from ..utils import leiden_str_from_children, callable_from_localname, localname
 
 
 class Expan(EpiDocElement):
@@ -30,9 +30,9 @@ class Expan(EpiDocElement):
 
         self._e = e
 
-        if local_name(e) != 'expan':
+        if localname(e) != 'expan':
             raise TypeError(f'Element should be of type <expan>, '
-                            f'but is of type <{local_name(e)}>.')
+                            f'but is of type <{localname(e)}>.')
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail

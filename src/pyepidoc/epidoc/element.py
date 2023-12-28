@@ -40,7 +40,7 @@ from .enums import (
 )
 from . import ids
 from ..utils import maxoneT, head, last
-from pyepidoc.xml.utils import local_name, remove_children
+from pyepidoc.xml.utils import localname, remove_children
 
 def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     # Check that does not contain atomic tags

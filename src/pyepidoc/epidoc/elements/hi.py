@@ -1,6 +1,6 @@
 from lxml.etree import _Element
 from ..element import EpiDocElement
-from pyepidoc.epidoc.utils import local_name
+from pyepidoc.epidoc.utils import localname
 from pyepidoc.epidoc.utils import leiden_str_from_children
 
 
@@ -16,9 +16,9 @@ class Hi(EpiDocElement):
 
         self._e = e
 
-        if local_name(e) != 'hi':
+        if localname(e) != 'hi':
             raise TypeError(f'Element should be of type <hi>, '
-                            f'but is of type <{local_name(e)}>.')
+                            f'but is of type <{localname(e)}>.')
 
 
     def __str__(self) -> str:

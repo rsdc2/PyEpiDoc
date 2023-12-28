@@ -16,7 +16,7 @@ from lxml.etree import (
 )
 
 from ..xml import Namespace as ns
-from ..xml.utils import local_name
+from ..xml.utils import localname
 from ..utils import maxone, remove_none, head
 from ..constants import TEINS, XMLNS, A_TO_Z_SET
 from ..xml.baseelement import BaseElement
@@ -226,7 +226,7 @@ class Token(EpiDocElement):
         """
 
         def string_rep(n: Node) -> str:
-            ln = local_name(n)
+            ln = localname(n)
 
             if ln in ['g', 'lb', 'gap']:
                 return str(elem_classes[ln](n))
@@ -245,7 +245,7 @@ class Token(EpiDocElement):
                     if str(last).strip() not in ['', '·']:
                         return acc 
                 
-                if local_name(last) in ['lb', 'w', 'name', 'persName']:
+                if localname(last) in ['lb', 'w', 'name', 'persName']:
                     return acc
             
             return acc + [node]

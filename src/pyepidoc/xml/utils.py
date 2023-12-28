@@ -5,7 +5,7 @@ from lxml import etree
 from copy import deepcopy
 
 
-def local_name(node: _Element | _ElementUnicodeResult) -> str:
+def localname(node: _Element | _ElementUnicodeResult) -> str:
     """
     Return the local name of a node.
     Returns '#text' if node is |_ElementUnicodeResult|
@@ -22,6 +22,9 @@ def remove_children(elem: _Element) -> _Element:
         elem_.remove(child)
 
     return elem_
+
+
+# def 
 
 
 # def filter_by_non_ancestors(
