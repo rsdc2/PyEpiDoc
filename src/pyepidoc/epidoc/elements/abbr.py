@@ -5,13 +5,26 @@ from typing import Optional
 from ...utils import head
 
 from ..element import EpiDocElement
-from ..utils import leiden_str_from_children
+from ..utils import leiden_str_from_children, normalized_str_from_children
 from .am import Am
 from .lb import Lb
 
 
 class Abbr(EpiDocElement):    
     def __str__(self) -> str:
+
+        return self.leiden_form
+
+    @property
+    def am(self) -> list[Am]:
+        return [Am(elem.e) for elem in self.am_elems]
+
+    @property
+    def am_count(self) -> int:
+        return len(self.am_elems)
+
+    @property
+    def _element_classes(self) -> dict[str, type]:
         from .unclear import Unclear
         from .hi import Hi
 
@@ -22,20 +35,8 @@ class Abbr(EpiDocElement):
             'unclear': Unclear
         }
 
-        return leiden_str_from_children(
-            self.e,
-            element_classes,
-            'node'
-        )
-
-    @property
-    def am(self) -> list[Am]:
-        return [Am(elem.e) for elem in self.am_elems]
-
-    @property
-    def am_count(self) -> int:
-        return len(self.am_elems)
-
+        return element_classes
+    
     @property
     def first_am(self) -> Optional[Am]:
         return head(self.am)
@@ -93,23 +94,18 @@ class Abbr(EpiDocElement):
 
     @property
     def leiden_form(self) -> str:
-        from .unclear import Unclear
-        from .hi import Hi
-
-        element_classes: dict[str, type] = {
-            'am': Am,
-            'hi': Hi,
-            'lb': Lb,
-            'unclear': Unclear
-        }
 
         return leiden_str_from_children(
             self.e,
-            element_classes,
+            self._element_classes,
             'node'
         )
 
-        
     @property
     def normalized_form(self) -> str:
-        return self.text_desc_compressed_whitespace
+        
+        return normalized_str_from_children(
+            self.e,
+            self._element_classes,
+            'node'
+        )

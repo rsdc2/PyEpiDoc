@@ -14,7 +14,11 @@ tests = [
     ('<w><expan><abbr><num value="2">II</num>vir</abbr><ex>o</ex></expan></w>', 
      ['IIviro'], ['IIvir(o)']),
     ('<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>',
-     ['XIUndecimanorum'], ['XI(Undeci)manorum'])
+     ['XIUndecimanorum'], ['XI(Undeci)manorum']),
+    ('<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>',
+     ['XIUndecimanorum'], ['XI(Undeci)manorum']),
+    ('<w><expan><abbr><am><g ref="#christogram">☧</g></am></abbr><ex>Christi</ex></expan></w>',
+     ['Christi'], ['{☧}(Christi)'])
 ]
 
 
