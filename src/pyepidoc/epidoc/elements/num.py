@@ -43,6 +43,7 @@ class Num(EpiDocElement):
             'node'
         )
 
+        # Capitalize Roman numerals
         if self.charset == 'latin' and self.roman_numeral_chars_only:
             return normalized_str.upper()
         
