@@ -15,7 +15,7 @@ class Num(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'num':
+        if self.localname != 'num':
             raise TypeError('Element should be <num>.')
 
     @property

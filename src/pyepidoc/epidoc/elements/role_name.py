@@ -15,7 +15,7 @@ class RoleName(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'roleName':
+        if self.localname != 'roleName':
             raise TypeError('Element should be <roleName>.')
 
     @property

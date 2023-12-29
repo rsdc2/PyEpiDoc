@@ -21,7 +21,7 @@ def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
     starting with the ancestor closest to the |Element|
     """
     return [Ab(elem) for elem in elem.ancestors_incl_self 
-        if elem.local_name == 'ab']
+        if elem.localname == 'ab']
 
 
 def owner_doc(elem:EpiDocElement) -> Optional[EpiDoc]:

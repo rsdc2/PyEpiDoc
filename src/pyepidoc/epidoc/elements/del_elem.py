@@ -21,7 +21,7 @@ class Del(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'del':
+        if self.localname != 'del':
             raise TypeError('Element should be <supplied>.')
 
     @property

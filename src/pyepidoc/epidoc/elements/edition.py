@@ -308,7 +308,7 @@ class Edition(EpiDocElement):
     @property
     def supplied(self) -> Sequence[BaseElement]:
         return [elem for elem in self.desc_elems 
-            if elem.local_name == 'supplied']
+            if elem.localname == 'supplied']
 
     @property
     def textparts(self) -> list[TextPart]:

@@ -93,7 +93,7 @@ class Token(EpiDocElement):
         Returns a list of <ab> and <div> parent |Element|.
         """
 
-        return self.get_parents_by_name(['ab', 'div'])
+        return self.get_ancestors_by_name(['ab', 'div'])
 
     @cached_property
     def ab_or_div_lang(self) -> Optional[str]:
@@ -259,7 +259,7 @@ class Token(EpiDocElement):
         Compare @form and @orig_form
         """
         
-        if self.local_name == 'num':
+        if self.localname == 'num':
             return Num(self.e).normalized_form
         
         return normalized_str_from_children(self.e, elem_classes, 'node')

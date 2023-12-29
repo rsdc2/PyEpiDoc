@@ -25,7 +25,7 @@ class Surplus(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'surplus':
+        if self.localname != 'surplus':
             raise TypeError('Element should be <surplus>.')
 
     @property

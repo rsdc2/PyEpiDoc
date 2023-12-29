@@ -20,7 +20,7 @@ class Choice(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'choice':
+        if self.localname != 'choice':
             raise TypeError('Element should be <choice>.')
 
     @property

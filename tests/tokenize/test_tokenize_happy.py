@@ -155,8 +155,12 @@ xml_to_tokenize = [
      '<w>d<hi rend="apex">u</hi>mviralium</w>'),
     
     ('dominus',
-     '<w>dominus</w>')
+     '<w>dominus</w>'),
+
+    ('<expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan>',
+     '<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>')
 ]
+
 
 @pytest.mark.parametrize("xml_pair", xml_to_tokenize)
 def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):

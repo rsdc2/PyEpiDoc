@@ -14,7 +14,7 @@ class Lb(EpiDocElement):
 
     def __init__(self, e: _Element | EpiDocElement | BaseElement):
         type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-        node_name_err_msg = f'Element must be <lb>. Element is {EpiDocElement(e).local_name}.'
+        node_name_err_msg = f'Element must be <lb>. Element is {EpiDocElement(e).localname}.'
 
         if type(e) not in [_Element, EpiDocElement, BaseElement]:
             raise TypeError(type_err_msg)
@@ -26,7 +26,7 @@ class Lb(EpiDocElement):
         elif type(e) is BaseElement:
             self._e = e.e
 
-        if self.local_name != 'lb':
+        if self.localname != 'lb':
             raise TypeError(node_name_err_msg)
 
     def __repr__(self):

@@ -15,7 +15,7 @@ class Orig(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'orig':
+        if self.localname != 'orig':
             raise TypeError('Element should be <orig>.')
 
     @property

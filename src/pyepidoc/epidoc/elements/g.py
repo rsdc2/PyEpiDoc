@@ -14,7 +14,7 @@ class G(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'g':
+        if self.localname != 'g':
             raise TypeError('Element should be <g>.')
 
     @property

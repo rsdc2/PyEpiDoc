@@ -25,7 +25,7 @@ class Unclear(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'unclear':
+        if self.localname != 'unclear':
             raise TypeError('Element should be <unclear>.')
 
     @property

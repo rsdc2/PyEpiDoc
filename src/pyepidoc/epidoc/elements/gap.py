@@ -14,7 +14,7 @@ class Gap(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'gap':
+        if self.localname != 'gap':
             raise TypeError('Element should be <gap>.')
 
     @property

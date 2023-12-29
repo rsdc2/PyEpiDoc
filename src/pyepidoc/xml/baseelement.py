@@ -28,6 +28,7 @@ from .namespace import Namespace as ns
 
 from ..constants import TEINS, XMLNS, SubsumableRels
 from ..utils import maxone
+from pyepidoc.classes import SetRelation
 
 
 class BaseElement(Showable):    
@@ -102,6 +103,33 @@ class BaseElement(Showable):
 
     def __str__(self) -> str:
         return self.__repr__()
+
+    @property
+    def ancestors_incl_self(self) -> ExtendableSeq[BaseElement]:
+
+        """
+        Returns an |ExtendableSeq| of parent |BaseElement|
+        ordered by closest parent to furthest parent.
+        """
+
+        def _climb(acc:ExtendableSeq[BaseElement], element:Optional[BaseElement]) -> ExtendableSeq[BaseElement]:
+            if element is None:
+                return acc
+            elif isinstance(element, BaseElement) or issubclass(type(element), BaseElement):
+                acc += [element]
+                return _climb(acc, element.parent)
+            
+            raise TypeError('element is of the wrong type.')
+
+        init_list = cast(ExtendableSeq[BaseElement], []) 
+        return _climb(acc=init_list, element=self)
+
+    @property
+    def ancestors_excl_self(self) -> ExtendableSeq[BaseElement]:
+        ancestors = self.ancestors_incl_self
+        if len(ancestors) > 0:
+            return cast(ExtendableSeq[BaseElement], ancestors[1:])
+        return cast(ExtendableSeq[BaseElement], [])
 
     def _clean_text(self, text: str):
 
@@ -185,7 +213,7 @@ class BaseElement(Showable):
         """
         :return: list of names of all descendant nodes
         """
-        return [elem.local_name for elem in self.desc_elems]
+        return [elem.localname for elem in self.desc_elems]
 
     @property
     def desc_elem_name_set(self) -> set[str]:
@@ -327,7 +355,7 @@ class BaseElement(Showable):
             parent_tag_names:list[str]) -> Optional[BaseElement]:
 
         return maxone(
-            lst=self.get_parents_by_name(parent_tag_names), 
+            lst=self.get_ancestors_by_name(parent_tag_names), 
             defaultval=None, 
             throw_if_more_than_one=False
         )
@@ -343,12 +371,24 @@ class BaseElement(Showable):
         
         return BaseElement(descs[0])
 
-    def get_parents_by_name(
+    def get_ancestors_by_name(
             self,  
-            parenttagnames:list[str]) -> Sequence[BaseElement]:
+            ancestor_names:list[str]) -> Sequence[BaseElement]:
         
-        return [parent for parent in self.ancestors_incl_self 
-            if parent.tag.name in parenttagnames]
+        return [ancestor for ancestor in self.ancestors_incl_self 
+            if ancestor.tag.name in ancestor_names]
+
+    def has_ancestor_by_name(self, name: str) -> bool:
+        names = map(lambda elem: elem.localname, self.ancestors_excl_self)
+        return name in names
+
+    def has_ancestors_by_names(
+            self, 
+            names: list[str], 
+            setrelation: Callable[[set[str], set[str]], bool]) -> bool:
+        
+        ancestor_names = map(lambda elem: elem.localname, self.ancestors_excl_self)
+        return setrelation(set(names), set(ancestor_names))
 
     def has_attrib(self, attribname:str) -> bool:
         if self._e is None:
@@ -393,7 +433,7 @@ class BaseElement(Showable):
         self.set_attrib('id', id_value, namespace=XMLNS)
 
     @property
-    def local_name(self) -> str:
+    def localname(self) -> str:
         """
         :return: Name without namespace as |str|
         """
@@ -426,32 +466,6 @@ class BaseElement(Showable):
         else:
             raise TypeError('Parent is of incorrect type.')
 
-    @property
-    def ancestors_incl_self(self) -> ExtendableSeq[BaseElement]:
-
-        """
-        Returns an |ExtendableSeq| of parent |BaseElement|
-        ordered by closest parent to furthest parent.
-        """
-
-        def _climb(acc:ExtendableSeq[BaseElement], element:Optional[BaseElement]) -> ExtendableSeq[BaseElement]:
-            if element is None:
-                return acc
-            elif isinstance(element, BaseElement) or issubclass(type(element), BaseElement):
-                acc += [element]
-                return _climb(acc, element.parent)
-            
-            raise TypeError('element is of the wrong type.')
-
-        init_list = cast(ExtendableSeq[BaseElement], []) 
-        return _climb(acc=init_list, element=self)
-
-    @property
-    def ancestors_excl_self(self) -> ExtendableSeq[BaseElement]:
-        ancestors = self.ancestors_incl_self
-        if len(ancestors) > 0:
-            return cast(ExtendableSeq[BaseElement], ancestors[1:])
-        return cast(ExtendableSeq[BaseElement], [])
 
     @property
     def previous_sibling(self) -> Optional[BaseElement]:

@@ -30,3 +30,7 @@ class Am(EpiDocElement):
             self.text_desc_compressed_whitespace,
             '}'
         ])
+
+    @property
+    def normalized_form(self) -> str:
+        return ''

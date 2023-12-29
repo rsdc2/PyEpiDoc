@@ -15,7 +15,7 @@ class Supplied(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'supplied':
+        if self.localname != 'supplied':
             raise TypeError('Element should be <supplied>.')
 
     @property

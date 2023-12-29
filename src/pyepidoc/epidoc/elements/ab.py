@@ -131,7 +131,7 @@ class Ab(EpiDocElement):
                 if elem.parent is None:
                     return None
                 
-                if elem.local_name == 'div' and elem.get_attrib('type') == 'edition':
+                if elem.localname == 'div' and elem.get_attrib('type') == 'edition':
                     return lang
 
                 return _get_lang(elem.parent)
@@ -407,7 +407,7 @@ class Ab(EpiDocElement):
         """
 
         def parent_name_set(elem: _Element) -> set[str]:
-            parent_names = [parent.local_name 
+            parent_names = [parent.localname 
                             for parent in Token(elem).ancestors_incl_self]
             return set(parent_names)
         

@@ -14,7 +14,7 @@ class W(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'w':
+        if self.localname != 'w':
             raise TypeError('Element should be <w>.')
 
     # def __str__(self) -> str:

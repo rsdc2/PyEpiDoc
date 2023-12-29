@@ -48,7 +48,7 @@ def descendant_atomic_tokens(elem: EpiDocElement) -> list[EpiDocElement]:
 
     return [token for token 
         in desc_tokens
-        if set([ancestor.local_name 
+        if set([ancestor.localname 
                 for ancestor in token.ancestors_excl_self])
                     .isdisjoint(AtomicTokenType.value_set()) 
     ]

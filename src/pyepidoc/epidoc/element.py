@@ -33,7 +33,7 @@ from ..constants import (A_TO_Z_SET,
                          XMLNS, 
                          SubsumableRels,
                          ROMAN_NUMERAL_CHARS)
-from ..classes import Tag
+from ..classes import Tag, SetRelation
 from .enums import (
     whitespace, 
     AtomicTokenType, 
@@ -44,7 +44,7 @@ from .enums import (
 )
 from . import ids
 from ..utils import maxoneT, head, last, to_lower
-from pyepidoc.xml.utils import localname, remove_children
+
 
 def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     # Check that does not contain atomic tags
@@ -52,20 +52,32 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
 
     atomic_token_set = AtomicTokenType.value_set()
     atomic_non_token_set = AtomicNonTokenType.value_set()
-    name_set = EpiDocElement(subelement).desc_elem_name_set
-    
-    if atomic_token_set.intersection(name_set) != set():
+    epidoc_elem = EpiDocElement(subelement)
+    atomic_descs = epidoc_elem.get_desc_elems_by_name(list(atomic_token_set))
+    all_descs = epidoc_elem.desc_elems
+    all_name_set = epidoc_elem.desc_elem_name_set
+
+    if all_name_set.issubset(atomic_token_set) and all_name_set != set(): # i.e. the only subelement is a number
+        w = epidoc_elem # in which case do nothing
+
+    elif epidoc_elem.localname == 'choice' and all_name_set.issubset({*atomic_token_set, 'orig', 'reg', 'sic', 'corr'}) \
+        and len(all_descs) != 0 and not {'orig', 'reg', 'sic', 'corr'}.issuperset(all_name_set):
+        # i.e. descendant elements are all in <choice> and at least one descendant has been tokenized
+        w = EpiDocElement(subelement)  
+
+    elif atomic_token_set.intersection(all_name_set) != set():
         # i.e. there is at least one subtoken that is an atomic token
-        w = EpiDocElement(subelement) 
+        # w = EpiDocElement(subelement) 
+        w = EpiDocElement.w_factory(subelements=[subelement])
     
-    elif name_set - atomic_non_token_set == set() and \
-        name_set != set() and \
+    elif all_name_set - atomic_non_token_set == set() and \
+        all_name_set != set() and \
         subelement.tail in [None, '']:
 
         # i.e. subelements are only atomic non-tokens, with no
         # external text
         
-        w = EpiDocElement(subelement)
+        w = epidoc_elem
 
     else:
         # Surround in Atomic token tag
@@ -270,7 +282,7 @@ class EpiDocElement(BaseElement, Showable):
         Returns True if the element is an edition <div>.
         """
 
-        return self.local_name == 'div' \
+        return self.localname == 'div' \
             and self.get_attrib('type') == 'edition'
 
     @property
@@ -311,16 +323,15 @@ class EpiDocElement(BaseElement, Showable):
         Used for element addition in __add__ method.
         """
 
-        if self.local_name == 'lb' and self.get_attrib('break') == 'no':
+        if self.localname == 'lb' and self.get_attrib('break') == 'no':
             return False
         
         first_child = head(self.child_elems)
         if first_child is not None and (self.text == '' or self.text is None):
-            if  first_child.local_name == 'lb' and first_child.get_attrib('break') == 'no':
+            if  first_child.localname == 'lb' and first_child.get_attrib('break') == 'no':
                 return False
             
         return True
-
 
     @property
     def child_elems(self) -> list[EpiDocElement]:
@@ -336,11 +347,11 @@ class EpiDocElement(BaseElement, Showable):
     @property
     def dict_desc(self) -> dict[str, str | dict]:
         if self._e is None:
-            return {'name': self.local_name, 
+            return {'name': self.localname, 
                     'ns': self.tag.ns, 
                     'attrs': dict()}
 
-        return {'name': self.local_name, 
+        return {'name': self.localname, 
                 'ns': self.tag.ns, 
                 'attrs': self._e.attrib}
 
@@ -378,7 +389,7 @@ class EpiDocElement(BaseElement, Showable):
         if self.tail is None: 
             return False
         
-        if self.local_name == 'lb' and self.get_attrib('break') == 'no':
+        if self.localname == 'lb' and self.get_attrib('break') == 'no':
             return False
         
         if self.tail == '':
@@ -856,15 +867,15 @@ class EpiDocElement(BaseElement, Showable):
         Used for element addition in __add__ method.
         """
 
-        if self.local_name == 'lb' and self.get_attrib('break') == 'no':
+        if self.localname == 'lb' and self.get_attrib('break') == 'no':
             return False
         
-        if self.local_name == "Commment":
+        if self.localname == "Commment":
             return False
 
         last_child = last(self.child_elems)
         if last_child is not None and (last_child.tail == '' or last_child.tail is None):
-            if  last_child.local_name == 'lb' and last_child.get_attrib('break') == 'no':
+            if  last_child.localname == 'lb' and last_child.get_attrib('break') == 'no':
                 return False
 
         if self.e is None:
@@ -1117,7 +1128,7 @@ class EpiDocElement(BaseElement, Showable):
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
                 elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>, <hi>
-                    if localname in CompoundTokenType.values(): # this is designed for <hi>, which is also a compound token
+                    if localname in CompoundTokenType.values(): # this is intended for <hi>, which is also a compound token
                         tokenized = tokenize_subatomic_tags(e_without_tail)
                         if EpiDocElement(new_parent).children == []:
                             new_parent.append(tokenized.e)
@@ -1163,7 +1174,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [child for child in self.child_elems
-            if child.local_name in AtomicTokenType.values() or \
+            if child.localname in AtomicTokenType.values() or \
                 child.tag.name == "Comment"]
 
     @property

@@ -15,7 +15,7 @@ class Sic(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'sic':
+        if self.localname != 'sic':
             raise TypeError('Element should be <sic>.')
 
     @property

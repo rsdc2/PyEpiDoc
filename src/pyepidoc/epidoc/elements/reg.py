@@ -15,7 +15,7 @@ class Reg(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'reg':
+        if self.localname != 'reg':
             raise TypeError('Element should be <reg>.')
 
     @property

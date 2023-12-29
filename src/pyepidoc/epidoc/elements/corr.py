@@ -15,7 +15,7 @@ class Corr(EpiDocElement):
 
         self._e = e
 
-        if self.local_name != 'corr':
+        if self.localname != 'corr':
             raise TypeError('Element should be <corr>.')
 
     @property
