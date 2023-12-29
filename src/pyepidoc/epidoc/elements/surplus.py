@@ -39,4 +39,4 @@ class Surplus(EpiDocElement):
 
     @property
     def normalized_form(self) -> str:
-        return leiden_str_from_children(self.e, element_classes, 'node')
+        return ''

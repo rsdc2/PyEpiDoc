@@ -18,7 +18,13 @@ tests = [
     ('<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>',
      ['XIUndecimanorum'], ['XI(Undeci)manorum']),
     ('<w><expan><abbr><am><g ref="#christogram">☧</g></am></abbr><ex>Christi</ex></expan></w>',
-     ['Christi'], ['{☧}(Christi)'])
+     ['Christi'], ['{☧}(Christi)']),
+    ('<w>die<surplus>e</surplus>s</w>',
+     ['dies'], [r'die{e}s']),
+    ('<w><expan><abbr>no<hi rend="small">v</hi>e<choice><corr>m</corr><sic>n</sic></choice>b</abbr><ex>res</ex></expan></w>',
+     ['novembres'], ['novenb(res)']),
+    ('<w><expan><abbr>A<am>A</am>U<am>U</am></abbr><ex>gustis</ex></expan></w>',
+     ['Augustis'], [r'A{A}U{U}(gustis)'])
 ]
 
 

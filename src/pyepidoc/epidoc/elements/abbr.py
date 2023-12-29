@@ -7,8 +7,6 @@ from ...utils import head
 from ..element import EpiDocElement
 from ..utils import leiden_str_from_children, normalized_str_from_children
 from .am import Am
-from .lb import Lb
-
 
 class Abbr(EpiDocElement):    
     def __str__(self) -> str:
@@ -25,11 +23,14 @@ class Abbr(EpiDocElement):
 
     @property
     def _element_classes(self) -> dict[str, type]:
-        from .unclear import Unclear
+        from .choice import Choice
         from .hi import Hi
+        from .lb import Lb
+        from .unclear import Unclear
 
         element_classes: dict[str, type] = {
             'am': Am,
+            'choice': Choice,
             'hi': Hi,
             'lb': Lb,
             'unclear': Unclear
@@ -109,3 +110,8 @@ class Abbr(EpiDocElement):
             self._element_classes,
             'node'
         )
+        if len(normalized) > 0:
+            if normalized[0] == normalized[0].capitalize():
+                return normalized.capitalize()
+
+        return normalized
