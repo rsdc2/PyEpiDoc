@@ -42,7 +42,7 @@ class Num(EpiDocElement):
             element_classes, 
             'node'
         )
-        
+
         if self.charset == 'latin' and self.roman_numeral_chars_only:
             return normalized_str.upper()
         

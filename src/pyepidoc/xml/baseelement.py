@@ -28,7 +28,7 @@ from .namespace import Namespace as ns
 
 from ..constants import TEINS, XMLNS, SubsumableRels
 from ..utils import maxone
-from pyepidoc.classes import SetRelation
+from pyepidoc.xml.utils import localname
 
 
 class BaseElement(Showable):    
@@ -169,6 +169,11 @@ class BaseElement(Showable):
             
         _children: list[_Element] = self._e.getchildren()
         return [BaseElement(child) for child in _children]
+
+    @property
+    def child_node_names(self) -> list[str]:
+        children = self.child_nodes
+        return list(map(localname, children))
 
     @property
     def child_nodes(self) -> list[_Element | _ElementUnicodeResult]:

@@ -27,12 +27,14 @@ class Abbr(EpiDocElement):
         from .hi import Hi
         from .lb import Lb
         from .unclear import Unclear
+        from .num import Num
 
         element_classes: dict[str, type] = {
             'am': Am,
             'choice': Choice,
             'hi': Hi,
             'lb': Lb,
+            'num': Num,
             'unclear': Unclear
         }
 
@@ -105,12 +107,19 @@ class Abbr(EpiDocElement):
     @property
     def normalized_form(self) -> str:
         
-        return normalized_str_from_children(
+        normalized = normalized_str_from_children(
             self.e,
             self._element_classes,
             'node'
         )
-        if len(normalized) > 0:
+
+        if self.child_node_names == ['num']:
+            if self.next_sibling is not None and \
+                self.next_sibling.localname == 'ex':
+
+                return ''
+
+        if len(normalized) > 0 and head(self.child_node_names) != 'num':
             if normalized[0] == normalized[0].capitalize():
                 return normalized.capitalize()
 
