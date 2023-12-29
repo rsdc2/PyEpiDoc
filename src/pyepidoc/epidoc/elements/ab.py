@@ -390,6 +390,10 @@ class Ab(EpiDocElement):
         return list(map(Token, descendant_atomic_tokens(self)))
     
     @property
+    def tokens_list_leiden_str(self) -> list[str]:
+        return [token.leiden_form for token in self.tokens]
+
+    @property
     def tokens_list_normalized_str(self) -> list[str]:
         return [token.normalized_form for token in self.tokens]
     

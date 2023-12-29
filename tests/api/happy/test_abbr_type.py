@@ -5,34 +5,35 @@ from pyepidoc.epidoc.elements.expan import Expan
 from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.utils import contains
 from lxml import etree
+from pyepidoc.constants import TEINS
 
 
 multiplications = [
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><hi rend="supraline"><abbr>d<am>d</am></abbr></hi><ex cert="low">ominis</ex></expan>',     # from ISic000501
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>d<am>d</am></abbr><ex>ominis</ex></expan>',
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr><am>d</am>d</abbr><ex>ominis</ex></expan>',
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>imp<am>p</am></abbr><ex>eratorum</ex></expan>',
+    f'<expan xmlns="{TEINS}"><hi rend="supraline"><abbr>d<am>d</am></abbr></hi><ex cert="low">ominis</ex></expan>',     # from ISic000501
+    f'<expan xmlns="{TEINS}"><abbr>d<am>d</am></abbr><ex>ominis</ex></expan>',
+    f'<expan xmlns="{TEINS}"><abbr><am>d</am>d</abbr><ex>ominis</ex></expan>',
+    f'<expan xmlns="{TEINS}"><abbr>imp<am>p</am></abbr><ex>eratorum</ex></expan>',
 
 ]
 
 non_multiplications = [
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr><am>Ͻ</am></abbr><ex>mulieris</ex></expan>',
+    f'<expan xmlns="{TEINS}"><abbr><am>Ͻ</am></abbr><ex>mulieris</ex></expan>',
 ]
 
 suspensions = [
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>d</abbr><ex>omninis</ex></expan>'
+    f'<expan xmlns="{TEINS}"><abbr>d</abbr><ex>omninis</ex></expan>'
 ]
 
 contractions = [
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
+    f'<expan xmlns="{TEINS}"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
 ]
 
 contractions_with_suspension = [
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>co</abbr><ex>n</ex><abbr>s</abbr><ex>ule</ex></expan>'
+    f'<expan xmlns="{TEINS}"><abbr>co</abbr><ex>n</ex><abbr>s</abbr><ex>ule</ex></expan>'
 ]
 
 non_contractions = [
-    '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr><am><num value="6">VI</num></am></abbr><ex>se</ex><abbr>vir</abbr></expan>'
+    f'<expan xmlns="{TEINS}"><abbr><am><num value="6">VI</num></am></abbr><ex>se</ex><abbr>vir</abbr></expan>'
 ]
 
 
@@ -85,7 +86,7 @@ def test_contraction_with_suspension(xmlstr: str):
 
 
 def test_first_desc_node_is_desc_of_abbr():
-    xml = '<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
+    xml = f'<expan xmlns="{TEINS}"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
     elem = etree.fromstring(xml, None)
     expan = Expan(elem)
     assert expan._desc_textnode_is_desc_of('1', 'abbr') == True
