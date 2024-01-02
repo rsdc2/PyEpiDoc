@@ -24,10 +24,12 @@ def overall_analysis_to_csv(
     list_dict = pivot_dict(d)
     fieldnames = list(list_dict[0].keys())
     
+
     writer = csv.DictWriter(f, fieldnames)
     writer.writeheader()
     writer.writerows(list_dict)
 
+    print(f'Written results to {fp}...')
     f.close()
 
 
