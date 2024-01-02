@@ -54,7 +54,7 @@ def write_overall_distribution_stone_non_funerary():
     overall_analysis_to_csv(
         EpiDocCorpus(corpus_path)
             .filter_by_materialclass(['#material.stone'], 'substring')
-            .filter_by_textclass([TextClass.Funerary]), 
+            .filter_by_textclass([TextClass.Funerary], SetRelation.disjoint), 
         filepath='overall_distribution_stone_non_funerary.csv'
     )
 
@@ -82,7 +82,7 @@ def write_abbr_count_stone_funerary():
 
 def write_abbr_count_stone_non_funerary():
     corpus = (EpiDocCorpus(corpus_path)
-              .filter_by_textclass([TextClass.Funerary])
+              .filter_by_textclass([TextClass.Funerary], SetRelation.disjoint)
               .filter_by_materialclass(['#material.stone'], 'substring'))
     abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix='stone_nonfunerary_')
 
@@ -119,9 +119,9 @@ if __name__ == '__main__':
     # write_overall_distribution_funerary()
     # write_abbr_count_non_funerary()
     # write_abbr_count_stone_funerary()
-    write_abbr_count_stone_non_funerary()
+    # write_abbr_count_stone_non_funerary()
     # write_overall_distribution_stone_funerary()
-    # write_overall_distribution_stone_non_funerary()
+    write_overall_distribution_stone_non_funerary()
     # abbr_count('example.csv')
     # print_overall_distribution()
     # print_instances()
