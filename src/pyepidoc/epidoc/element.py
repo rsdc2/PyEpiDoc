@@ -225,6 +225,15 @@ class EpiDocElement(BaseElement, Showable):
 
         self._final_space = final_space
 
+    # def __eq__(self, other) -> bool:
+    #     if not isinstance(other, EpiDocElement):
+    #         return False
+        
+    #     return self.e == other.e
+
+    # def __hash__(self) -> int:
+    #     return hash(self.e)
+
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
         content = ''.join([
@@ -777,14 +786,6 @@ class EpiDocElement(BaseElement, Showable):
         """
         return self.gaps == []
 
-    # @property
-    # def normalized_form(self) -> str:
-    #     """
-    #     Default normalized string representation is simply
-    #     str(self). To be overridden by subclasses.
-    #     """
-    #     return 'default_normalized_form'
-
     @property
     def nospace_till_next_element(self) -> bool:
         return self._tail_prototokens == [] and not self.final_tailtoken_boundary
@@ -940,7 +941,7 @@ class EpiDocElement(BaseElement, Showable):
         return len(matches) > 0
 
     @staticmethod
-    def _subsume_filterfunc(head:EpiDocElement, dep:EpiDocElement):
+    def _subsume_filterfunc(head: EpiDocElement, dep: EpiDocElement):
 
         def _filterfunc(item) -> bool:
             if item['head'] != head.dict_desc:

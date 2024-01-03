@@ -158,7 +158,18 @@ xml_to_tokenize = [
      '<w>dominus</w>'),
 
     ('<expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan>',
-     '<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>')
+     '<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>'),
+
+    ('<hi rend="supraline"><num value="88">πη</num></hi> · ἐτελεύτ<supplied reason="lost">η</supplied>',
+     '<hi rend="supraline"><num value="88">πη</num></hi> · <w>ἐτελεύτ<supplied reason="lost">η</supplied></w>'),
+     
+    ('<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>',
+     '<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>'),
+
+    # <hi> is treated as subsumable
+    ('<num value="15"><hi rend="supraline">ιε</hi></num> καλα<supplied reason="lost">ν</supplied>',
+     '<num value="15"><hi rend="supraline">ιε</hi></num><w>καλα<supplied reason="lost">ν</supplied></w>')
+
 ]
 
 
@@ -176,6 +187,17 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
     if tokenized is None:
         return False
     
-    # breakpoint()
-    assert tokenized_benchmark.tokens == tokenized.tokens
+    benchmark_strs = [etree.tostring(t.e)
+                      for t in tokenized_benchmark.tokens]
+    
+    tokenized_strs = [etree.tostring(t.e) 
+                      for t in tokenized.tokens]
+
+    result = benchmark_strs == tokenized_strs
+    
+    if not result:
+        breakpoint()
+        pass
+
+    assert result
     assert tokenized.tokens != []
