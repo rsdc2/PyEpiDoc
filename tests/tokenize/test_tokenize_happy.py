@@ -142,33 +142,33 @@ def test_tokenize_special_cases(tokenize_type:str):
 
 
 xml_to_tokenize = [
-    # ('<roleName type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</roleName>',
-    #  '<roleName type="civic" subtype="duumviralis"><w>d<hi rend="apex">u</hi>mviralium</w></roleName>'),
+    ('<roleName type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</roleName>',
+     '<roleName type="civic" subtype="duumviralis"><w>d<hi rend="apex">u</hi>mviralium</w></roleName>'),
 
-    # ('<roleName type="civic" subtype="duumviralis">duumviralium</roleName>',
-    #  '<roleName type="civic" subtype="duumviralis"><w>duumviralium</w></roleName>'),
+    ('<roleName type="civic" subtype="duumviralis">duumviralium</roleName>',
+     '<roleName type="civic" subtype="duumviralis"><w>duumviralium</w></roleName>'),
     
-    # ('<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>',
-    #  '<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>'),
+    ('<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>',
+     '<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>'),
     
-    # ('d<hi rend="apex">u</hi>mviralium',
-    #  '<w>d<hi rend="apex">u</hi>mviralium</w>'),
+    ('d<hi rend="apex">u</hi>mviralium',
+     '<w>d<hi rend="apex">u</hi>mviralium</w>'),
     
-    # ('dominus',
-    #  '<w>dominus</w>'),
+    ('dominus',
+     '<w>dominus</w>'),
 
-    # ('<expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan>',
-    #  '<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>'),
+    ('<expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan>',
+     '<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>'),
 
-    # ('<hi rend="supraline"><num value="88">πη</num></hi> · ἐτελεύτ<supplied reason="lost">η</supplied>',
-    #  '<hi rend="supraline"><num value="88">πη</num></hi> · <w>ἐτελεύτ<supplied reason="lost">η</supplied></w>'),
+    ('<hi rend="supraline"><num value="88">πη</num></hi> · ἐτελεύτ<supplied reason="lost">η</supplied>',
+     '<hi rend="supraline"><num value="88">πη</num></hi> · <w>ἐτελεύτ<supplied reason="lost">η</supplied></w>'),
      
-    # ('<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>',
-    #  '<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>'),
+    ('<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>',
+     '<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>'),
 
-    # # <hi> is treated as subsumable
-    # ('<num value="15"><hi rend="supraline">ιε</hi></num> καλα<supplied reason="lost">ν</supplied>',
-    #  '<num value="15"><hi rend="supraline">ιε</hi></num><w>καλα<supplied reason="lost">ν</supplied></w>'),
+    # <hi> is treated as subsumable
+    ('<num value="15"><hi rend="supraline">ιε</hi></num> καλα<supplied reason="lost">ν</supplied>',
+     '<num value="15"><hi rend="supraline">ιε</hi></num><w>καλα<supplied reason="lost">ν</supplied></w>'),
 
     ('<placeName ref="https://pleiades.stoa.org/places/678374">Μά'
      '<lb n="3" break="no"/>κρης κώ'
