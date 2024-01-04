@@ -1078,23 +1078,6 @@ class EpiDocElement(BaseElement, Showable):
 
         def append_tail_or_text(_tail: Optional[str], _parent:_Element) -> _Element:
 
-
-            # if _tail is not None:
-            #     tailword_strs = _tail.split()
-            #     tailtokens = [EpiDocElement.w_factory(prototoken=tailtoken_str) 
-            #         for tailtoken_str in tailword_strs]
-                
-            #     if _parent.getchildren() == [] or _tail[0] == ' ':
-            #         for tailtoken in tailtokens:
-            #             if tailtoken.e is not None:
-            #                 _parent.append(tailtoken.e)
-                
-
-            #     elif _parent.getchildren()[-1].tail is None:
-            #         _parent.getchildren()[-1].tail = tailword_strs[0]
-            #         for tailtoken in tailtokens[1:]:
-            #             if tailtoken.e is not None:
-            #                 _parent.append(tailtoken.e)
             if _tail is not None:
                 tailword_strs = _tail.split()
                 tailtokens = [EpiDocElement.w_factory(prototoken=tailtoken_str) 
