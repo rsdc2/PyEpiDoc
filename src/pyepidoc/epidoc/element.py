@@ -588,8 +588,11 @@ class EpiDocElement(BaseElement, Showable):
 
             """TODO merge with w_factory"""
 
-            def handle_compound_token(p:_Element) -> EpiDocElement:
+            def handle_compound_token(p: _Element) -> EpiDocElement:
                 return EpiDocElement.w_factory(parent=p)
+                # elem = EpiDocElement(p)
+                # token_sequences = 
+                
             
             
             _e = deepcopy(e)
@@ -1074,6 +1077,24 @@ class EpiDocElement(BaseElement, Showable):
         """TODO merge w_factory and make_word functions."""
 
         def append_tail_or_text(_tail: Optional[str], _parent:_Element) -> _Element:
+
+
+            # if _tail is not None:
+            #     tailword_strs = _tail.split()
+            #     tailtokens = [EpiDocElement.w_factory(prototoken=tailtoken_str) 
+            #         for tailtoken_str in tailword_strs]
+                
+            #     if _parent.getchildren() == [] or _tail[0] == ' ':
+            #         for tailtoken in tailtokens:
+            #             if tailtoken.e is not None:
+            #                 _parent.append(tailtoken.e)
+                
+
+            #     elif _parent.getchildren()[-1].tail is None:
+            #         _parent.getchildren()[-1].tail = tailword_strs[0]
+            #         for tailtoken in tailtokens[1:]:
+            #             if tailtoken.e is not None:
+            #                 _parent.append(tailtoken.e)
             if _tail is not None:
                 tailword_strs = _tail.split()
                 tailtokens = [EpiDocElement.w_factory(prototoken=tailtoken_str) 
@@ -1124,7 +1145,25 @@ class EpiDocElement(BaseElement, Showable):
                 e_without_tail.tail = None   # type: ignore
                 localname = ns.remove_ns(e.tag)
 
-                if localname in AtomicTokenType.values() + AtomicNonTokenType.values():
+                if localname == 'lb' and EpiDocElement(e).get_attrib('break') == 'no':
+                    
+                    lb = e_without_tail
+                    lb_tail = e.tail
+
+                    if new_parent.getchildren() == []:
+                        new_parent.append(lb)
+                        new_parent = append_tail_or_text(lb_tail, new_parent)    
+                    else:
+                        
+                        last_child = new_parent.getchildren()[-1]
+                        last_child.append(lb)
+                        if lb_tail is not None:
+                            lb_tail_strs = lb_tail.split()
+                            lb.tail = lb_tail_strs[0] # type: ignore
+
+                            new_parent = append_tail_or_text(' '.join(lb_tail_strs[1:]), new_parent)
+
+                elif localname in AtomicTokenType.values() + AtomicNonTokenType.values():
                     new_parent.append(e_without_tail)
                     new_parent = append_tail_or_text(e.tail, new_parent)                    
 
@@ -1153,6 +1192,8 @@ class EpiDocElement(BaseElement, Showable):
                     if new_w_elem.e is not None:
                         new_parent.append(new_w_elem.e)
                         new_parent = append_tail_or_text(e.tail, new_parent)
+
+
 
             return EpiDocElement(new_parent, final_space=True)
         else:
