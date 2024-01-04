@@ -1125,7 +1125,6 @@ class EpiDocElement(BaseElement, Showable):
                 localname = ns.remove_ns(e.tag)
 
                 if localname == 'lb' and EpiDocElement(e).get_attrib('break') == 'no':
-                    breakpoint()
                     lb = e_without_tail
                     lb_tail = e.tail
 
