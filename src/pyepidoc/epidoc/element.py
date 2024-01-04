@@ -590,11 +590,7 @@ class EpiDocElement(BaseElement, Showable):
 
             def handle_compound_token(p: _Element) -> EpiDocElement:
                 return EpiDocElement.w_factory(parent=p)
-                # elem = EpiDocElement(p)
-                # token_sequences = 
-                
-            
-            
+
             _e = deepcopy(e)
             _e.tail = self.tail_completer   # type: ignore
             _element = EpiDocElement(_e)
@@ -1129,7 +1125,7 @@ class EpiDocElement(BaseElement, Showable):
                 localname = ns.remove_ns(e.tag)
 
                 if localname == 'lb' and EpiDocElement(e).get_attrib('break') == 'no':
-                    
+                    breakpoint()
                     lb = e_without_tail
                     lb_tail = e.tail
 
@@ -1175,8 +1171,6 @@ class EpiDocElement(BaseElement, Showable):
                     if new_w_elem.e is not None:
                         new_parent.append(new_w_elem.e)
                         new_parent = append_tail_or_text(e.tail, new_parent)
-
-
 
             return EpiDocElement(new_parent, final_space=True)
         else:
