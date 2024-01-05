@@ -225,7 +225,7 @@ class Token(EpiDocElement):
                     if str(last).strip() not in ['', '·']:
                         return acc 
                 
-                if localname(last) in ['lb', 'w', 'name', 'persName']:
+                if localname(last) in ['lb', 'w', 'name', 'persName', 'num']:
                     return acc
             
             return acc + [node]
