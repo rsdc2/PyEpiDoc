@@ -24,7 +24,9 @@ tests = [
     ('<w><expan><abbr>no<hi rend="small">v</hi>e<choice><corr>m</corr><sic>n</sic></choice>b</abbr><ex>res</ex></expan></w>',
      ['novembres'], ['novenb(res)']),
     ('<w><expan><abbr>A<am>A</am>U<am>U</am></abbr><ex>gustis</ex></expan></w>',
-     ['Augustis'], [r'A{A}U{U}(gustis)'])
+     ['Augustis'], [r'A{A}U{U}(gustis)']),
+    ('<w>ἐτελεύτη<g ref="#ivy-leaf">❦</g><lb n="2" break="no"/>σεν</w>',
+     ['ἐτελεύτησεν'], [r'ἐτελεύτη · |σεν'])
 ]
 
 

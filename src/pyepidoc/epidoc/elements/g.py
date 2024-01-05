@@ -20,3 +20,7 @@ class G(EpiDocElement):
     @property
     def leiden_form(self) -> str:
         return ' · '
+
+    @property
+    def normalized_form(self) -> str:
+        return ''
