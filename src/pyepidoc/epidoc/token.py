@@ -230,16 +230,19 @@ class Token(EpiDocElement):
             
             return acc + [node]
 
-        preceding = reversed([e for e in self.preceding_nodes_in_edition])
-        following = [e for e in self.following_nodes_in_edition]
+        preceding = reversed([e for e in self.preceding_nodes_in_ab])
+        following = [e for e in self.following_nodes_in_ab]
 
         preceding_upto_text: list[Node] = \
-            list(reversed(reduce(get_next_non_text, preceding, list[Node]()))) # type: ignore
+            list(reversed(reduce(
+                get_next_non_text, # type: ignore 
+                preceding, 
+                list[Node]()))) # type: ignore
         following_upto_text: list[Node] = reduce(get_next_non_text, following, [])
         
         prec_text = ''.join(map(string_rep, preceding_upto_text))
         following_text = ''.join(map(string_rep, following_upto_text))
-
+        # breakpoint()
         return prec_text + self.leiden_form + following_text        
 
     @property

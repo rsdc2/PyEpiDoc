@@ -423,6 +423,19 @@ class EpiDocElement(BaseElement, Showable):
         return self.internal_token_elements[0]
 
     @property
+    def following_nodes_in_ab(self) -> list[_Element | _ElementUnicodeResult]:
+
+        """
+        Returns any following |_Element| or |_ElementUnicodeResult| whose
+        ancestor is an ab.
+        """
+
+        return self._e.xpath(
+            'following::node()[ancestor::x:ab]', 
+            namespaces={"x": TEINS}
+        )
+
+    @property
     def following_nodes_in_edition(self) -> list[_Element]:
 
         """
@@ -821,6 +834,21 @@ class EpiDocElement(BaseElement, Showable):
             return None
         else:
             raise TypeError('Parent is of incorrect type.')
+
+    @property
+    def preceding_nodes_in_ab(
+        self) -> list[_Element | _ElementUnicodeResult]:
+
+        """
+        Returns any preceding |_Element| or 
+        |_ElementUnicodeResult| whose ancestor is an edition.
+        """
+
+        return self._e.xpath(
+            'preceding::node()[ancestor::x:ab]', 
+            namespaces={"x": TEINS}
+        )
+
 
     @property
     def preceding_nodes_in_edition(

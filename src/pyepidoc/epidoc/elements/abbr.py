@@ -25,6 +25,7 @@ class Abbr(EpiDocElement):
     def _element_classes(self) -> dict[str, type]:
         from .choice import Choice
         from .hi import Hi
+        from .g import G
         from .lb import Lb
         from .unclear import Unclear
         from .num import Num
@@ -32,6 +33,7 @@ class Abbr(EpiDocElement):
         element_classes: dict[str, type] = {
             'am': Am,
             'choice': Choice,
+            'g': G,
             'hi': Hi,
             'lb': Lb,
             'num': Num,

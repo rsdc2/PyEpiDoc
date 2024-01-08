@@ -26,7 +26,9 @@ leiden_and_normalized_tests = [
     ('<w><expan><abbr>A<am>A</am>U<am>U</am></abbr><ex>gustis</ex></expan></w>',
      ['Augustis'], [r'A{A}U{U}(gustis)']),
     ('<w>ἐτελεύτη<g ref="#ivy-leaf">❦</g><lb n="2" break="no"/>σεν</w>',
-     ['ἐτελεύτησεν'], [r'ἐτελεύτη · |σεν']) 
+     ['ἐτελεύτησεν'], [r'ἐτελεύτη ❦ |σεν']), 
+    ('<w><expan><abbr><g ref="#christogram">☧</g></abbr><ex>ιστῷ</ex></expan></w>',
+     ['Χριστῷ'], [r' ☧ (ιστῷ)']) 
 ]
 
 leiden_plus_tests = [
@@ -63,7 +65,7 @@ def test_leiden_string_forms(
     assert ab.tokens_list_leiden_str == leiden_tokens
 
 
-@pytest.mark.parametrize(['xml', 'leiden_forms', 'leiden_plus_forms'], leiden_and_normalized_tests)
+@pytest.mark.parametrize(['xml', 'leiden_forms', 'leiden_plus_forms'], leiden_plus_tests)
 def test_leiden_plus_forms(
     xml: str, 
     leiden_forms: list[str], 
@@ -73,4 +75,10 @@ def test_leiden_plus_forms(
     """
 
     ab = Ab(elem_from_str(abify(xml)))
+    assert [token.leiden_form for token in ab.tokens] == leiden_forms
+
+    test_leiden_plus_forms = [token.leiden_plus_form for token in ab.tokens]
+    if test_leiden_plus_forms != leiden_plus_forms:
+        breakpoint()
+
     assert [token.leiden_plus_form for token in ab.tokens] == leiden_plus_forms
