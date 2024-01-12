@@ -20,7 +20,7 @@ leiden_and_normalized_tests = [
     ('<w><expan><abbr><am><g ref="#christogram">☧</g></am></abbr><ex>Christi</ex></expan></w>',
      ['Christi'], ['{☧}(Christi)']),
     ('<w>die<surplus>e</surplus>s</w>',
-     ['dies'], [r'die{e}s']),
+     ['dies'], [r'die{e}s']),hello
     ('<w><expan><abbr>no<hi rend="small">v</hi>e<choice><corr>m</corr><sic>n</sic></choice>b</abbr><ex>res</ex></expan></w>',
      ['novembres'], ['novenb(res)']),
     ('<w><expan><abbr>A<am>A</am>U<am>U</am></abbr><ex>gustis</ex></expan></w>',
