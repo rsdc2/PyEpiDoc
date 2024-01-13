@@ -1,4 +1,4 @@
-# PyEpiDoc
+# PyEpiDoc (α)
 
 PyEpiDoc is a Python (>=3.9) library for parsing and interacting with [TEI](https://tei-c.org/) XML
 [EpiDoc](https://epidoc.stoa.org/) files. It has been tested on Python 3.9 on Linux (Ubuntu).
