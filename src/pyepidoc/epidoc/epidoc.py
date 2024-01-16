@@ -334,6 +334,10 @@ class EpiDoc(DocRoot):
         return self.textlang.get_attrib('mainLang')
 
     @property
+    def mean_date(self) -> int | None:
+        return self.date_mean
+
+    @property
     def otherlangs(self) -> list[str]:
         if self.textlang is None:
             return []
