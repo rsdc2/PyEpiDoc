@@ -12,7 +12,10 @@ from pyepidoc.displayutils import show_elems
 from pyepidoc.classes import SetRelation
 
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
-corpus_path = MASTER_PATH # insert path to your corpus here 
+TOKENIZED_PATH = '/data/ISicily/pyepidoc-data/isicily_tokenized/'
+FORKED_PATH = '/data/ISicily/ISicily-forked/ISicily/inscriptions/'
+corpus_path = TOKENIZED_PATH # insert path to your corpus here 
+
 
 
 def print_overall_distribution():
@@ -116,12 +119,13 @@ def print_instances():
 
 if __name__ == '__main__':
     # write_abbr_count_all()
-    # write_overall_distribution_funerary()
     # write_abbr_count_non_funerary()
     # write_abbr_count_stone_funerary()
     # write_abbr_count_stone_non_funerary()
-    # write_overall_distribution_stone_funerary()
+    write_overall_distribution_funerary()
+    write_overall_distribution_stone_funerary()
     write_overall_distribution_stone_non_funerary()
+    write_overall_distribution_stone()
     # abbr_count('example.csv')
     # print_overall_distribution()
     # print_instances()
