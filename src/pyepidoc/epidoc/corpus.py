@@ -218,11 +218,17 @@ class EpiDocCorpus:
     def filter_by_form(
         self, 
         forms: list[str], 
-        set_relation=SetRelation.intersection
+        set_relation=SetRelation.intersection,
+        ignore_case: bool=True
     ) -> EpiDocCorpus:
-    
-        docs = [doc for doc in self.docs
-            if set_relation(set(forms), doc.forms)]  
+        
+        if ignore_case:
+            forms_lower = [form.lower() for form in forms]
+            docs = [doc for doc in self.docs
+                if set_relation(set(forms_lower), [form.lower() for form in doc.forms])]  
+        else:
+            docs = [doc for doc in self.docs
+                if set_relation(set(forms), doc.forms)]  
 
         return EpiDocCorpus(inpt=docs)
 
