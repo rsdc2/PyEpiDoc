@@ -5,6 +5,8 @@ I also found these articles helpful: https://iq.opengenus.org/convert-decimal-to
 https://stackoverflow.com/questions/6692183/python-integer-to-base-32-hex-aka-triacontakaidecimal last accessed 2023-11-14
 """
 
+from typing import Literal
+
 UPPERCASE = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 LOWERCASE = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
@@ -43,15 +45,19 @@ def remove_fixed_strs(id: str) -> int:
     return int(id.replace('-', '').replace('ISic', ''))
 
 
-def insert_fixed_strs(id: str) -> str:
+def insert_fixed_strs(id: str, elem_id_length: Literal[4, 5]) -> str:
     """
     Insert ISic and '-' for an I.Sicily token ID 
     """
-    padded = id.rjust(11, '0')
-    return 'ISic' + padded[:-5] + '-' + padded[-5:]
+    if elem_id_length == 4:
+        padded = id.rjust(10, '0')
+    elif elem_id_length == 5:
+        padded = id.rjust(11, '0')
+
+    return 'ISic' + padded[:-elem_id_length] + '-' + padded[-elem_id_length:]
 
 
-def dec_to_base(dec: int, base: int) -> str:
+def dec_to_base(dec: int, base: Literal[52, 100]) -> str:
     """
     Convert a decimal number to a number of base 'base'.
     This works by recursively dividing the quotient by
@@ -71,7 +77,7 @@ def dec_to_base(dec: int, base: int) -> str:
     return ''.join([digits_dict[base][item] for item in l])
 
 
-def base_to_dec(base_inpt: str, base: int) -> int:
+def base_to_dec(base_inpt: str, base: Literal[52, 100]) -> int:
     
     """Convert a string of base 'base' to a base 10 integer"""
     
@@ -86,27 +92,23 @@ def base_to_dec(base_inpt: str, base: int) -> int:
     return f(list(base_inpt), 0)
  
 
-def compress(id: str, base: int) -> str:
+def compress(id: str, base: Literal[52, 100]) -> str:
     """Compresses an I.Sicily ID to base 'base'"""
     zero = digits_dict[base][0]
     return dec_to_base(remove_fixed_strs(id), base).rjust(5, zero)
 
 
-def decompress(id: str, base: int) -> str:
+def decompress(id: str, base: Literal[52, 100]) -> str:
     """Decompresses an I.Sicily ID from base 'base' to base 10"""
     expanded = str(base_to_dec(id, base))
-    return insert_fixed_strs(expanded)
+
+    if base == 52:
+        return insert_fixed_strs(expanded, elem_id_length=4)
+    elif base == 100:
+        return insert_fixed_strs(expanded, elem_id_length=5)
 
 
 if __name__ == '__main__':
-    # x = compress('ISic037000-01000', 87)
-    # x = compress('ISic021474-83647', 87)
-    # y = compress(decompress('ψψψψψ', 87), 87)
-    # z = decompress('ψψψψψ', 87)
-    # print(x, z)
-
-    x = compress('ISic000001-00001', 87)
-    x = decompress('ψψψψψ', 77)
-    # x = decompress('ωωωωω', 100)
-    x = decompress('ωωωω', 100)
+    x = decompress('ω', 100)
+    # x = compress('')
     print(x)
