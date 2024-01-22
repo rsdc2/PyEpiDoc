@@ -3,7 +3,7 @@ import random
 
 
 def test_id_correct_expansion():
-    ID = 'ISic099999-99999' # 'ISic999999-9999'
+    ID = 'ISic099999-9999' # 'ISic999999-9999'
     b = 52
     x = compress(ID, b)
     y = decompress(x, b)
@@ -23,7 +23,7 @@ def generate_isic_ids(max_doc_id: int=10, max_token_id: int=10):
             yield inscription_id
 
 
-def full_circle(id: str, base: int):
+def full_circle(id: str, base: Literal[52, 100]):
     return decompress(compress(id, base), base)
 
 
