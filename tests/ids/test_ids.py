@@ -18,7 +18,7 @@ def generate_isic_ids(max_doc_id: int=10, max_token_id: int=10):
     for i in r1:
         r2 = iter(range(0, max_token_id))
         for j in r2:
-            inscription_id = insert_fixed_strs(str(i) + str(j))
+            inscription_id = pad_and_insert_fixed_strs(str(i) + str(j), 4)
         
             yield inscription_id
 
@@ -42,4 +42,4 @@ def test_random_isic_ids():
     for doc_id in rand_gen(start=1, end=40000000, size=20):
         doc_id_str = str(doc_id)
         
-        assert full_circle(insert_fixed_strs(doc_id_str), 52) == insert_fixed_strs(doc_id_str)
+        assert full_circle(pad_and_insert_fixed_strs(doc_id_str, 4), 52) == pad_and_insert_fixed_strs(doc_id_str, 4)

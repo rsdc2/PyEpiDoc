@@ -4,7 +4,7 @@ For algorithms, cf. https://en.wikipedia.org/wiki/Positional_notation#Base_conve
 I also found these articles helpful: https://iq.opengenus.org/convert-decimal-to-hexadecimal/, 
 https://stackoverflow.com/questions/6692183/python-integer-to-base-32-hex-aka-triacontakaidecimal last accessed 2023-11-14
 """
-
+from __future__ import annotations
 from typing import Literal
 
 UPPERCASE = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -37,17 +37,25 @@ def rev_digits(d: dict[int, str]) -> dict[str, int]:
     return {v: k for k, v in d.items()}
 
 
-def remove_fixed_strs(id: str) -> int:
+def remove_fixed_strs(id: str) -> str:
     """
     Strips ISic and '-' from an I.Sicily token ID
     """
+    result = id.replace('-', '').replace('ISic', '')
+    return result
 
-    return int(id.replace('-', '').replace('ISic', ''))
+
+def elem_id_length_from_base(base: Literal[52, 100]) -> Literal[4, 5]:
+    if base == 52: 
+        return 4
+    
+    if base == 100:
+        return 5
 
 
-def insert_fixed_strs(id: str, elem_id_length: Literal[4, 5]) -> str:
+def pad_and_insert_fixed_strs(id: str, elem_id_length: Literal[4, 5]) -> str:
     """
-    Insert ISic and '-' for an I.Sicily token ID 
+    Pad and insert ISic and '-' for an I.Sicily token ID 
     """
     if elem_id_length == 4:
         padded = id.rjust(10, '0')
@@ -95,17 +103,34 @@ def base_to_dec(base_inpt: str, base: Literal[52, 100]) -> int:
 def compress(id: str, base: Literal[52, 100]) -> str:
     """Compresses an I.Sicily ID to base 'base'"""
     zero = digits_dict[base][0]
-    return dec_to_base(remove_fixed_strs(id), base).rjust(5, zero)
+    return dec_to_base(int(remove_fixed_strs(id)), base).rjust(5, zero)
 
 
 def decompress(id: str, base: Literal[52, 100]) -> str:
     """Decompresses an I.Sicily ID from base 'base' to base 10"""
     expanded = str(base_to_dec(id, base))
+    id_length = elem_id_length_from_base(base)
+    return pad_and_insert_fixed_strs(expanded, elem_id_length=id_length)
 
-    if base == 52:
-        return insert_fixed_strs(expanded, elem_id_length=4)
-    elif base == 100:
-        return insert_fixed_strs(expanded, elem_id_length=5)
+
+def convert(
+        old_id: str, 
+        old_base: Literal[52, 100], 
+        new_base: Literal[52, 100]) -> str:
+    """
+    Convert compressed ids between base 52 and base 100
+    """
+
+    decompressed = remove_fixed_strs(decompress(old_id, old_base))
+    if old_base == 52:
+        decompressed = decompressed[0:7] + '0' + decompressed[7:]
+    elif old_base == 100:
+        decompressed = decompressed[0:7] + decompressed[8:]
+
+
+    compressed = compress(decompressed, new_base)
+    return compressed
+
 
 
 if __name__ == '__main__':
