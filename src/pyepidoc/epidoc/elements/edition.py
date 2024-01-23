@@ -12,6 +12,8 @@ import re
 from ...xml import BaseElement
 from ...constants import XMLNS
 from ...utils import default_str
+from ...types import Base
+
 from ..enums import SpaceSeparated, NoSpace
 
 from ..element import EpiDocElement
@@ -274,11 +276,11 @@ class Edition(EpiDocElement):
     def prettify(self, spaceunit:SpaceUnit, number:int) -> None:
         prettify(spaceunit=spaceunit, number=number, edition=self)
 
-    def set_ids(self) -> None:
+    def set_ids(self, base: Base=52) -> None:
 
         # TODO This needs to be more general than abs
         for ab in self.abs:
-            ab.set_ids()
+            ab.set_ids(base)
 
     def space_tokens(self) -> None:
 

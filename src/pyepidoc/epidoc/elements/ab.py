@@ -23,6 +23,8 @@ from pyepidoc.classes import SetRelation
 from ...xml import BaseElement
 from ...utils import update_set_inplace, head
 from ...constants import XMLNS
+from ...types import Base
+
 from pyepidoc.epidoc.utils import descendant_atomic_tokens
 
 
@@ -183,9 +185,9 @@ class Ab(EpiDocElement):
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
 
-    def set_ids(self) -> None:
+    def set_ids(self, base: Base=52) -> None:
         for idcarrier in self.id_carriers:
-            idcarrier.set_id()
+            idcarrier.set_id(base)
 
     @property
     def space_separated(self) -> list[EpiDocElement]:

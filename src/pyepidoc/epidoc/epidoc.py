@@ -7,6 +7,7 @@ from itertools import chain
 from .element import EpiDocElement, BaseElement
 from ..xml.docroot import DocRoot
 from ..utils import maxone, listfilter, head, remove_none
+from ..types import Base
 
 from .elements.edition import Edition
 from .elements.expan import Expan
@@ -447,9 +448,13 @@ class EpiDoc(DocRoot):
             return None
         return EpiDocElement(publication_stmt)
 
-    def set_ids(self) -> None:
+    def set_ids(self, base: Base=52) -> None:
+        """
+        Put IDs (xml:id) on all elements of the edition,
+        in place
+        """
         for edition in self.editions():
-            edition.set_ids()
+            edition.set_ids(base)
 
     def space_tokens(self) -> None:
         for edition in self.editions():

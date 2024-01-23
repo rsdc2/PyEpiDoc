@@ -16,8 +16,9 @@ input_path = Path('ids/files/input')
 output_path = Path('ids/files/output')
 benchmark_path = Path('ids/files/benchmark')
 
+
 @pytest.mark.parametrize('file', tests)
-def test_tokenize_special_cases(file: Path):
+def test_convert_ids_in_epidoc(file: Path):
     # Convert the IDs
     doc = EpiDoc(input_path / file)
 
