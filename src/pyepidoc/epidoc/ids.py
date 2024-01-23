@@ -101,13 +101,21 @@ def base_to_dec(base_inpt: str, base: Literal[52, 100]) -> int:
  
 
 def compress(id: str, base: Literal[52, 100]) -> str:
-    """Compresses an I.Sicily ID to base 'base'"""
+    """
+    Compresses an I.Sicily element ID 
+
+    :param id: the element ID to generate
+    :param base: the base to use in the generation of an ID 
+    :returns: a compressed ID
+    """
     zero = digits_dict[base][0]
     return dec_to_base(int(remove_fixed_strs(id)), base).rjust(5, zero)
 
 
 def decompress(id: str, base: Literal[52, 100]) -> str:
-    """Decompresses an I.Sicily ID from base 'base' to base 10"""
+    """
+    Decompresses an I.Sicily ID from base 'base' to base 10
+    """
     expanded = str(base_to_dec(id, base))
     id_length = elem_id_length_from_base(base)
     return pad_and_insert_fixed_strs(expanded, elem_id_length=id_length)
