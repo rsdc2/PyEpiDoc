@@ -21,3 +21,14 @@ class UncompressedIDLengthError(Exception):
                f'should be {required_length}')
         self.args = (msg,)
 
+
+class IDSizeError(Exception):
+    """
+    Class for handling errors where the integer size of an ID is 
+    too big
+    """
+
+    def __init__(self, actual_size: int, required_size: int):
+        msg = (f'Value is too big ({actual_size}): '
+               f'should be less than or equal to {required_size}')
+        self.args = (msg,)

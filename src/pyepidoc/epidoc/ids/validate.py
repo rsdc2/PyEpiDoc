@@ -22,6 +22,10 @@ def compressed_length(compressed_id: str) -> bool:
 
 
 def uncompressed_length(uncompressed_id: str, base: Literal[52, 100]) -> bool:
+    """
+    Check that the length of an uncompressed id is correct for the base
+    used
+    """
     no_fixed_strs = remove_fixed_strs(uncompressed_id)
     required_length = 10 if base == 52 else 11
     valid = len(no_fixed_strs) == required_length
@@ -29,4 +33,14 @@ def uncompressed_length(uncompressed_id: str, base: Literal[52, 100]) -> bool:
     if not valid:
         raise UncompressedIDLengthError(len(uncompressed_id), required_length)
 
+    return valid
+
+
+def max_size(uncompressed_id: str, base: Literal[52, 100]) -> bool:
+    no_fixed_strs = remove_fixed_strs(uncompressed_id)
+    max_limit = 9999999999 if base == 100 else 380204031
+    valid = int(no_fixed_strs) <= max_limit
+    if not valid:
+        raise IDSizeError(int(no_fixed_strs), max_limit)
+    
     return valid

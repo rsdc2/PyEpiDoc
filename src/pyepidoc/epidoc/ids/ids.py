@@ -18,8 +18,12 @@ def compress(id: str, base: Literal[52, 100]) -> str:
     :returns: a compressed ID
     """
     _ = validate.uncompressed_length(id, base)
+    _ = validate.max_size(id, base)
+
     zero = digits_dict[base][0]
-    return dec_to_base(int(remove_fixed_strs(id)), base).rjust(5, zero)
+    compressed = dec_to_base(int(remove_fixed_strs(id)), base)
+    padded = compressed.rjust(5, zero)
+    return padded
 
 
 def decompress(compressed_id: str, base: Literal[52, 100]) -> str:
@@ -29,9 +33,11 @@ def decompress(compressed_id: str, base: Literal[52, 100]) -> str:
 
     _ = validate.compressed_length(compressed_id)
 
-    expanded = str(base_to_dec(compressed_id, base))
+    decompressed = str(base_to_dec(compressed_id, base))
+    _ = validate.max_size(decompressed, base)
+
     id_length = elem_id_length_from_base(base)
-    return pad_and_insert_fixed_strs(expanded, elem_id_length=id_length)
+    return pad_and_insert_fixed_strs(decompressed, elem_id_length=id_length)
 
 
 def convert(
