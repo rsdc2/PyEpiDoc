@@ -7,7 +7,8 @@ from typing import (
     Union, 
     Iterable,
     cast,
-    overload
+    overload,
+    Literal
 )
 
 from ..classes import Showable, ExtendableSeq
@@ -32,8 +33,10 @@ from ..constants import (A_TO_Z_SET,
                          TEINS, 
                          XMLNS, 
                          SubsumableRels,
-                         ROMAN_NUMERAL_CHARS)
-from ..classes import Tag, SetRelation
+                         ROMAN_NUMERAL_CHARS,
+                         VALID_BASES)
+from ..types import Base
+
 from .enums import (
     whitespace, 
     AtomicTokenType, 
@@ -504,10 +507,18 @@ class EpiDocElement(BaseElement, Showable):
 
     @cached_property
     def id_isic(self) -> str:
+        """
+        Extracts the I.Sicily document ID from the 
+        owner document of the element.
+        These are of the form 'ISic012345'
+        """
         if self._e is None:
             return ""
 
-        xpathres = self._e.xpath(f'preceding::x:idno[@type="filename"]', namespaces={"x": TEINS}) 
+        xpathres = self._e.xpath(
+            f'preceding::x:idno[@type="filename"]', 
+            namespaces={"x": TEINS}
+        ) 
         
         if type(xpathres) is not list:
             raise TypeError("XPath result is not a list.")
@@ -944,9 +955,26 @@ class EpiDocElement(BaseElement, Showable):
 
         self._e.attrib[ns.give_ns(attribname, namespace)] = value
 
-    def set_id(self, compress:bool=True) -> None:
-        id_xml = self.id_isic + "-" + str(len(self.preceding_or_ancestor_in_edition)).rjust(3, '0') + '0'
-        self.id_xml = ids.compress(id_xml, 52) if compress else id_xml
+    def set_id(self, base: Base=52, compress: bool=True) -> None:
+        """
+        Set compressed element ID, e.g. 'AAAAB', 
+        which expands to e.g. ISic000000-(0)0001
+
+        """
+        elem_id_length = ids.elem_id_length_from_base(base)
+
+        # Number of preceding elements
+        preceding_elem_count = str(len(self.preceding_or_ancestor_in_edition))
+
+        # Pad the element token ID with the correct amount for the base
+        # Add 'wiggle room' digit
+        elem_id = preceding_elem_count.rjust(elem_id_length - 1, '0') + '0'
+
+        # Stitch two IDs together
+        id_xml = self.id_isic + '-' + elem_id
+
+        # Compress the ID, if required
+        self.id_xml = ids.compress(id_xml, base) if compress else id_xml
 
     def _can_subsume(self, other:EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 
