@@ -2,15 +2,38 @@ from pyepidoc.epidoc.ids import *
 import random
 import pytest
 
+compressions_52 = [
+    ("ISic000001-0001", "AADkR", "First token id"),
+    ("ISic000000-0000", "AAAAA", "Zero token id")
+    # ("ISic099999-9999", "ωωωωω", "Last token id")
+]
 
 
-def test_id_correct_expansion():
-    ID = 'ISic099999-9999' # 'ISic999999-9999'
-    b = 52
+compressions_100 = [
+    ("ISic000001-00001", "AAKAB", "First token id"),
+    ("ISic000000-00000", "AAAAA", "Zero token id"),
+    ("ISic099999-99999", "ωωωωω", "Last token id")
+]
+
+
+def test_id_100_correct_roundtrip():
+    ID = 'ISic099999-09999' # 'ISic999999-9999'
+    b = 100
     x = compress(ID, b)
     y = decompress(x, b)
 
     assert y == ID
+
+
+@pytest.mark.parametrize(['uncompressed', 'compressed', '_'], compressions_52)
+def test_id_52_correct_compression(uncompressed, compressed, _):
+    assert compress(uncompressed, 52) == compressed
+
+
+@pytest.mark.parametrize(['uncompressed', 'compressed', '_'], compressions_100)
+def test_id_100_correct_compression(uncompressed, compressed, _):
+    assert compress(uncompressed, 100) == compressed
+
 
 
 def generate_isic_ids(doc_ids_count: int=10, elem_ids_count: int=10):
@@ -32,7 +55,7 @@ def generate_isic_ids(doc_ids_count: int=10, elem_ids_count: int=10):
         # Iterate through the token IDs in the I.Sicily document
         for j in r2:
             inscription_id = pad_and_insert_fixed_strs(str(i) + str(j), 4)
-            breakpoint()
+            # breakpoint()
             yield inscription_id
 
 
