@@ -1,5 +1,4 @@
-from pyepidoc.epidoc.ids import convert, compress, ConversionError
-from pyepidoc.epidoc.ids import validate
+from pyepidoc.epidoc.ids import convert
 from pyepidoc.types import Base
 
 import pytest
