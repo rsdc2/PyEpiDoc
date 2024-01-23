@@ -1,8 +1,5 @@
 """
 Functions for generating compressed token ids for I.Sicly documents. 
-For algorithms, cf. https://en.wikipedia.org/wiki/Positional_notation#Base_conversion, last accessed 2023-07-05
-I also found these articles helpful: https://iq.opengenus.org/convert-decimal-to-hexadecimal/, 
-https://stackoverflow.com/questions/6692183/python-integer-to-base-32-hex-aka-triacontakaidecimal last accessed 2023-11-14
 """
 from __future__ import annotations
 from typing import Literal
@@ -20,6 +17,7 @@ def compress(id: str, base: Literal[52, 100]) -> str:
     :param base: the base to use in the generation of an ID 
     :returns: a compressed ID
     """
+    _ = validate.uncompressed_length(id, base)
     zero = digits_dict[base][0]
     return dec_to_base(int(remove_fixed_strs(id)), base).rjust(5, zero)
 

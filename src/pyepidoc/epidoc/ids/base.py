@@ -1,3 +1,9 @@
+"""
+For algorithms, cf. https://en.wikipedia.org/wiki/Positional_notation#Base_conversion, last accessed 2023-07-05
+I also found these articles helpful: https://iq.opengenus.org/convert-decimal-to-hexadecimal/, 
+https://stackoverflow.com/questions/6692183/python-integer-to-base-32-hex-aka-triacontakaidecimal last accessed 2023-11-14
+"""
+
 from typing import Literal
 
 UPPERCASE = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -15,6 +21,7 @@ digits87 = DIGITS + UPPERCASE + LOWERCASE + UCASEGREEK1 + LCASEGREEK1
 digits77 = UPPERCASE + LOWERCASE + UCASEGREEK1 + LCASEGREEK1
 digits100 = UPPERCASE + LOWERCASE + UCASEGREEK2 + LCASEGREEK2
 
+# Use a dict to store the information so that can easily reverse
 digits_dict = {52: {k: v for (k, v) in enumerate(digits52)}, 
                62: {k: v for (k, v) in enumerate(digits62)},
                87: {k: v for (k, v) in enumerate(digits87)},
@@ -28,6 +35,7 @@ def rev_digits(d: dict[int, str]) -> dict[str, int]:
     """
 
     return {v: k for k, v in d.items()}
+
 
 def dec_to_base(dec: int, base: Literal[52, 100]) -> str:
     """
