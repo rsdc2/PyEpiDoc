@@ -48,6 +48,5 @@ def convert(
     elif old_base == 100:
         decompressed = decompressed[0:7] + decompressed[8:]
 
-
     compressed = compress(decompressed, new_base)
     return compressed
