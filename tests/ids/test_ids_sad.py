@@ -3,6 +3,7 @@ from pyepidoc.epidoc.ids import validate
 import pytest
 from functools import partial
 
+
 compressed_wrong_length_funcs = [
     validate.compressed_length,
     partial(decompress, base=52)
@@ -40,3 +41,13 @@ def test_uncompressed_wrong_length(id: str, base: Literal[52, 100]):
     with pytest.raises(UncompressedIDLengthError):
         _ = validate.uncompressed_length(id, base)
 
+
+too_large_uncompressed_ids = [
+    ('ISic099999-9999', 52),
+    ('ISic199999-09999', 100)
+]
+
+@pytest.mark.parametrize(('id', 'base'), too_large_uncompressed_ids)
+def test_too_large_uncompressed(id: str, base: Literal[52, 100]):
+    with pytest.raises(IDSizeError):
+        _ = validate.max_size(id, base)
