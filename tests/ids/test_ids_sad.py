@@ -50,4 +50,4 @@ too_large_uncompressed_ids = [
 @pytest.mark.parametrize(('id', 'base'), too_large_uncompressed_ids)
 def test_too_large_uncompressed(id: str, base: Literal[52, 100]):
     with pytest.raises(IDSizeError):
-        _ = validate.max_size(id, base)
+        _ = validate.max_int_size(id, base)

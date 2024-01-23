@@ -10,6 +10,16 @@ class CompressedIDLengthError(Exception):
         self.args = (msg,)
 
 
+class ConversionError(Exception):
+    """
+    Class for handling errors in conversion between IDs of 
+    different bases
+    """
+
+    def __init__(self, msg: str):
+        self.args = (msg,)    
+
+
 class UncompressedIDLengthError(Exception):
     """
     Class for handling errors associated with ID generation

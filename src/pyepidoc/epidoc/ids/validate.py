@@ -36,7 +36,12 @@ def uncompressed_length(uncompressed_id: str, base: Literal[52, 100]) -> bool:
     return valid
 
 
-def max_size(uncompressed_id: str, base: Literal[52, 100]) -> bool:
+def max_int_size(uncompressed_id: str, base: Literal[52, 100]) -> bool:
+    """
+    Checks that the decimal integer of the element ID,
+    e.g. ISic099999-99999, is below the integer limit for the
+    respective base
+    """
     no_fixed_strs = remove_fixed_strs(uncompressed_id)
     max_limit = 9999999999 if base == 100 else 380204031
     valid = int(no_fixed_strs) <= max_limit
@@ -44,3 +49,17 @@ def max_size(uncompressed_id: str, base: Literal[52, 100]) -> bool:
         raise IDSizeError(int(no_fixed_strs), max_limit)
     
     return valid
+
+
+def max_int_token_part_size(
+        uncompressed_id: str, 
+        base: Literal[52, 100]) -> bool:
+
+    token_part = uncompressed_id[:-5]
+    
+    if base == 52 and token_part[0] != '0':
+        raise ConversionError(
+            f'Token part {token_part} is too large'
+        ) 
+
+    return True
