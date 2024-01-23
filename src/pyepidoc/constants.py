@@ -33,3 +33,5 @@ SubsumableRels = [
     {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'hi', 'ns': TEINS, 'attrs': dict()}},
     {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'choice', 'ns': TEINS, 'attrs': dict()}},
 ]
+
+VALID_BASES = [52, 100]

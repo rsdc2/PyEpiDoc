@@ -16,16 +16,16 @@ UCASEGREEK2 = list('ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ')
 
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 digits52 = UPPERCASE + LOWERCASE
-digits62 = DIGITS + digits52
-digits87 = DIGITS + UPPERCASE + LOWERCASE + UCASEGREEK1 + LCASEGREEK1
-digits77 = UPPERCASE + LOWERCASE + UCASEGREEK1 + LCASEGREEK1
+# digits62 = DIGITS + digits52
+# digits87 = DIGITS + UPPERCASE + LOWERCASE + UCASEGREEK1 + LCASEGREEK1
+# digits77 = UPPERCASE + LOWERCASE + UCASEGREEK1 + LCASEGREEK1
 digits100 = UPPERCASE + LOWERCASE + UCASEGREEK2 + LCASEGREEK2
 
 # Use a dict to store the information so that can easily reverse
 digits_dict = {52: {k: v for (k, v) in enumerate(digits52)}, 
-               62: {k: v for (k, v) in enumerate(digits62)},
-               87: {k: v for (k, v) in enumerate(digits87)},
-               77: {k: v for (k, v) in enumerate(digits77)},
+            #    62: {k: v for (k, v) in enumerate(digits62)},
+            #    87: {k: v for (k, v) in enumerate(digits87)},
+            #    77: {k: v for (k, v) in enumerate(digits77)},
                100: {k: v for (k, v) in enumerate(digits100)}}
 
 

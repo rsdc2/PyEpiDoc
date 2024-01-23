@@ -21,7 +21,8 @@ def compress(id: str, base: Literal[52, 100]) -> str:
     _ = validate.max_int_size(id, base)
 
     zero = digits_dict[base][0]
-    compressed = dec_to_base(int(remove_fixed_strs(id)), base)
+    no_fixed_strs = remove_fixed_strs(id)
+    compressed = dec_to_base(int(no_fixed_strs), base)
     padded = compressed.rjust(5, zero)
     return padded
 

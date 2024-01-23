@@ -15,10 +15,10 @@ def convert(
 
     decompressed = remove_fixed_strs(decompress(old_id, old_base))
     if old_base == 52:
-        decompressed = decompressed[0:7] + '0' + decompressed[7:]
+        decompressed = decompressed[0:6] + '0' + decompressed[6:]
     elif old_base == 100:
         _ = validate.max_int_token_part_size(decompressed, 52)
-        decompressed = decompressed[0:7] + decompressed[8:]
+        decompressed = decompressed[0:6] + decompressed[7:]
 
     compressed = compress(decompressed, new_base)
     return compressed

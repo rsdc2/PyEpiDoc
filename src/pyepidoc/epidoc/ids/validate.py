@@ -55,7 +55,7 @@ def max_int_token_part_size(
         uncompressed_id: str, 
         base: Literal[52, 100]) -> bool:
 
-    token_part = uncompressed_id[:-5]
+    token_part = uncompressed_id[-5:]
     
     if base == 52 and token_part[0] != '0':
         raise ConversionError(
