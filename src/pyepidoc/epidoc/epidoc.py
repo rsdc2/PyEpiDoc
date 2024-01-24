@@ -605,7 +605,7 @@ class EpiDoc(DocRoot):
             self.convert_ws_to_names()
 
         if set_ids:
-            self.set_ids()
+            self.set_ids(100)
             
         if prettify_edition:
             self.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
