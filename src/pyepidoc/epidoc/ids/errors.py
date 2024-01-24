@@ -26,8 +26,8 @@ class UncompressedIDLengthError(Exception):
     and conversion
     """
 
-    def __init__(self, actual_length: int, required_length: int):
-        msg = (f'Value is of incorrect length ({actual_length}): '
+    def __init__(self, id: str, actual_length: int, required_length: int):
+        msg = (f'{id} is of incorrect length ({actual_length}): '
                f'should be {required_length}')
         self.args = (msg,)
 
