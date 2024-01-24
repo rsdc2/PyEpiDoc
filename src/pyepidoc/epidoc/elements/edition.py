@@ -57,6 +57,7 @@ def prettify(
 
     newlinetags = ['div', 'ab', 'lg', 'l', 'lb']
 
+
     def _get_multiplier(element:BaseElement) -> int:
         if element.tag.name in chain(
             AtomicTokenType.values(),
@@ -205,6 +206,12 @@ class Edition(EpiDocElement):
                 CompoundTokenType.values() 
             )
         ]
+
+    def convert_ids(self, oldbase: Base, newbase: Base) -> None:
+
+        # TODO This needs to be more general than abs
+        for ab in self.abs:
+            ab.convert_ids(oldbase, newbase)
 
     def convert_words_to_names(self) -> Edition:
         for ab in self.abs:

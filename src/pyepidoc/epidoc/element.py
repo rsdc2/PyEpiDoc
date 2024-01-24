@@ -266,38 +266,6 @@ class EpiDocElement(BaseElement, Showable):
                 for abbr in self.get_desc_elems_by_name('abbr')]
         
     @property
-    def charset(self) -> str:
-        return "latin" if set(self.form) - A_TO_Z_SET == set() \
-            else "other"
-    
-    @cached_property
-    def form(self) -> str:
-        """
-        Returns the full form, including any abbreviation expansion.
-        Compare @normalized_form
-        """
-
-        return self._clean_text(self.text_desc)
-
-    @property
-    def has_abbr(self) -> bool:
-        """
-        Returns True if the element contains an 
-        abbreviation, i.e. <abbr>.
-        """
-        
-        return len(self.abbr_elems) > 0
-
-    @property
-    def is_edition(self) -> bool:
-        """
-        Returns True if the element is an edition <div>.
-        """
-
-        return self.localname == 'div' \
-            and self.get_attrib('type') == 'edition'
-
-    @property
     def am_elems(self) -> Sequence[EpiDocElement]:
         """
         Returns a |list| of abbreviation marker elements <am>.
@@ -305,7 +273,10 @@ class EpiDocElement(BaseElement, Showable):
         last accessed 2023-04-13.
         """
 
-        return [EpiDocElement(abbr) for abbr in self.get_desc_elems_by_name('am')]
+        return [EpiDocElement(abbr) 
+                for abbr in self.get_desc_elems_by_name('am')]
+
+
 
     def append_space(self) -> EpiDocElement:
         """Appends a space to the element in place."""
@@ -327,27 +298,36 @@ class EpiDocElement(BaseElement, Showable):
         self._e.tail = self._e.tail + ' '   # type: ignore
         return self
 
-    @property
-    def left_bound(self) -> bool:
-        """
-        Return False if self is <lb break='no'>, otherwise return True.
-        First child only counted if the element has no text.
-        Used for element addition in __add__ method.
-        """
-
-        if self.localname == 'lb' and self.get_attrib('break') == 'no':
+    def _can_subsume(self, other:EpiDocElement) -> bool:
+        if type(other) is not EpiDocElement: 
             return False
         
-        first_child = head(self.child_elems)
-        if first_child is not None and (self.text == '' or self.text is None):
-            if  first_child.localname == 'lb' and first_child.get_attrib('break') == 'no':
-                return False
+        matches = list(filter(
+            self._subsume_filterfunc(head=self, dep=other),
+            SubsumableRels)
+        )
             
-        return True
+        return len(matches) > 0
 
+    @property
+    def charset(self) -> str:
+        return "latin" if set(self.form) - A_TO_Z_SET == set() \
+            else "other"
+    
     @property
     def child_elems(self) -> list[EpiDocElement]:
         return [EpiDocElement(child) for child in self.child_elements]
+    
+    def convert_id(self, oldbase: Base, newbase: Base) -> None:
+        """
+        Convert the element's @xml:id attribute to a different base
+        """
+        current_id = self.id_xml
+
+        if current_id is None:
+            return 
+        
+        self.id_xml = ids.convert(current_id, oldbase, newbase)
     
     @property
     def depth(self) -> int:
@@ -451,10 +431,28 @@ class EpiDocElement(BaseElement, Showable):
             namespaces={"x": TEINS}
         )
 
+    @cached_property
+    def form(self) -> str:
+        """
+        Returns the full form, including any abbreviation expansion.
+        Compare @normalized_form
+        """
+
+        return self._clean_text(self.text_desc)
+
     @property
     def gaps(self) -> list[EpiDocElement]:
         return [EpiDocElement(gap) for gap in self.get_desc('gap')]
     
+    @property
+    def has_abbr(self) -> bool:
+        """
+        Returns True if the element contains an 
+        abbreviation, i.e. <abbr>.
+        """
+        
+        return len(self.abbr_elems) > 0
+
     def has_gap(self, reasons:list[str]=[]) -> bool:
         """
         Returns True if the document contains a <gap> element with a reason
@@ -481,6 +479,15 @@ class EpiDocElement(BaseElement, Showable):
                 return True
 
         return False
+
+    @property
+    def has_supplied(self) -> bool:
+        """
+        Returns True if token contains a 
+        <supplied> tag.
+        """
+
+        return len(self.supplied) > 0
 
     @property
     def id_internal(self) -> list[int]:
@@ -672,6 +679,15 @@ class EpiDocElement(BaseElement, Showable):
         return make_internal_token(e)
 
     @property
+    def is_edition(self) -> bool:
+        """
+        Returns True if the element is an edition <div>.
+        """
+
+        return self.localname == 'div' \
+            and self.get_attrib('type') == 'edition'
+
+    @property
     def _join_to_next(self) -> bool:
         return len(self.next_no_spaces) > 1
 
@@ -712,6 +728,24 @@ class EpiDocElement(BaseElement, Showable):
 
         return last(get_preceding_lb(self))
 
+    @property
+    def left_bound(self) -> bool:
+        """
+        Return False if self is <lb break='no'>, otherwise return True.
+        First child only counted if the element has no text.
+        Used for element addition in __add__ method.
+        """
+
+        if self.localname == 'lb' and self.get_attrib('break') == 'no':
+            return False
+        
+        first_child = head(self.child_elems)
+        if first_child is not None and (self.text == '' or self.text is None):
+            if  first_child.localname == 'lb' and first_child.get_attrib('break') == 'no':
+                return False
+            
+        return True
+    
     @property
     def leiden_elems(self) -> Sequence[EpiDocElement]:
         """
@@ -976,17 +1010,6 @@ class EpiDocElement(BaseElement, Showable):
         # Compress the ID, if required
         self.id_xml = ids.compress(id_xml, base) if compress else id_xml
 
-    def _can_subsume(self, other:EpiDocElement) -> bool:
-        if type(other) is not EpiDocElement: 
-            return False
-        
-        matches = list(filter(
-            self._subsume_filterfunc(head=self, dep=other),
-            SubsumableRels)
-        )
-            
-        return len(matches) > 0
-
     def _subsumable_by(self, other:EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 
             return False
@@ -1041,15 +1064,6 @@ class EpiDocElement(BaseElement, Showable):
     @property
     def supplied(self):
         return [EpiDocElement(supplied) for supplied in self.get_desc('supplied')]
-
-    @property
-    def has_supplied(self) -> bool:
-        """
-        Returns True if token contains a 
-        <supplied> tag.
-        """
-
-        return len(self.supplied) > 0
 
     @property
     def _tail_prototokens(self) -> list[str]:

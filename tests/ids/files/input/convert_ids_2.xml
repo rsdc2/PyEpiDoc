@@ -6,8 +6,8 @@
         <body>
             <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
-                    <lb n="1" xml:id="AAAAB"/><w xml:id="AAAAC">Dis</w> <w xml:id="AAAAD">Man 
-                    <lb n="2" break="no" xml:id="AAAAE"/>ibus</w>
+                    <lb n="1" xml:id="abcde"/><w xml:id="abcdf">Dis</w> <w xml:id="abcdg">Man 
+                    <lb n="2" break="no" xml:id="abcdh"/>ibus</w>
                 </ab>
             </div>
         </body>

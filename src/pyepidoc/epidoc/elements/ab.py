@@ -75,6 +75,10 @@ class Ab(EpiDocElement):
             )
         ]
 
+    def convert_ids(self, oldbase: Base, newbase: Base) -> None:
+        for idcarrier in self.id_carriers:
+            idcarrier.convert_id(oldbase, newbase)
+
     def convert_words_to_names(self) -> Ab:
 
         """Converts all <w> to <name> if they are capitalized."""
@@ -108,10 +112,9 @@ class Ab(EpiDocElement):
     def id_carriers(self) -> list[EpiDocElement]:
 
         """
-        WordCarriers are XML elements that carry text fragments
-        either as element-internal text, or in their tails.
+        id_carriers are XML elements that carry an 
+        @xml:id attribute
         """
-        # breakpoint()
         return [EpiDocElement(element) 
                 for element in self.desc_elems
                 if element.tag.name in IdCarrier]

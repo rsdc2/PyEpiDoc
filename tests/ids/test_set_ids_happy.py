@@ -19,17 +19,16 @@ benchmark_path = Path('ids/files/benchmark')
 
 @pytest.mark.parametrize('filename', tests)
 def test_set_ids_in_epidoc(filename: Path):
-    # Convert the IDs
+    # Set the IDs
     doc = EpiDoc(input_path / filename)
     doc.set_ids(base=100)
     doc.to_xml_file(output_path / filename)
 
     # Output to a new XML file
-    output = EpiDoc(output_path / filename).editions()[0].abs[0]
-    benchmark = EpiDoc(benchmark_path / filename).editions()[0].abs[0]
+    output = EpiDoc(output_path / filename)
+    benchmark = EpiDoc(benchmark_path / filename)
 
-    output_elem_ids = [elem.id_xml for elem in output.desc_elems]
-    benchmark_elem_ids = [elem.id_xml for elem in benchmark.desc_elems]
-
-    assert output_elem_ids == benchmark_elem_ids
+    # Check the ids
+    assert output.ids == benchmark.ids
+    assert output.ids != []
     

@@ -73,10 +73,23 @@ class EpiDoc(DocRoot):
         return [item for edition in self.editions() 
             for item in edition.compound_tokens]
 
+    def convert_ids(self, oldbase: Base, newbase: Base) -> None:
+        """
+        Put IDs (xml:id) on all elements of the edition,
+        in place
+        """
+        for edition in self.editions():
+            edition.convert_ids(oldbase, newbase)
+    
     def convert_ws_to_names(self) -> EpiDoc:
-        """Converts all <w> to <name> in place if they begin with a capital."""
+        """
+        Converts all <w> to <name> in place if they 
+        begin with a capital.
+        """
+        
         for edition in self.editions():
             edition.convert_words_to_names()
+        
         return self
 
     @property
@@ -111,10 +124,10 @@ class EpiDoc(DocRoot):
 
     @property
     def distributor(self) -> Optional[str]:
-
         """
         IRT (Tripolitania) does not use <authority>
         """
+
         if self.publication_stmt is None:
             return None
 
@@ -279,6 +292,18 @@ class EpiDoc(DocRoot):
 
         return idno_elem.text
 
+    @property
+    def ids(self) -> list[str]:
+        """
+        The element IDs in the editions of the document
+        """
+
+        abs = chain(*[edition.abs 
+                      for edition in self.editions()])
+        elems = chain(*[ab.id_carriers for ab in abs])
+
+        return [elem.id_xml for elem in elems 
+                if elem.id_xml is not None]
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
