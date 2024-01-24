@@ -246,32 +246,36 @@ class EpiDoc(DocRoot):
     @property
     def id(self) -> str:
 
-        def get_idno_elems(s:str) -> list[BaseElement]:
+        """
+        The document ID, e.g. ISic000001-00001
+        """
+
+        def get_idno_elems(s: str) -> list[BaseElement]:
             if self.publication_stmt is None:
                 return []
 
             return self.publication_stmt.get_desc_elems_by_name('idno', {'type': s})            
 
-        idno_elem = None
+        id_sources = {
+            'Epigraphische Datenbank Heidelberg': 'localID',
+            'I.Sicily': 'filename',
+            'Università di Bologna': 'localID',
+            'King’s College London': 'filename'
+        }
 
-        if self.authority == 'Epigraphische Datenbank Heidelberg':
-            idno_elems = get_idno_elems('localID')
-            idno_elem = maxone(idno_elems)
+        if self.authority is None:
+            return 'None'
+        
+        source = id_sources.get(self.authority)
 
-        elif self.authority == 'I.Sicily':
-            idno_elems = get_idno_elems('filename')
-            idno_elem = maxone(idno_elems)
-
-        elif self.authority == 'Università di Bologna':
-            idno_elems = get_idno_elems('localID')
-            idno_elem = maxone(idno_elems)
-
-        elif self.distributor == "King’s College London":
-            idno_elems = get_idno_elems('filename')
-            idno_elem = maxone(idno_elems)
+        if source is None:
+            return 'None'
+        
+        idno_elems = get_idno_elems(s=source)
+        idno_elem = maxone(idno_elems)
 
         if idno_elem is None:
-            return '[None]'
+            return 'None'
 
         return idno_elem.text
 
