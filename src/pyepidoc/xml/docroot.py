@@ -33,12 +33,16 @@ class DocRoot:
         declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
         processing_instructions = (self.processing_instructions_str + '\n').encode("utf-8")
 
-        b_str = etree.tostring( 
-            self.e, 
-            pretty_print=True,      # type: ignore
-            encoding='utf-8',       # type: ignore
-            xml_declaration=False   # type: ignore
-        )
+        try:
+            b_str = etree.tostring( 
+                self.e, 
+                pretty_print=True,      # type: ignore
+                encoding='utf-8',       # type: ignore
+                xml_declaration=False   # type: ignore
+            )
+        except AssertionError as e:
+            print(e)
+            return b''
 
         return declaration + processing_instructions + b_str
 
@@ -150,10 +154,17 @@ class DocRoot:
 
         xpathstr = ' | '.join([f".//ns:{elemname}" + self._compile_attribs(attribs) for elemname in _elemnames])
 
-        xpathRes = (self
-            .e
-            .xpath(xpathstr, namespaces={'ns': TEINS})
-        )
+        try:
+            xpathRes = (self
+                .e
+                .xpath(xpathstr, namespaces={'ns': TEINS})
+            )
+        except XMLSyntaxError:
+            print("XML syntax error")
+            return []
+        except AssertionError as e:
+            print(e)
+            return []
 
         if type(xpathRes) is list:
             return cast(list[_Element], xpathRes)
@@ -170,7 +181,20 @@ class DocRoot:
             return []
 
         if not lang:
-            return cast(list[_Element], self.e.xpath(f".//ns:div[@type='{divtype}']", namespaces={'ns': TEINS}) )
+            try:
+                return cast(
+                    list[_Element], 
+                    self.e.xpath(
+                        f".//ns:div[@type='{divtype}']", 
+                        namespaces={'ns': TEINS}) 
+                    )
+            except XMLSyntaxError as e:
+                print(e)
+                return []
+            
+            except AssertionError as e:
+                print(e)
+                return []
 
         elif lang:
             return cast(list[_Element], self.e.xpath(
@@ -225,6 +249,12 @@ class DocRoot:
     def xpath(self, xpathstr:str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 
             return []
-
+        try:
         # NB the cast won't necessarily be correct for all test cases
-        return cast(list[Union[_Element,_ElementUnicodeResult]], self.e.xpath(xpathstr, namespaces={'ns': TEINS}))
+            return cast(
+                list[Union[_Element,_ElementUnicodeResult]], 
+                self.e.xpath(xpathstr, namespaces={'ns': TEINS})
+            )
+        except XMLSyntaxError:
+            print("XML syntax error")
+            return []
