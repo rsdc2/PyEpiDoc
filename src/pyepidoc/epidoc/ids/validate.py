@@ -34,7 +34,8 @@ def uncompressed_length(
 
     if not valid:
         raise UncompressedIDLengthError(
-            len(uncompressed_id), 
+            uncompressed_id,
+            len(no_fixed_strs), 
             required_length
         )
 
