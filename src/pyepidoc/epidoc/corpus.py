@@ -174,7 +174,7 @@ class EpiDocCorpus:
         return len(self.docs)
 
     @staticmethod
-    def _doc_to_xml_file(dstfolder: str, doc: EpiDoc) -> None:
+    def _doc_to_xml_file(dstfolder: str | Path, doc: EpiDoc) -> None:
         
         "Writes out an EpiDoc object to an XML file"
         dstfolder_path = Path(dstfolder)
@@ -506,12 +506,12 @@ class EpiDocCorpus:
 
     def tokenize_to_folder(
         self, 
-        dstfolder:str, 
-        add_space_between_words:bool=True,
-        prettify_edition:bool=True,
-        set_ids:bool=False,
-        convert_ws_to_names:bool=True,
-        verbose:bool=True
+        dstfolder: str | Path, 
+        add_space_between_words: bool=True,
+        prettify_edition: bool=True,
+        set_ids: bool=False,
+        convert_ws_to_names: bool=True,
+        verbose: bool=True
     ) -> None:
 
         """
