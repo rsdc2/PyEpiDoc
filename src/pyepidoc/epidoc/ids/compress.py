@@ -37,7 +37,6 @@ def decompress(compressed_id: str, base: Literal[52, 100]) -> str:
     :param base: the base to use to decompress the ID
     :returns: a string with the decompressed ID
     """
-
     _ = validate.compressed_length(compressed_id)
 
     decompressed = str(base_to_dec(compressed_id, base))
