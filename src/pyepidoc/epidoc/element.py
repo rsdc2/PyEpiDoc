@@ -60,7 +60,8 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     all_descs = epidoc_elem.desc_elems
     all_name_set = epidoc_elem.desc_elem_name_set
 
-    if all_name_set.issubset(atomic_token_set) and all_name_set != set(): # i.e. the only subelement is a number
+    if all_name_set.issubset(atomic_token_set) and all_name_set != set(): 
+        # i.e. the only subelement is a name
         w = epidoc_elem # in which case do nothing
 
     elif epidoc_elem.localname == 'choice' and all_name_set.issubset({*atomic_token_set, 'orig', 'reg', 'sic', 'corr'}) \
