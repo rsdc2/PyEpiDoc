@@ -79,7 +79,7 @@ def dec_to_base(dec: int, base_idx: Literal[52, 100]) -> str:
     l = f(dec)
 
     # Look up all the items and concatenate the strings
-    return ''.join([base_values[item] for item in l])
+    return ''.join([base_values[base_value] for base_value in l])
 
 
 def base_to_dec(base_inpt: str, base: Literal[52, 100]) -> int:
