@@ -37,7 +37,7 @@ def rev_digits(d: dict[int, str]) -> dict[str, int]:
     return {v: k for k, v in d.items()}
 
 
-def dec_to_base(dec: int, base: Literal[52, 100]) -> str:
+def dec_to_base(dec: int, base_idx: Literal[52, 100]) -> str:
     """
     Convert a decimal number to a number of base 'base'.
     This works by recursively dividing the quotient by
@@ -47,26 +47,71 @@ def dec_to_base(dec: int, base: Literal[52, 100]) -> str:
     in the new base number.
     """
 
-    def f(i: int) -> list[int]:
-        q = i // base
-        r = i % base
+    base_values = digits_dict[base_idx]
 
-        return ([q] if q < base else f(q)) + [r]
-        
+    def f(i: int) -> list[int]:
+        # Get the quotient, i.e. the whole number of times
+        # that the base goes into the integer
+        q = i // base_idx 
+
+        # Get the remainder, i.e. what is left over after
+        # dividing i by dividing by the base index
+        r = i % base_idx
+
+        if q < base_idx:
+            # The quotient is less than the base index,
+            # so return the quotient and the remainder 
+            # in two separate positions:
+            # the first position constitutes 
+            # the first power of the base index,
+            # while the second position consitiutes
+            # the zeroth power of the base index.
+            
+            return [q, r]
+        else:
+            return f(q) + [r]
+    
+    # Produce a list of decimal values 
+    # each corresponding to a value in the new base.
+    # This value can be looked up in the 
+    # list providing all the values of the base
+    # indexed by decimal value
     l = f(dec)
-    return ''.join([digits_dict[base][item] for item in l])
+
+    # Look up all the items and concatenate the strings
+    return ''.join([base_values[item] for item in l])
 
 
 def base_to_dec(base_inpt: str, base: Literal[52, 100]) -> int:
     
-    """Convert a string of base 'base' to a base 10 integer"""
+    """
+    Convert a string of base 'base' to a base 10 integer
+    """
+
+    base_values = rev_digits(digits_dict[base])
     
     def f(l: list[str], acc: int) -> int:
+        """
+        :param l: a list of characters giving the value in
+        the base
+        :param acc: an accumulator that takes the running
+        sum of the base conversion calculation
+        """
+        # No more digits to convert
         if l == []:
             return acc
         
-        v = rev_digits(digits_dict[base])[l[0]] * base ** (len(l) - 1)
+        # Each position in the string from the left
+        # corresponds to a power of the base index,
+        # where the right-most digit is power 0, i.e. 1.
+        # This constitutes the multiplier for the value 
+        # at this position
 
+        multiplier = base ** (len(l) - 1)
+        v = base_values[l[0]] * multiplier
         return f(l[1:], acc + v)
     
+    # Calculate the value of the base
+    # starting from the left-most digit
     return f(list(base_inpt), 0)
+
