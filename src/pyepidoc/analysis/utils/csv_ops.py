@@ -8,8 +8,6 @@ def pivot_dict(d: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     """
 
     row_names = list(d.keys())
-    # first = row_names[0]
-    # col_names = [''] + list(d[first].keys())
     list_dict = list[dict[str, str]]()
 
     for row_name in row_names:

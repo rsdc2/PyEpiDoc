@@ -1,22 +1,39 @@
 from pathlib import Path
-import timeit
-import csv
+from typing import Literal
 
 from pyepidoc.analysis.abbreviations.overall import *
-from pyepidoc.analysis.abbreviations.output import overall_analysis_to_csv, abbr_count_all_to_csvs
-from pyepidoc.analysis.abbreviations.instances import abbreviation_count, raw_abbreviations
-from pyepidoc.analysis.utils.csv_ops import pivot_dict
-from pyepidoc.epidoc.enums import AbbrType, TextClass
+from pyepidoc.analysis.abbreviations.output import (
+    overall_analysis_to_csv, 
+    abbr_count_all_to_csvs
+)
+from pyepidoc.epidoc.enums import TextClass
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.displayutils import show_elems
 from pyepidoc.classes import SetRelation
 
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
 TOKENIZED_PATH = '/data/ISicily/pyepidoc-data/isicily_tokenized/'
+TOKENIZED_FORKED_PATH = '/data/ISicily/pyepidoc-data/isicily_tokenized_forked/'
 FORKED_PATH = '/data/ISicily/ISicily-forked/ISicily/inscriptions/'
-corpus_path = TOKENIZED_PATH # insert path to your corpus here 
+corpus_path = TOKENIZED_FORKED_PATH# insert path to your corpus here 
 
 
+def id_list_from_file(period: Literal[
+    'imperial', 
+    'archaic', 
+    'hellenistic', 
+    'lateantique']) -> list[str]:
+    
+    """
+    Reads text files containing lists of ids and returns them as a 
+    list of strs
+    """
+    p = Path(period + '_inscrs.txt')
+    with open(p) as f:
+        lines = f.readlines()
+        lines_ = [line.strip() for line in lines]
+
+        return lines_
 
 def print_overall_distribution():
     corpus = EpiDocCorpus(corpus_path)
@@ -80,14 +97,34 @@ def write_abbr_count_stone_funerary():
     corpus = (EpiDocCorpus(corpus_path)
               .filter_by_textclass([TextClass.Funerary])
               .filter_by_materialclass(['#material.stone'], 'substring'))
+              
     abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix='stone_funerary_')
 
 
 def write_abbr_count_stone_non_funerary():
     corpus = (EpiDocCorpus(corpus_path)
-              .filter_by_textclass([TextClass.Funerary], SetRelation.disjoint)
-              .filter_by_materialclass(['#material.stone'], 'substring'))
+            .filter_by_textclass([TextClass.Funerary], SetRelation.disjoint)
+            .filter_by_materialclass(['#material.stone'], 'substring')
+            .filter_by_ids(ids)
+            )
+    
     abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix='stone_nonfunerary_')
+
+
+def write_all_abbr_count():
+    text_types = {'funerary': SetRelation.intersection,
+                    'nonfunerary': SetRelation.disjoint}
+    
+    for text_type in ['funerary', 'nonfunerary']:
+        for period in ['archaic', 'hellenistic', 'imperial']:
+            ids = id_list_from_file(period)
+            corpus = (EpiDocCorpus(corpus_path)
+                        .filter_by_textclass([TextClass.Funerary], text_types[text_type])
+                        .filter_by_materialclass(['#material.stone'], 'substring')
+                        .filter_by_ids(ids)
+                    )
+        
+            abbr_count_all_to_csvs(corpus=corpus, output_filename_prefix=f'stone_{text_type}_{period}_')
 
 
 def other():
@@ -122,12 +159,12 @@ if __name__ == '__main__':
     # write_abbr_count_non_funerary()
     # write_abbr_count_stone_funerary()
     # write_abbr_count_stone_non_funerary()
-    write_overall_distribution_funerary()
-    write_overall_distribution_stone_funerary()
-    write_overall_distribution_stone_non_funerary()
-    write_overall_distribution_stone()
+    # write_overall_distribution_funerary()
+    # write_overall_distribution_stone_funerary()
+    # write_overall_distribution_stone_non_funerary()
+    # write_overall_distribution_stone()
     # abbr_count('example.csv')
     # print_overall_distribution()
     # print_instances()
     # other()
-    
+    write_all_abbr_count()

@@ -50,9 +50,9 @@ def abbr_count_to_csv(
         language=language
     )
     count = abbreviation_count(raw)
-    count_dict = {k: {'frequency': v['frequency'], 'isic_ids': v['isic_ids']} 
+    count_dict = {k: {'frequency': v['frequency'], 'isic_ids': f'{", ".join(list(v["isic_ids"]))}'} 
                   for k, v in count.items()}
-    
+
     list_dict = pivot_dict(count_dict)
     sorted_list_dict = sorted(
         list_dict, 

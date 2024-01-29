@@ -264,14 +264,20 @@ class EpiDocCorpus:
         
         return EpiDocCorpus(docs)
     
-    def filter_by_idrange(self, start:int, end:int) -> EpiDocCorpus:
+    def filter_by_idrange(self, start: int, end: int) -> EpiDocCorpus:
         _int_range = range(start, end + 1)
-        _str_range = [self.prefix + str(item).zfill(6) for item in _int_range]
+        _str_range = [self.prefix + str(item).zfill(6) 
+                      for item in _int_range]
         
         return self.filter_by_ids(ids=_str_range)
 
-    def filter_by_ids(self, ids:list[str]) -> EpiDocCorpus:
-        return EpiDocCorpus([self.docs_dict[id] for id in ids])
+    def filter_by_ids(self, ids: list[str]) -> EpiDocCorpus:
+        """
+        Returns a new EpiDocCorpus containing the documents with 
+        the ids in the ids list of strings
+        """
+        ids_ = [id for id in ids if id in self.docs_dict.keys()]
+        return EpiDocCorpus([self.docs_dict[id] for id in ids_])
 
     def filter_by_languages(self, 
         langs: list[str], 

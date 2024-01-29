@@ -22,3 +22,4 @@ out
 .vscode
 *.csv
 *lock*
+*_inscrs.txt
