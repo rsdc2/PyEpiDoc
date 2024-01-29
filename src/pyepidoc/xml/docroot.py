@@ -14,16 +14,18 @@ from lxml.etree import (
     _Element, 
     _ElementTree, 
     _ElementUnicodeResult,
+    _ProcessingInstruction,
     XMLSyntaxError,
-    _ProcessingInstruction
+    XMLSyntaxAssertionError
 )
 
 from ..constants import TEINS, XMLNS
 from .baseelement import BaseElement
-
+from .errors import handle_xmlsyntaxerror
 
 class DocRoot:    
     _e: _Element
+    _p: Path
 
     def __bytes__(self) -> bytes:
         """
@@ -63,6 +65,7 @@ class DocRoot:
 
     def __init__(self, inpt: Path | str | _ElementTree):
         if isinstance(inpt, Path):
+            self._p = inpt
             if not inpt.exists():
                 raise FileExistsError(f'File {inpt.absolute()} does not exist')
             self._e = self._e_from_file(inpt)
@@ -71,7 +74,7 @@ class DocRoot:
             self._e = inpt.getroot()
             return
         elif isinstance(inpt, str):
-            p = Path(inpt)
+            self._p = p = Path(inpt)
             if not p.exists():
                 raise FileExistsError(f'File {p.absolute()} does not exist')
             self._e = self._e_from_file(p)
@@ -135,8 +138,13 @@ class DocRoot:
             )
             return self._roottree.getroot()
         
-        except XMLSyntaxError:
-            print(f'XML syntax error in {filepath.absolute()}')
+        except XMLSyntaxAssertionError as e:
+            print('XMLSyntaxAssertionError in _e_from_file')
+            print(e)
+            return _Element()
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in _e_from_file')
+            handle_xmlsyntaxerror(e)
             return _Element()
 
     @property
@@ -164,10 +172,16 @@ class DocRoot:
                 .e
                 .xpath(xpathstr, namespaces={'ns': TEINS})
             )
-        except XMLSyntaxError:
-            print("XML syntax error")
+        except XMLSyntaxAssertionError as e:
+            print('XMLSyntaxAssertionError in get_desc')
+            print(e)
+            return []
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in get_desc')
+            handle_xmlsyntaxerror(e)
             return []
         except AssertionError as e:
+            print(f'AssertionError in get_desc while analysing {self._p}')
             print(e)
             return []
 
@@ -193,7 +207,13 @@ class DocRoot:
                         f".//ns:div[@type='{divtype}']", 
                         namespaces={'ns': TEINS}) 
                     )
+            
+            except XMLSyntaxAssertionError as e:
+                print('XMLSyntaxAssertionError in getdivdescendants')
+                print(e)
+                return []
             except XMLSyntaxError as e:
+                print('XMLSyntaxError in getdivdescendants')
                 print(e)
                 return []
             
@@ -260,6 +280,11 @@ class DocRoot:
                 list[Union[_Element,_ElementUnicodeResult]], 
                 self.e.xpath(xpathstr, namespaces={'ns': TEINS})
             )
-        except XMLSyntaxError:
-            print("XML syntax error")
+        except XMLSyntaxAssertionError as e:
+            print('XMLSyntaxAssertionError in xpath')
+            print(e)
+            return []
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in xpath')
+            handle_xmlsyntaxerror(e)
             return []

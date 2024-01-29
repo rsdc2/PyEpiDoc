@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import (
     Callable,
-    Iterable,
     Optional, 
     Sequence, 
     overload, 
@@ -12,6 +11,11 @@ from typing import (
 from functools import cached_property
 from itertools import chain
 from pathlib import Path
+
+from lxml.etree import (
+    XMLSyntaxAssertionError, 
+    XMLSyntaxError
+)  
 
 from .epidoc import EpiDoc
 from .element import EpiDocElement
@@ -187,7 +191,16 @@ class EpiDocCorpus:
 
     @cached_property
     def docs(self) -> list[EpiDoc]:
-        return list(sorted(self._docs, key=lambda doc: doc.id))
+        try:
+            return list(sorted(self._docs, key=lambda doc: doc.id))
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in docs')
+            print(e)
+            return []
+        except Exception as e:
+            print('Exception in docs')
+            print(e)
+            return []
 
     @cached_property
     def docs_dict(self) -> dict[str, EpiDoc]:
