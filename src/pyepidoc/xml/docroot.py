@@ -77,7 +77,8 @@ class DocRoot:
             self._e = self._e_from_file(p)
             return
         
-        raise TypeError(f"input is of type {type(inpt)}, but should be either Path, _ElementTree or str.")
+        raise TypeError(f'input is of type {type(inpt)}, but should be either '
+                        'Path, _ElementTree or str.')
 
     @staticmethod
     def _clean_text(text:str):
@@ -87,7 +88,7 @@ class DocRoot:
             .replace('\t', '')
 
     @staticmethod
-    def _compile_attribs(attribs:Optional[dict[str, str]]) -> str:
+    def _compile_attribs(attribs: Optional[dict[str, str]]) -> str:
         if attribs is None:
             return ''
         return '[' + ''.join([f"@{k}='{attribs[k]}'" for k in attribs]) + ']'
@@ -114,7 +115,8 @@ class DocRoot:
         if self.e is None:
             return []
         
-        return [BaseElement(item) for item in self.e.iterdescendants(tag=None)
+        return [BaseElement(item) 
+                for item in self.e.iterdescendants(tag=None)
                  if isinstance(item, _Element)]
 
     def _e_from_file(self, filepath: Path) -> _Element:
@@ -122,11 +124,14 @@ class DocRoot:
         """
         Reads the root element from file and returns self._e
         """
-
+        if not isinstance(filepath, Path):
+            raise TypeError('filepath variable must be of type'
+                            'Path')
+        
         try:
             self._roottree:_ElementTree = etree.parse(
                 source=filepath.absolute(), 
-                parser=None
+                parser=None # i.e. default
             )
             return self._roottree.getroot()
         
