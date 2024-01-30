@@ -68,7 +68,7 @@ class DocRoot:
             self._p = inpt
             if not inpt.exists():
                 raise FileExistsError(f'File {inpt.absolute()} does not exist')
-            self._e = self._e_from_file(inpt)
+            self._e = self._load_e_from_file(inpt)
             return
         elif isinstance(inpt, _ElementTree):
             self._e = inpt.getroot()
@@ -77,7 +77,7 @@ class DocRoot:
             self._p = p = Path(inpt)
             if not p.exists():
                 raise FileExistsError(f'File {p.absolute()} does not exist')
-            self._e = self._e_from_file(p)
+            self._e = self._load_e_from_file(p)
             return
         
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
@@ -122,19 +122,24 @@ class DocRoot:
                 for item in self.e.iterdescendants(tag=None)
                  if isinstance(item, _Element)]
 
-    def _e_from_file(self, filepath: Path) -> _Element:
+    def _load_e_from_file(self, filepath: Path) -> _Element:
 
         """
-        Reads the root element from file and returns self._e
+        Reads the root element from file and returns an
+        _Element object representing the XML document
         """
         if not isinstance(filepath, Path):
             raise TypeError('filepath variable must be of type'
                             'Path')
         
         try:
-            self._roottree:_ElementTree = etree.parse(
-                source=filepath.absolute(), 
-                parser=None # i.e. default
+            parser = etree.XMLParser(
+                load_dtd=False,
+                resolve_entities=False
+            )
+            self._roottree: _ElementTree = etree.parse(
+                source=filepath, 
+                parser=parser
             )
             return self._roottree.getroot()
         
