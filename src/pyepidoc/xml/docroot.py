@@ -8,7 +8,7 @@ from typing import (
 )
 from pathlib import Path
 
-from lxml import etree 
+from lxml import etree, isoschematron
 from lxml.etree import ( 
     _Comment,
     _Element, 
@@ -16,14 +16,16 @@ from lxml.etree import (
     _ElementUnicodeResult,
     _ProcessingInstruction,
     XMLSyntaxError,
-    XMLSyntaxAssertionError
+    XMLSyntaxAssertionError,
+    DocumentInvalid
 )
 
 from ..constants import TEINS, XMLNS
 from .baseelement import BaseElement
 from .errors import handle_xmlsyntaxerror
 
-class DocRoot:    
+class DocRoot:  
+    _roottree: _ElementTree  
     _e: _Element
     _p: Path
 
@@ -122,35 +124,6 @@ class DocRoot:
                 for item in self.e.iterdescendants(tag=None)
                  if isinstance(item, _Element)]
 
-    def _load_e_from_file(self, filepath: Path) -> _Element:
-
-        """
-        Reads the root element from file and returns an
-        _Element object representing the XML document
-        """
-        if not isinstance(filepath, Path):
-            raise TypeError('filepath variable must be of type'
-                            'Path')
-        
-        try:
-            parser = etree.XMLParser(
-                load_dtd=False,
-                resolve_entities=False
-            )
-            self._roottree: _ElementTree = etree.parse(
-                source=filepath, 
-                parser=parser
-            )
-            return self._roottree.getroot()
-        
-        except XMLSyntaxAssertionError as e:
-            print('XMLSyntaxAssertionError in _e_from_file')
-            print(e)
-            return _Element()
-        except XMLSyntaxError as e:
-            print('XMLSyntaxError in _e_from_file')
-            handle_xmlsyntaxerror(e)
-            return _Element()
 
     @property
     def e(self) -> _Element:
@@ -234,6 +207,43 @@ class DocRoot:
         
         return []
 
+    def _load_e_from_file(self, filepath: Path) -> _Element:
+
+        """
+        Reads the root element from file and returns an
+        _Element object representing the XML document
+        """
+        return self._load_etree_from_file(filepath=filepath).getroot()
+
+    def _load_etree_from_file(self, filepath: Path) -> _ElementTree:
+        """
+        Reads the root element from file and returns an
+        _ElementTree object representing the XML document
+        """
+        if not isinstance(filepath, Path):
+            raise TypeError('filepath variable must be of type'
+                            'Path')
+        
+        try:
+            parser = etree.XMLParser(
+                load_dtd=False,
+                resolve_entities=False
+            )
+            self._roottree: _ElementTree = etree.parse(
+                source=filepath, 
+                parser=parser
+            )
+            return self._roottree
+        
+        except XMLSyntaxAssertionError as e:
+            print('XMLSyntaxAssertionError in _e_from_file')
+            print(e)
+            return _ElementTree()
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in _e_from_file')
+            handle_xmlsyntaxerror(e)
+            return _ElementTree()        
+
     @property
     def processing_instructions(self) -> list[_ProcessingInstruction]:
         """
@@ -275,6 +285,34 @@ class DocRoot:
         xpath_res = cast(list[str], self.e.xpath('.//text()'))
 
         return ''.join(xpath_res)
+
+    def validate_relaxng(self, fp: Path | str) -> bool:
+        """
+        Validates the EpiDoc file against a RelaxNG schema
+        """
+        fp_ = Path(fp)
+        relax_ng_doc = etree.parse(source=fp_, parser=None)
+        relaxng = etree.RelaxNG(relax_ng_doc)
+        # return relaxng.validate(self.roottree)
+        try:
+            relaxng.assertValid(self.roottree)
+        except DocumentInvalid as e:
+            log = relaxng.error_log
+            breakpoint()
+            print(log.last_error)
+        
+        return False
+
+    def validate_schematron(self, fp: Path | str) -> bool:
+        """
+        Validates the EpiDoc file again a Schematron
+        """
+
+        fp_ = Path(fp)
+        
+        schematron_doc = etree.parse(fp_, parser=None)
+        schematron = isoschematron.Schematron(schematron_doc)
+        return schematron.validate(self.roottree)
 
     def xpath(self, xpathstr:str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 
