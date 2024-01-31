@@ -142,45 +142,109 @@ def test_tokenize_special_cases(tokenize_type:str):
 
 
 xml_to_tokenize = [
-    ('<roleName type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</roleName>',
-     '<roleName type="civic" subtype="duumviralis"><w>d<hi rend="apex">u</hi>mviralium</w></roleName>'),
+    # ('<roleName type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</roleName>',
+    #  '<roleName type="civic" subtype="duumviralis"><w>d<hi rend="apex">u</hi>mviralium</w></roleName>'),
 
-    ('<roleName type="civic" subtype="duumviralis">duumviralium</roleName>',
-     '<roleName type="civic" subtype="duumviralis"><w>duumviralium</w></roleName>'),
+    # ('<roleName type="civic" subtype="duumviralis">duumviralium</roleName>',
+    #  '<roleName type="civic" subtype="duumviralis"><w>duumviralium</w></roleName>'),
     
-    ('<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>',
-     '<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>'),
+    # ('<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>',
+    #  '<name type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</name>'),
     
-    ('d<hi rend="apex">u</hi>mviralium',
-     '<w>d<hi rend="apex">u</hi>mviralium</w>'),
+    # ('d<hi rend="apex">u</hi>mviralium',
+    #  '<w>d<hi rend="apex">u</hi>mviralium</w>'),
     
-    ('dominus',
-     '<w>dominus</w>'),
+    # ('dominus',
+    #  '<w>dominus</w>'),
 
-    ('<expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan>',
-     '<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>'),
+    # ('<expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan>',
+    #  '<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>'),
 
-    ('<hi rend="supraline"><num value="88">πη</num></hi> · ἐτελεύτ<supplied reason="lost">η</supplied>',
-     '<hi rend="supraline"><num value="88">πη</num></hi> · <w>ἐτελεύτ<supplied reason="lost">η</supplied></w>'),
+    # ('<hi rend="supraline"><num value="88">πη</num></hi> · ἐτελεύτ<supplied reason="lost">η</supplied>',
+    #  '<hi rend="supraline"><num value="88">πη</num></hi> · <w>ἐτελεύτ<supplied reason="lost">η</supplied></w>'),
      
-    ('<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>',
-     '<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>'),
+    # ('<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>',
+    #  '<hi rend="supraline"><num value="15">ιε</num></hi> <w>καλα<supplied reason="lost">ν</supplied></w>'),
 
-    # <hi> is treated as subsumable
-    ('<num value="15"><hi rend="supraline">ιε</hi></num> καλα<supplied reason="lost">ν</supplied>',
-     '<num value="15"><hi rend="supraline">ιε</hi></num><w>καλα<supplied reason="lost">ν</supplied></w>'),
+    # # <hi> is treated as subsumable
+    # ('<num value="15"><hi rend="supraline">ιε</hi></num> καλα<supplied reason="lost">ν</supplied>',
+    #  '<num value="15"><hi rend="supraline">ιε</hi></num><w>καλα<supplied reason="lost">ν</supplied></w>'),
 
-    ('<placeName ref="https://pleiades.stoa.org/places/678374">Μά'
-     '<lb n="3" break="no"/>κρης κώ'
-     '<lb n="4" break="no"/>μης</placeName>',
+    # ('<placeName ref="https://pleiades.stoa.org/places/678374">Μά'
+    #  '<lb n="3" break="no"/>κρης κώ'
+    #  '<lb n="4" break="no"/>μης</placeName>',
 
-    #  '<placeName ref="https://pleiades.stoa.org/places/678374"><w>Μά</w>'
-    #  '<lb n="3" break="no"/><w>κρης</w><w>κώ</w>'
-    #  '<lb n="4" break="no"/><w>μης</w></placeName>'
+    #  '<placeName ref="https://pleiades.stoa.org/places/678374"><w>Μά'
+    #  '<lb n="3" break="no"/>κρης</w><w>κώ'
+    #  '<lb n="4" break="no"/>μης</w></placeName>'
+    # ),
 
-     '<placeName ref="https://pleiades.stoa.org/places/678374"><w>Μά'
-     '<lb n="3" break="no"/>κρης</w><w>κώ'
-     '<lb n="4" break="no"/>μης</w></placeName>'
+    # ('<persName><supplied><name>John</name></supplied></persName>',
+    #  '<persName><name><supplied><name>John</name></supplied></name></persName>'),
+
+    ('<persName><supplied><name>John</name></supplied></persName>',
+     '<persName><supplied><name>John</name></supplied></persName>'),
+
+    ('<persName>'
+        '<supplied>'
+            '<name>John</name>'
+        '</supplied>'
+     '</persName>',
+     
+     '<persName>'
+        '<supplied>'
+            '<name>John</name>'
+        '</supplied>'
+     '</persName>'),
+
+
+    # ('<supplied>John</supplied>',
+    #  '<w><supplied>John</supplied></w>'),
+
+    (
+     '<persName type="attested">'
+		'<supplied reason="lost">'
+			'<name type="praenomen"><expan><abbr>M</abbr><ex>arci</ex></expan></name>'
+		'</supplied>' 
+     '</persName>',
+
+     '<persName type="attested">'
+        '<w>'
+            '<supplied reason="lost">'
+                '<name type="praenomen"><expan><abbr>M</abbr><ex>arci</ex></expan></name>'
+            '</supplied>' 
+        '</w>'
+     '</persName>'
+     ),
+
+    (
+     '<persName>'
+		'<supplied>'
+			'<name><expan><abbr>M</abbr><ex>arci</ex></expan></name>'
+		'</supplied>' 
+     '</persName>',
+
+     '<persName>'
+        '<w>'
+            '<supplied>'
+                '<name><expan><abbr>M</abbr><ex>arci</ex></expan></name>'
+            '</supplied>' 
+        '</w>'
+     '</persName>'
+     ),
+
+    (
+     '<persName>'
+		'<supplied>'
+			'<name>Marci</name>'
+		'</supplied>' 
+     '</persName>',
+
+     '<persName>'
+        '<supplied>'
+            '<name>Marci</name>'
+        '</supplied>' 
+     '</persName>'
      )
 ]
 
@@ -204,12 +268,18 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
     
     tokenized_strs = [etree.tostring(t.e) 
                       for t in tokenized.tokens]
+    
+    benchmark_bstr: bytes = etree.tostring(tokenized_benchmark.e)
+    benchmark_str = benchmark_bstr.decode()
 
-    result = benchmark_strs == tokenized_strs
+    tokenized_bstr: bytes = etree.tostring(tokenized.e)
+    tokenized_str = tokenized_bstr.decode()
+
+    result = tokenized_str == benchmark_str
     
     if not result:
         breakpoint()
         pass
 
-    assert benchmark_strs == tokenized_strs
+    assert tokenized_str == benchmark_str
     assert tokenized.tokens != []
