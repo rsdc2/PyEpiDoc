@@ -6,8 +6,8 @@ def test_validate_relax_ng():
     """
     Test that validates against a RelaxNG schema
     """
-    # doc = EpiDoc('xml/files/ISic000002.xml')
-    doc = EpiDoc('xml/files/ex.xml')
+    doc = EpiDoc('xml/files/ISic000002.xml')
+    # doc = EpiDoc('xml/files/ex.xml')
     assert doc.validate_relaxng('../validation/tei-epidoc.rng') == True
 
 
