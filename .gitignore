@@ -23,5 +23,4 @@ out
 *.csv
 *lock*
 *_inscrs.txt
-*.rng
 *.sch

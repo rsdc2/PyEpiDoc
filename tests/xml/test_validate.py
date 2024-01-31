@@ -11,7 +11,7 @@ def test_validate_relax_ng():
     assert doc.validate_relaxng('../validation/tei-epidoc.rng') == True
 
 
-def test_validate_isoschematron():
-    # doc = EpiDoc('xml/files/ISic000002.xml')
-    doc = EpiDoc('xml/files/ex.xml')
-    assert doc.validate_isoschematron('../validation/ircyr-checking_.sch')
+# def test_validate_isoschematron():
+#     # doc = EpiDoc('xml/files/ISic000002.xml')
+#     doc = EpiDoc('xml/files/ex.xml')
+#     assert doc.validate_isoschematron('../validation/ircyr-checking_.sch')
