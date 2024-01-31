@@ -50,13 +50,15 @@ from ..utils import maxoneT, head, last, to_lower
 
 
 def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
-    # Check that does not contain atomic tags
-    # If it does, tokenizer does not surround in an atomic tag
+    """
+    Check that subelement does not contain atomic tags
+    If it does, tokenizer does not surround in an atomic tag
+    """
 
     atomic_token_set = AtomicTokenType.value_set()
     atomic_non_token_set = AtomicNonTokenType.value_set()
     epidoc_elem = EpiDocElement(subelement)
-    atomic_descs = epidoc_elem.get_desc_elems_by_name(list(atomic_token_set))
+    # atomic_descs = epidoc_elem.get_desc_elems_by_name(list(atomic_token_set))
     all_descs = epidoc_elem.desc_elems
     all_name_set = epidoc_elem.desc_elem_name_set
 
@@ -69,10 +71,15 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
         # i.e. descendant elements are all in <choice> and at least one descendant has been tokenized
         w = EpiDocElement(subelement)  
 
+    elif atomic_token_set.intersection(all_name_set) == {'num'}:
+        # i.e. there is at least one subtoken that is an atomic token
+        # and that element is a <num/> element
+        # in which case surround with <w> token
+        w = EpiDocElement.w_factory(subelements=[subelement])
+
     elif atomic_token_set.intersection(all_name_set) != set():
         # i.e. there is at least one subtoken that is an atomic token
-        # w = EpiDocElement(subelement) 
-        w = EpiDocElement.w_factory(subelements=[subelement])
+        w = epidoc_elem # in which case do nothing
     
     elif all_name_set - atomic_non_token_set == set() and \
         all_name_set != set() and \
