@@ -242,7 +242,7 @@ class Edition(EpiDocElement):
         return [EpiDocElement(gap) 
                 for gap in self.get_desc('gap')]
 
-    def get_desc_tokens(self) -> list[Token]:
+    def get_desc_tokens_no_nested(self) -> list[Token]:
         """
         Return the descendant tokens,
         except if the token has a token ancestor;
@@ -360,7 +360,7 @@ class Edition(EpiDocElement):
         """
 
         return [Token(word) for word 
-            in self.get_desc_tokens()
+            in self.get_desc_tokens_no_nested()
         ]
 
     @property
