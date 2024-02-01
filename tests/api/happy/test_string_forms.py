@@ -30,7 +30,19 @@ leiden_and_normalized_tests = [
     ('<w><expan><abbr><g ref="#christogram">☧</g></abbr><ex>ιστῷ</ex></expan></w>',
      ['Χριστῷ'], [r' ☧ (ιστῷ)']) ,
     ('<w><expan><abbr><hi rend="ligature"><am>dt</am></hi></abbr><ex>depositio</ex></expan></w>',
-     ['depositio'], [r'{dt}(depositio)'])
+     ['depositio'], [r'{dt}(depositio)']),
+    ('<w><expan><abbr><hi rend="reversed"><am>Ↄ</am></hi></abbr><ex>circiter</ex></expan></w>',
+     ['circiter'], [r'{Ↄ}(circiter)']),
+    ('<num value="3"><choice><orig>tris</orig><reg>tres</reg></choice></num>',
+     ['tres'], ['tris']),
+    ('<num value="73">ο <g ref="#ivy-leaf">❦</g> γ </num>',
+     ['ογ'], ['ο ❦ γ']),
+    ('<roleName type="civic" subtype="duumvir"><w><expan><abbr><hi rend="supraline">II</hi>vir</abbr><ex>o</ex></expan></w></roleName>',
+     ['duoviro'], ['IIvir(o)']),
+
+
+     
+
 ]
 
 leiden_plus_tests = [

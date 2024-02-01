@@ -32,9 +32,13 @@ class Num(EpiDocElement):
     @property
     def normalized_form(self) -> str:
         from .expan import Expan
+        from .choice import Choice
+        from .g import G
 
         element_classes: dict[str, type] = {
-            'expan': Expan
+            'expan': Expan,
+            'choice': Choice,
+            'g': G
         }
         
         normalized_str = normalized_str_from_children(

@@ -142,7 +142,7 @@ class BaseElement(Showable):
             .replace('\t', ''))
 
     @staticmethod
-    def _compile_attribs(attribs:Optional[dict[str, str]]) -> str:
+    def _compile_attribs(attribs: Optional[dict[str, str]]) -> str:
         if attribs is None:
             return ''
         return '[' + ''.join([f"@{k}='{attribs[k]}'" 
@@ -211,7 +211,7 @@ class BaseElement(Showable):
         _descs = self._e.xpath('.//node()')
         descs = _descs if type(_descs) is list else []
         return [BaseElement(desc) for desc in descs 
-            if isinstance(desc, _Element)]
+                    if isinstance(desc, _Element)]
     
     @property
     def desc_elem_names(self) -> list[str]:
@@ -290,21 +290,18 @@ class BaseElement(Showable):
 
         return self._e.attrib.get(ns().give_ns(attribname, namespace), None)
 
-    # def get_child_elems_by_name(
-    #         self,
-    #         elem_names:Union[list[str], str], 
-    #         attribs:Optional[dict[str, str]]=None
-    #         ) -> list[BaseElement]:
-        
-    #     return [BaseElement() 
-    #         for child in self._e.chil]
-
     def get_desc(self, 
         elemnames: Union[list[str], str], 
         attribs: Optional[dict[str, str]]=None,
         ns_prefix: str="ns:",
         namespace: str=TEINS
     ) -> list[_Element]:
+
+        """
+        Return all descendant elements with the names 
+        given in elemnames and attributes given in 
+        attribs
+        """
 
         if self.e is None: 
             return []
@@ -390,7 +387,13 @@ class BaseElement(Showable):
     def has_ancestors_by_names(
             self, 
             names: list[str], 
-            setrelation: Callable[[set[str], set[str]], bool]) -> bool:
+            setrelation: Callable[[set[str], set[str]], bool]
+            ) -> bool:
+        
+        """
+        Return true if the set relation function returns true
+        for the set of names and the set of ancestors
+        """
         
         ancestor_names = map(lambda elem: elem.localname, self.ancestors_excl_self)
         return setrelation(set(names), set(ancestor_names))

@@ -9,12 +9,11 @@ from lxml.etree import _Element
 from typing import Optional, Sequence
 import re
 
-from ...xml import BaseElement
-from ...constants import XMLNS
-from ...utils import default_str
-from ...types import Base
-
-from ..enums import SpaceSeparated, NoSpace
+from pyepidoc.xml import BaseElement
+from pyepidoc.constants import XMLNS
+from pyepidoc.utils import default_str
+from pyepidoc.types import Base
+from pyepidoc.classes import SetRelation
 
 from ..element import EpiDocElement
 from .ab import Ab
@@ -26,6 +25,8 @@ from .textpart import TextPart
 
 from ..enums import (
     SpaceUnit, 
+    SpaceSeparated,
+    NoSpace,
     TokenCarrier, 
     AtomicTokenType, 
     SubatomicTagType, 
@@ -238,7 +239,25 @@ class Edition(EpiDocElement):
 
     @property
     def gaps(self) -> list[EpiDocElement]:
-        return [EpiDocElement(gap) for gap in self.get_desc('gap')]
+        return [EpiDocElement(gap) 
+                for gap in self.get_desc('gap')]
+
+    def get_desc_tokens(self) -> list[Token]:
+        """
+        Return the descendant tokens,
+        except if the token has a token ancestor;
+        i.e. does not return nested tokens
+        """
+
+        def has_not_token_ancestor(t: Token) -> bool:
+            return not t.has_ancestors_by_names(
+                AtomicTokenType.values(),
+                SetRelation.intersection
+            )
+
+        desc = map(Token, self.get_desc(AtomicTokenType.values()))
+        
+        return list(filter(has_not_token_ancestor, desc))
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
@@ -338,9 +357,7 @@ class Edition(EpiDocElement):
         # Fix: use xpath to remove any items with a token as a parent
 
         return [Token(word) for word 
-            in self.get_desc(
-                AtomicTokenType.values() 
-            )
+            in self.get_desc_tokens(AtomicTokenType.values())
         ]
 
     @property
