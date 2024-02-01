@@ -1,7 +1,7 @@
 from lxml.etree import _Element
 from ..element import EpiDocElement
 from pyepidoc.epidoc.utils import localname
-from pyepidoc.epidoc.utils import leiden_str_from_children
+from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 
 
 class Hi(EpiDocElement):
@@ -35,3 +35,19 @@ class Hi(EpiDocElement):
         }
         
         return leiden_str_from_children(self.e, element_classes, 'node')
+    
+    @property
+    def normalized_form(self) -> str:
+        from .expan import Expan
+        from .abbr import Abbr
+        from .ex import Ex
+        from .am import Am
+
+        element_classes: dict[str, type] = {
+            'expan': Expan,
+            'abbr': Abbr,
+            'ex': Ex,
+            'am': Am
+        }
+        
+        return normalized_str_from_children(self.e, element_classes, 'node')        

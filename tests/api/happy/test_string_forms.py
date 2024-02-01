@@ -28,7 +28,9 @@ leiden_and_normalized_tests = [
     ('<w>ἐτελεύτη<g ref="#ivy-leaf">❦</g><lb n="2" break="no"/>σεν</w>',
      ['ἐτελεύτησεν'], [r'ἐτελεύτη ❦ |σεν']), 
     ('<w><expan><abbr><g ref="#christogram">☧</g></abbr><ex>ιστῷ</ex></expan></w>',
-     ['Χριστῷ'], [r' ☧ (ιστῷ)']) 
+     ['Χριστῷ'], [r' ☧ (ιστῷ)']) ,
+    ('<w><expan><abbr><hi rend="ligature"><am>dt</am></hi></abbr><ex>depositio</ex></expan></w>',
+     ['depositio'], [r'{dt}(depositio)'])
 ]
 
 leiden_plus_tests = [
