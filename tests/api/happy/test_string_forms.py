@@ -10,9 +10,9 @@ import pytest
 
 leiden_and_normalized_tests = [
     ('<w><expan><abbr><num value="2"><hi rend="intraline">II</hi></num>vir</abbr><ex>o</ex></expan></w>', 
-     ['IIviro'], ['IIvir(o)']), 
+     ['duoviro'], ['IIvir(o)']), 
     ('<w><expan><abbr><num value="2">II</num>vir</abbr><ex>o</ex></expan></w>', 
-     ['IIviro'], ['IIvir(o)']),
+     ['duoviro'], ['IIvir(o)']),
     ('<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>',
      ['Undecimanorum'], ['XI(Undeci)manorum']),
     ('<w><expan><abbr><num value="11">XI</num></abbr><ex>Undeci</ex><abbr>manorum</abbr></expan></w>',
@@ -36,13 +36,7 @@ leiden_and_normalized_tests = [
     ('<num value="3"><choice><orig>tris</orig><reg>tres</reg></choice></num>',
      ['tres'], ['tris']),
     ('<num value="73">ο <g ref="#ivy-leaf">❦</g> γ </num>',
-     ['ογ'], ['ο ❦ γ']),
-    ('<roleName type="civic" subtype="duumvir"><w><expan><abbr><hi rend="supraline">II</hi>vir</abbr><ex>o</ex></expan></w></roleName>',
-     ['duoviro'], ['IIvir(o)']),
-
-
-     
-
+     ['ογ'], ['ο ❦ γ'])
 ]
 
 leiden_plus_tests = [

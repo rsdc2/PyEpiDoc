@@ -49,6 +49,12 @@ class Num(EpiDocElement):
 
         # Capitalize Roman numerals
         if self.charset == 'latin' and self.roman_numeral_chars_only:
-            return normalized_str.upper()
+            normalized_str = normalized_str.upper()
         
+        # If part of abbreviation, spell out Roman numerals
+        # TODO: add more numerals here
+        if self.has_ancestor_by_name('abbr'):
+            if normalized_str == 'II':
+                return 'duo'
+
         return normalized_str

@@ -26,12 +26,14 @@ class Hi(EpiDocElement):
         from .abbr import Abbr
         from .ex import Ex
         from .am import Am
+        from .num import Num
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'abbr': Abbr,
             'ex': Ex,
-            'am': Am
+            'am': Am,
+            'num': Num
         }
         
         return leiden_str_from_children(self.e, element_classes, 'node')
@@ -42,12 +44,14 @@ class Hi(EpiDocElement):
         from .abbr import Abbr
         from .ex import Ex
         from .am import Am
+        from .num import Num
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'abbr': Abbr,
             'ex': Ex,
-            'am': Am
+            'am': Am,
+            'num': Num
         }
         
         return normalized_str_from_children(self.e, element_classes, 'node')        

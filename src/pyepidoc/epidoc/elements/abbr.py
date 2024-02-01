@@ -115,12 +115,16 @@ class Abbr(EpiDocElement):
             'node'
         )
 
+        # Return the empty string if only children
+        # are <num>
         if self.child_node_names == ['num']:
             if self.next_sibling is not None and \
                 self.next_sibling.localname == 'ex':
 
                 return ''
 
+        # Remove sequences of capitals in e.g. AUgustis from 
+        # e.g. <w><expan><abbr>A<am>A</am>U<am>U</am></abbr><ex>gustis</ex></expan></w>
         if len(normalized) > 0 and head(self.child_node_names) != 'num':
             if normalized[0] == normalized[0].capitalize():
                 return normalized.capitalize()

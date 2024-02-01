@@ -47,7 +47,7 @@ def test_abbr_forms():
 
     token = edition.tokens[0]
 
-    assert token.normalized_form == 'IIviro'
+    assert token.normalized_form == 'duoviro'
     assert token.leiden_form == 'IIvir(o)'
     assert token.leiden_plus_form == '|IIvir(o)'
 

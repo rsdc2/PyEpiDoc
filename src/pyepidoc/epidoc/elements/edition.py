@@ -357,7 +357,7 @@ class Edition(EpiDocElement):
         # Fix: use xpath to remove any items with a token as a parent
 
         return [Token(word) for word 
-            in self.get_desc_tokens(AtomicTokenType.values())
+            in self.get_desc_tokens()
         ]
 
     @property
