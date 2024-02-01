@@ -353,8 +353,11 @@ class Edition(EpiDocElement):
 
     @property
     def tokens(self) -> list[Token]:
-        # TODO: at the moment a <num> inside a <w> will generate two tokens
-        # Fix: use xpath to remove any items with a token as a parent
+        """
+        Return the descendant tokens. Does not return
+        tokens within tokens, e.g. <num> within <w> 
+        e.g. in an abbreviated token IIviro for duoviro
+        """
 
         return [Token(word) for word 
             in self.get_desc_tokens()

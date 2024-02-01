@@ -902,7 +902,6 @@ class EpiDocElement(BaseElement, Showable):
             namespaces={"x": TEINS}
         )
 
-
     @property
     def preceding_nodes_in_edition(
         self) -> list[_Element | _ElementUnicodeResult]:
