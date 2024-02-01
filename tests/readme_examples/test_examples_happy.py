@@ -46,14 +46,30 @@ def test_corpus_example():
     # Filter the corpus to find the funerary inscriptions
     funerary_corpus = corpus.filter_by_textclass([TextClass.Funerary.value])
 
-    # Within the funerary corpus, find all the Latin inscriptions from Catania / Catina:
+    # Within the funerary corpus, find all the Latin inscriptions from Panhormus:
     panhormus_funerary_corpus = (
         funerary_corpus
             .filter_by_orig_place(['Panhormus'])
             .filter_by_languages(['la'])
     )
 
-    # Output the of this set of documents to a file ```catina_funerary_ids_la.txt``` 
-    # in the current working directory.
     panhormus_funerary_ids = '\n'.join(panhormus_funerary_corpus.ids)
     assert panhormus_funerary_ids == ''
+
+
+
+def test_corpus_example_2():
+
+    # Load the corpus
+    corpus = EpiDocCorpus(corpus_folderpath)
+
+
+    # Find all the Latin inscriptions from Panhormus:
+    panhormus_corpus = (
+        corpus
+            .filter_by_orig_place(['Panhormus'])
+            .filter_by_languages(['la'])
+    )
+
+    panhormus_ids = '\n'.join(panhormus_corpus.ids)
+    assert panhormus_ids == 'ISic000032'
