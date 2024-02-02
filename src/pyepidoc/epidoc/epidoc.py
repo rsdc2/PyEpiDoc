@@ -79,9 +79,7 @@ class EpiDoc(DocRoot):
         self.assert_has_TEIns()
 
         if validate_on_load:
-            module_path = inspect.getfile(pyepidoc)
-            rng_path = Path(module_path).parent / Path('tei-epidoc.rng')
-            validation_result, msg = self.validate_relaxng(rng_path)
+            validation_result, msg = self.validate_relaxng(self._rng_path)
             
             if not validation_result:
                 raise EpiDocValidationError(msg)
@@ -528,6 +526,23 @@ class EpiDoc(DocRoot):
         if publication_stmt is None:
             return None
         return EpiDocElement(publication_stmt)
+    
+    @property
+    def _pyepidoc_module_path(self) -> Path:
+        """
+        Returns the path of the pyepidoc module.
+        Indended for use with obtaining the path 
+        of the rng validation file.
+        """
+        return Path(inspect.getfile(pyepidoc))
+    
+    @property
+    def _rng_path(self) -> Path:
+        """
+        Returns the path of the 'tei-epidoc.rng' file
+        for use in validation.
+        """
+        return Path(self._pyepidoc_module_path).parent / Path('tei-epidoc.rng')
 
     def set_ids(self, base: Base=52) -> None:
         """

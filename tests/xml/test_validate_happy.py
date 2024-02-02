@@ -8,7 +8,7 @@ def test_validate_relax_ng():
     """
     doc = EpiDoc('xml/files/ISic000002.xml')
     # doc = EpiDoc('xml/files/ex.xml')
-    assert doc.validate_relaxng('../validation/tei-epidoc.rng')[0] == True
+    assert doc.validate_relaxng(doc._rng_path)[0] == True
 
 
 # def test_validate_isoschematron():
