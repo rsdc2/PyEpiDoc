@@ -134,12 +134,16 @@
         </fileDesc>
         <encodingDesc>
              <p>Encoded following the latest EpiDoc guidelines</p>
-             
-                     <p xmlns="http://www.tei-c.org/ns/1.0">Taxonomies for ISicily controlled values</p>
-                 
-	  
-	       <p xmlns="http://www.tei-c.org/ns/1.0">ISicily glyphs authority list</p>
-	     
+             <xi:include href="../alists/ISicily-taxonomies.xml">
+                 <xi:fallback>
+                     <p>Taxonomies for ISicily controlled values</p>
+                 </xi:fallback>
+             </xi:include>
+	  <xi:include href="../alists/charDecl.xml">
+	     <xi:fallback>
+	       <p>ISicily glyphs authority list</p>
+	     </xi:fallback>
+	   </xi:include>
          </encodingDesc>
         <profileDesc>
             <calendarDesc>
