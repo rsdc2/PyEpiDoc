@@ -1,9 +1,10 @@
 from pyepidoc import EpiDoc
 from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.enums import TextClass
-from pyepidoc.file.funcs import str_to_file
+from pyepidoc.file.ops import str_to_file
 
 corpus_folderpath = "api/files/corpus"
+
 
 def test_tokens_example():
     from pyepidoc import EpiDoc
