@@ -123,6 +123,7 @@ def test_check_ns_on_load():
     """
     _ = EpiDoc(relative_filepaths['ISic000001'])
 
+
 def test_reproduces_processing_instructions():
     doc = EpiDoc(relative_filepaths['line_2'])
     doc.to_xml_file(line_2_output)
