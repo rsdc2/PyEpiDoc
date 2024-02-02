@@ -54,9 +54,15 @@ class EpiDoc(DocRoot):
     def __hash__(self) -> int:
         return hash(self.id)
     
-    def __init__(self, inpt: Path | str | _ElementTree):
+    def __init__(
+            self, 
+            inpt: Path | str | _ElementTree,
+            validate_on_load: bool=False):
         super().__init__(inpt)
         self.assert_has_TEIns()
+
+        if validate_on_load:
+            pass
 
     @property
     def apparatus(self) -> list[_Element]:
