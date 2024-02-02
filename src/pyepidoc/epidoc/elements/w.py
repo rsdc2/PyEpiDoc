@@ -32,11 +32,13 @@ class W(EpiDocElement):
         from .expan import Expan
         from .num import Num
         from .surplus import Surplus
+        from .hi import Hi
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'num': Num,
-            'surplus': Surplus
+            'surplus': Surplus,
+            'hi': Hi
         }
         
         return normalized_str_from_children(self.e, element_classes, 'node')
