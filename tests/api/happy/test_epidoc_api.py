@@ -98,6 +98,12 @@ def test_lines():
     assert l4.n == '2'
 
 
+@pytest.mark.parametrize("filepath", relative_filepaths.values())
+def test_load_relative_filepath_from_str(filepath:str):
+    doc = EpiDoc(filepath)
+    assert doc.tokens_list_str != []
+
+
 def test_materialclasses():
     doc = EpiDoc(relative_filepaths['ISic000001'])
     assert doc.materialclasses == ['#material.stone.marble']
@@ -111,11 +117,12 @@ def test_punct():
     assert str(doc.tokens[0]) == "hello"
 
 
-@pytest.mark.parametrize("filepath", relative_filepaths.values())
-def test_load_relative_filepath_from_str(filepath:str):
-    doc = EpiDoc(filepath)
-    assert doc.tokens_list_str != []
-
+def test_validate_on_load():
+    """
+    
+    """
+    doc = EpiDoc(relative_filepaths['ISic000001'])
+    doc.assert_TEIns()
 
 def test_reproduces_processing_instructions():
     doc = EpiDoc(relative_filepaths['line_2'])

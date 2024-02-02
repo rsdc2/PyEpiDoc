@@ -34,8 +34,10 @@ class DocRoot:
         Convert the XML to bytes including processing instructions
         """
 
-        declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
-        processing_instructions = (self.processing_instructions_str + '\n').encode("utf-8")
+        declaration = \
+            '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
+        processing_instructions = \
+            (self.processing_instructions_str + '\n').encode("utf-8")
 
         try:
             b_str = etree.tostring( 
@@ -233,12 +235,14 @@ class DocRoot:
                 source=filepath, 
                 parser=parser
             )
+
             return self._roottree
         
         except XMLSyntaxAssertionError as e:
             print('XMLSyntaxAssertionError in _e_from_file')
             print(e)
             return _ElementTree()
+        
         except XMLSyntaxError as e:
             print('XMLSyntaxError in _e_from_file')
             handle_xmlsyntaxerror(e)

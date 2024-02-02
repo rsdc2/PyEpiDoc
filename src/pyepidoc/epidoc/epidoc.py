@@ -1,6 +1,10 @@
 from __future__ import annotations
 from typing import Optional, Union, Literal, overload
-from lxml.etree import _Element, _ElementUnicodeResult 
+from lxml.etree import (
+    _Element, 
+    _ElementTree,
+    _ElementUnicodeResult
+)
 from pathlib import Path
 from itertools import chain
 
@@ -48,6 +52,15 @@ class EpiDoc(DocRoot):
     @property
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants('apparatus')
+
+    def assert_TEIns(self) -> bool:
+        """
+        Return True if uses TEI namespaces;
+        raises an error if not
+        """
+
+        assert 'http://www.tei-c.org/ns/1.0' in self.e.nsmap.values()
+        return True
 
     @property
     def authority(self) -> Optional[str]:
@@ -356,6 +369,15 @@ class EpiDoc(DocRoot):
             return self.lang_usages
 
         return langs
+
+    def _load_etree_from_file(self, filepath: Path) -> _ElementTree:
+        """
+        Reads the root element from file and returns an
+        _ElementTree object representing the XML document
+        """
+        element_tree = super()._load_etree_from_file(filepath)
+        self.assert_TEIns()
+        return element_tree
 
     @property
     def mainlang(self) -> Optional[str]:
