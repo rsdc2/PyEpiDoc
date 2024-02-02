@@ -1,6 +1,7 @@
 
 from lxml.etree import XMLSyntaxError
 
+
 def handle_xmlsyntaxerror(e: XMLSyntaxError):
     # print(
     #     f'XMLSyntaxError in {e.filename} '
