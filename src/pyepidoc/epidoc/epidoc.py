@@ -1,18 +1,23 @@
 from __future__ import annotations
-from typing import Optional, Union, Literal, overload
+from typing import Optional, Literal, overload
 from lxml.etree import (
     _Element, 
-    _ElementTree,
-    _ElementUnicodeResult
+    _ElementTree
 )
 from pathlib import Path
 from itertools import chain
 
 from .element import EpiDocElement, BaseElement
 from ..xml.docroot import DocRoot
-from ..utils import maxone, listfilter, head, remove_none
+from ..utils import (
+    maxone, 
+    listfilter, 
+    head,
+    remove_none
+)
 from ..types import Base
 
+from .errors import TEINSError
 from .elements.edition import Edition
 from .elements.expan import Expan
 from .enums import (
@@ -51,19 +56,21 @@ class EpiDoc(DocRoot):
     
     def __init__(self, inpt: Path | str | _ElementTree):
         super().__init__(inpt)
-        self.assert_TEIns()
+        self.assert_has_TEIns()
 
     @property
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants('apparatus')
 
-    def assert_TEIns(self) -> bool:
+    def assert_has_TEIns(self) -> bool:
         """
         Return True if uses TEI namespaces;
         raises an AssertionError if not
         """
 
-        assert 'http://www.tei-c.org/ns/1.0' in self.e.nsmap.values()
+        if not 'http://www.tei-c.org/ns/1.0' in self.e.nsmap.values():
+            raise TEINSError()
+        
         return True
 
     @property
