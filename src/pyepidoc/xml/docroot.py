@@ -242,7 +242,7 @@ class DocRoot:
                 source=filepath, 
                 parser=parser
             )
-            self._roottree.xinclude()
+            # self._roottree.xinclude()
 
             return self._roottree
         
