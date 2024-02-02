@@ -1,7 +1,6 @@
 from pyepidoc.epidoc.scripts import tokenize
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.elements.ab import Ab
-from pyepidoc.file.funcs import filepath_from_list
 from pyepidoc.xml.utils import abify
 
 import os
@@ -86,15 +85,15 @@ def get_path_vars(tokenize_type:str) -> tuple[str, str, str, str, str, str]:
     untokenized_folderpath = 'tokenize/files/untokenized'
     tokenized_folderpath = 'tokenize/files/tokenized_output'
     benchmark_folderpath = 'tokenize/files/tokenized_benchmark'
-    tokenized_filepath = filepath_from_list([tokenized_folderpath], filename)
-    benchmark_filepath = filepath_from_list([benchmark_folderpath], filename)
+    tokenized_filepath = Path(tokenized_folderpath) / Path(filename)
+    benchmark_filepath = Path(benchmark_folderpath) / Path(filename)
 
     return (filename, 
             untokenized_folderpath, 
             tokenized_folderpath, 
             benchmark_folderpath, 
-            tokenized_filepath, 
-            benchmark_filepath)
+            str(tokenized_filepath), 
+            str(benchmark_filepath))
 
 
 def tokenize_epidoc(tokenize_type: str) -> tuple[EpiDoc, EpiDoc]:
