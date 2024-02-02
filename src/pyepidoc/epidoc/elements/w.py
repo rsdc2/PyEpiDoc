@@ -31,10 +31,12 @@ class W(EpiDocElement):
     def normalized_form(self) -> str:
         from .expan import Expan
         from .num import Num
+        from .surplus import Surplus
 
         element_classes: dict[str, type] = {
             'expan': Expan,
-            'num': Num
+            'num': Num,
+            'surplus': Surplus
         }
         
         return normalized_str_from_children(self.e, element_classes, 'node')

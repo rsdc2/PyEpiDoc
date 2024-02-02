@@ -27,13 +27,15 @@ class Hi(EpiDocElement):
         from .ex import Ex
         from .am import Am
         from .num import Num
+        from .surplus import Surplus
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'abbr': Abbr,
             'ex': Ex,
             'am': Am,
-            'num': Num
+            'num': Num,
+            'surplus': Surplus
         }
         
         return leiden_str_from_children(self.e, element_classes, 'node')
@@ -45,13 +47,15 @@ class Hi(EpiDocElement):
         from .ex import Ex
         from .am import Am
         from .num import Num
+        from .surplus import Surplus
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'abbr': Abbr,
             'ex': Ex,
             'am': Am,
-            'num': Num
+            'num': Num,
+            'surplus': Surplus
         }
         
         return normalized_str_from_children(self.e, element_classes, 'node')        

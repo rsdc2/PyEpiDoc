@@ -36,7 +36,9 @@ leiden_and_normalized_tests = [
     ('<num value="3"><choice><orig>tris</orig><reg>tres</reg></choice></num>',
      ['tres'], ['tris']),
     ('<num value="73">ο <g ref="#ivy-leaf">❦</g> γ </num>',
-     ['ογ'], ['ο ❦ γ'])
+     ['ογ'], ['ο ❦ γ']),
+    ('<w>mere<hi rend="ligature">nt<surplus><hi rend="tall">t</hi></surplus></hi>i</w>',
+     ['merenti'], [r'merent{t}i'])
 ]
 
 leiden_plus_tests = [
