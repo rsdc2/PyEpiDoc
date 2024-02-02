@@ -6,18 +6,21 @@ from lxml.etree import (
 )
 from pathlib import Path
 from itertools import chain
+import inspect
 
-from .element import EpiDocElement, BaseElement
-from ..xml.docroot import DocRoot
-from ..utils import (
+import pyepidoc
+from pyepidoc.xml.docroot import DocRoot
+from pyepidoc.utils import (
     maxone, 
     listfilter, 
     head,
     remove_none
 )
-from ..types import Base
+from pyepidoc.types import Base
 
-from .errors import TEINSError
+from .token import Token
+from .errors import TEINSError, EpiDocValidationError
+from .element import EpiDocElement, BaseElement
 from .elements.edition import Edition
 from .elements.expan import Expan
 from .enums import (
@@ -25,7 +28,6 @@ from .enums import (
     AbbrType
 )
 
-from .token import Token
 
 
 class EpiDoc(DocRoot):
@@ -47,7 +49,7 @@ class EpiDoc(DocRoot):
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, EpiDoc):
-            raise TypeError(f"Cannot compare type EpiDoc with {type(other)}")
+            raise TypeError(f'Cannot compare type EpiDoc with {type(other)}')
         
         return self.id == other.id
 
@@ -58,11 +60,17 @@ class EpiDoc(DocRoot):
             self, 
             inpt: Path | str | _ElementTree,
             validate_on_load: bool=False):
+        
         super().__init__(inpt)
         self.assert_has_TEIns()
 
         if validate_on_load:
-            pass
+            module_path = inspect.getfile(pyepidoc)
+            rng_path = Path(module_path).parent / Path('tei-epidoc.rng')
+            validation_result, msg = self.validate_relaxng(rng_path)
+            
+            if not validation_result:
+                raise EpiDocValidationError(msg)
 
     @property
     def apparatus(self) -> list[_Element]:

@@ -235,6 +235,7 @@ class DocRoot:
                 source=filepath, 
                 parser=parser
             )
+            self._roottree.xinclude()
 
             return self._roottree
         
@@ -301,24 +302,30 @@ class DocRoot:
         schematron = isoschematron.Schematron(schematron_doc)
         return schematron.validate(self.roottree)
 
-    def validate_relaxng(self, fp: Path | str) -> bool:
+    def validate_relaxng(self, fp: Path | str) -> tuple[bool, str]:
         """
         Validates the EpiDoc file against a RelaxNG schema
+
+        :return: a tuple containing a bool giving the validation result,
+        as well as a message string.
         """
         fp_ = Path(fp)
         relax_ng_doc = etree.parse(source=fp_, parser=None)
         relaxng = etree.RelaxNG(relax_ng_doc)
-        valid = relaxng.validate(self.roottree)
+        
+        try:
+            relaxng.assertValid(self.roottree)
+            msg = (f'{fp} is valid EpiDoc according to the '
+                    'RelaxNG schema')
+            valid = True
+        except DocumentInvalid as e:
+            log = relaxng.error_log
+            # msg = str(e)
+            valid = False
+            msg = log.last_error
+            # print(log.last_error)
 
-        if not valid:
-            try:
-                relaxng.assertValid(self.roottree)
-            except DocumentInvalid as e:
-                log = relaxng.error_log
-                print(e)
-                print(log.last_error)
-
-        return valid
+        return (valid, msg)
 
     def xpath(self, xpathstr:str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 
