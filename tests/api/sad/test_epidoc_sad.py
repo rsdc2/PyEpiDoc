@@ -1,4 +1,5 @@
 from pyepidoc import EpiDoc
+from pyepidoc.epidoc.errors import TEINSError
 import pytest
 
 
@@ -16,5 +17,5 @@ def test_does_not_create_folderpath():
 
 def test_check_ns_on_load():
     test_file = 'api/files/isic_file_no_tei_ns.xml'
-    with pytest.raises(AssertionError):
+    with pytest.raises(TEINSError):
         _ = EpiDoc(test_file)
