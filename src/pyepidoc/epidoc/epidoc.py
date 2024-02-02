@@ -48,6 +48,10 @@ class EpiDoc(DocRoot):
 
     def __hash__(self) -> int:
         return hash(self.id)
+    
+    def __init__(self, inpt: Path | str | _ElementTree):
+        super().__init__(inpt)
+        self.assert_TEIns()
 
     @property
     def apparatus(self) -> list[_Element]:
@@ -56,7 +60,7 @@ class EpiDoc(DocRoot):
     def assert_TEIns(self) -> bool:
         """
         Return True if uses TEI namespaces;
-        raises an error if not
+        raises an AssertionError if not
         """
 
         assert 'http://www.tei-c.org/ns/1.0' in self.e.nsmap.values()
@@ -369,15 +373,6 @@ class EpiDoc(DocRoot):
             return self.lang_usages
 
         return langs
-
-    def _load_etree_from_file(self, filepath: Path) -> _ElementTree:
-        """
-        Reads the root element from file and returns an
-        _ElementTree object representing the XML document
-        """
-        element_tree = super()._load_etree_from_file(filepath)
-        self.assert_TEIns()
-        return element_tree
 
     @property
     def mainlang(self) -> Optional[str]:

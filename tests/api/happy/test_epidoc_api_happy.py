@@ -117,12 +117,11 @@ def test_punct():
     assert str(doc.tokens[0]) == "hello"
 
 
-def test_validate_on_load():
+def test_check_ns_on_load():
     """
     
     """
-    doc = EpiDoc(relative_filepaths['ISic000001'])
-    doc.assert_TEIns()
+    _ = EpiDoc(relative_filepaths['ISic000001'])
 
 def test_reproduces_processing_instructions():
     doc = EpiDoc(relative_filepaths['line_2'])
