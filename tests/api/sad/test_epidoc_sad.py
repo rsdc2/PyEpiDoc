@@ -2,8 +2,6 @@ from pyepidoc import EpiDoc
 import pytest
 
 
-
-
 def test_does_not_create_folderpath():
     """
     Test that error is raised if try to write to folderpath
