@@ -61,6 +61,20 @@ class EpiDoc(DocRoot):
             inpt: Path | str | _ElementTree,
             validate_on_load: bool=False):
         
+        """
+        Initialize an EpiDoc object on a given input 
+        (string, Path or lxml _ElementTree).
+        On load checks that the file has the TEI namespace 
+        "http://www.tei-c.org/ns/1.0" declared.
+
+        :param inpt: string (containing path to document), 
+            Path or lxml _ElementTree
+
+        :param validate_on_load: if True, validates against 
+            EpiDoc RelaxNG schema, "tei-epidoc.rng", found in the root 
+            directory of the package
+        """
+        
         super().__init__(inpt)
         self.assert_has_TEIns()
 
@@ -75,7 +89,7 @@ class EpiDoc(DocRoot):
     @property
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants('apparatus')
-
+    
     def assert_has_TEIns(self) -> bool:
         """
         Return True if uses TEI namespaces;

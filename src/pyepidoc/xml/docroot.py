@@ -54,6 +54,9 @@ class DocRoot:
 
     @overload
     def __init__(self, inpt:Path):
+        """
+        :param inpt: Path containing the filepath of the EpiDoc XML file.
+        """
         ...
 
     @overload
@@ -65,6 +68,10 @@ class DocRoot:
 
     @overload
     def __init__(self, inpt:_ElementTree):
+        """
+        :param inpt: an lxml _Element tree object representing an
+            lxml document
+        """
         ...
 
     def __init__(self, inpt: Path | str | _ElementTree):
