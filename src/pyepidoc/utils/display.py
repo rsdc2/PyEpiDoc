@@ -1,7 +1,7 @@
 # Provides functions for showing elements
 from typing import Iterable
-from .epidoc.dom import doc_id, lang
-from .epidoc.element import EpiDocElement
+from ..epidoc.dom import doc_id, lang
+from ..epidoc.element import EpiDocElement
 
 
 def show_elems(

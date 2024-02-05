@@ -134,6 +134,58 @@ str_to_file(catina_funerary_ids, 'catina_funerary_ids_la.txt')
 
 ```
 
+### Validate EpiDoc XML
+
+There are two ways to validate an EpiDoc XML file: 
+
+1. Validate on load, e.g.:
+
+```
+from pyepidoc import EpiDoc
+
+doc = EpiDoc('examples/ISic000001_tokenized.xml', validate_on_load=True)
+```
+
+- This validates according to the RelaxNG schema `tei-epidoc.rng` 
+in the `pyepidoc` root directory.
+- By default `validate_on_load` is set to `False`.
+
+2. Validate against a custom RelaxNG schema:
+
+```
+from pyepidoc import EpiDoc
+doc = EpiDoc('examples/ISic000001_tokenized.xml')
+
+doc.validate_by_relaxng(fp='path/to/relaxngschema.rng')
+```
+
+# Code organisation
+
+## Package structure
+
+The PyEpiDoc package has four subpackages:
+
+- `xml` containing modules with base classes for XML handling;
+- `epidoc` containing modules for handling EpiDoc specific XML handling, e.g. ```<ab>```, ```<w>``` etc.;
+- `analysis` containing modules for analysing EpiDoc files and corpora, e.g. of abbreviations;
+- `utils` containing modules providing utility functions for use generally.
+
+## Modifying tokenizer behaviour
+
+The treatment of a given token by the tokenizer may be affected by one or more of the following:
+
+- Status in ```pyepidoc/epidoc/epidoctypes.py```
+- Presence in ```pyepidoc/constants.py``` in ```SubsumableRels```
+
+The token will be subsumed into a neighbouring ```<w>``` token if it is not separated by whitespace if:
+- it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels```
+
+The token will be subsumed into a neighbouring ```<w>``` token regardless of the presence of intervening whitespace if:
+- it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels``` and
+- it is a member of ```AlwaysSubsumableType``` in ```epidoctypes.py```
+
+# Code integrity
+
 ## Run the tests
 
 with ```pytest``` installed (the dev installation will do this for you):
@@ -171,59 +223,6 @@ installed, e.g.:
     ```
     python3.10 -m mypy src/pyepidoc
     ```
-
-
-## Tokenizer behaviour
-
-The treatment of a given token by the tokenizer may be affected by one or more of the following:
-
-- Status in ```pyepidoc/epidoc/epidoctypes.py```
-- Presence in ```pyepidoc/constants.py``` in ```SubsumableRels```
-
-The token will be subsumed into a neighbouring ```<w>``` token if it is not separated by whitespace if:
-- it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels```
-
-The token will be subsumed into a neighbouring ```<w>``` token regardless of the presence of intervening whitespace if:
-- it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels``` and
-- it is a member of ```AlwaysSubsumableType``` in ```epidoctypes.py```
-
-
-## Validate EpiDoc XML
-
-There are two ways to validate an EpiDoc XML file: 
-
-1. Validate on load, e.g.:
-
-```
-from pyepidoc import EpiDoc
-
-doc = EpiDoc('examples/ISic000001_tokenized.xml', validate_on_load=True)
-```
-
-- This validates according to the RelaxNG schema `tei-epidoc.rng` 
-in the `pyepidoc` root directory.
-- By default `validate_on_load` is set to `False`.
-
-2. Validate against a custom RelaxNG schema:
-
-```
-from pyepidoc import EpiDoc
-doc = EpiDoc('examples/ISic000001_tokenized.xml')
-
-doc.validate_by_relaxng(fp='path/to/relaxngschema.rng')
-```
-
-
-
-## Package structure
-
-The PyEpiDoc package has three subpackages:
-
-- ```xml``` containing modules with base classes for EpiDoc XML handling;
-- ```epidoc``` containing modules for handling EpiDoc specific XML nodes, e.g. ```<ab>```, ```<w>``` etc.
-
-In addition ```utils.py``` provides general utility functions, in particular for handling Python 
-```list```s.
 
 ## Features to be included in future
 

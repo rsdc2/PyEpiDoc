@@ -1,5 +1,14 @@
 from __future__ import annotations
+from enum import Enum
+from collections import namedtuple
 from pathlib import Path
+
+FilePath = namedtuple('FilePath', ['folderpath', 'filename'])
+
+
+class FileMode(Enum):
+    r = 'r'
+    w = 'w'
 
 
 def str_to_file(s: str, filepath: str):

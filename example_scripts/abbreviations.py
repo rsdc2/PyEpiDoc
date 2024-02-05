@@ -7,7 +7,7 @@ from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.epidoc.dom import lang, owner_doc
 from pyepidoc.utils import top, contains, listfilter
-from pyepidoc.displayutils import show_elems
+from pyepidoc.utils.display import show_elems
 
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
 corpus_path = MASTER_PATH # insert path to your corpus here 

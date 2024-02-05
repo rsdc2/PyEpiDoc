@@ -2,11 +2,13 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 from typing import Literal, Optional
+
 from .overall import overall_distribution_via_expans 
 from .instances import raw_abbreviations, abbreviation_count
+
 from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc import EpiDocCorpus
-from ..utils.csv_ops import pivot_dict
+from pyepidoc.utils.csv import pivot_dict
 
 
 def overall_analysis_to_csv(

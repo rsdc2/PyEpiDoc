@@ -9,8 +9,6 @@ lists and strings.
 from typing import (
     TypeVar, 
     Optional, 
-    Union, 
-    Callable, 
     Sequence,
     Iterable
 )
