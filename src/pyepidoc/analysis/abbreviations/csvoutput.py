@@ -3,7 +3,7 @@ import csv
 from pathlib import Path
 from typing import Literal, Optional
 
-from .overall import overall_distribution_via_expans 
+from .distribution import overall_distribution_via_expans 
 from .instances import raw_abbreviations, abbreviation_count
 
 from pyepidoc.epidoc.enums import AbbrType
