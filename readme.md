@@ -168,7 +168,12 @@ The PyEpiDoc package has four subpackages:
 - `xml` containing modules with base classes for XML handling;
 - `epidoc` containing modules for handling EpiDoc specific XML handling, e.g. ```<ab>```, ```<w>``` etc.;
 - `analysis` containing modules for analysing EpiDoc files and corpora, e.g. of abbreviations;
-- `utils` containing modules providing utility functions for use generally.
+- `shared` containing modules and classes for use generally in the project.
+
+Probably the most useful subpackage in the first instance will be `epidoc`, and in particular 
+`epidoc.py` and `corpus.py`, which, via the classes `EpiDoc` and `EpiDocCorpus`, provide
+APIs to EpiDoc files and corpora respectively.
+
 
 ## Modifying tokenizer behaviour
 
