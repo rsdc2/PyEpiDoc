@@ -7,6 +7,7 @@ from lxml.etree import (
 from pathlib import Path
 from itertools import chain
 import inspect
+import re
 
 import pyepidoc
 from pyepidoc.xml.docroot import DocRoot
@@ -207,11 +208,7 @@ class EpiDoc(DocRoot):
         combined = textpart_langs + edition_langs
 
         return set(combined)
-
-    @property
-    def edition_text(self) -> str:
-        return ''.join([edition.text_desc for edition in self.editions()])
-
+    
     def editions(self, include_transliterations=False) -> list[Edition]:
         editions = [Edition(edition) 
             for edition in self.get_div_descendants('edition')]
@@ -567,6 +564,46 @@ class EpiDoc(DocRoot):
     @property
     def tei_header(self) -> Optional[_Element]:
         return maxone(self.get_desc('teiHeader'))
+
+    def text(
+            self, 
+            leiden_or_normalized: Literal['leiden', 'normalized']) -> str:
+        
+        """
+        :param leiden_or_normalized: the type of text wanted, whether
+        the Leiden version or a normalized version (i.e. with all the 
+        abbreviations expanded)
+        :return: the edition text of the document
+        """
+        
+        if leiden_or_normalized == 'leiden':
+
+            leiden = ' '.join([token.leiden_plus_form for token in self.tokens])
+            
+            leiden_ = re.sub(r'\|\s+?\|', '|', leiden)
+            leiden__ = re.sub(r'·\s+?·', '·', leiden_)
+        
+            return leiden__.replace('|', '\n')
+        
+        elif leiden_or_normalized == 'normalized':
+            return ' '.join(self.tokens_normalized_list_str)
+
+    @property
+    def text_leiden(self) -> str:
+        """
+        :return: a string containing the Leiden representation of the
+        document including line breaks
+        """
+
+        return self.text('leiden')
+
+    @property
+    def text_normalized(self) -> str:
+        """
+        :return: a normalized version of the edition text (i.e.
+        all abbreviations expanded etc.) with no line breaks
+        """
+        return self.text('normalized')
 
     @property
     def textclasses(self) -> list[str]:

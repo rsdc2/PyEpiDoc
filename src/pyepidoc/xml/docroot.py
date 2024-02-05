@@ -293,6 +293,9 @@ class DocRoot:
 
     @property
     def text_desc(self) -> str:
+        """
+        Return the inner text of all the descendant nodes
+        """
         if self.e is None: 
             return ''
         
