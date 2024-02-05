@@ -32,7 +32,6 @@ def test_validate_does_not_change_file():
     change the EpiDoc file
     """
     doc1 = EpiDoc('xml/files/ISic000001_with_xinclude.xml')
-    
     doc2 = EpiDoc('xml/files/ISic000001_with_xinclude.xml', 
                validate_on_load=True)
     
