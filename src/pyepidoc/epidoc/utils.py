@@ -12,7 +12,7 @@ from pyepidoc.epidoc.enums import (
     RegTextType, 
     AtomicTokenType
 )
-from pyepidoc.constants import TEINS
+from pyepidoc.shared.constants import TEINS
 from pyepidoc.epidoc.element import EpiDocElement
 
 

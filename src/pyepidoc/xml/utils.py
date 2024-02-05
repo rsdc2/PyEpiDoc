@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.constants import TEINS
+from pyepidoc.shared.constants import TEINS
 from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
 from copy import deepcopy

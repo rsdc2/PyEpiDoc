@@ -10,13 +10,13 @@ import inspect
 
 import pyepidoc
 from pyepidoc.xml.docroot import DocRoot
-from pyepidoc.utils import (
+from pyepidoc.shared import (
     maxone, 
     listfilter, 
     head,
     remove_none
 )
-from pyepidoc.types import Base
+from pyepidoc.shared.types import Base
 
 from .token import Token
 from .errors import TEINSError, EpiDocValidationError

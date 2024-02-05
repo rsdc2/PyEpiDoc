@@ -10,7 +10,7 @@ from typing import (
     overload
 )
 
-from ..classes import Showable, ExtendableSeq
+from ..shared.classes import Showable, ExtendableSeq
 import operator
 import re
 
@@ -22,12 +22,12 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from ..classes import Tag
+from ..shared.classes import Tag
 
 from .namespace import Namespace as ns
 
-from ..constants import TEINS, XMLNS, SubsumableRels
-from ..utils import maxone
+from ..shared.constants import TEINS, XMLNS, SubsumableRels
+from ..shared import maxone
 from pyepidoc.xml.utils import localname
 
 

@@ -5,7 +5,7 @@ from itertools import chain
 
 from lxml.etree import _Element
 
-from ...utils import head
+from ...shared import head
 
 from ..element import EpiDocElement
 

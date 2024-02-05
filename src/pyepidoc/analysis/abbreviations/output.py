@@ -8,7 +8,7 @@ from .instances import raw_abbreviations, abbreviation_count
 
 from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc import EpiDocCorpus
-from pyepidoc.utils.csv import pivot_dict
+from pyepidoc.shared.csv import pivot_dict
 
 
 def overall_analysis_to_csv(

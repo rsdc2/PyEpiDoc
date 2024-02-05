@@ -11,7 +11,7 @@ from typing import (
     Literal
 )
 
-from ..classes import Showable, ExtendableSeq
+from ..shared.classes import Showable, ExtendableSeq
 from ..xml.baseelement import BaseElement
 
 from copy import deepcopy
@@ -29,13 +29,13 @@ from lxml.etree import (
 
 from ..xml.namespace import Namespace as ns
 
-from ..constants import (A_TO_Z_SET, 
+from ..shared.constants import (A_TO_Z_SET, 
                          TEINS, 
                          XMLNS, 
                          SubsumableRels,
                          ROMAN_NUMERAL_CHARS,
                          VALID_BASES)
-from ..types import Base
+from ..shared.types import Base
 
 from .enums import (
     whitespace, 
@@ -46,7 +46,7 @@ from .enums import (
     AlwaysSubsumable
 )
 from . import ids
-from ..utils import maxoneT, head, last, to_lower
+from ..shared import maxoneT, head, last, to_lower
 
 
 def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:

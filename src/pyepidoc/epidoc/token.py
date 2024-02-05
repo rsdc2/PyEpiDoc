@@ -17,8 +17,8 @@ from lxml.etree import (
 
 from ..xml import Namespace as ns
 from ..xml.utils import localname
-from ..utils import maxone, remove_none, head, to_lower
-from ..constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
+from ..shared import maxone, remove_none, head, to_lower
+from ..shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
 from ..xml.baseelement import BaseElement
 
 from .element import EpiDocElement

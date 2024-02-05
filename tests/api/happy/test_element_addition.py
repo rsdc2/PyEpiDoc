@@ -1,4 +1,4 @@
-from pyepidoc.constants import TEINS
+from pyepidoc.shared.constants import TEINS
 from lxml import etree
 from pyepidoc.epidoc.element import EpiDocElement
 import pytest

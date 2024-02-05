@@ -11,8 +11,8 @@ from .elements.ab import Ab
 from .elements.edition import Edition
 from .elements.lb import Lb
 
-from ..constants import *
-from ..utils import maxone, head
+from ..shared.constants import *
+from ..shared import maxone, head
 
 
 def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:

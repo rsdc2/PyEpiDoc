@@ -1,4 +1,4 @@
-from ...constants import XMLNS
+from ...shared.constants import XMLNS
 from ..element import EpiDocElement
 
 

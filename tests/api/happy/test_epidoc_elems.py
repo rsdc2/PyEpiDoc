@@ -5,8 +5,8 @@ from pyepidoc.epidoc.epidoc import EpiDoc, Expan
 from pyepidoc.epidoc.elements.abbr import Abbr
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.xml.baseelement import BaseElement
-from pyepidoc.utils import head
-from pyepidoc.constants import TEINS
+from pyepidoc.shared import head
+from pyepidoc.shared.constants import TEINS
 
 
 relative_filepaths = {

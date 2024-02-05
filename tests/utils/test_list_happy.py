@@ -1,4 +1,4 @@
-from pyepidoc.utils import flatlist
+from pyepidoc.shared import flatlist
 import pytest
 
 list2D = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]

@@ -6,7 +6,7 @@ from lxml.etree import _Element
 from ..element import EpiDocElement
 
 from ...xml import BaseElement
-from ...constants import XMLNS
+from ...shared.constants import XMLNS
 
 from .ab import Ab
 

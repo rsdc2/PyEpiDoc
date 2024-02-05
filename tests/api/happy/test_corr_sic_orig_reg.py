@@ -6,7 +6,7 @@ correct Leiden plus text
 import pytest
 from pyepidoc.epidoc.token import Token
 from pyepidoc.xml.utils import elem_from_str
-from pyepidoc.constants import TEINS
+from pyepidoc.shared.constants import TEINS
 
 tests = [
     (f'<w xmlns="{TEINS}"><choice><sic>que</sic><corr>quae</corr></choice></w>',

@@ -6,7 +6,7 @@ from .enums import (
 )
 from .epidoc import EpiDoc
 from .corpus import EpiDocCorpus
-from ..constants import *
+from ..shared.constants import *
 
 
 def tokenize(

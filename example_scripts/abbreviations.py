@@ -6,8 +6,8 @@ information about abbreviations from an EpiDoc corpus
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.epidoc.dom import lang, owner_doc
-from pyepidoc.utils import top, contains, listfilter
-from pyepidoc.utils.display import show_elems
+from pyepidoc.shared import top, contains, listfilter
+from pyepidoc.shared.display import show_elems
 
 MASTER_PATH = '/data/ISicily/ISicily/inscriptions/'
 corpus_path = MASTER_PATH # insert path to your corpus here 

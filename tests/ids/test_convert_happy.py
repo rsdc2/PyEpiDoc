@@ -1,5 +1,5 @@
 from pyepidoc.epidoc.ids import convert
-from pyepidoc.types import Base
+from pyepidoc.shared.types import Base
 
 import pytest
 

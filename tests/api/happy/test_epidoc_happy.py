@@ -1,6 +1,6 @@
 
 from pyepidoc.epidoc.epidoc import EpiDoc
-from pyepidoc.utils import head
+from pyepidoc.shared import head
 from pyepidoc.epidoc.dom import lang, line
 
 import pytest

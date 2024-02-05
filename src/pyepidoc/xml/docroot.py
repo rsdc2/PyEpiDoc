@@ -21,7 +21,7 @@ from lxml.etree import (
     DocumentInvalid
 )
 
-from ..constants import TEINS, XMLNS
+from ..shared.constants import TEINS, XMLNS
 from .baseelement import BaseElement
 from .errors import handle_xmlsyntaxerror
 

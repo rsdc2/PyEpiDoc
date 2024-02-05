@@ -4,7 +4,7 @@ EpiDoc files
 """
 
 from pyepidoc import EpiDoc
-from pyepidoc.utils import head
+from pyepidoc.shared import head
 from pyepidoc.epidoc.dom import lang
 
 import pytest

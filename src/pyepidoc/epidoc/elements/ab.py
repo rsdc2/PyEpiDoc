@@ -19,11 +19,11 @@ from ..enums import (
     NoSpace,
     OrigTextType
 )
-from pyepidoc.classes import SetRelation
+from pyepidoc.shared.classes import SetRelation
 from ...xml import BaseElement
-from ...utils import update_set_inplace, head
-from ...constants import XMLNS
-from ...types import Base
+from ...shared import update_set_inplace, head
+from ...shared.constants import XMLNS
+from ...shared.types import Base
 
 from pyepidoc.epidoc.utils import descendant_atomic_tokens
 

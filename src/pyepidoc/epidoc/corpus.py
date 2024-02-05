@@ -22,9 +22,9 @@ from .element import EpiDocElement
 from .token import Token
 from .elements.expan import Expan
 from .enums import TextClass
-from pyepidoc.classes import SetRelation
+from pyepidoc.shared.classes import SetRelation
 
-from ..utils import maxone, top
+from ..shared import maxone, top
 
 
 class EpiDocCorpus:

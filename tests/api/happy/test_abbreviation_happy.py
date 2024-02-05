@@ -1,6 +1,6 @@
 from pyepidoc import EpiDoc
 from pyepidoc.epidoc.enums import AbbrType
-from pyepidoc.utils import contains
+from pyepidoc.shared import contains
 
 def test_abbr():
     doc = EpiDoc('api/files/abbreviations/multiplication.xml')

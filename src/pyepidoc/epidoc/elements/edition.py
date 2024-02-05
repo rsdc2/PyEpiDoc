@@ -10,10 +10,10 @@ from typing import Optional, Sequence
 import re
 
 from pyepidoc.xml import BaseElement
-from pyepidoc.constants import XMLNS
-from pyepidoc.utils import default_str
-from pyepidoc.types import Base
-from pyepidoc.classes import SetRelation
+from pyepidoc.shared.constants import XMLNS
+from pyepidoc.shared import default_str
+from pyepidoc.shared.types import Base
+from pyepidoc.shared.classes import SetRelation
 
 from ..element import EpiDocElement
 from .ab import Ab
