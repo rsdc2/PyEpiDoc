@@ -175,7 +175,7 @@ installed, e.g.:
 
 ## Tokenizer behaviour
 
-The treatement of a given token by the tokenizer may be affected by one or more of the following:
+The treatment of a given token by the tokenizer may be affected by one or more of the following:
 
 - Status in ```pyepidoc/epidoc/epidoctypes.py```
 - Presence in ```pyepidoc/constants.py``` in ```SubsumableRels```
@@ -186,6 +186,33 @@ The token will be subsumed into a neighbouring ```<w>``` token if it is not sepa
 The token will be subsumed into a neighbouring ```<w>``` token regardless of the presence of intervening whitespace if:
 - it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels``` and
 - it is a member of ```AlwaysSubsumableType``` in ```epidoctypes.py```
+
+
+## Validate EpiDoc XML
+
+There are two ways to validate an EpiDoc XML file: 
+
+1. Validate on load, e.g.:
+
+```
+from pyepidoc import EpiDoc
+
+doc = EpiDoc('examples/ISic000001_tokenized.xml', validate_on_load=True)
+```
+
+- This validates according to the RelaxNG schema `tei-epidoc.rng` 
+in the `pyepidoc` root directory.
+- By default `validate_on_load` is set to `False`.
+
+2. Validate against a custom RelaxNG schema:
+
+```
+from pyepidoc import EpiDoc
+doc = EpiDoc('examples/ISic000001_tokenized.xml')
+
+doc.validate_by_relaxng(fp='path/to/relaxngschema.rng')
+```
+
 
 
 ## Package structure
