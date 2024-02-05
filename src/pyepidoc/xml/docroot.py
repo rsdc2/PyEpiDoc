@@ -7,6 +7,7 @@ from typing import (
     Sequence
 )
 from pathlib import Path
+from copy import deepcopy
 
 from lxml import etree, isoschematron
 from lxml.etree import ( 
@@ -75,6 +76,7 @@ class DocRoot:
         ...
 
     def __init__(self, inpt: Path | str | _ElementTree):
+
         if isinstance(inpt, Path):
             self._p = inpt
             if not inpt.exists():
@@ -133,7 +135,6 @@ class DocRoot:
                 for item in self.e.iterdescendants(tag=None)
                  if isinstance(item, _Element)]
 
-
     @property
     def e(self) -> _Element:
         return self._e
@@ -152,7 +153,9 @@ class DocRoot:
         else:
             raise TypeError("elemnames has incorrect type.")
 
-        xpathstr = ' | '.join([f".//ns:{elemname}" + self._compile_attribs(attribs) for elemname in _elemnames])
+        xpathstr = ' | '.join([f'.//ns:{elemname}' + \
+                               self._compile_attribs(attribs) 
+                               for elemname in _elemnames])
 
         try:
             xpathRes = (self
@@ -242,7 +245,6 @@ class DocRoot:
                 source=filepath, 
                 parser=parser
             )
-            # self._roottree.xinclude()
 
             return self._roottree
         
@@ -311,30 +313,34 @@ class DocRoot:
 
     def validate_relaxng(self, fp: Path | str) -> tuple[bool, str]:
         """
-        Validates the EpiDoc file against a RelaxNG schema
+        Validates the EpiDoc file against a RelaxNG schema. 
+        Runs the lxml xinclude method to include any modular elements, 
+        see https://lxml.de/api.html#xinclude-and-elementinclude
 
         :return: a tuple containing a bool giving the validation result,
         as well as a message string.
         """
+
         fp_ = Path(fp)
         relax_ng_doc = etree.parse(source=fp_, parser=None)
         relaxng = etree.RelaxNG(relax_ng_doc)
         
         try:
-            relaxng.assertValid(self.roottree)
+            roottree_ = deepcopy(self.roottree)
+            roottree_.xinclude()
+            relaxng.assertValid(roottree_)
             msg = (f'{fp} is valid EpiDoc according to the '
                     'RelaxNG schema')
             valid = True
-        except DocumentInvalid as e:
+
+        except DocumentInvalid:
             log = relaxng.error_log
-            # msg = str(e)
             valid = False
             msg = log.last_error
-            # print(log.last_error)
 
         return (valid, msg)
 
-    def xpath(self, xpathstr:str) -> list[_Element | _ElementUnicodeResult]:
+    def xpath(self, xpathstr: str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 
             return []
         try:
