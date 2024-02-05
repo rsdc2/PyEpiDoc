@@ -684,10 +684,14 @@ class EpiDoc(DocRoot):
         tokens = [token for edition in self.editions()
                     for token in edition.tokens]
         return tokens
-
+    
     @property
-    def tokens_list_str(self) -> list[str]:
-        return list(chain(*[edition.tokens_list_str 
+    def tokens_leiden_str(self) -> str:
+        return ' '.join([token.leiden_form for token in self.tokens])
+    
+    @property
+    def tokens_normalized_list_str(self) -> list[str]:
+        return list(chain(*[edition.tokens_normalized_list_str 
                             for edition in self.editions()]))
     
     @property
@@ -703,8 +707,8 @@ class EpiDoc(DocRoot):
                             for edition in self.editions()]))
 
     @property
-    def tokens_str(self) -> str:
-        return ' '.join(self.tokens_list_str)
+    def tokens_normalized_str(self) -> str:
+        return ' '.join(self.tokens_normalized_list_str)
     
     @property
     def translation(self) -> list[_Element]:

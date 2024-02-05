@@ -340,7 +340,8 @@ class Edition(EpiDocElement):
 
     @property
     def textparts(self) -> list[TextPart]:
-        return [TextPart(part) for part in self.get_div_descendants('textpart')]
+        return [TextPart(part) 
+                for part in self.get_div_descendants('textpart')]
 
     def tokenize(self) -> Optional[Edition]:
         for ab in self.abs:
@@ -359,9 +360,7 @@ class Edition(EpiDocElement):
         e.g. in an abbreviated token IIviro for duoviro
         """
 
-        return [Token(word) for word 
-            in self.get_desc_tokens_no_nested()
-        ]
+        return [Token(word) for word in self.get_desc_tokens_no_nested()]
 
     @property
     def token_g_dividers(self) -> list[EpiDocElement]:
@@ -370,9 +369,9 @@ class Edition(EpiDocElement):
         ]
     
     @property
-    def tokens_list_str(self) -> list[str]:
-        return [token.normalized_form for token in self.tokens]
-    
+    def tokens_leiden_str(self) -> str:
+        return ' '.join([token.leiden_plus_form for token in self.tokens])
+
     @property
     def tokens_normalized(self) -> list[Token]:
 
@@ -386,11 +385,13 @@ class Edition(EpiDocElement):
                             for ab in self.abs]))
 
     @property
-    def tokens_str(self) -> str:
-        return ' '.join(self.tokens_list_str)
+    def tokens_normalized_list_str(self) -> list[str]:
+        return [token.normalized_form for token in self.tokens]
+    
+    @property
+    def tokens_normalized_str(self) -> str:
+        return ' '.join(self.tokens_normalized_list_str)
 
     @property
     def w_tokens(self) -> list[Token]:
-        return [Token(word) for word 
-            in self.get_desc(['w'])
-        ]
+        return [Token(word) for word in self.get_desc(['w'])]

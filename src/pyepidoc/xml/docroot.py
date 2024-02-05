@@ -16,7 +16,7 @@ from lxml.etree import (
     _ElementTree, 
     _ElementUnicodeResult,
     _ProcessingInstruction,
-    XMLSyntaxError,
+    XMLSyntaxError, 
     XMLSyntaxAssertionError,
     DocumentInvalid
 )
