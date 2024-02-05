@@ -79,7 +79,7 @@ class EpiDoc(DocRoot):
         self.assert_has_TEIns()
 
         if validate_on_load:
-            validation_result, msg = self.validate_relaxng(self._rng_path)
+            validation_result, msg = self.validate_by_relaxng(self._rng_path)
             
             if not validation_result:
                 raise EpiDocValidationError(msg)

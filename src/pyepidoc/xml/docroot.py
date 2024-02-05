@@ -300,7 +300,7 @@ class DocRoot:
 
         return ''.join(xpath_res)
 
-    def validate_isoschematron(self, fp: Path | str) -> bool:
+    def validate_by_isoschematron(self, fp: Path | str) -> bool:
         """
         Validates the EpiDoc file again a an ISOSchematron schema
         """
@@ -311,7 +311,7 @@ class DocRoot:
         schematron = isoschematron.Schematron(schematron_doc)
         return schematron.validate(self.roottree)
 
-    def validate_relaxng(self, fp: Path | str) -> tuple[bool, str]:
+    def validate_by_relaxng(self, fp: Path | str) -> tuple[bool, str]:
         """
         Validates the EpiDoc file against a RelaxNG schema. 
         Runs the lxml xinclude method to include any modular elements, 
