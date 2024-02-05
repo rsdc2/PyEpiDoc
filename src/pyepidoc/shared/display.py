@@ -4,8 +4,8 @@ from ..epidoc.dom import doc_id, lang
 from ..epidoc.element import EpiDocElement
 
 
-def show_list(
-    items: list, 
+def show_items(
+    items: Iterable, 
     sep: str='\n', 
     prefix: str='- '
 ) -> str:
@@ -17,6 +17,19 @@ def show_list(
     """
     return sep + sep.join([f'{prefix}{str(item)}' 
                            for item in items])
+
+
+def print_items(
+    items: Iterable,
+    sep: str='\n',
+    prefix: str='- '
+) -> None:
+    """
+    Output a list to stdout
+    """
+
+    print(show_items(items, sep, prefix))
+
 
 
 def show_elems(

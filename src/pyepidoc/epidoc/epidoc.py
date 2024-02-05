@@ -575,16 +575,17 @@ class EpiDoc(DocRoot):
 
     def text(
             self, 
-            leiden_or_normalized: Literal['leiden', 'normalized']) -> str:
+            type: Literal['leiden', 'normalized', 'xml']) -> str:
         
         """
-        :param leiden_or_normalized: the type of text wanted, whether
+        :param type: the type of text wanted, whether
         the Leiden version or a normalized version (i.e. with all the 
-        abbreviations expanded)
+        abbreviations expanded), or the raw text content of the descendant
+        XML nodes
         :return: the edition text of the document
         """
         
-        if leiden_or_normalized == 'leiden':
+        if type == 'leiden':
 
             leiden = ' '.join([token.leiden_plus_form for token in self.tokens_no_nested])
             
@@ -593,10 +594,14 @@ class EpiDoc(DocRoot):
         
             return leiden__.replace('|', '\n')
         
-        elif leiden_or_normalized == 'normalized':
+        elif type == 'normalized':
             tokens = list(chain(*[edition.tokens_normalized_list_str 
                             for edition in self.editions()]))
             return ' '.join(tokens)
+        
+        elif type == 'xml':
+            return '\n'.join(edition.text_desc_compressed_whitespace 
+                           for edition in self.editions())
 
     @property
     def text_leiden(self) -> str:
@@ -614,6 +619,15 @@ class EpiDoc(DocRoot):
         all abbreviations expanded etc.) with no line breaks
         """
         return self.text('normalized')
+    
+    @property
+    def text_xml(self) -> str:
+
+        """
+        Raw text from XML nodes
+        """
+
+        return self.text('xml')
 
     @property
     def textclasses(self) -> list[str]:
@@ -695,11 +709,11 @@ class EpiDoc(DocRoot):
 
     def tokenize(
         self, 
-        add_space_between_words:bool=True,
-        prettify_edition:bool=True,
-        set_ids:bool=False,
-        convert_ws_to_names:bool=False,
-        verbose:bool=True
+        add_space_between_words: bool=True,
+        prettify_edition: bool=True,
+        set_ids: bool=False,
+        convert_ws_to_names: bool=False,
+        verbose: bool=True
     ) -> EpiDoc:
         
         """
@@ -725,6 +739,14 @@ class EpiDoc(DocRoot):
             self.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
 
         return self
+
+    @property
+    def tokens(self) -> list[Token]:
+        """
+        :return: a list of all the tokens in the document, 
+        excluding tokens within tokens
+        """
+        return self.tokens_no_nested
 
     @property
     def tokens_incl_nested(self) -> list[Token]:
