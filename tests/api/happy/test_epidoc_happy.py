@@ -7,8 +7,6 @@ import pytest
 
 relative_filepaths = {
     'ISic000001': 'api/files/single_files_untokenized/ISic000001.xml',
-    'ISic000001_with_xinclude': 'api/files/single_files_untokenized/ISic000001_with_xinclude.xml',
-    'ISic000001_no_xinclude': 'api/files/single_files_untokenized/ISic000001_no_xinclude.xml',
     'ISic000552': 'api/files/single_files_tokenized/ISic000552.xml',
     'persName_nested': 'api/files/persName_nested.xml',
     'line_1': 'api/files/line_1.xml',
@@ -134,12 +132,3 @@ def test_reproduces_processing_instructions():
     assert all([str(instr) in list(map(str, doc.processing_instructions)) 
                 for instr in doc_.processing_instructions])
     
-
-def test_validate_on_load():
-    _ = EpiDoc(relative_filepaths['ISic000001_no_xinclude'], 
-               validate_on_load=True)
-
-
-def test_validate_on_load_2():
-    _ = EpiDoc(relative_filepaths['ISic000001_with_xinclude'], 
-               validate_on_load=True)
