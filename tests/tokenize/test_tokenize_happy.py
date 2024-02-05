@@ -134,8 +134,8 @@ def test_tokenize_special_cases(tokenize_type:str):
     tokenized_epidoc, tokenized_benchmark = tokenize_epidoc(tokenize_type=tokenize_type)
 
     # Do the tests    
-    assert [str(word) for word in tokenized_epidoc.tokens] == [str(word) for word in tokenized_benchmark.tokens]
-    assert [word.xml_byte_str for word in tokenized_epidoc.tokens] == [word.xml_byte_str for word in tokenized_benchmark.tokens]
+    assert [str(word) for word in tokenized_epidoc.tokens_no_nested] == [str(word) for word in tokenized_benchmark.tokens_no_nested]
+    assert [word.xml_byte_str for word in tokenized_epidoc.tokens_no_nested] == [word.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]
     assert [word.xml_byte_str for word in tokenized_epidoc.compound_words] == [word.xml_byte_str for word in tokenized_benchmark.compound_words]
     assert [edition.xml_byte_str for edition in tokenized_epidoc.editions()] == [edition.xml_byte_str for edition in tokenized_benchmark.editions()]
 

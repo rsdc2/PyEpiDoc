@@ -242,22 +242,32 @@ class Edition(EpiDocElement):
         return [EpiDocElement(gap) 
                 for gap in self.get_desc('gap')]
 
-    def get_desc_tokens_no_nested(self) -> list[Token]:
+    def get_desc_tokens(self, include_nested: bool=False) -> list[Token]:
         """
-        Return the descendant tokens,
-        except if the token has a token ancestor;
-        i.e. does not return nested tokens
-        """
+        :param include_nested: if true, returns all the descendant tokens,
+        including tokens within tokens; if false, ignores tokens within 
+        tokens, e.g. <num> within <w> in e.g. IIviro = duoviro
 
-        def has_not_token_ancestor(t: Token) -> bool:
-            return not t.has_ancestors_by_names(
-                AtomicTokenType.values(),
-                SetRelation.intersection
-            )
+        :return: the descendant tokens
+        """
 
         desc = map(Token, self.get_desc(AtomicTokenType.values()))
-        
-        return list(filter(has_not_token_ancestor, desc))
+
+        if include_nested:
+            return list(desc)
+
+        else:
+
+            def has_not_token_ancestor(t: Token) -> bool:
+                return not t.has_ancestors_by_names(
+                    AtomicTokenType.values(),
+                    SetRelation.intersection
+                )
+            
+
+            desc = map(Token, self.get_desc(AtomicTokenType.values()))
+            
+            return list(filter(has_not_token_ancestor, desc))        
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
@@ -353,14 +363,26 @@ class Edition(EpiDocElement):
         return self
 
     @property
-    def tokens(self) -> list[Token]:
+    def tokens_incl_nested(self) -> list[Token]:
         """
-        Return the descendant tokens. Does not return
+        :return: the descendant tokens including
         tokens within tokens, e.g. <num> within <w> 
         e.g. in an abbreviated token IIviro for duoviro
         """
 
-        return [Token(word) for word in self.get_desc_tokens_no_nested()]
+        return [Token(word) 
+                for word in self.get_desc_tokens(include_nested=False)]        
+
+    @property
+    def tokens_no_nested(self) -> list[Token]:
+        """
+        :return: the descendant tokens excluding
+        tokens within tokens, e.g. <num> within <w> 
+        e.g. in an abbreviated token IIviro for duoviro
+        """
+
+        return [Token(word) 
+                for word in self.get_desc_tokens(include_nested=False)]
 
     @property
     def token_g_dividers(self) -> list[EpiDocElement]:
@@ -370,7 +392,8 @@ class Edition(EpiDocElement):
     
     @property
     def tokens_leiden_str(self) -> str:
-        return ' '.join([token.leiden_plus_form for token in self.tokens])
+        return ' '.join([token.leiden_plus_form 
+                         for token in self.tokens_no_nested])
 
     @property
     def tokens_normalized(self) -> list[Token]:
@@ -386,7 +409,7 @@ class Edition(EpiDocElement):
 
     @property
     def tokens_normalized_list_str(self) -> list[str]:
-        return [token.normalized_form for token in self.tokens]
+        return [token.normalized_form for token in self.tokens_no_nested]
     
     @property
     def tokens_normalized_str(self) -> str:

@@ -2,6 +2,7 @@ dist
 __pycache__
 env39
 pyepidoc.egg-info
+.ipynb_checkpoints
 .pytest_cache
 .mypy_cache
 .pyc

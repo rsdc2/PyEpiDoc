@@ -29,6 +29,7 @@ class DocRoot:
     _roottree: _ElementTree  
     _e: _Element
     _p: Path
+    _valid: Optional[bool] = None
 
     def __bytes__(self) -> bytes:
         """
@@ -180,17 +181,23 @@ class DocRoot:
 
         raise TypeError('XPath result is of the wrong type.')
 
-    def get_div_descendants(
+    def get_div_descendants_by_type(
         self, 
-        divtype:str, 
-        lang:Optional[str]=None
+        divtype: str, 
+        lang: Optional[str]=None
     ) -> list[_Element]:
 
-        if self.e is None: 
-            return []
+        """
+        :param divtype: the value of the @type attribute of 
+        the <div/>, e.g. "edition" or "translation"
+        :param lang: the value of the @xml:lang attibute
+        of the <div/> element. If None, treated as not specified.
+        :return: a list of descendant elements where the
+        @type attribute matches divtype.
+        """
 
-        if not lang:
-            try:
+        try:
+            if lang is None:
                 return cast(
                     list[_Element], 
                     self.e.xpath(
@@ -198,24 +205,25 @@ class DocRoot:
                         namespaces={'ns': TEINS}) 
                     )
             
-            except XMLSyntaxAssertionError as e:
-                print('XMLSyntaxAssertionError in getdivdescendants')
-                print(e)
-                return []
-            except XMLSyntaxError as e:
-                print('XMLSyntaxError in getdivdescendants')
-                print(e)
-                return []
+            elif lang is not None:
+                return cast(list[_Element], self.e.xpath(
+                    f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
+                    namespaces={'ns': TEINS, 'xml': XMLNS}) 
+                )
             
-            except AssertionError as e:
-                print(e)
-                return []
-
-        elif lang:
-            return cast(list[_Element], self.e.xpath(
-                f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
-                namespaces={'ns': TEINS, 'xml': XMLNS}) 
-            )
+        except XMLSyntaxAssertionError as e:
+            print('XMLSyntaxAssertionError in getdivdescendants')
+            print(e)
+            return []
+        
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in getdivdescendants')
+            print(e)
+            return []
+        
+        except AssertionError as e:
+            print(e)
+            return []
         
         return []
 
@@ -303,6 +311,27 @@ class DocRoot:
 
         return ''.join(xpath_res)
 
+    @property
+    def valid(self) -> Optional[bool]:
+        """
+        :return: the result of the last validation attempt; None
+        if no validation has been run
+        """
+        return self._valid
+
+    @property
+    def validation_result(self) -> str:
+        """
+        :return: a string giving the result of the last validation 
+        attempt
+        """
+        if self.valid == True:
+            return f'{self._p} is valid'
+        elif self.valid == False:
+            return f'{self._p} is not valid'
+        else:
+            return 'No validation has been carried out'
+
     def validate_by_isoschematron(self, fp: Path | str) -> bool:
         """
         Validates the EpiDoc file again a an ISOSchematron schema
@@ -334,14 +363,14 @@ class DocRoot:
             relaxng.assertValid(roottree_)
             msg = (f'{fp} is valid EpiDoc according to the '
                     'RelaxNG schema')
-            valid = True
+            self._valid = True
 
         except DocumentInvalid:
             log = relaxng.error_log
-            valid = False
+            self._valid = False
             msg = log.last_error
 
-        return (valid, msg)
+        return (self._valid, msg)
 
     def xpath(self, xpathstr: str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 

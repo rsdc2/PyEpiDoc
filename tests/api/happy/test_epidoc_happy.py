@@ -24,7 +24,8 @@ def test_collect_tokens():
     filepath = relative_filepaths['ISic000001']
     doc = EpiDoc(filepath)
 
-    assert doc.tokens_normalized_list_str == [
+    assert [token.normalized_form 
+            for token in doc.tokens_normalized] == [
         'Dis', 
         'manibus', 
         'Zethi', 
@@ -43,7 +44,7 @@ def test_collect_normalized():
     filepath = relative_filepaths['ISic000552']
     doc = EpiDoc(filepath)
 
-    assert doc.tokens_normalized_list_str[0:2] == [
+    assert [token.normalized_form for token in doc.tokens_normalized][0:2] == [
         'Flamma', 
         'secutor'
     ]
@@ -58,7 +59,7 @@ def test_leiden_plus_text():
     fp = relative_filepaths['leiden']
     doc = EpiDoc(fp)
 
-    leiden_strs = [token.leiden_plus_form for token in doc.tokens]
+    leiden_strs = [token.leiden_plus_form for token in doc.tokens_no_nested]
     
     assert leiden_strs[0] == '| · Dis · '
 
@@ -66,7 +67,7 @@ def test_leiden_plus_text():
 def test_lines():
     doc_1 = EpiDoc(relative_filepaths['line_1'])
 
-    token = head(doc_1.tokens)
+    token = head(doc_1.tokens_no_nested)
     assert token is not None
 
     l1 = line(token)
@@ -82,7 +83,7 @@ def test_lines():
     assert l2.n == '1'
 
     doc_2 = EpiDoc(relative_filepaths['line_2'])
-    token = head(doc_2.tokens)
+    token = head(doc_2.tokens_no_nested)
     assert token is not None
 
     l3 = line(token)
@@ -90,7 +91,7 @@ def test_lines():
 
     assert l3.n == '1'
     
-    second_token = doc_2.tokens[1]
+    second_token = doc_2.tokens_no_nested[1]
     assert second_token.text_desc == 'ambulavit'
 
     l4 = line(second_token)
@@ -101,7 +102,7 @@ def test_lines():
 @pytest.mark.parametrize("filepath", relative_filepaths.values())
 def test_load_relative_filepath_from_str(filepath:str):
     doc = EpiDoc(filepath)
-    assert doc.tokens_normalized_list_str != []
+    assert doc.tokens_normalized != []
 
 
 def test_materialclasses():
@@ -114,7 +115,7 @@ def test_punct():
     Tests that comma is removed from string version of token
     """
     doc = EpiDoc(relative_filepaths['comma']) 
-    assert str(doc.tokens[0]) == "hello"
+    assert str(doc.tokens_no_nested[0]) == "hello"
 
 
 def test_check_ns_on_load():

@@ -45,7 +45,7 @@ def test_abbr_forms():
 
     assert edition != None
 
-    token = edition.tokens[0]
+    token = edition.tokens_no_nested[0]
 
     assert token.normalized_form == 'duoviro'
     assert token.leiden_form == 'IIvir(o)'
@@ -149,5 +149,6 @@ def test_gaps():
 
 def test_nested():
     doc = EpiDoc(relative_filepaths['persName_nested'])
-    assert doc.tokens_normalized_list_str == ['Maximus', 'Decimus', 'Meridius']
+    assert [token.normalized_form 
+            for token in doc.tokens_normalized] == ['Maximus', 'Decimus', 'Meridius']
     assert [str(token) for token in doc.w_tokens] == ['Meridius']
