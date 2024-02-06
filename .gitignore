@@ -25,3 +25,5 @@ out
 *_inscrs.txt
 *.sch
 validation
+example_corpus
+.ipynb_checkpoints
