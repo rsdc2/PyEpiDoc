@@ -31,29 +31,6 @@ class DocRoot:
     _p: Path
     _valid: Optional[bool] = None
 
-    def __bytes__(self) -> bytes:
-        """
-        Convert the XML to bytes including processing instructions
-        """
-
-        declaration = \
-            '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
-        processing_instructions = \
-            (self.processing_instructions_str + '\n').encode("utf-8")
-
-        try:
-            b_str = etree.tostring( 
-                self.e, 
-                pretty_print=True,      # type: ignore
-                encoding='utf-8',       # type: ignore
-                xml_declaration=False   # type: ignore
-            )
-        except AssertionError as e:
-            print(e)
-            return b''
-
-        return declaration + processing_instructions + b_str
-
     @overload
     def __init__(self, inpt:Path):
         """
@@ -96,6 +73,51 @@ class DocRoot:
         
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
                         'Path, _ElementTree or str.')
+
+    def __bytes__(self) -> bytes:
+        """
+        Convert the XML to bytes including processing instructions
+        """
+
+        declaration = \
+            '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
+        processing_instructions = \
+            (self.processing_instructions_str + '\n').encode("utf-8")
+
+        try:
+            b_str = etree.tostring( 
+                self.e, 
+                pretty_print=True,      # type: ignore
+                xml_declaration=False   # type: ignore
+            )
+        except AssertionError as e:
+            print(e)
+            return b''
+
+        return declaration + processing_instructions + b_str
+    
+    def __str__(self) -> str:
+        """
+        Convert the XML to bytes including processing instructions
+        """
+
+        declaration = \
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+        processing_instructions = \
+            (self.processing_instructions_str + '\n')
+
+        try:
+            s = etree.tostring( 
+                self.e, 
+                pretty_print=True,      # type: ignore
+                encoding='unicode',       # type: ignore
+                xml_declaration=False   # type: ignore
+            )
+        except AssertionError as e:
+            print(e)
+            return ''
+
+        return declaration + processing_instructions + s
 
     @staticmethod
     def _clean_text(text:str):
@@ -372,6 +394,21 @@ class DocRoot:
 
         return (self._valid, msg)
 
+    @property
+    def xml_byte_str(self) -> bytes:
+        """
+        Return the element as a byte string
+        """
+        return self.__bytes__()
+    
+    @property
+    def xml_str(self) -> str:
+
+        """
+        Return the element as a unicode string
+        """
+        return self.__str__()
+    
     def xpath(self, xpathstr: str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 
             return []

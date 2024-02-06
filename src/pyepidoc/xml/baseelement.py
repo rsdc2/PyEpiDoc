@@ -586,9 +586,27 @@ class BaseElement(Showable):
 
     @property
     def xml_byte_str(self) -> bytes:
-        if self._e is None:
-            raise TypeError("Underlying element is None")
-        return etree.tostring(self._e)
+        """
+        Return the element as a byte string
+        """
+        return etree.tostring(
+            self._e, 
+            method='xml', # type: ignore
+            pretty_print=True # type: ignore
+        ) 
+    
+    @property
+    def xml_str(self) -> str:
+
+        """
+        Return the element as a unicode string
+        """
+        return etree.tostring(
+            self._e, 
+            method='xml', # type: ignore
+            encoding='unicode', # type: ignore
+            pretty_print=True # type: ignore
+        )
     
     def xpath(
             self, 

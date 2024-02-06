@@ -45,9 +45,6 @@ class EpiDoc(DocRoot):
     def __repr__(self) -> str:
         return f'EpiDoc(id="{self.id}")'
 
-    def __str__(self) -> str:
-        return str(bytes(self))
-
     def __eq__(self, other) -> bool:
         if not isinstance(other, EpiDoc):
             raise TypeError(f'Cannot compare type EpiDoc with {type(other)}')
@@ -549,7 +546,7 @@ class EpiDoc(DocRoot):
         """
         return Path(self._pyepidoc_module_path).parent / Path('tei-epidoc.rng')
 
-    def set_ids(self, base: Base=52) -> None:
+    def set_ids(self, base: Base=100) -> None:
         """
         Put IDs (xml:id) on all elements of the edition,
         in place
