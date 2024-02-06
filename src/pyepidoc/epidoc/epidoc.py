@@ -41,18 +41,6 @@ class EpiDoc(DocRoot):
     as well as that for accessing the editions present
     in the file.
     """
-
-    def __repr__(self) -> str:
-        return f'EpiDoc(id="{self.id}")'
-
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, EpiDoc):
-            raise TypeError(f'Cannot compare type EpiDoc with {type(other)}')
-        
-        return self.id == other.id
-
-    def __hash__(self) -> int:
-        return hash(self.id)
     
     def __init__(
             self, 
@@ -78,13 +66,25 @@ class EpiDoc(DocRoot):
         self.assert_has_TEIns()
 
         if validate_on_load:
-            validation_result, msg = self.validate_by_relaxng(self._rng_path)
+            validation_result, msg = self.validate()
             
             if not validation_result:
                 raise EpiDocValidationError(msg)
             
             if verbose:
                 print(f'{self._p} is a valid EpiDoc file')
+
+    def __repr__(self) -> str:
+        return f'EpiDoc(id="{self.id}")'
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, EpiDoc):
+            raise TypeError(f'Cannot compare type EpiDoc with {type(other)}')
+        
+        return self.id == other.id
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
     @property
     def apparatus(self) -> list[_Element]:
@@ -787,6 +787,16 @@ class EpiDoc(DocRoot):
 
         return '\n'.join(chain(*[EpiDocElement(div).text_desc_compressed_whitespace 
                        for div in translation_divs]))
+    
+    def validate(self) -> tuple[bool, str]:
+        """
+        Validate according to the TEI EpiDoc RelaxNG schema
+
+        :return: a validation result as a bool, and a string giving a validation
+        message, either an error if it has failed, or a string 
+        confirming that the file is valid.
+        """
+        return self.validate_by_relaxng(self._rng_path)
     
     @property
     def w_tokens(self) -> list[Token]:

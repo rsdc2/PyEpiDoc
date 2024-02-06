@@ -365,7 +365,7 @@ class DocRoot:
         schematron = isoschematron.Schematron(schematron_doc)
         return schematron.validate(self.roottree)
 
-    def validate_by_relaxng(self, fp: Path | str) -> tuple[bool, str]:
+    def validate_by_relaxng(self, relax_ng_path: Path | str) -> tuple[bool, str]:
         """
         Validates the EpiDoc file against a RelaxNG schema. 
         Runs the lxml xinclude method to include any modular elements, 
@@ -375,15 +375,15 @@ class DocRoot:
         as well as a message string.
         """
 
-        fp_ = Path(fp)
-        relax_ng_doc = etree.parse(source=fp_, parser=None)
+        relax_ng_path_ = Path(relax_ng_path)
+        relax_ng_doc = etree.parse(source=relax_ng_path_, parser=None)
         relaxng = etree.RelaxNG(relax_ng_doc)
         
         try:
             roottree_ = deepcopy(self.roottree)
             roottree_.xinclude()
             relaxng.assertValid(roottree_)
-            msg = (f'{fp} is valid EpiDoc according to the '
+            msg = (f'{self._p} is valid EpiDoc according to the '
                     'RelaxNG schema')
             self._valid = True
 
