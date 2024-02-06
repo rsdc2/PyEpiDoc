@@ -7,6 +7,7 @@ from lxml.etree import (
 from pathlib import Path
 from itertools import chain
 import inspect
+import re
 
 import pyepidoc
 from pyepidoc.xml.docroot import DocRoot
@@ -40,26 +41,12 @@ class EpiDoc(DocRoot):
     as well as that for accessing the editions present
     in the file.
     """
-
-    def __repr__(self) -> str:
-        return f'EpiDoc(id="{self.id}")'
-
-    def __str__(self) -> str:
-        return str(bytes(self))
-
-    def __eq__(self, other) -> bool:
-        if not isinstance(other, EpiDoc):
-            raise TypeError(f'Cannot compare type EpiDoc with {type(other)}')
-        
-        return self.id == other.id
-
-    def __hash__(self) -> int:
-        return hash(self.id)
     
     def __init__(
             self, 
             inpt: Path | str | _ElementTree,
-            validate_on_load: bool=False):
+            validate_on_load: bool=False,
+            verbose: bool=True):
         
         """
         Initialize an EpiDoc object on a given input 
@@ -79,14 +66,29 @@ class EpiDoc(DocRoot):
         self.assert_has_TEIns()
 
         if validate_on_load:
-            validation_result, msg = self.validate_by_relaxng(self._rng_path)
+            validation_result, msg = self.validate()
             
             if not validation_result:
                 raise EpiDocValidationError(msg)
+            
+            if verbose:
+                print(f'{self._p} is a valid EpiDoc file')
+
+    def __repr__(self) -> str:
+        return f'EpiDoc(id="{self.id}")'
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, EpiDoc):
+            raise TypeError(f'Cannot compare type EpiDoc with {type(other)}')
+        
+        return self.id == other.id
+
+    def __hash__(self) -> int:
+        return hash(self.id)
 
     @property
     def apparatus(self) -> list[_Element]:
-        return self.get_div_descendants('apparatus')
+        return self.get_div_descendants_by_type('apparatus')
     
     def assert_has_TEIns(self) -> bool:
         """
@@ -116,7 +118,7 @@ class EpiDoc(DocRoot):
 
     @property
     def commentary(self) -> list[_Element]:
-        return self.get_div_descendants('commentary')
+        return self.get_div_descendants_by_type('commentary')
 
     @property
     def compound_words(self) -> list[EpiDocElement]:
@@ -207,25 +209,25 @@ class EpiDoc(DocRoot):
         combined = textpart_langs + edition_langs
 
         return set(combined)
-
-    @property
-    def edition_text(self) -> str:
-        return ''.join([edition.text_desc for edition in self.editions()])
-
+    
     def editions(self, include_transliterations=False) -> list[Edition]:
         editions = [Edition(edition) 
-            for edition in self.get_div_descendants('edition')]
+            for edition in self.get_div_descendants_by_type('edition')]
 
         if include_transliterations:
             return editions
 
         else:
-            return listfilter(lambda edition: edition.subtype != 'transliteration', editions)
+            return listfilter(
+                lambda edition: edition.subtype != 'transliteration', 
+                editions
+            )
 
     @property
     def expans(self) -> list[Expan]:
         """
-        Returns a list of abbreviated items (including both abbreviation and expansion)
+        Returns a list of abbreviated items (including both 
+        abbreviation and expansion)
         """
         
         return list(chain(*[edition.expans 
@@ -254,7 +256,7 @@ class EpiDoc(DocRoot):
 
     @property
     def forms(self) -> set[str]:
-        return set([str(word) for word in self.tokens])
+        return set([str(word) for word in self.tokens_no_nested])
 
     @property
     def gaps(self) -> list[EpiDocElement]:
@@ -431,7 +433,7 @@ class EpiDoc(DocRoot):
 
     @property
     def lemmata(self) -> set[str]:
-        _lemmata = [word.lemma for word in self.tokens 
+        _lemmata = [word.lemma for word in self.tokens_no_nested 
             if word.lemma is not None]
 
         return set(_lemmata)
@@ -476,7 +478,7 @@ class EpiDoc(DocRoot):
             return None        
 
         return EpiDocElement(orig_date)
-
+ 
     @property
     def orig_place(self) -> str:
         xpath_results = self.xpath('//ns:history/ns:origin/'
@@ -544,7 +546,7 @@ class EpiDoc(DocRoot):
         """
         return Path(self._pyepidoc_module_path).parent / Path('tei-epidoc.rng')
 
-    def set_ids(self, base: Base=52) -> None:
+    def set_ids(self, base: Base=100) -> None:
         """
         Put IDs (xml:id) on all elements of the edition,
         in place
@@ -567,6 +569,62 @@ class EpiDoc(DocRoot):
     @property
     def tei_header(self) -> Optional[_Element]:
         return maxone(self.get_desc('teiHeader'))
+
+    def text(
+            self, 
+            type: Literal['leiden', 'normalized', 'xml']) -> str:
+        
+        """
+        :param type: the type of text wanted, whether
+        the Leiden version or a normalized version (i.e. with all the 
+        abbreviations expanded), or the raw text content of the descendant
+        XML nodes
+        :return: the edition text of the document
+        """
+        
+        if type == 'leiden':
+
+            leiden = ' '.join([token.leiden_plus_form for token in self.tokens_no_nested])
+            
+            leiden_ = re.sub(r'\|\s+?\|', '|', leiden)
+            leiden__ = re.sub(r'·\s+?·', '·', leiden_)
+        
+            return leiden__.replace('|', '\n')
+        
+        elif type == 'normalized':
+            tokens = list(chain(*[edition.tokens_normalized_list_str 
+                            for edition in self.editions()]))
+            return ' '.join(tokens)
+        
+        elif type == 'xml':
+            return '\n'.join(edition.text_desc_compressed_whitespace 
+                           for edition in self.editions())
+
+    @property
+    def text_leiden(self) -> str:
+        """
+        :return: a string containing the Leiden representation of the
+        document including line breaks
+        """
+
+        return self.text('leiden')
+
+    @property
+    def text_normalized(self) -> str:
+        """
+        :return: a normalized version of the edition text (i.e.
+        all abbreviations expanded etc.) with no line breaks
+        """
+        return self.text('normalized')
+    
+    @property
+    def text_xml(self) -> str:
+
+        """
+        Raw text from XML nodes
+        """
+
+        return self.text('xml')
 
     @property
     def textclasses(self) -> list[str]:
@@ -644,15 +702,15 @@ class EpiDoc(DocRoot):
 
     @property
     def token_count(self) -> int:
-        return len(self.tokens)
+        return len(self.tokens_no_nested)
 
     def tokenize(
         self, 
-        add_space_between_words:bool=True,
-        prettify_edition:bool=True,
-        set_ids:bool=False,
-        convert_ws_to_names:bool=False,
-        verbose:bool=True
+        add_space_between_words: bool=True,
+        prettify_edition: bool=True,
+        set_ids: bool=False,
+        convert_ws_to_names: bool=False,
+        verbose: bool=True
     ) -> EpiDoc:
         
         """
@@ -681,15 +739,32 @@ class EpiDoc(DocRoot):
 
     @property
     def tokens(self) -> list[Token]:
-        tokens = [token for edition in self.editions()
-                    for token in edition.tokens]
-        return tokens
+        """
+        :return: a list of all the tokens in the document, 
+        excluding tokens within tokens
+        """
+        return self.tokens_no_nested
 
     @property
-    def tokens_list_str(self) -> list[str]:
-        return list(chain(*[edition.tokens_list_str 
-                            for edition in self.editions()]))
-    
+    def tokens_incl_nested(self) -> list[Token]:
+        """
+        :return: a list of all the tokens in the document, 
+        including tokens within tokens
+        """
+        tokens = chain(*[edition.tokens_incl_nested 
+                         for edition in self.editions()])
+        return list(tokens)        
+
+    @property
+    def tokens_no_nested(self) -> list[Token]:
+        """
+        :return: a list of all the tokens in the document, 
+        excluding tokens within tokens
+        """
+        tokens = chain(*[edition.tokens_no_nested 
+                         for edition in self.editions()])
+        return list(tokens)
+        
     @property
     def tokens_normalized(self) -> list[Token]:
 
@@ -701,15 +776,28 @@ class EpiDoc(DocRoot):
 
         return list(chain(*[edition.tokens_normalized 
                             for edition in self.editions()]))
-
-    @property
-    def tokens_str(self) -> str:
-        return ' '.join(self.tokens_list_str)
     
     @property
-    def translation(self) -> list[_Element]:
-        return self.get_div_descendants('apparatus')
+    def translation_text(self) -> str:
+        """
+        :return: the text for all translations, if present
+        """
+        
+        translation_divs = self.get_div_descendants_by_type('translation')
 
+        return '\n'.join(chain(*[EpiDocElement(div).text_desc_compressed_whitespace 
+                       for div in translation_divs]))
+    
+    def validate(self) -> tuple[bool, str]:
+        """
+        Validate according to the TEI EpiDoc RelaxNG schema
+
+        :return: a validation result as a bool, and a string giving a validation
+        message, either an error if it has failed, or a string 
+        confirming that the file is valid.
+        """
+        return self.validate_by_relaxng(self._rng_path)
+    
     @property
     def w_tokens(self) -> list[Token]:
         return list(chain(*[edition.w_tokens 

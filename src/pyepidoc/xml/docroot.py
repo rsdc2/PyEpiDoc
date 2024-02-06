@@ -16,7 +16,7 @@ from lxml.etree import (
     _ElementTree, 
     _ElementUnicodeResult,
     _ProcessingInstruction,
-    XMLSyntaxError,
+    XMLSyntaxError, 
     XMLSyntaxAssertionError,
     DocumentInvalid
 )
@@ -29,29 +29,7 @@ class DocRoot:
     _roottree: _ElementTree  
     _e: _Element
     _p: Path
-
-    def __bytes__(self) -> bytes:
-        """
-        Convert the XML to bytes including processing instructions
-        """
-
-        declaration = \
-            '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
-        processing_instructions = \
-            (self.processing_instructions_str + '\n').encode("utf-8")
-
-        try:
-            b_str = etree.tostring( 
-                self.e, 
-                pretty_print=True,      # type: ignore
-                encoding='utf-8',       # type: ignore
-                xml_declaration=False   # type: ignore
-            )
-        except AssertionError as e:
-            print(e)
-            return b''
-
-        return declaration + processing_instructions + b_str
+    _valid: Optional[bool] = None
 
     @overload
     def __init__(self, inpt:Path):
@@ -95,6 +73,51 @@ class DocRoot:
         
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
                         'Path, _ElementTree or str.')
+
+    def __bytes__(self) -> bytes:
+        """
+        Convert the XML to bytes including processing instructions
+        """
+
+        declaration = \
+            '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
+        processing_instructions = \
+            (self.processing_instructions_str + '\n').encode("utf-8")
+
+        try:
+            b_str = etree.tostring( 
+                self.e, 
+                pretty_print=True,      # type: ignore
+                xml_declaration=False   # type: ignore
+            )
+        except AssertionError as e:
+            print(e)
+            return b''
+
+        return declaration + processing_instructions + b_str
+    
+    def __str__(self) -> str:
+        """
+        Convert the XML to bytes including processing instructions
+        """
+
+        declaration = \
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+        processing_instructions = \
+            (self.processing_instructions_str + '\n')
+
+        try:
+            s = etree.tostring( 
+                self.e, 
+                pretty_print=True,      # type: ignore
+                encoding='unicode',       # type: ignore
+                xml_declaration=False   # type: ignore
+            )
+        except AssertionError as e:
+            print(e)
+            return ''
+
+        return declaration + processing_instructions + s
 
     @staticmethod
     def _clean_text(text:str):
@@ -180,17 +203,23 @@ class DocRoot:
 
         raise TypeError('XPath result is of the wrong type.')
 
-    def get_div_descendants(
+    def get_div_descendants_by_type(
         self, 
-        divtype:str, 
-        lang:Optional[str]=None
+        divtype: str, 
+        lang: Optional[str]=None
     ) -> list[_Element]:
 
-        if self.e is None: 
-            return []
+        """
+        :param divtype: the value of the @type attribute of 
+        the <div/>, e.g. "edition" or "translation"
+        :param lang: the value of the @xml:lang attibute
+        of the <div/> element. If None, treated as not specified.
+        :return: a list of descendant elements where the
+        @type attribute matches divtype.
+        """
 
-        if not lang:
-            try:
+        try:
+            if lang is None:
                 return cast(
                     list[_Element], 
                     self.e.xpath(
@@ -198,24 +227,25 @@ class DocRoot:
                         namespaces={'ns': TEINS}) 
                     )
             
-            except XMLSyntaxAssertionError as e:
-                print('XMLSyntaxAssertionError in getdivdescendants')
-                print(e)
-                return []
-            except XMLSyntaxError as e:
-                print('XMLSyntaxError in getdivdescendants')
-                print(e)
-                return []
+            elif lang is not None:
+                return cast(list[_Element], self.e.xpath(
+                    f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
+                    namespaces={'ns': TEINS, 'xml': XMLNS}) 
+                )
             
-            except AssertionError as e:
-                print(e)
-                return []
-
-        elif lang:
-            return cast(list[_Element], self.e.xpath(
-                f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
-                namespaces={'ns': TEINS, 'xml': XMLNS}) 
-            )
+        except XMLSyntaxAssertionError as e:
+            print('XMLSyntaxAssertionError in getdivdescendants')
+            print(e)
+            return []
+        
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in getdivdescendants')
+            print(e)
+            return []
+        
+        except AssertionError as e:
+            print(e)
+            return []
         
         return []
 
@@ -293,12 +323,36 @@ class DocRoot:
 
     @property
     def text_desc(self) -> str:
+        """
+        Return the inner text of all the descendant nodes
+        """
         if self.e is None: 
             return ''
         
         xpath_res = cast(list[str], self.e.xpath('.//text()'))
 
         return ''.join(xpath_res)
+
+    @property
+    def valid(self) -> Optional[bool]:
+        """
+        :return: the result of the last validation attempt; None
+        if no validation has been run
+        """
+        return self._valid
+
+    @property
+    def validation_result(self) -> str:
+        """
+        :return: a string giving the result of the last validation 
+        attempt
+        """
+        if self.valid == True:
+            return f'{self._p} is valid'
+        elif self.valid == False:
+            return f'{self._p} is not valid'
+        else:
+            return 'No validation has been carried out'
 
     def validate_by_isoschematron(self, fp: Path | str) -> bool:
         """
@@ -311,7 +365,7 @@ class DocRoot:
         schematron = isoschematron.Schematron(schematron_doc)
         return schematron.validate(self.roottree)
 
-    def validate_by_relaxng(self, fp: Path | str) -> tuple[bool, str]:
+    def validate_by_relaxng(self, relax_ng_path: Path | str) -> tuple[bool, str]:
         """
         Validates the EpiDoc file against a RelaxNG schema. 
         Runs the lxml xinclude method to include any modular elements, 
@@ -321,25 +375,40 @@ class DocRoot:
         as well as a message string.
         """
 
-        fp_ = Path(fp)
-        relax_ng_doc = etree.parse(source=fp_, parser=None)
+        relax_ng_path_ = Path(relax_ng_path)
+        relax_ng_doc = etree.parse(source=relax_ng_path_, parser=None)
         relaxng = etree.RelaxNG(relax_ng_doc)
         
         try:
             roottree_ = deepcopy(self.roottree)
             roottree_.xinclude()
             relaxng.assertValid(roottree_)
-            msg = (f'{fp} is valid EpiDoc according to the '
+            msg = (f'{self._p} is valid EpiDoc according to the '
                     'RelaxNG schema')
-            valid = True
+            self._valid = True
 
         except DocumentInvalid:
             log = relaxng.error_log
-            valid = False
+            self._valid = False
             msg = log.last_error
 
-        return (valid, msg)
+        return (self._valid, msg)
 
+    @property
+    def xml_byte_str(self) -> bytes:
+        """
+        Return the element as a byte string
+        """
+        return self.__bytes__()
+    
+    @property
+    def xml_str(self) -> str:
+
+        """
+        Return the element as a unicode string
+        """
+        return self.__str__()
+    
     def xpath(self, xpathstr: str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 
             return []

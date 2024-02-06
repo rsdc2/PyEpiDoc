@@ -12,7 +12,7 @@ def test_tokens_example():
 
     doc = EpiDoc("readme_examples/files/input/ISic000001_tokenized.xml")
 
-    tokens = doc.tokens
+    tokens = doc.tokens_no_nested
     tokens_str = ' '.join([str(token) for token in tokens])
 
     assert tokens_str == 'Dis manibus Zethi vixit annis VI'
@@ -32,8 +32,8 @@ def test_tokenize_example():
     tokenized_benchmark = EpiDoc("readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")
     try:
         # breakpoint()
-        assert [str(word) for word in tokenized_doc.tokens] == [str(word) for word in tokenized_benchmark.tokens]
-        assert [word.xml_byte_str for word in tokenized_doc.tokens] == [word.xml_byte_str for word in tokenized_benchmark.tokens]
+        assert [str(word) for word in tokenized_doc.tokens_no_nested] == [str(word) for word in tokenized_benchmark.tokens_no_nested]
+        assert [word.xml_byte_str for word in tokenized_doc.tokens_no_nested] == [word.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]
         assert [word.xml_byte_str for word in tokenized_doc.compound_words] == [word.xml_byte_str for word in tokenized_benchmark.compound_words]
         assert [edition.xml_byte_str for edition in tokenized_doc.editions()] == [edition.xml_byte_str for edition in tokenized_benchmark.editions()]
     except AssertionError as e:

@@ -35,7 +35,7 @@ def test_langs(
     doc_1 = EpiDoc(fp)
 
     expan_1 = head(doc_1.expans)
-    token_1 = head(doc_1.tokens)
+    token_1 = head(doc_1.tokens_no_nested)
     assert expan_1 is not None and token_1 is not None
 
     assert doc_1.langs == langs

@@ -42,7 +42,7 @@ print(show_elems(top(suspensions, 10)))
 
 doc000001 = owner_doc(suspensions[0])
 if doc000001 is not None:
-    print(doc000001.edition_text)
+    print(doc000001.text_normalized)
 else:
     raise TypeError("doc is None")
 

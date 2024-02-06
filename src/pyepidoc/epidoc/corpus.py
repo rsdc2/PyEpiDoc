@@ -206,7 +206,7 @@ class EpiDocCorpus:
     def docs_dict(self) -> dict[str, EpiDoc]:
         return {doc.id: doc for doc in self.docs}
     
-    @cached_property
+    @cached_property 
     def empty_corpus(self) -> EpiDocCorpus:
         return EpiDocCorpus([])
 
@@ -352,7 +352,7 @@ class EpiDocCorpus:
 
     def filter_by_orig_place(
         self,
-        orig_places:list[str],
+        orig_places: list[str],
         set_relation=SetRelation.intersection
     ) -> EpiDocCorpus:
         
@@ -561,7 +561,7 @@ class EpiDocCorpus:
 
     @property
     def tokens(self) -> list[Token]:
-        return list(chain(*[doc.tokens for doc in self.docs]))
+        return list(chain(*[doc.tokens_no_nested for doc in self.docs]))
     
     def top(self, length=10) -> EpiDocCorpus:
         return EpiDocCorpus(list(top(self.docs, length)))

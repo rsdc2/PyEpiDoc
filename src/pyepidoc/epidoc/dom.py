@@ -24,7 +24,7 @@ def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
         if elem.localname == 'ab']
 
 
-def owner_doc(elem:EpiDocElement) -> Optional[EpiDoc]:
+def owner_doc(elem: EpiDocElement) -> Optional[EpiDoc]:
     """
     Returns the |EpiDoc| document owning an element.
     """
