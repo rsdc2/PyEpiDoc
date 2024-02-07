@@ -59,6 +59,15 @@ To install PyEpiDoc along with its dependencies (```lxml```) and development dep
     pip install .[dev]
     ```
 
+## Running the Jupyter Notebooks
+
+A couple of Jupyter notebooks are included in the repository to provide example usage:
+
+- `getting_started.ipynb`
+- `abbreviations.ipynb`
+
+For instructions on installing Jupyter notebook, see https://docs.jupyter.org/en/latest/install/notebook-classic.html. Alternatively, see also https://jupyter.org/install.
+
 ## Example usage
 
 Given a tokenized EpiDoc file ```ISic000001.xml``` in an ```examples/``` folder in the current working directory.
