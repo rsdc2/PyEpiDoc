@@ -68,6 +68,12 @@ A couple of Jupyter notebooks are included in the repository to provide example 
 
 For instructions on installing Jupyter notebook, see https://docs.jupyter.org/en/latest/install/notebook-classic.html. Alternatively, see also https://jupyter.org/install.
 
+Once Jupyter notebook is installed, to run `getting_started.ipynb`, type:
+
+```
+jupyter notebook getting_started.ipynb
+```
+
 ## Example usage
 
 Given a tokenized EpiDoc file ```ISic000001.xml``` in an ```examples/``` folder in the current working directory.
