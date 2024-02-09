@@ -1000,7 +1000,6 @@ class EpiDocElement(BaseElement, Showable):
         """
         Set compressed element ID, e.g. 'AAAAB', 
         which expands to e.g. ISic000000-(0)0001
-
         """
         elem_id_length = ids.elem_id_length_from_base(base)
 
