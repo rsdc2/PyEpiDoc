@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://epidoc.stoa.org/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../schematron/ircyr-checking.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>I.Sicily inscription 000817</title>
+                <editor ref="#JP">Jonathan Prag</editor>
+                <principal ref="#JP">Jonathan Prag</principal>
+                <funder>John Fell OUP Research Fund</funder>
+	   <funder><ref target="https://cordis.europa.eu/project/id/885040">ERC Advanced Grant no.885040</ref></funder>
+                <respStmt>
+                    <name xml:id="JP" ref="http://orcid.org/0000-0003-3819-8537">Jonathan Prag</name>
+                    <resp>original data collection and editing</resp>
+                </respStmt>
+                <respStmt>
+                    <name xml:id="JCu" ref="http://orcid.org/0000-0002-6686-3728">James Cummings</name>
+                    <resp>conversion to EpiDoc</resp>
+                </respStmt>
+                <respStmt>
+                    <name xml:id="JCh" ref="http://orcid.org/0000-0001-6823-0265">James Chartrand</name>
+                    <resp>site construction and encoding</resp>
+                </respStmt>
+                <respStmt>
+                    <name xml:id="VV" ref="http://orcid.org/0000-0002-9695-0240">Valeria Vitale</name>
+                    <resp>editing of geo data</resp>
+                </respStmt>
+                <respStmt>
+                    <name xml:id="MM">Michael Metcalfe</name>
+                    <resp>museum data collection</resp>
+                </respStmt>
+	    <respStmt>
+     	       <name xml:id="SS" ref="https://orcid.org/0000-0003-3914-9569">Simona Stoyanova</name>
+     	       <resp>standardisation of template and tidying up encoding</resp>
+ 	   </respStmt>
+	    <respStmt>
+                    <name xml:id="system">system</name>
+                    <resp>automated or batch processes</resp>
+                </respStmt>
+            </titleStmt>
+            <publicationStmt>
+                <authority>I.Sicily</authority>
+                <idno type="filename">ISic000817</idno>
+                <idno type="TM">175811</idno>
+                <idno type="EDR">074416</idno>
+                <idno type="EDH"/>
+                <idno type="EDCS">12800324</idno>
+                <idno type="PHI"/>
+                <idno type="URI">http://sicily.classics.ox.ac.uk/inscription/ISic000817</idno>
+                <idno type="DOI" when="2020-12-22">10.5281/zenodo.4385321</idno>
+                <availability>
+                    <licence target="http://creativecommons.org/licenses/by/4.0/">Licensed under a Creative Commons-Attribution 4.0 licence</licence>
+                </availability>
+            </publicationStmt>
+            <sourceDesc>
+                <msDesc>
+                    <msIdentifier>
+                        <country>Italy</country>
+                        <region>Sicily</region>
+                        <settlement>Marsala</settlement>
+                        <repository role="museum" ref="http://sicily.classics.ox.ac.uk/museum/108">Museo archeologico regionale Lilibeo Marsala - Baglio Anselmi</repository>
+                        <!--No inventory number found-->
+                        <!--Adding location for old id numbers if available-->
+                        <altIdentifier>
+                            <settlement/>
+                            <repository/>
+                            <idno type="old"/>
+                        </altIdentifier>
+                    </msIdentifier>
+                    <msContents>
+                        <textLang mainLang="la">Latin</textLang>
+                    </msContents>
+                    <physDesc>
+                        <objectDesc>
+                            <supportDesc>
+                                <support>
+                                    <material ana="#material.stone.limestone" ref="http://www.eagle-network.eu/voc/material/lod/66.html">limestone (Trapani)</material>
+                                    <objectType ana="#object.plaque" ref="http://www.eagle-network.eu/voc/objtyp/lod/257">plaque</objectType>
+                                    <dimensions>
+                                        <!--Default values and requires editing-->
+                                        <height unit="cm"/>
+                                        <width unit="cm"/>
+                                        <depth unit="cm"/>
+                                    </dimensions>
+                                </support>
+                                <condition/>
+		    </supportDesc>
+                            <layoutDesc>
+                                <layout>
+                                    <rs ana="#execution.chiselled" ref="http://www.eagle-network.eu/voc/writing/lod/1">chiselled</rs>
+                                	<damage/>
+			</layout>
+                            </layoutDesc>
+                        </objectDesc>
+                        <handDesc>
+                            <handNote><!--Default value and requires editing-->
+                                <locus from="line1" to="line1">Line 1</locus>
+                                <dimensions type="letterHeight">
+                                    <height unit="mm"/>
+                                </dimensions>
+                                <locus from="line1" to="line2">Interlineation line 1 to 2</locus>
+                                <dimensions type="interlinear">
+                                    <height unit="mm"/>
+                                </dimensions>
+                            </handNote>
+                        </handDesc>
+                    </physDesc>
+                    <history>
+                        <origin>
+                            <origPlace>
+                                <placeName type="ancient" ref="http://pleiades.stoa.org/places/462281">Lilybaeum</placeName>		
+                                <placeName type="modern" ref="http://sws.geonames.org/6542148">Marsala</placeName>
+                            	<geo>37.80355, 12.4379</geo>
+		</origPlace>
+                            <origDate datingMethod="#julian" notBefore-custom="0201" notAfter-custom="0250" precision="low">First half of 3rd century CE</origDate>
+                        </origin>
+                        <provenance type="found" subtype="discovered">Excavations in Roman villa in Marsala</provenance>
+                        <provenance type="observed">On display.</provenance>
+                        <provenance type="observed" subtype="autopsied" resp="#MM">Metcalfe 2015.11.12</provenance>
+                        <acquisition/>
+                    </history>
+                    
+                </msDesc>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+             <p>Encoded following the latest EpiDoc guidelines</p>
+             <xi:include href="../alists/ISicily-taxonomies.xml">
+                 <xi:fallback>
+                     <p>Taxonomies for ISicily controlled values</p>
+                 </xi:fallback>
+             </xi:include>
+	  <xi:include href="../alists/charDecl.xml">
+	     <xi:fallback>
+	       <p>ISicily glyphs authority list</p>
+	     </xi:fallback>
+	   </xi:include>
+         </encodingDesc>
+        <profileDesc>
+            <calendarDesc>
+                <calendar xml:id="julian">
+                    <p>Julian Calendar</p>
+                </calendar>
+            </calendarDesc>
+            <langUsage>
+                <language ident="en">English</language>
+                <language ident="it">Italian</language>
+                <language ident="grc">Ancient Greek</language>
+                <language ident="la">Latin</language>
+                <language ident="he">Hebrew</language>
+                <language ident="phn">Phoenician</language>
+                <language ident="xpu">Punic</language>
+                <language ident="osc">Oscan</language>
+                <language ident="xly">Elymian</language>
+                <language ident="scx">Sikel</language>
+                <language ident="sxc">Sikan</language>
+            </langUsage>
+            <textClass>
+                <keywords scheme="http://www.eagle-network.eu/voc/typeins.html">
+                    <term ana="#function.building" ref="http://www.eagle-network.eu/voc/typeins/lod/86.html">building</term>
+                </keywords>
+            </textClass>
+        </profileDesc>
+        <revisionDesc status="draft">
+            <listChange>
+                <change when="2016-12-03" who="#JCu">James Cummings autogenerated EpiDoc output from database</change>
+                <change when="2017-11-16" who="#JP">Jonathan Prag added bibl element</change>
+                <change when="2017-12-03" who="#JP">Jonathan Prag cleaned TEI, added image, objectType</change>
+            	<change when="2020-10-05" who="#SS">Simona Stoyanova normalised Unicode</change>
+            	<change when="2020-10-08" who="#SS">Simona Stoyanova updated list of languages</change>
+            	<change when="2020-11-20" who="#SS">Simona Stoyanova added EDCS numbers</change>
+	<change when="2020-11-26" who="#SS">Simona Stoyanova restructured bibliography</change>
+	<change when="2020-12-22" who="#system">Updated Zenodo DOI</change>
+            	<change when="2021-01-19" who="#SS">renumbered files, uris and references</change>
+                <change when="2021-03-01" who="#JP">Jonathan Prag made preliminary edits of text and file</change>
+            </listChange>
+        </revisionDesc>
+    </teiHeader>
+    <facsimile>
+        <surface type="front">
+            <graphic n="screen" url="ISic000817_tiled.tif" height="4608px" width="3072px">
+                <desc>Photo M. Metcalfe</desc>
+            </graphic>
+            <graphic n="print" url="ISic000817.jpg" height="4608px" width="3072px">
+                <desc>Photo M. Metcalfe</desc>
+            </graphic>
+        </surface>
+    </facsimile>
+    <text>
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="la">
+                <ab>
+                    <lb n="0"/><gap reason="lost" extent="unknown" unit="line"/>
+                    <lb n="1"/><w>opere</w> <w><choice><sic>plataeam</sic><corr>plateam</corr></choice></w> <w>vici</w> <name>Se<unclear>p</unclear><supplied reason="lost">tizodi</supplied></name> 
+                    <lb n="2"/><w>lapide</w> <name>Drepanitano</name> <w>sua</w> <w><expan><abbr>p</abbr><ex>ecunia</ex></expan></w> <w><expan><abbr>strav</abbr><ex>it</ex></expan></w> 
+                    <lb n="3"/><name><expan><abbr>Q</abbr><ex>uintus</ex></expan></name> <name>Fabius</name> <name><expan><abbr>Q</abbr><ex>uinti</ex></expan></name> <w><expan><abbr>f</abbr><ex>ilius</ex></expan></w> <name><expan><abbr>Maec</abbr><ex>ia</ex></expan></name> <name>Caesilius</name> 
+                    <lb n="4"/><name>Modius</name> <name>Titianus</name> <w><expan><abbr>q</abbr><ex>uaestor</ex></expan></w> <w>pro</w> <w><expan><abbr>pr</abbr><ex>aetore</ex></expan></w> 
+                    <lb n="5"/><w><expan><abbr>prov</abbr><ex>inciae</ex></expan></w> <name><expan><abbr>Sici</abbr><ex>liae</ex></expan></name> <w><choice><sic>plataeam</sic><corr>plateam</corr></choice></w> <w>vici</w> 
+                    <lb n="6"/><name>Septizodi</name> <w>sternendam</w> <w>et</w> 
+                    <lb n="7"/><w>perficiendam</w> <w>curavit</w> <w>ded<supplied reason="lost">i</supplied>
+                    <lb n="8" break="no"/>cavitque</w>
+                </ab>
+            </div>
+            <div type="apparatus">
+                <p><!--external apparatus criticus (if applicable)--></p>
+            </div>
+            <div type="translation">
+                <p><!--translation(s) - add @xml:lang for 'en' or 'it' to div--></p>
+            </div>
+            <div type="commentary">
+                <p><!--commented out pending revision-->
+                    <!--quaestor of Sicily, not previously known, Q. Favius Caesilius Modius Titianus - must be same man as Q. Fabius Caesilius Titianus of CIL 10.7287; g'father is Q. Aquillius Niger, procos. Africa; stemma of family on Barbieri, p.41-44. Opere plataeam vici sep[-]O[-] lapide drepanitano sua pecunia stravit Quintus Fabius Quinti filius Maec. Caesilius Modius Titianus, quaestor pro praetore provinciae Siciliae, Plataeam vici septizodi sternendam et perficiendam curavit dedicavitque. Cf. AE 1964.181. Also recorded in Diz.Epig. 4.1071 col.2 and 1072f and see now Pfuntner Latomus 2017--></p>
+            </div>
+            <div type="bibliography">
+                <listBibl type="edition">
+                    <bibl type="bulletin" n="AE">
+                        <citedRange>1964.0182</citedRange>
+                        <ptr target="http://zotero.org/groups/382445/items/R46KDTZX"/>
+                    <ref target="https://biblio.inscriptiones.org/epig10001283">https://biblio.inscriptiones.org/epig10001283</ref></bibl>
+                    <bibl>
+                        <author>Barbieri</author>
+                        <date>1961</date>
+                        <citedRange>no.2</citedRange>
+                        <ptr target="https://www.zotero.org/groups/382445/items/KHCM59WG"/>
+                    <ref target="https://biblio.inscriptiones.org/epig10002169">https://biblio.inscriptiones.org/epig10002169</ref></bibl>
+                   <bibl>
+                        <author>Pfuntner</author>
+                        <date>2016</date>
+                        <citedRange>444-445</citedRange>
+                        <ptr target="http://zotero.org/groups/382445/items/WHFFU9X6"/>
+                    <ref target="https://biblio.inscriptiones.org/epig10002535">https://biblio.inscriptiones.org/epig10002535</ref></bibl>
+                </listBibl>
+	   <listBibl type="discussion">
+	       <bibl>
+	           <author>Manganaro</author>
+	           <date>1988</date>
+	           <citedRange>45</citedRange>
+	           <ptr target="https://www.zotero.org/groups/382445/items/RZSFKACR"/>
+	       <ref target="https://biblio.inscriptiones.org/epig10001427">https://biblio.inscriptiones.org/epig10001427</ref></bibl>
+	   </listBibl>
+            </div>
+        </body>
+    </text>
+</TEI>

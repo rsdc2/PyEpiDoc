@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://epidoc.stoa.org/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../schematron/ircyr-checking.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>I.Sicily inscription 000812</title>
+                <editor ref="#JP">Jonathan Prag</editor>
+                <principal ref="#JP">Jonathan Prag</principal>
+                <funder>John Fell OUP Research Fund</funder>
+	   <funder><ref target="https://cordis.europa.eu/project/id/885040">ERC Advanced Grant no.885040</ref></funder>
+                <respStmt>
+                    <name xml:id="JP" ref="http://orcid.org/0000-0003-3819-8537">Jonathan Prag</name>
+                    <resp>original data collection and editing</resp>
+                </respStmt>
+                <respStmt>
+                    <name xml:id="JCu" ref="http://orcid.org/0000-0002-6686-3728">James Cummings</name>
+                    <resp>conversion to EpiDoc</resp>
+                </respStmt>
+                <respStmt>
+                    <name xml:id="JCh" ref="http://orcid.org/0000-0001-6823-0265">James Chartrand</name>
+                    <resp>site construction and encoding</resp>
+                </respStmt>
+                <respStmt>
+                    <name xml:id="VV" ref="http://orcid.org/0000-0002-9695-0240">Valeria Vitale</name>
+                    <resp>editing of geo data</resp>
+                </respStmt>
+                <respStmt>
+                    <name xml:id="MM">Michael Metcalfe</name>
+                    <resp>museum data collection</resp>
+                </respStmt>
+	    <respStmt>
+     	       <name xml:id="SS" ref="https://orcid.org/0000-0003-3914-9569">Simona Stoyanova</name>
+     	       <resp>standardisation of template and tidying up encoding</resp>
+ 	   </respStmt>
+	    <respStmt>
+                    <name xml:id="system">system</name>
+                    <resp>automated or batch processes</resp>
+                </respStmt>
+            </titleStmt>
+            <publicationStmt>
+                <authority>I.Sicily</authority>
+                <idno type="filename">ISic000812</idno>
+                <idno type="TM">175808</idno>
+                <idno type="EDR">108327</idno>
+                <idno type="EDH"/>
+                <idno type="EDCS">10701750</idno>
+                <idno type="PHI"/>
+                <idno type="URI">http://sicily.classics.ox.ac.uk/inscription/ISic000812</idno>
+                <idno type="DOI" when="2020-12-22">10.5281/zenodo.4385315</idno>
+                <availability>
+                    <licence target="http://creativecommons.org/licenses/by/4.0/">Licensed under a Creative Commons-Attribution 4.0 licence.</licence>
+                </availability>
+            </publicationStmt>
+            <sourceDesc>
+                <msDesc>
+                    <msIdentifier>
+                        <country>Italy</country>
+                        <region>Sicily</region>
+                        <settlement>Marsala</settlement>
+                        <repository role="museum" ref="http://sicily.classics.ox.ac.uk/museum/114">Museo Civico di Marsala</repository>
+                        <!--No inventory number found-->
+                        <!--Adding location for old id numbers if available-->
+                        <altIdentifier>
+                            <settlement/>
+                            <repository/>
+                            <idno type="old"/>
+                        </altIdentifier>
+                    </msIdentifier>
+                    <msContents>
+                        <textLang mainLang="grc" otherLangs="la" ana="#bilingualism.biversion.complementary">Latin and Ancient Greek</textLang>
+                    </msContents>
+                    <physDesc>
+                        <objectDesc>
+                            <supportDesc>
+                                <support><p>A base, with a substantial upper moulding (on which stand the two lines of Latin), and then a framed epigraphic field (H 96 cm x W 45 cm) on the main body of the base.</p>
+                                    <material ana="#material.stone" ref="http://www.eagle-network.eu/voc/material/lod/2.html">stone</material>
+                                    <objectType ana="#object.base" ref="http://www.eagle-network.eu/voc/objtyp/lod/57.html" cert="low">base</objectType>
+                                    <dimensions><!--Barbieri-->
+                                        <height unit="cm">160</height>
+                                        <width unit="cm">64</width>
+                                        <depth unit="cm">57</depth>
+                                    </dimensions>
+                                </support>
+                                <condition/>
+		    </supportDesc>
+                            <layoutDesc>
+                                <layout><p>The Latin name is written very large on the moulding, with vivas immediately below; the Greek text at consistent size in the epigraphic field on the face of the base.</p>
+                                    <rs ana="#execution.chiselled" ref="http://www.eagle-network.eu/voc/writing/lod/1">chiselled</rs>
+                                	<damage/>
+			</layout>
+                            </layoutDesc>
+                        </objectDesc>
+                        <handDesc>
+                            <handNote><!--Barbieri-->
+                                <locus from="line1" to="line1">Line 1</locus>
+                                <dimensions type="letterHeight">
+                                    <height unit="mm">120</height>
+                                </dimensions>
+                                <locus from="line2" to="line2">Line 2</locus>
+                                <dimensions type="letterHeight">
+                                    <height unit="mm">30</height>
+                                </dimensions>
+                                <locus from="line3" to="line10">Line 3-10</locus>
+                                <dimensions type="letterHeight">
+                                    <height unit="mm">40</height>
+                                </dimensions>
+                                <locus from="line1" to="line2">Interlineation line 1 to 2</locus>
+                                <dimensions type="interlinear">
+                                    <height unit="mm"/>
+                                </dimensions>
+                            </handNote>
+                        </handDesc>
+                    </physDesc>
+                    <history>
+                        <origin>
+                            <origPlace>
+                                <placeName type="ancient" ref="http://pleiades.stoa.org/places/462281">Lilybaeum</placeName>		
+                                <placeName type="modern" ref="http://sws.geonames.org/6542148">Marsala</placeName>
+                            	<geo>37.80355, 12.4379</geo>
+		</origPlace>
+                            <origDate datingMethod="#julian" notBefore-custom="0313" notAfter-custom="0350" cert="low">Probably Constantinian, probably of the 320s CE</origDate>
+                        </origin>
+                        <provenance type="found">Original discovery not recorded.</provenance>
+                        <provenance type="observed" subtype="seen">Display no.8</provenance>
+                        <provenance type="observed" subtype="autopsied">None</provenance>
+                        <acquisition/>
+                    </history>
+                </msDesc>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+             <p>Encoded following the latest EpiDoc guidelines</p>
+             <xi:include href="../alists/ISicily-taxonomies.xml">
+                 <xi:fallback>
+                     <p>Taxonomies for ISicily controlled values</p>
+                 </xi:fallback>
+             </xi:include>
+	  <xi:include href="../alists/charDecl.xml">
+	     <xi:fallback>
+	       <p>ISicily glyphs authority list</p>
+	     </xi:fallback>
+	   </xi:include>
+         </encodingDesc>
+        <profileDesc>
+            <calendarDesc>
+                <calendar xml:id="julian">
+                    <p>Julian Calendar</p>
+                </calendar>
+            </calendarDesc>
+            <langUsage>
+                <language ident="en">English</language> 
+                <language ident="it">Italian</language> 
+                <language ident="grc">Ancient Greek</language> 
+                <language ident="la">Latin</language> 
+                <language ident="he">Hebrew</language> 
+                <language ident="phn">Phoenician</language>
+                <language ident="xpu">Punic</language>
+                <language ident="osc">Oscan</language> 
+                <language ident="xly">Elymian</language> 
+                <language ident="scx">Sikel</language>  
+                <language ident="sxc">Sikan</language>  
+            </langUsage>
+            <textClass>
+                <keywords scheme="http://www.eagle-network.eu/voc/typeins.html">
+                    <term ana="#function.honorific" ref="http://www.eagle-network.eu/voc/typeins/lod/69.html">honorific</term>
+                </keywords>
+            </textClass>
+        </profileDesc>
+        <revisionDesc status="draft">
+            <listChange>
+                <change when="2016-12-03" who="#JCu">James Cummings autogenerated EpiDoc output from database</change>
+            	   <change when="2020-10-05" who="#SS">Simona Stoyanova normalised Unicode</change>
+            	   <change when="2020-10-08" who="#SS">Simona Stoyanova updated list of languages</change>
+            	<change when="2020-11-20" who="#SS">Simona Stoyanova added EDCS numbers</change>
+		<change when="2020-11-26" who="#SS">Simona Stoyanova restructured bibliography</change>
+	    <change when="2020-12-22" who="#system">Updated Zenodo DOI</change>
+            	<change when="2021-01-19" who="#SS">renumbered files, uris and references</change>
+                <change when="2022-12-08" who="#JP">Jonathan Prag encoded text and metadata in draft from published edition of Barbieri</change>
+                <change when="2023-05-04" who="#SS">added milestones to indicate change of face</change>
+                <change when="2024-09-24" who="#JP">Jonathan Prag added pilot bilingualism annotation</change>
+	</listChange>
+        </revisionDesc>
+    </teiHeader>
+    <facsimile>
+        <surface type="front">
+            <graphic n="screen" url="ISic000812_tiled.tif" height="3680px" width="5520px">
+                <desc>I.Sicily with the permission of the Assessorato Regionale dei Beni Culturali e dell’Identità Siciliana - Dipartimento dei Beni Culturali e dell’Identità Siciliana</desc>
+            </graphic>
+            <graphic n="print" url="ISic000812.jpg" height="3680px" width="5520px">
+                <desc>I.Sicily with the permission of the Assessorato Regionale dei Beni Culturali e dell’Identità Siciliana - Dipartimento dei Beni Culturali e dell’Identità Siciliana</desc>
+            </graphic>
+         </surface>
+    </facsimile>
+    <text>
+        <body>
+            <div type="edition" xml:space="preserve" resp="#JP">
+                <div type="textpart" subtype="section" n="a" xml:lang="la">
+                    <ab>
+                        <lb n="1"/><w>Eumeni</w> 
+                        <lb n="2"/><w>vivas</w>
+                    </ab>
+                </div>
+                
+                <div type="textpart" subtype="section" n="b" xml:lang="grc">
+                    <ab>
+                        <lb n="3"/><w>Ἀλπείνιον</w> <name>Μάγνον</name> 
+                        <lb n="4"/><w>τὸν</w> <w>λαμπρότατον</w> <w><expan><abbr>ὑπατ</abbr><ex>ικὸν</ex></expan></w> 
+                        <lb n="5"/><w>καὶ</w> <w>ἁγνότατον</w> <w>δικαστὴν</w> 
+                        <lb n="6"/><w>βουλὴ</w> <w>καὶ</w> <w>δῆμος</w> 
+                        <lb n="7"/><name>Λιλυβαειτῶν</name> <w>διὰ</w> <w>τὰς</w> 
+                        <lb n="8"/><w>περὶ</w> <w>τὴν</w> <w>πατρίδα</w> 
+                        <lb n="9"/><w>εὐεργεσίας</w> <w>τὸν</w> 
+                        <lb n="10"/><w>πάτρωνα</w> <w><choice><orig>ἠμίψατο</orig><reg>ἠμείψατο</reg></choice></w>
+                    </ab>
+                </div>
+            </div>
+            <div type="apparatus">
+                <listApp><app><note>Text of Barbieri</note></app></listApp>
+            </div>
+            <div type="translation">
+                <p><!--translation(s) - add @xml:lang for 'en' or 'it' to div--></p>
+            </div>
+            <div type="commentary">
+                <p><!--commented out pending revision-->
+                    <!--Opens with a latin acclamation to Eumeni Vivas. The rest in Greek; cf. IG 14.1078 for similar; Eumenius Alpinius Magnus. Extensive discussion of likely career / origins (apparently a citizen of Lilybaeum, but p'haps of Gallic origin?), relating it to Chastagnol, Historia 12 (1963) and consularis governors of the island between 320 and 331 AD. Cf. CIL 10.517 for this man as gov. of Lucania and Bruttium in 320s. Note p.233: 'Non mancano iscrizioni greche dedicate, in Italia e talora in altre regioni, a funzionari di diocesi italiche...' Goes through Chastagnol for e.g.s, which incl. IG 14.453=CIL 10.7017; IG 14.1075 = CIL 6.1715; IG 14.455; IG 14.14 = CIL 10.7125; CIL 6.31961 = IG 14.1078a. Section in Greek: Alpeinion Magnon ton lamprotaton hupatikon kai hagnotaton dikasten boule kai demos Lilubaeiton dia tas peri ten patrida euergesias ton patrona emipsato. Discussions of relevance in Kokalos 1982-83 (38-39) 472 and Kokalos (1997-1998) 43-44.1: 253--></p>
+            </div>
+            <div type="bibliography">
+                <listBibl type="edition">
+                    <bibl type="bulletin" n="AE">
+                        <citedRange>1966.0167</citedRange>
+                        <ptr target="http://zotero.org/groups/382445/items/R46KDTZX"/>
+                    <ref target="https://biblio.inscriptiones.org/epig10001283">https://biblio.inscriptiones.org/epig10001283</ref></bibl>
+                    <bibl>
+                        <author>Barbieri</author>
+                        <date>1963</date>
+                        <citedRange>232-242 no.2 tav. LXVIII</citedRange>
+                        <ptr target="https://www.zotero.org/groups/382445/items/3CP5TSQF"/>
+                    <ref target="https://biblio.inscriptiones.org/epig10002168">https://biblio.inscriptiones.org/epig10002168</ref></bibl>
+                    <bibl>
+                        <author>Calderone</author>
+                        <date>1959</date>
+                        <citedRange>1072</citedRange>
+                        <ptr target="https://www.zotero.org/groups/382445/items/PACIVUJ6"/>
+                    <ref target="https://biblio.inscriptiones.org/epig10002099">https://biblio.inscriptiones.org/epig10002099</ref></bibl>
+                </listBibl>
+	   <listBibl type="discussion"><bibl/></listBibl>
+            </div>
+        </body>
+    </text>
+</TEI>
