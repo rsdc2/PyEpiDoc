@@ -15,6 +15,7 @@ from pyepidoc.shared import default_str
 from pyepidoc.shared.types import Base
 from pyepidoc.shared.classes import SetRelation
 
+from .. import ids
 from ..element import EpiDocElement
 from .ab import Ab
 from .lg import Lg
@@ -312,11 +313,20 @@ class Edition(EpiDocElement):
     def prettify(self, spaceunit:SpaceUnit, number:int) -> None:
         prettify(spaceunit=spaceunit, number=number, edition=self)
 
-    def set_ids(self, base: Base=52) -> None:
+    def set_ids(self, base: Base=52, compress: bool=True) -> None:
+        for i, elem in enumerate(self.text_elems, 1):
+            # Find out how long the element part of the ID should be
+            elem_id_length = ids.elem_id_length_from_base(base)
+            
+            # Pad the element token ID with the correct amount for the base
+            # Add 'wiggle room' digit
+            elem_id = str(i).rjust(elem_id_length - 1, '0') + '0'
 
-        # TODO This needs to be more general than abs
-        for ab in self.abs:
-            ab.set_ids(base)
+            # Stitch two IDs together
+            id_xml = self.id_isic + '-' + elem_id
+
+            # Set the ID, leave the compression to the element
+            elem.set_id(id_xml, base, compress)
 
     def space_tokens(self) -> None:
 
@@ -347,6 +357,15 @@ class Edition(EpiDocElement):
     def supplied(self) -> Sequence[BaseElement]:
         return [elem for elem in self.desc_elems 
             if elem.localname == 'supplied']
+
+    @property
+    def text_elems(self) -> list[EpiDocElement]:
+        """
+        All elements in the document responsible for carrying
+        text information as part of the edition
+        """
+        elems = chain(*[ab.desc_elems for ab in self.abs])
+        return list(map(EpiDocElement, elems))
 
     @property
     def textparts(self) -> list[TextPart]:

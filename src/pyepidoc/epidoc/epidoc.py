@@ -23,6 +23,7 @@ from .token import Token
 from .errors import TEINSError, EpiDocValidationError
 from .element import EpiDocElement, BaseElement
 from .elements.edition import Edition
+from .elements.ab import Ab
 from .elements.expan import Expan
 from .enums import (
     SpaceUnit,
@@ -85,6 +86,11 @@ class EpiDoc(DocRoot):
 
     def __hash__(self) -> int:
         return hash(self.id)
+
+    @property
+    def abs(self) -> list[Ab]:
+        return list(chain(*[edition.abs 
+                            for edition in self.editions()]))
 
     @property
     def apparatus(self) -> list[_Element]:
@@ -599,6 +605,15 @@ class EpiDoc(DocRoot):
         elif type == 'xml':
             return '\n'.join(edition.text_desc_compressed_whitespace 
                            for edition in self.editions())
+
+    @property
+    def text_elems(self) -> list[EpiDocElement]:
+        """
+        All elements in the document responsible for carrying
+        text information as part of the edition
+        """
+        elems = chain(*[ab.desc_elems for ab in self.abs])
+        return list(map(EpiDocElement, elems))
 
     @property
     def text_leiden(self) -> str:

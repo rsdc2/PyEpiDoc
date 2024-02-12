@@ -2,13 +2,9 @@ from __future__ import annotations
 from typing import (
     List,
     Sequence,
-    Callable,
     Optional, 
-    Union, 
-    Iterable,
     cast,
-    overload,
-    Literal
+    overload
 )
 
 from ..shared.classes import Showable, ExtendableSeq
@@ -996,25 +992,43 @@ class EpiDocElement(BaseElement, Showable):
 
         self._e.attrib[ns.give_ns(attribname, namespace)] = value
 
-    def set_id(self, base: Base=52, compress: bool=True) -> None:
+    def set_id(
+            self, 
+            id: Optional[str]=None, 
+            base: Base=52, 
+            compress: bool=True) -> None:
         """
-        Set compressed element ID, e.g. 'AAAAB', 
-        which expands to e.g. ISic000000-(0)0001
+        Set the @xml:id attribute of the element
+
+        :param id: the ID to apply to the attribute; if None,
+        calculates the ID based on the location in the XML file
+
+        :param base: the base to use to calculate the ID
+
+        :param compress: whether or not to compress the ID
         """
-        elem_id_length = ids.elem_id_length_from_base(base)
 
-        # Number of preceding elements
-        preceding_elem_count = str(len(self.preceding_or_ancestor_in_edition))
+        if id is None:
+            elem_id_length = ids.elem_id_length_from_base(base)
 
-        # Pad the element token ID with the correct amount for the base
-        # Add 'wiggle room' digit
-        elem_id = preceding_elem_count.rjust(elem_id_length - 1, '0') + '0'
+            # Number of preceding elements
+            preceding_elem_count = str(len(self.preceding_or_ancestor_in_edition))
 
-        # Stitch two IDs together
-        id_xml = self.id_isic + '-' + elem_id
+            # Pad the element token ID with the correct amount for the base
+            # Add 'wiggle room' digit
+            elem_id = preceding_elem_count.rjust(elem_id_length - 1, '0') + '0'
 
-        # Compress the ID, if required
-        self.id_xml = ids.compress(id_xml, base) if compress else id_xml
+            # Stitch two IDs together
+            id_xml = self.id_isic + '-' + elem_id
+
+            # Compress the ID, if required
+            self.id_xml = ids.compress(id_xml, base) if compress else id_xml
+
+        else:
+            if compress:
+                self.id_xml = ids.compress(id, base)
+            else:
+                self.id_xml = id
 
     def _subsumable_by(self, other:EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 
