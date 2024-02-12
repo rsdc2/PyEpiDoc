@@ -111,11 +111,11 @@ def line(elem: EpiDocElement) -> Optional[Lb]:
     return Lb(lb)
 
 
-def line_end(elem: EpiDocElement) -> bool:
-    """
-    Returns True if the token or part of the token
-    appears at a line end
-    """
+# def line_end(elem: EpiDocElement) -> bool:
+#     """
+#     Returns True if the token or part of the token
+#     appears at a line end
+#     """
     
 
 
