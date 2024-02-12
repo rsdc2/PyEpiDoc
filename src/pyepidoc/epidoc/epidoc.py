@@ -692,7 +692,9 @@ class EpiDoc(DocRoot):
             p = Path(dst)
 
         if not p.parent.exists():
-            raise FileExistsError(f'Directory {p.parent.absolute()} does not exist.')
+            raise FileExistsError(
+                f'Directory {p.parent.absolute()} does not exist.'
+            )
 
         if verbose: 
             print(f'Writing {self.id}...')
