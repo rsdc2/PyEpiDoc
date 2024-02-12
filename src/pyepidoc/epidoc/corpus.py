@@ -523,6 +523,10 @@ class EpiDocCorpus:
         with open(dst, 'w') as f:
             f.write(self.formatted_text)
 
+    @property
+    def token_count(self) -> int:
+        return sum([doc.token_count for doc in self.docs])
+
     def tokenize_to_folder(
         self, 
         dstfolder: str | Path, 
@@ -554,10 +558,6 @@ class EpiDocCorpus:
                 dstfolder, 
                 doc
             )
-
-    @property
-    def token_count(self) -> int:
-        return sum([doc.token_count for doc in self.docs])
 
     @property
     def tokens(self) -> list[Token]:
