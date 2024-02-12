@@ -697,8 +697,8 @@ class EpiDoc(DocRoot):
         if verbose: 
             print(f'Writing {self.id}...')
         
-        with open(dst, 'wb') as f:
-            f.write(bytes(self))
+        with open(dst, 'w') as f:
+            f.write(str(self))
 
     @property
     def token_count(self) -> int:
