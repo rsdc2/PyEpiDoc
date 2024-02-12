@@ -208,7 +208,7 @@ class BaseElement(Showable):
         if self._e is None:
             return []
 
-        _descs = self._e.xpath('.//node()')
+        _descs = self._e.xpath('.//*')
         descs = _descs if type(_descs) is list else []
         return [BaseElement(desc) for desc in descs 
                     if isinstance(desc, _Element)]
