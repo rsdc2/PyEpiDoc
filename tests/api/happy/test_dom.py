@@ -43,6 +43,6 @@ def test_count_line_ends(fp):
     tokens = edition.tokens_incl_nested
     
     linecount = len(edition.lbs)
-    lineends = sum([line_ends(token) for token in tokens])
+    lineends = sum(map(line_ends, tokens))
 
     assert linecount == lineends
