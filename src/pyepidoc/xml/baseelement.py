@@ -228,6 +228,10 @@ class BaseElement(Showable):
         return set(self.desc_elem_names)
 
     @property
+    def desc_nodes(self) -> list[_Element | _ElementUnicodeResult]:
+        return self._e.xpath('.//node()')
+
+    @property
     def dict_desc(self) -> dict:
         if self._e is None:
             return {'name': self.tag.name, 'ns': self.tag.ns, 'attrs': dict()}

@@ -2,9 +2,11 @@
 Functions for navigating the DOM from elements within 
 the document
 """
-
+from __future__ import annotations
 from typing import Optional, Sequence
+from lxml.etree import _Element, _ElementUnicodeResult
 
+from ..xml.utils import localname
 from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .elements.ab import Ab
@@ -57,6 +59,22 @@ def ancestor_edition(elem: EpiDocElement) -> Optional[Edition]:
     return edition
 
 
+def ancestor_ab(elem: EpiDocElement) -> Optional[Ab]:
+    """
+    Returns the Ab containing the element (if any)
+    """
+
+    abs = filter(
+        lambda elem: localname(elem.e) == 'ab', 
+        elem.ancestors_excl_self
+    )
+
+    try:
+        return Ab(next(abs))
+    except StopIteration:
+        return None
+
+
 def doc_id(elem: EpiDocElement) -> Optional[str]:
     """
     Finds the document id containing a given element.
@@ -102,6 +120,18 @@ def lang(elem: EpiDocElement) -> Optional[str]:
     return doc.mainlang
     
 
+def last_in_ab(elem: EpiDocElement) -> bool:
+    """
+    Return True if the element is last in its <ab/>
+    """
+
+    ab = ancestor_ab(elem)
+    if ab is None:
+        return False
+    
+    return id(elem.e) == id(ab.tokens[-1].e)
+
+
 def line(elem: EpiDocElement) -> Optional[Lb]:
     lb = elem.lb_in_preceding_or_ancestor
     
@@ -111,13 +141,65 @@ def line(elem: EpiDocElement) -> Optional[Lb]:
     return Lb(lb)
 
 
-# def line_end(elem: EpiDocElement) -> bool:
-#     """
-#     Returns True if the token or part of the token
-#     appears at a line end
-#     """
+def line_ends_inside(elem: EpiDocElement) -> int:
+    """
+    Count the number of <lb/> elements that are 
+    descendants of the element
+    """
+
+    lbs = filter(
+        lambda elem: localname(elem.e) == 'lb', 
+        elem.desc_elems
+    )
+
+    return len(list(lbs))
+
+
+def line_end_after(elem: EpiDocElement) -> bool:
+    """
+    Returns True if the token or part of the token
+    appears at a line end
+    """
+
+    def _filter_nodes(node: _ElementUnicodeResult | _Element) -> bool:
+        """
+        Filter out text nodes that contain line breaks and nothing else
+        """
+        if type(node) is _Element:
+            return True
+        elif type(node) is _ElementUnicodeResult:
+            if '\n' in node and node.strip() == '':
+                return False
+            
+            return True
+        
+        return False
+
+
+    if last_in_ab(elem):
+        return True
+
+    following = filter(_filter_nodes, elem.following_nodes_in_ab)
+    localnames = map(localname, following)
+    try:
+        first = next(localnames)
+        if first == 'lb':
+            return True
+        else:
+            return False
+            
+    except StopIteration:
+        return False
     
 
+def line_ends(elem: EpiDocElement) -> int:
+    inside = line_ends_inside(elem)
+    after = line_end_after(elem)
+
+    if after:
+        return inside + 1
+    else:
+        return inside
 
 def materialclasses(elem: EpiDocElement) -> list[str]:
     """

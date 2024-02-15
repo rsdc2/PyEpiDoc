@@ -714,7 +714,7 @@ class EpiDocElement(BaseElement, Showable):
         last accessed 2023-04-20.
         """
 
-        def get_preceding_lb(elem:EpiDocElement) -> list[_Element]:
+        def get_preceding_lb(elem: EpiDocElement) -> list[_Element]:
             
             result = elem.xpath('preceding::*[descendant-or-self::ns:lb]')
 

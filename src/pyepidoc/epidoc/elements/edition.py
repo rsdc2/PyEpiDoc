@@ -18,10 +18,11 @@ from pyepidoc.shared.classes import SetRelation
 from .. import ids
 from ..element import EpiDocElement
 from .ab import Ab
-from .lg import Lg
-from .l import L
-from ..token import Token
 from .expan import Expan
+from .l import L
+from .lb import Lb
+from .lg import Lg
+from ..token import Token
 from .textpart import TextPart
 
 from ..enums import (
@@ -278,6 +279,10 @@ class Edition(EpiDocElement):
     @property
     def lang(self):
         return self.get_attrib('lang', XMLNS)
+
+    @property
+    def lbs(self) -> list[EpiDocElement]:
+        return list(chain(*[ab.lbs for ab in self.abs]))
 
     @property
     def lgs(self) -> list[Ab]:
