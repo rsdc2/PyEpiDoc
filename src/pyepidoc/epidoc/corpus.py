@@ -480,10 +480,11 @@ class EpiDocCorpus:
 
     def set_ids(
             self, 
-            dstfolder:str, 
-            fullpath:bool, 
+            dstfolder:str,
             verbose=True,
-            create_folderpath:bool=False) -> None:
+            create_folderpath:bool=False
+        ) -> None:
+        
         for doc in self.docs:
             if verbose: print(f'Setting ids for {doc.id}...')
             doc.set_ids()
