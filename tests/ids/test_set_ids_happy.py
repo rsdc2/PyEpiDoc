@@ -9,7 +9,8 @@ from pyepidoc import EpiDoc
 make_path = lambda s: Path(s + '.xml') 
 
 tests = map(make_path, [
-    'set_ids_1'
+    'set_ids_1', 
+    'ISic001470'
 ])
 
 input_path = Path('ids/files/input')
