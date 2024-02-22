@@ -22,7 +22,7 @@ class RoleName(EpiDocElement):
             raise TypeError('Element should be <roleName>.')
 
     def __repr__(self) -> str:
-        return f'RoleName({self.leiden_form}, type: "{self.role_type}", subtype: "{self.role_subtype})'
+        return f'RoleName({self.leiden_form}, type: "{self.role_name_type}", subtype: "{self.role_name_subtype})'
 
     @property
     def leiden_form(self) -> str:
@@ -75,9 +75,9 @@ class RoleName(EpiDocElement):
         )
     
     @property
-    def role_type(self) -> str:
+    def role_name_type(self) -> str:
         return self.get_attrib("type") or ""
     
     @property
-    def role_subtype(self) -> str:
+    def role_name_subtype(self) -> str:
         return self.get_attrib("subtype") or ""

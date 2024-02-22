@@ -58,3 +58,7 @@ class Num(EpiDocElement):
                 return 'duo'
 
         return normalized_str
+    
+    @property
+    def value(self) -> str:
+        return self.get_attrib('value') or ''

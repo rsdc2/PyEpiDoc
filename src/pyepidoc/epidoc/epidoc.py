@@ -27,6 +27,7 @@ from .elements.ab import Ab
 from .elements.name import Name
 from .elements.pers_name import PersName
 from .elements.g import G
+from .elements.num import Num
 from .elements.role_name import RoleName
 from .elements.expan import Expan
 from .enums import (
@@ -476,6 +477,15 @@ class EpiDoc(DocRoot):
         
         names = map(Name, edition.get_desc('name'))
         return list(names)
+
+    @property
+    def nums(self) -> list[Num]:
+        edition = self.editions()[0]
+        if edition is None:
+            return []
+        
+        nums = map(Num, edition.get_desc('num'))
+        return list(nums)
 
     @property
     def not_after(self) -> Optional[int]:

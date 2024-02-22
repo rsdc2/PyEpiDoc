@@ -20,6 +20,7 @@ from .token import Token
 from .elements.expan import Expan
 from .elements.name import Name
 from .elements.g import G
+from .elements.num import Num
 from .enums import TextClass
 from .elements.role_name import RoleName
 from .elements.pers_name import PersName
@@ -412,6 +413,30 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(list(docs))
 
+    def filter_by_num_value(
+        self,
+        min: int,
+        max: int,
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection
+    ) -> EpiDocCorpus:
+        
+        """
+        Filters the corpus according to the value
+        of <num>.
+
+        :param set_relation: a value of SetRelation
+        """
+
+        num_values = map(str, range(min, max + 1))
+
+        def _filter_by_num_value(doc: EpiDoc) -> bool:
+            doc_num_values = map(lambda num: num.value, doc.nums)
+            return set_relation(set(num_values), set(doc_num_values))
+
+        docs = filter(_filter_by_num_value, self.docs)  
+
+        return EpiDocCorpus(list(docs))
+
     def filter_by_orig_place(
         self,
         orig_places: list[str],
@@ -457,7 +482,7 @@ class EpiDocCorpus:
         
         def _filter_by_rolename(doc: EpiDoc) -> bool:
             doc_role_subtypes = map(
-                lambda rolename: rolename.role_subtype, 
+                lambda rolename: rolename.role_name_subtype, 
                 doc.role_names
             )
             if set_relation(set(role_name_subtypes), set(doc_role_subtypes)):
@@ -476,7 +501,7 @@ class EpiDocCorpus:
         
         def _filter_by_rolename(doc: EpiDoc) -> bool:
             doc_role_name_types = map(
-                lambda rolename: rolename.role_type, 
+                lambda rolename: rolename.role_name_type, 
                 doc.role_names
             )
             if set_relation(set(role_types), set(doc_role_name_types)):
@@ -600,6 +625,10 @@ class EpiDocCorpus:
     @property
     def names(self) -> list[Name]:
         return list(chain(*[doc.names for doc in self.docs]))
+
+    @property
+    def nums(self) -> list[Num]:
+        return list(chain(*[doc.nums for doc in self.docs]))
 
     @property
     def pers_names(self) -> list[PersName]:
