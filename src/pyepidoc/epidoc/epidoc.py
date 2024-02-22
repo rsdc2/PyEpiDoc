@@ -24,6 +24,7 @@ from .errors import TEINSError, EpiDocValidationError
 from .element import EpiDocElement, BaseElement
 from .elements.edition import Edition
 from .elements.ab import Ab
+from .elements.name import Name
 from .elements.role_name import RoleName
 from .elements.expan import Expan
 from .enums import (
@@ -457,6 +458,15 @@ class EpiDoc(DocRoot):
                             for e in material_e])
 
     @property
+    def names(self) -> list[Name]:
+        edition = self.editions()[0]
+        if edition is None:
+            return []
+        
+        names = map(Name, edition.get_desc('name'))
+        return list(names)
+
+    @property
     def not_after(self) -> Optional[int]:
         return self._get_daterange_attrib('notAfter-custom')
 
@@ -558,15 +568,16 @@ class EpiDoc(DocRoot):
         """
         Return a list of RoleName objects for each 
         <roleName> in the edition.
-        If there is no edition, returns an empty list.
+        If there is no edition, returns an empty list.  
         """
 
         if self.editions() == []:
             return []
         
         role_name_elems = (self
-                      .editions()[0]
-                      .get_desc_elems_by_name('roleName'))
+            .editions()[0]
+            .get_desc_elems_by_name('roleName')
+        )
         
         role_names = map(
             lambda elem: RoleName(elem.e), 

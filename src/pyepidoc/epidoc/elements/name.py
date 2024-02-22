@@ -1,7 +1,6 @@
 from lxml.etree import _Element
-from ..element import EpiDocElement
-from ..utils import leiden_str_from_children, normalized_str_from_children
 from .w import W
+
 
 class Name(W):
     """
@@ -16,3 +15,7 @@ class Name(W):
 
         if self.localname != 'name':
             raise TypeError('Element should be <name>.')
+
+    @property
+    def name_type(self) -> str:
+        return self.get_attrib('type') or ""

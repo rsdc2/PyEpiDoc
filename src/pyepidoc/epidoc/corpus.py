@@ -18,6 +18,7 @@ from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .token import Token
 from .elements.expan import Expan
+from .elements.name import Name
 from .enums import TextClass
 from .elements.role_name import RoleName
 from pyepidoc.shared.classes import SetRelation
@@ -348,6 +349,48 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(docs)
 
+    def filter_by_name(
+        self,
+        names: list[str],
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection
+    ) -> EpiDocCorpus:
+        
+        """
+        Filters the corpus according to the value
+        of <name>.
+
+        :param set_relation: a value of SetRelation
+        """
+
+        def filter_by_name(doc: EpiDoc) -> bool:
+            doc_names = map(lambda name: name.form, doc.names)
+            return set_relation(set(names), set(doc_names))
+
+        docs = filter(filter_by_name, self.docs)  
+
+        return EpiDocCorpus(list(docs))
+
+    def filter_by_name_type(
+        self,
+        name_types: list[str],
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection
+    ) -> EpiDocCorpus:
+        
+        """
+        Filters the corpus according to the value
+        of <name>.
+
+        :param set_relation: a value of SetRelation
+        """
+
+        def filter_by_name(doc: EpiDoc) -> bool:
+            doc_name_types = map(lambda name: name.name_type, doc.names)
+            return set_relation(set(name_types), set(doc_name_types))
+
+        docs = filter(filter_by_name, self.docs)  
+
+        return EpiDocCorpus(list(docs))
+
     def filter_by_orig_place(
         self,
         orig_places: list[str],
@@ -386,9 +429,9 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(list(docs))
     
-    def filter_by_role_subtype(
+    def filter_by_role_name_subtype(
         self,
-        role_subtypes: list[str],
+        role_name_subtypes: list[str],
         set_relation: Callable[[set, set], bool]=SetRelation.intersection
     ) -> EpiDocCorpus:
         
@@ -397,7 +440,7 @@ class EpiDocCorpus:
                 lambda rolename: rolename.role_subtype, 
                 doc.role_names
             )
-            if set_relation(set(role_subtypes), set(doc_role_subtypes)):
+            if set_relation(set(role_name_subtypes), set(doc_role_subtypes)):
                 return True
             
             return False
@@ -529,6 +572,10 @@ class EpiDocCorpus:
 
     def multilinguals(self, head:Optional[int]=None) -> list[EpiDoc]:
         return [doc for doc in self.docs if doc.is_multilingual]
+
+    @property
+    def names(self) -> list[Name]:
+        return list(chain(*[doc.names for doc in self.docs]))
 
     @cached_property
     def prefix(self) -> str:

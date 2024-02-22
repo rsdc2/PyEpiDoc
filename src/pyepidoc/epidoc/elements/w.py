@@ -16,6 +16,9 @@ class W(EpiDocElement):
 
         if self.localname != 'w':
             raise TypeError('Element should be <w>.')
+        
+    def __str__(self) -> str:
+        return self.leiden_form
 
     @property
     def leiden_form(self) -> str:

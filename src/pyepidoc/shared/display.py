@@ -15,7 +15,7 @@ def show_items(
     :param sep: string to place after each item; defaults to new line
     :return: a string representation of all the items in a list
     """
-    return sep + sep.join([f'{prefix}{str(item)}' 
+    return sep.join([f'{prefix}{str(item)}' 
                            for item in items])
 
 
@@ -29,7 +29,6 @@ def print_items(
     """
 
     print(show_items(items, sep, prefix))
-
 
 
 def show_elems(
