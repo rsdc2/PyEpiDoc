@@ -537,6 +537,10 @@ class EpiDocCorpus:
             return ''
         
         return doc.prefix
+    
+    @property
+    def role_names(self) -> list[RoleName]:
+        return list(chain(*[doc.role_names for doc in self.docs]))
 
     def set_ids(
             self, 

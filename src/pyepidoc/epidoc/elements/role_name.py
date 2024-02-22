@@ -21,6 +21,10 @@ class RoleName(EpiDocElement):
         if self.localname != 'roleName':
             raise TypeError('Element should be <roleName>.')
 
+    def __repr__(self) -> str:
+        return f'RoleName({self.text_desc}, type: "{self.role_type}", subtype: "{self.role_subtype})'
+
+
     @property
     def leiden_form(self) -> str:
         
