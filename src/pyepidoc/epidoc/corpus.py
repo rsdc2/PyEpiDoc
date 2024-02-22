@@ -12,16 +12,14 @@ from functools import cached_property
 from itertools import chain
 from pathlib import Path
 
-from lxml.etree import (
-    XMLSyntaxAssertionError, 
-    XMLSyntaxError
-)  
+from lxml.etree import XMLSyntaxError  
 
 from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .token import Token
 from .elements.expan import Expan
 from .enums import TextClass
+from .elements.role_name import RoleName
 from pyepidoc.shared.classes import SetRelation
 
 from ..shared import maxone, top
@@ -373,11 +371,58 @@ class EpiDocCorpus:
         role_names: list[str],
         set_relation: Callable[[set, set], bool]=SetRelation.intersection
     ) -> EpiDocCorpus:
-        docs = [doc for doc in self.docs
-            if set_relation(set(role_names), set(doc.role_names))]
 
-        return EpiDocCorpus(docs)
+        def _filter_by_rolename(doc: EpiDoc) -> bool:
+            doc_role_names = map(
+                lambda rolename: rolename.text_desc, 
+                doc.role_names
+            )
+            if set_relation(set(role_names), set(doc_role_names)):
+                return True
+            
+            return False
 
+        docs = filter(_filter_by_rolename, self.docs)
+
+        return EpiDocCorpus(list(docs))
+    
+    def filter_by_role_subtype(
+        self,
+        role_subtypes: list[str],
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection
+    ) -> EpiDocCorpus:
+        
+        def _filter_by_rolename(doc: EpiDoc) -> bool:
+            doc_role_subtypes = map(
+                lambda rolename: rolename.role_subtype, 
+                doc.role_names
+            )
+            if set_relation(set(role_subtypes), set(doc_role_subtypes)):
+                return True
+            
+            return False
+
+        docs = filter(_filter_by_rolename, self.docs)
+        return EpiDocCorpus(list(docs))
+
+    def filter_by_role_type(
+        self,
+        role_types: list[str],
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection
+    ) -> EpiDocCorpus:
+        
+        def _filter_by_rolename(doc: EpiDoc) -> bool:
+            doc_role_types = map(
+                lambda rolename: rolename.role_type, 
+                doc.role_names
+            )
+            if set_relation(set(role_types), set(doc_role_types)):
+                return True
+            
+            return False
+
+        docs = filter(_filter_by_rolename, self.docs)
+        return EpiDocCorpus(list(docs))
 
     def filter_by_textclass(
         self, 
@@ -388,8 +433,12 @@ class EpiDocCorpus:
         # Convert input textclasses to their string representation
         _textclasses = list(map(str, textclasses))
     
-        docs = [doc for doc in self.docs
-            if set_relation(set(_textclasses), set(doc.textclasses))]
+        docs = [
+            doc for doc in self.docs
+            if set_relation(
+                set(_textclasses), 
+                set(doc.textclasses))
+        ]
 
         return EpiDocCorpus(docs)
 
@@ -491,9 +540,8 @@ class EpiDocCorpus:
 
     def set_ids(
             self, 
-            dstfolder:str,
-            verbose=True,
-            create_folderpath:bool=False
+            dstfolder: str,
+            verbose=True
         ) -> None:
         
         for doc in self.docs:

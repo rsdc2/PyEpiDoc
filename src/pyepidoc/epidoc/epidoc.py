@@ -24,6 +24,7 @@ from .errors import TEINSError, EpiDocValidationError
 from .element import EpiDocElement, BaseElement
 from .elements.edition import Edition
 from .elements.ab import Ab
+from .elements.role_name import RoleName
 from .elements.expan import Expan
 from .enums import (
     SpaceUnit,
@@ -551,6 +552,28 @@ class EpiDoc(DocRoot):
         for use in validation.
         """
         return Path(self._pyepidoc_module_path).parent / Path('tei-epidoc.rng')
+
+    @property
+    def role_names(self) -> list[RoleName]:
+        """
+        Return a list of RoleName objects for each 
+        <roleName> in the edition.
+        If there is no edition, returns an empty list.
+        """
+
+        if self.editions() == []:
+            return []
+        
+        role_name_elems = (self
+                      .editions()[0]
+                      .get_desc_elems_by_name('roleName'))
+        
+        role_names = map(
+            lambda elem: RoleName(elem.e), 
+            role_name_elems
+        )
+    
+        return list(role_names)
 
     def set_ids(self, base: Base=100) -> None:
         """

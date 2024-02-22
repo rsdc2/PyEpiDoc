@@ -17,16 +17,26 @@ class W(EpiDocElement):
         if self.localname != 'w':
             raise TypeError('Element should be <w>.')
 
-    # def __str__(self) -> str:
-        
-    #     from .expan import Expan
+    @property
+    def leiden_form(self) -> str:
+        from .expan import Expan
+        from .num import Num
+        from .surplus import Surplus
+        from .hi import Hi
 
-    #     element_classes: dict[str, type] = {
-    #         'expan': Expan
-    #     }
+        element_classes: dict[str, type] = {
+            'expan': Expan,
+            'num': Num,
+            'surplus': Surplus,
+            'hi': Hi
+        }
         
-    #     return leiden_str_from_children(self.e, element_classes, 'node')
-    
+        return leiden_str_from_children(
+            self.e, 
+            element_classes, 
+            'node'
+        )
+
     @property
     def normalized_form(self) -> str:
         from .expan import Expan
@@ -41,4 +51,8 @@ class W(EpiDocElement):
             'hi': Hi
         }
         
-        return normalized_str_from_children(self.e, element_classes, 'node')
+        return normalized_str_from_children(
+            self.e, 
+            element_classes, 
+            'node'
+        )
