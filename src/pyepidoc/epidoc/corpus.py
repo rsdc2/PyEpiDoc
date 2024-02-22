@@ -368,6 +368,17 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(docs)
 
+    def filter_by_role_name(
+        self, 
+        role_names: list[str],
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection
+    ) -> EpiDocCorpus:
+        docs = [doc for doc in self.docs
+            if set_relation(set(role_names), set(doc.role_names))]
+
+        return EpiDocCorpus(docs)
+
+
     def filter_by_textclass(
         self, 
         textclasses: list[str | TextClass], 
