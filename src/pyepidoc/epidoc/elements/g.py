@@ -17,11 +17,16 @@ class G(EpiDocElement):
         if self.localname != 'g':
             raise TypeError('Element should be <g>.')
 
+    def __str__(self) -> str:
+        return self.leiden_form
+
+    @property
+    def ref(self) -> str:
+        return self.get_attrib('ref') or ''    
+
     @property
     def leiden_form(self) -> str:
-        # return ' · '
         return ' ' + self.text_desc_compressed_whitespace + ' '
-
 
     @property
     def normalized_form(self) -> str:

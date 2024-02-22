@@ -6,7 +6,7 @@ from ..utils import (
 )
 
 
-class RoleName(EpiDocElement):
+class PersName(EpiDocElement):
     """
     Provides services for abbreviation expansions 
     given in <roleName> elements.
@@ -18,11 +18,11 @@ class RoleName(EpiDocElement):
 
         self._e = e
 
-        if self.localname != 'roleName':
-            raise TypeError('Element should be <roleName>.')
+        if self.localname != 'persName':
+            raise TypeError('Element should be <persName>.')
 
     def __repr__(self) -> str:
-        return f'RoleName({self.leiden_form}, type: "{self.role_type}", subtype: "{self.role_subtype})'
+        return f'PersName({self.leiden_form}, type: "{self.pers_name_type}")'
 
     @property
     def leiden_form(self) -> str:
@@ -75,9 +75,5 @@ class RoleName(EpiDocElement):
         )
     
     @property
-    def role_type(self) -> str:
+    def pers_name_type(self) -> str:
         return self.get_attrib("type") or ""
-    
-    @property
-    def role_subtype(self) -> str:
-        return self.get_attrib("subtype") or ""

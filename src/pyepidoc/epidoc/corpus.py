@@ -19,8 +19,10 @@ from .element import EpiDocElement
 from .token import Token
 from .elements.expan import Expan
 from .elements.name import Name
+from .elements.g import G
 from .enums import TextClass
 from .elements.role_name import RoleName
+from .elements.pers_name import PersName
 from pyepidoc.shared.classes import SetRelation
 
 from ..shared import maxone, top
@@ -244,6 +246,25 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(inpt=docs)
 
+    def filter_by_g_ref(
+        self,
+        g_refs: list[str],
+        set_relation: Callable[[set, set], bool]=SetRelation.intersection
+    ) -> EpiDocCorpus:
+        
+        def _filter_by_rolename(doc: EpiDoc) -> bool:
+            doc_g_refs = map(
+                lambda g: g.ref, 
+                doc.gs
+            )
+            if set_relation(set(g_refs), set(doc_g_refs)):
+                return True
+            
+            return False
+
+        docs = filter(_filter_by_rolename, self.docs)
+        return EpiDocCorpus(list(docs))
+
     def filter_by_has_gap(
         self,
         has_gap=False,
@@ -409,26 +430,25 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(docs)
 
-    def filter_by_role_name(
-        self, 
-        role_names: list[str],
+    def filter_by_pers_name_type(
+        self,
+        pers_name_types: list[str],
         set_relation: Callable[[set, set], bool]=SetRelation.intersection
     ) -> EpiDocCorpus:
-
-        def _filter_by_rolename(doc: EpiDoc) -> bool:
-            doc_role_names = map(
-                lambda rolename: rolename.text_desc, 
-                doc.role_names
+        
+        def _filter_by_pers_name(doc: EpiDoc) -> bool:
+            doc_pers_name_types = map(
+                lambda pers_name: pers_name.pers_name_type, 
+                doc.pers_names
             )
-            if set_relation(set(role_names), set(doc_role_names)):
+            if set_relation(set(pers_name_types), set(doc_pers_name_types)):
                 return True
             
             return False
 
-        docs = filter(_filter_by_rolename, self.docs)
-
+        docs = filter(_filter_by_pers_name, self.docs)
         return EpiDocCorpus(list(docs))
-    
+
     def filter_by_role_name_subtype(
         self,
         role_name_subtypes: list[str],
@@ -448,18 +468,18 @@ class EpiDocCorpus:
         docs = filter(_filter_by_rolename, self.docs)
         return EpiDocCorpus(list(docs))
 
-    def filter_by_role_type(
+    def filter_by_role_name_type(
         self,
         role_types: list[str],
         set_relation: Callable[[set, set], bool]=SetRelation.intersection
     ) -> EpiDocCorpus:
         
         def _filter_by_rolename(doc: EpiDoc) -> bool:
-            doc_role_types = map(
+            doc_role_name_types = map(
                 lambda rolename: rolename.role_type, 
                 doc.role_names
             )
-            if set_relation(set(role_types), set(doc_role_types)):
+            if set_relation(set(role_types), set(doc_role_name_types)):
                 return True
             
             return False
@@ -488,6 +508,10 @@ class EpiDocCorpus:
     @property
     def formatted_text(self) -> str:
         return ''.join([doc.formatted_text for doc in self.docs])          
+
+    @property
+    def gs(self) -> list[G]:
+        return list(chain(*[doc.gs for doc in self.docs]))
 
     def get_doc_by_id(self, id:str) -> Optional[EpiDoc]:
         docs = self.filter_by_ids([id]).docs
@@ -576,6 +600,10 @@ class EpiDocCorpus:
     @property
     def names(self) -> list[Name]:
         return list(chain(*[doc.names for doc in self.docs]))
+
+    @property
+    def pers_names(self) -> list[PersName]:
+        return list(chain(*[doc.pers_names for doc in self.docs]))
 
     @cached_property
     def prefix(self) -> str:

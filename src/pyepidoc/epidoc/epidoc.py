@@ -25,6 +25,8 @@ from .element import EpiDocElement, BaseElement
 from .elements.edition import Edition
 from .elements.ab import Ab
 from .elements.name import Name
+from .elements.pers_name import PersName
+from .elements.g import G
 from .elements.role_name import RoleName
 from .elements.expan import Expan
 from .enums import (
@@ -265,6 +267,15 @@ class EpiDoc(DocRoot):
     @property
     def forms(self) -> set[str]:
         return set([str(word) for word in self.tokens_no_nested])
+
+    @property
+    def gs(self) -> list[G]:
+        edition = self.editions()[0]
+        if edition is None:
+            return []
+        
+        gs = map(G, edition.get_desc('g'))
+        return list(gs)
 
     @property
     def gaps(self) -> list[EpiDocElement]:
@@ -510,6 +521,23 @@ class EpiDoc(DocRoot):
             return 'None'
         
         return str(result)
+
+    @property
+    def pers_names(self) -> list[PersName]:
+        if self.editions() == []:
+            return []
+        
+        pers_name_elems = (self
+            .editions()[0]
+            .get_desc_elems_by_name('persName')
+        )
+        
+        pers_names = map(
+            lambda elem: PersName(elem.e), 
+            pers_name_elems
+        )
+    
+        return list(pers_names)
 
     @property
     def prefix(self) -> str:

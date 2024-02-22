@@ -67,7 +67,7 @@ def test_filter_rolenames():
     """
 
     corpus = EpiDocCorpus(inpt=corpus_role_name_folderpath)
-    filtered_corpus = corpus.filter_by_role_type(
+    filtered_corpus = corpus.filter_by_role_name_type(
         ['supracivic']
     ).filter_by_role_name_subtype(['imperator'])
     assert filtered_corpus.doc_count == 2
