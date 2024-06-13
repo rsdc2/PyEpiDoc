@@ -835,6 +835,13 @@ class EpiDoc(DocRoot):
         return self.tokens_no_nested
 
     @property
+    def tokens_list_str(self) -> list[str]:
+        """
+        :return: tokens as a list of strings
+        """
+        return [str(token) for token in self.tokens]
+
+    @property
     def tokens_incl_nested(self) -> list[Token]:
         """
         :return: a list of all the tokens in the document, 
