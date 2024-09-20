@@ -25,6 +25,7 @@ from ..shared.constants import TEINS, XMLNS
 from .baseelement import BaseElement
 from .errors import handle_xmlsyntaxerror
 
+
 class DocRoot:  
     _roottree: _ElementTree  
     _e: _Element
@@ -61,9 +62,11 @@ class DocRoot:
                 raise FileExistsError(f'File {inpt.absolute()} does not exist')
             self._e = self._load_e_from_file(inpt)
             return
+        
         elif isinstance(inpt, _ElementTree):
             self._e = inpt.getroot()
             return
+        
         elif isinstance(inpt, str):
             self._p = p = Path(inpt)
             if not p.exists():
@@ -365,7 +368,9 @@ class DocRoot:
         schematron = isoschematron.Schematron(schematron_doc)
         return schematron.validate(self.roottree)
 
-    def validate_by_relaxng(self, relax_ng_path: Path | str) -> tuple[bool, str]:
+    def validate_by_relaxng(
+            self, 
+            relax_ng_path: Path | str) -> tuple[bool, str]:
         """
         Validates the EpiDoc file against a RelaxNG schema. 
         Runs the lxml xinclude method to include any modular elements, 

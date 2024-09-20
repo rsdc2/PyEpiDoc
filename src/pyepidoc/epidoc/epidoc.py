@@ -1,5 +1,10 @@
 from __future__ import annotations
-from typing import Optional, Literal, overload
+from typing import (
+    Optional, 
+    Literal, 
+    overload,
+    Callable
+)
 from lxml.etree import (
     _Element, 
     _ElementTree
@@ -22,19 +27,21 @@ from pyepidoc.shared.types import Base
 from .token import Token
 from .errors import TEINSError, EpiDocValidationError
 from .element import EpiDocElement, BaseElement
-from .elements.edition import Edition
+
 from .elements.ab import Ab
+from .elements.body import Body
+from .elements.edition import Edition
 from .elements.name import Name
 from .elements.pers_name import PersName
 from .elements.g import G
 from .elements.num import Num
 from .elements.role_name import RoleName
 from .elements.expan import Expan
+from .elements.w import W
 from .enums import (
     SpaceUnit,
     AbbrType
 )
-
 
 
 class EpiDoc(DocRoot):
@@ -128,6 +135,16 @@ class EpiDoc(DocRoot):
         return elem.text
 
     @property
+    def body(self) -> Body:
+        
+        body = maxone(self.get_desc(['body']))
+
+        if body is None:
+            raise ValueError('No body element found.')
+        
+        return Body(body)
+
+    @property
     def commentary(self) -> list[_Element]:
         return self.get_div_descendants_by_type('commentary')
 
@@ -154,6 +171,15 @@ class EpiDoc(DocRoot):
             edition.convert_words_to_names()
         
         return self
+    
+    def create_lemmatized_edition(self) -> Edition:
+
+        """
+        Add a new edition to the document, containing the text
+        of all the tokens with lemmata
+        """
+
+        
 
     @property
     def date(self) -> Optional[int]:
@@ -207,7 +233,9 @@ class EpiDoc(DocRoot):
     @property
     def div_langs(self) -> set[str]:
 
-        """Used by I.Sicily to host language information."""
+        """
+        Used by I.Sicily to host language information.
+        """
         
         textpart_langs = [textpart.lang 
             for edition in self.editions()
@@ -221,18 +249,22 @@ class EpiDoc(DocRoot):
 
         return set(combined)
     
+    def edition_by_subtype(self, subtype: str) -> Edition | None:
+        
+        """
+        Return an edition according to the subtype given in the 
+        subtype parameter, if it exists; else None.
+        """
+
+        return self.body.edition_by_subtype(subtype)
+
     def editions(self, include_transliterations=False) -> list[Edition]:
-        editions = [Edition(edition) 
-            for edition in self.get_div_descendants_by_type('edition')]
 
-        if include_transliterations:
-            return editions
+        """
+        Return a list of Edition elements
+        """
 
-        else:
-            return listfilter(
-                lambda edition: edition.subtype != 'transliteration', 
-                editions
-            )
+        return self.body.editions(include_transliterations)
 
     @property
     def expans(self) -> list[Expan]:
@@ -271,6 +303,11 @@ class EpiDoc(DocRoot):
 
     @property
     def gs(self) -> list[G]:
+
+        """
+        Return a list of <g> (= divider) elements
+        """
+
         edition = self.editions()[0]
         if edition is None:
             return []
@@ -428,6 +465,22 @@ class EpiDoc(DocRoot):
             return self.lang_usages
 
         return langs
+    
+    def lemmatize(
+            self, 
+            lemmatize: Callable[[str], str]
+        ):
+
+        """
+        Lemmatize all the <w> elements in 
+        the EpiDoc document.
+        """
+
+        if self.edition_by_subtype('simple-lemmatised') is None:
+            pass
+
+        for w in self.w_tokens:
+            w.lemma = lemmatize(w.text)
 
     @property
     def mainlang(self) -> Optional[str]:

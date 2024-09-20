@@ -530,6 +530,11 @@ class BaseElement(Showable):
     @property
     def tag(self) -> Tag:
 
+        """
+        Return the element tag as a nemedtuple
+        (namespace, name).
+        """
+
         if isinstance(self._e, _Comment):
             return Tag("", "Comment")
 

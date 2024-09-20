@@ -10,7 +10,8 @@ from typing import (
     TypeVar, 
     Optional, 
     Sequence,
-    Iterable
+    Iterable, 
+    Callable
 )
 
 from functools import reduce
@@ -45,13 +46,22 @@ def flatten(xd_list:Sequence[Sequence[T]]) -> Sequence[T]:
     Flattens list to one dimension.
     """
 
-    def reduce_list(acc:Sequence[T], l:Sequence[T]) -> Sequence[T]: 
+    def reduce_list(acc: Sequence[T], l: Sequence[T]) -> Sequence[T]: 
         return list(acc) + list(l)
 
     return reduce(reduce_list, xd_list, [])
 
-def listfilter(func, iterable:Iterable[T]) -> list[T]:
-    return list(filter(func, iterable))
+
+def listfilter(
+        predicate: Callable[[T], bool], 
+        iterable: Iterable[T]) -> list[T]:
+    
+    """
+    Filter an iterable according to a predicate, and 
+    return the result as a list.
+    """
+
+    return list(filter(predicate, iterable))
 
 
 def top(l:Sequence[T], length:Optional[int]=10) -> Sequence[T]:
