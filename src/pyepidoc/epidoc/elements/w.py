@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from lxml.etree import _Element
 from ..element import EpiDocElement
 from ..utils import leiden_str_from_children, normalized_str_from_children
@@ -41,6 +43,25 @@ class W(EpiDocElement):
         )
 
     @property
+    def lemma(self) -> str | None:
+        """
+        Return the lemma of the <w> element.
+        """
+        return self.get_attrib('lemma')
+    
+    @lemma.setter
+    def lemma(self, value: str) -> None:
+        
+        """
+        Set the @lemma attribute on the <w> element.
+        """
+
+        if not isinstance(value, str):
+            raise TypeError(f'Cannot set attribute on {self} because lemma value is not a string.')
+        
+        self.lemma = value
+
+    @property
     def normalized_form(self) -> str:
         from .expan import Expan
         from .num import Num
@@ -59,3 +80,4 @@ class W(EpiDocElement):
             element_classes, 
             'node'
         )
+    
