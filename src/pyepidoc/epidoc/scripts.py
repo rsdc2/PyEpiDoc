@@ -55,6 +55,6 @@ def set_ids(
         doc.set_ids()
 
         doc.convert_ws_to_names()
-        doc.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
+        doc.prettify_editions(spaceunit=SpaceUnit.Space, number=4)
 
         doc.to_xml_file(dst.absolute())

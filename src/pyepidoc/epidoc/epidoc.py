@@ -182,18 +182,19 @@ class EpiDoc(DocRoot):
         """
 
         # Check no lemmatized editions already
-        lemmatized_edition = self.edition_by_subtype('simple-lemmatized')
+        lemmatized_edition = self.body.edition_by_subtype('simple-lemmatized')
         if lemmatized_edition is not None:
             raise ValueError('Lemmatized edition already present.')
 
         # Create edition if it does not exist
-        self.body.add_edition('simple-lemmatized')
+        self.body.create_edition('simple-lemmatized')
         edition = self.body.edition_by_subtype('simple-lemmatized')
 
         # Raise an error if could not be created
         if edition is None:
             raise TypeError('Failed to create a simple lemmatized edition.')
         
+        self.prettify_editions()
         return edition
 
     @property
@@ -626,7 +627,7 @@ class EpiDoc(DocRoot):
         
         return ""
 
-    def prettify_edition(
+    def prettify_editions(
         self, 
         spaceunit=SpaceUnit.Space, 
         number=4, 
@@ -890,7 +891,7 @@ class EpiDoc(DocRoot):
             self.set_ids(100)
             
         if prettify_edition:
-            self.prettify_edition(spaceunit=SpaceUnit.Space, number=4)
+            self.prettify_editions(spaceunit=SpaceUnit.Space, number=4)
 
         return self
 

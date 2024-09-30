@@ -1,12 +1,12 @@
+import pytest
+from pathlib import Path
+from lxml import etree
+
+from pyepidoc.shared.file import remove_file
 from pyepidoc.epidoc.scripts import tokenize
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.elements.ab import Ab
 from pyepidoc.xml.utils import abify
-
-import os
-import pytest
-from pathlib import Path
-from lxml import etree
 
 
 tests = [
@@ -69,15 +69,7 @@ tests = [
 
 
 
-def remove_file(filepath: str):
 
-    try:
-        tokenized_f = Path(filepath)
-        if tokenized_f.exists():
-            os.remove(tokenized_f.absolute())
-
-    except FileExistsError:
-        pass
 
 
 def get_path_vars(tokenize_type:str) -> tuple[str, str, str, str, str, str]:

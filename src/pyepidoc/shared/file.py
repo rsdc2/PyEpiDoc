@@ -2,6 +2,7 @@ from __future__ import annotations
 from enum import Enum
 from collections import namedtuple
 from pathlib import Path
+import os
 
 FilePath = namedtuple('FilePath', ['folderpath', 'filename'])
 
@@ -24,3 +25,14 @@ def str_to_file(s: str, filepath: str):
 
     with open(fp, mode='w') as f:
         f.write(s)
+
+
+def remove_file(filepath: str):
+
+    try:
+        tokenized_f = Path(filepath)
+        if tokenized_f.exists():
+            os.remove(tokenized_f.absolute())
+
+    except FileExistsError:
+        pass

@@ -14,6 +14,7 @@ env39*
 test.py
 examples/ISic000032_tokenized.xml
 **/tokenized_output/*.xml
+**/lemmatized/*.xml
 todo.md
 data
 resources.md
