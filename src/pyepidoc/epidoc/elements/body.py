@@ -1,11 +1,21 @@
 
 from __future__ import annotations
 
+from lxml import etree
 from lxml.etree import _Element
 
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.epidoc.elements.edition import Edition
+
+from pyepidoc.xml.namespace import Namespace as ns
+
+from pyepidoc.shared.constants import (A_TO_Z_SET, 
+                         TEINS, 
+                         XMLNS, 
+                         SubsumableRels,
+                         ROMAN_NUMERAL_CHARS,
+                         VALID_BASES)
 
 from pyepidoc.shared.utils import maxone, listfilter
 from typing import Optional
@@ -23,12 +33,29 @@ class Body(EpiDocElement):
     ) -> None:
         
         super().__init__(e, False)
-        
-        if e.tag.name != 'body':
+        body_tag = ns.give_ns('body', TEINS)
+
+        if e.tag != body_tag:
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self.tag}> element.')
         
     
+    def add_edition(self, subtype: str) -> Edition:
+
+        """
+        Add an edition of the specified subtype to the Body
+        """
+
+        edition_elem = etree.Element(
+            ns.give_ns('div', TEINS), 
+            {'type': 'edition', 'subtype': subtype},
+            None
+        )
+        
+        new_edition = Edition(edition_elem)
+        self._e.append(edition_elem)
+        return new_edition
+
     def edition_by_subtype(self, subtype: str) -> Edition | None:
 
         """

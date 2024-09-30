@@ -176,10 +176,25 @@ class EpiDoc(DocRoot):
 
         """
         Add a new edition to the document, containing the text
-        of all the tokens with lemmata
+        of all the tokens with lemmata.
+        Raises an error if the edition already exists, or
+        if the edition could not be created.
         """
 
+        # Check no lemmatized editions already
+        lemmatized_edition = self.edition_by_subtype('simple-lemmatized')
+        if lemmatized_edition is not None:
+            raise ValueError('Lemmatized edition already present.')
+
+        # Create edition if it does not exist
+        self.body.add_edition('simple-lemmatized')
+        edition = self.body.edition_by_subtype('simple-lemmatized')
+
+        # Raise an error if could not be created
+        if edition is None:
+            raise TypeError('Failed to create a simple lemmatized edition.')
         
+        return edition
 
     @property
     def date(self) -> Optional[int]:

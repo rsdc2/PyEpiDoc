@@ -3,7 +3,7 @@ from pyepidoc.epidoc.elements.w import W
 
 
 def test_set_lemma():
-    path = 'epidoc/elements/files/'
+    path = 'epidoc/elements/files/unlemmatized/'
 
     doc = EpiDoc(path + 'lemmatize.xml')
     ws = doc.w_tokens
