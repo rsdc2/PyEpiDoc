@@ -12,7 +12,7 @@ def test_create_lemmatized_edition():
     """
     
     # Remove a pre-existing file
-    remove_file(unlemmatized_path + 'lemmatized_edition.xml')
+    remove_file(lemmatized_path + 'lemmatized_edition.xml')
     
     # Create the edition
     doc = EpiDoc(unlemmatized_path + 'lemmatize.xml')
@@ -32,6 +32,7 @@ def test_copy_edition_content():
     Tests that can copy the elements of an edition 
     to another edition element
     """
+    remove_file(lemmatized_path + 'lemmatized.xml')
 
     # Get the doc
     doc = EpiDoc(unlemmatized_path + 'lemmatize.xml')

@@ -14,7 +14,7 @@ def test_set_lemma():
     of a token element
     """
 
-    remove_file(unlemmatized_path + 'lemmatized.xml')
+    remove_file(lemmatized_path + 'lemmatized.xml')
 
     doc = EpiDoc(unlemmatized_path + 'lemmatize.xml')
     ws = doc.w_tokens
