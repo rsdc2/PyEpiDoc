@@ -39,7 +39,9 @@ class BaseElement(Showable):
     _e: _Element
 
     def __eq__(self, other) -> bool:
-        if type(other) is not BaseElement and not issubclass(type(other), BaseElement):
+        if type(other) is not BaseElement \
+            and not issubclass(type(other), BaseElement):
+
             return False
         
         return self.id_internal == other.id_internal
@@ -502,6 +504,16 @@ class BaseElement(Showable):
 
         return [BaseElement(sib) for sib in prev_sibs 
                 if type(sib) is _Element]
+
+    def remove_children(self) -> BaseElement:
+        """
+        Remove all children, but keep all other properties the same
+        """
+
+        for child in self.child_elements:
+            self._e.remove(child._e)
+
+        return self
 
     @property
     def root(self) -> BaseElement:
