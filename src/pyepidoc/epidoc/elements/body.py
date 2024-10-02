@@ -70,6 +70,7 @@ class Body(EpiDocElement):
             for child in source_elem.child_elements:
                 if tags_to_include is None or child.tag.name in tags_to_include:
                     child_for_target = EpiDocElement(deepcopy(child._e))
+                    child_for_target.remove_children()
                     target_elem._e.append(child_for_target._e)
                     append_children(EpiDocElement(child), child_for_target)
 
