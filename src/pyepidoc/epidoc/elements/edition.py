@@ -14,6 +14,7 @@ from pyepidoc.shared.constants import XMLNS
 from pyepidoc.shared import default_str
 from pyepidoc.shared.types import Base
 from pyepidoc.shared.classes import SetRelation
+from pyepidoc.shared.utils import maxone
 
 from .. import ids
 from ..element import EpiDocElement
@@ -377,14 +378,18 @@ class Edition(EpiDocElement):
         return [TextPart(part) 
                 for part in self.get_div_descendants('textpart')]
 
-    def tokenize(self) -> Optional[Edition]:
-        for ab in self.abs:
-            ab.tokenize()   
+    def token_by_id(self, id: str) -> Token | None:
 
-        for l in self.ls:
-            l.tokenize()
+        """
+        Return the token with the specified ID. Returns None
+        if not found. Raises an error if more than one token 
+        is found with the same ID.
+        """
 
-        return self
+        result = [token for token in self.tokens_incl_nested
+                  if token.id_xml == id]
+        
+        return maxone(result, None, True)
 
     @property
     def tokens_incl_nested(self) -> list[Token]:
@@ -438,6 +443,15 @@ class Edition(EpiDocElement):
     @property
     def tokens_normalized_str(self) -> str:
         return ' '.join(self.tokens_normalized_list_str)
+
+    def tokenize(self) -> Optional[Edition]:
+        for ab in self.abs:
+            ab.tokenize()   
+
+        for l in self.ls:
+            l.tokenize()
+
+        return self
 
     @property
     def w_tokens(self) -> list[Token]:

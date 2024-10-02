@@ -265,11 +265,14 @@ class EpiDoc(DocRoot):
 
         return set(combined)
     
-    def edition_by_subtype(self, subtype: str) -> Edition | None:
+    def edition_by_subtype(self, subtype: str | None) -> Edition | None:
         
         """
         Return an edition according to the subtype given in the 
-        subtype parameter, if it exists; else None.
+        subtype parameter, if it exists; else None. 
+
+        :param subtype: the subtype of the edition to be found.
+        If None, attempts to return the main edition.
         """
 
         return self.body.edition_by_subtype(subtype)
@@ -494,17 +497,36 @@ class EpiDoc(DocRoot):
 
         :param lemmatize: a function with one parameter,
         the form needing lemmatization, returning the 
-        lemma
+        lemma.
 
         :param where: where to put the lemmatized version,
         either on a separate <div> or on the main <div>.
         """
 
-        if where == 'separate':
-            if self.edition_by_subtype('simple-lemmatized') is None:
-                self.create_lemmatized_edition()
+        main_edition = self.edition_by_subtype(None)
+        if main_edition is None:
+            raise ValueError('No main edition could be found.')
 
-        for w in self.w_tokens:
+        if where == 'separate':
+            # Create a separate lemmatized edition if not already
+            # present
+            if self.edition_by_subtype('simple-lemmatized') is None:
+                
+                lemmatized_edition = self.create_lemmatized_edition()
+                self.body.copy_edition_content(
+                    main_edition, 
+                    lemmatized_edition,
+                    tags_to_include=['div', 'ab', 'w']
+                )
+
+            edition = lemmatized_edition
+        elif where == 'main':
+            edition = main_edition
+        else:
+            raise TypeError(
+                f'Invalid destination for lemmatized items: {where}')
+
+        for w in edition.w_tokens:
             w.lemma = lemmatize(w.text)
 
     @property

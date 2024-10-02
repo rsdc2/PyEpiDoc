@@ -1,6 +1,7 @@
 from typing import Callable
 from pyepidoc import EpiDoc
-from pyepidoc.shared.file import remove_file
+from pyepidoc.shared.file import remove_file 
+from pyepidoc.shared.testing import save_and_reload
 
 unlemmatized_path = 'epidoc/elements/files/unlemmatized/'
 lemmatized_path = 'epidoc/elements/files/lemmatized/'
@@ -23,8 +24,7 @@ def test_lemmatize_on_main_edition():
     doc.lemmatize(dummy_lemmatizer, 'main')
 
     # Check correct
-    doc.to_xml_file(lemmatized_path + filename)
-    doc_ = EpiDoc(lemmatized_path + filename)
+    doc_ = save_and_reload(doc, lemmatized_path + filename)
     edition_ = doc_.body.edition_by_subtype(None)
 
     assert edition_ is not None
@@ -46,8 +46,7 @@ def test_lemmatize_on_separate_edition():
     doc.to_xml_file(lemmatized_path + filename)
 
     # Check correct
-    doc.to_xml_file(lemmatized_path + filename)
-    doc_ = EpiDoc(lemmatized_path + filename)
+    doc_ = save_and_reload(doc, lemmatized_path + filename)
     edition_ = doc_.body.edition_by_subtype('simple-lemmatized')
 
     assert edition_ is not None

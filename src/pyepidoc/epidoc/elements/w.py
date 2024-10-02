@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from lxml.etree import _Element
 from ..element import EpiDocElement
-from ..utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 
 
 class W(EpiDocElement):
