@@ -61,6 +61,11 @@ class Body(EpiDocElement):
         def append_children(
                 source_elem: EpiDocElement, 
                 target_elem: EpiDocElement):
+            
+            """
+            Recursive function appending children of elements
+            to the new Edition
+            """
 
             for child in source_elem.child_elements:
                 if tags_to_include is None or child.tag.name in tags_to_include:
