@@ -42,45 +42,43 @@ class Body(EpiDocElement):
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self.tag}> element.')
 
-    def copy_edition_content(
+    def copy_edition_ws(
             self,
             source: Edition,
-            target: Edition,
-            tags_to_include: list[str] | None = None
+            target: Edition
     ) -> Edition:
         
         """
-        Copies the elements from one edition to another within
+        Copies the <w> elements from one edition to another within
         the body, and returns a reference the edition 
         receiving the new information.
 
         :param tags_to_include: a list of tag names (no namespaces)
         to include in the copy. If this is None, all elements are copied.
         """
+        indent = 4 * '\t'
 
-        def append_children(
+        def append_ws(
                 source_elem: EpiDocElement, 
                 target_elem: EpiDocElement):
             
             """
             Recursive function appending children of elements
-            to the new Edition
+            to the new Edition.
             """
 
-            for child in source_elem.child_elements:
-                if tags_to_include is None or child.tag.name in tags_to_include:
-                    child_for_target = EpiDocElement(deepcopy(child._e))
-                    child_for_target.remove_children()
-                    target_elem._e.append(child_for_target._e)
-                    append_children(EpiDocElement(child), child_for_target)
-                else: # i.e. tag to be excluded
-                    # Add the text content
-                    if len(target_elem.child_elems) == 0:
-                        target_elem.text = target_elem.text + child.text
-                    else:
-                        target_elem.child_elements[-1].tail = child.text
+            for desc_elem in source_elem.desc_elems:
+                
+                if desc_elem.tag.name == 'w':
+                    desc_for_target = EpiDocElement(deepcopy(desc_elem._e))
+                    desc_for_target.remove_children()
+                    desc_for_target.text = desc_elem.text_desc
+                    desc_for_target.tail = '\n' + indent
+                    target_elem._e.append(desc_for_target._e)
 
-        append_children(source, target)
+        target.text = '\n' + indent
+        append_ws(source, target)
+        target.child_elements[-1].tail = '\n' + 3 * '\t'
         return target
 
     def create_edition(
@@ -104,6 +102,8 @@ class Body(EpiDocElement):
         )
         
         new_edition = Edition(edition_elem)
+        new_edition.tail = '\n' + 2 * '\t'
+        self.children[-1].tail = (self.children[-1].tail or '') + '\n' + 3 * '\t'
         self._e.append(edition_elem)
         return new_edition
 

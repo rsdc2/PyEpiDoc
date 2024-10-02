@@ -1,4 +1,7 @@
 from typing import Callable
+
+import pytest
+
 from pyepidoc import EpiDoc
 from pyepidoc.shared.file import remove_file 
 from pyepidoc.shared.testing import save_and_reload
@@ -32,7 +35,16 @@ def test_lemmatize_on_main_edition():
     assert edition_.w_tokens[0].lemma == 'lemma'
 
 
-def test_lemmatize_on_separate_edition():
+unlemmatized_filenames = [
+    'unlemmatized.xml',
+    'unlemmatized_full.xml'] 
+
+@pytest.mark.parametrize(
+        "unlemmatized_filename", 
+        unlemmatized_filenames)
+def test_lemmatize_on_separate_edition(
+    unlemmatized_filename: str
+):
 
     """
     Test that calling the `lemmatize` method 
@@ -43,7 +55,7 @@ def test_lemmatize_on_separate_edition():
     filename = 'lemmatized_separate_edition_with_dummy.xml'
     remove_file(lemmatized_path + filename)
 
-    doc = EpiDoc(unlemmatized_path + 'unlemmatized.xml')
+    doc = EpiDoc(unlemmatized_path + unlemmatized_filename)
     doc.lemmatize(dummy_lemmatizer, 'separate')
     doc.to_xml_file(lemmatized_path + filename)
 
@@ -53,3 +65,4 @@ def test_lemmatize_on_separate_edition():
 
     assert edition_ is not None
     assert edition_.w_tokens[0].lemma == 'lemma'
+

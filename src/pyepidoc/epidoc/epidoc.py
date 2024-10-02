@@ -513,10 +513,9 @@ class EpiDoc(DocRoot):
             if self.edition_by_subtype('simple-lemmatized') is None:
                 
                 lemmatized_edition = self.create_lemmatized_edition()
-                self.body.copy_edition_content(
+                self.body.copy_edition_ws(
                     main_edition, 
-                    lemmatized_edition,
-                    tags_to_include=['div', 'ab', 'w']
+                    lemmatized_edition
                 )
 
             edition = lemmatized_edition

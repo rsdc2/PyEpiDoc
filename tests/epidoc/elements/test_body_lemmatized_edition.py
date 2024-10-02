@@ -37,7 +37,7 @@ def test_copy_edition_content():
     to another edition element
     """
 
-    filename = 'lemmatized_edition_with_content.xml'
+    filename = 'lemmatized_edition_with_content_no_lemmas.xml'
     remove_file(lemmatized_path + filename)
 
     # Get the doc
@@ -51,7 +51,7 @@ def test_copy_edition_content():
     target = doc.body.create_edition('simple-lemmatized')
 
     # Copy the edition content
-    doc.body.copy_edition_content(source, target)
+    doc.body.copy_edition_ws(source, target)
 
     # Check edition content copied correctly
     doc_ = save_and_reload(
@@ -63,25 +63,12 @@ def test_copy_edition_content():
     assert new_target_edition is not None
     assert new_source_edition is not None
 
-    assert len(new_source_edition.desc_elems) == \
-        len(new_target_edition.desc_elems)
+    assert len(new_target_edition.desc_elems) == 1
     
 
-tags_to_include_list = [
-    ([], 0),
-    (['ab', 'w'], 2)
-]
+def test_copy_edition_content_parametrized_no_lemmas():
 
-
-@pytest.mark.parametrize(
-        "tags_to_include_with_count", 
-        tags_to_include_list)
-def test_copy_edition_content_parametrized(
-    tags_to_include_with_count: tuple[list[str], int]):
-
-    tags_to_include, count = tags_to_include_with_count
-
-    filename = 'lemmatized_edition_with_content_parametrized.xml'
+    filename = 'lemmatized_edition_with_content_parametrized_no_lemmas.xml'
     remove_file(lemmatized_path + filename)
 
     # Get the doc
@@ -95,10 +82,9 @@ def test_copy_edition_content_parametrized(
     target = doc.body.create_edition('simple-lemmatized')
 
     # Copy the edition content
-    doc.body.copy_edition_content(
+    doc.body.copy_edition_ws(
         source, 
-        target,
-        tags_to_include)
+        target)
 
     # Check edition content copied correctly
     doc_ = save_and_reload(
@@ -111,4 +97,4 @@ def test_copy_edition_content_parametrized(
     assert new_target_edition is not None
     assert new_source_edition is not None
 
-    assert len(new_target_edition.desc_elems) == count
+    assert len(new_target_edition.desc_elems) == 1
