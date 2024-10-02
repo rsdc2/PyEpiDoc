@@ -7,8 +7,8 @@ from typing import (
     overload
 )
 
-from ..shared.classes import Showable, ExtendableSeq
-from ..xml.baseelement import BaseElement
+from pyepidoc.shared.classes import Showable, ExtendableSeq
+from pyepidoc.xml.baseelement import BaseElement
 
 from copy import deepcopy
 from functools import reduce, cached_property
@@ -23,15 +23,15 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from ..xml.namespace import Namespace as ns
+from pyepidoc.xml.namespace import Namespace as ns
 
-from ..shared.constants import (A_TO_Z_SET, 
+from pyepidoc.shared.constants import (A_TO_Z_SET, 
                          TEINS, 
                          XMLNS, 
                          SubsumableRels,
                          ROMAN_NUMERAL_CHARS,
                          VALID_BASES)
-from ..shared.types import Base
+from pyepidoc.shared.types import Base
 
 from .enums import (
     whitespace, 
@@ -42,7 +42,7 @@ from .enums import (
     AlwaysSubsumable
 )
 from . import ids
-from ..shared import maxoneT, head, last, to_lower
+from pyepidoc.shared import maxoneT, head, last, to_lower
 
 
 def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
