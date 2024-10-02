@@ -15,7 +15,7 @@ def test_create_lemmatized_edition():
     remove_file(lemmatized_path + 'lemmatized_edition.xml')
     
     # Create the edition
-    doc = EpiDoc(unlemmatized_path + 'lemmatize.xml')
+    doc = EpiDoc(unlemmatized_path + 'unlemmatized.xml')
     doc.body.create_edition('simple-lemmatized')
 
     # Save and check that the edition is there
@@ -35,7 +35,7 @@ def test_copy_edition_content():
     remove_file(lemmatized_path + 'lemmatized.xml')
 
     # Get the doc
-    doc = EpiDoc(unlemmatized_path + 'lemmatize.xml')
+    doc = EpiDoc(unlemmatized_path + 'unlemmatized.xml')
 
     # Get the source (main) edition
     source = doc.body.edition_by_subtype(None)

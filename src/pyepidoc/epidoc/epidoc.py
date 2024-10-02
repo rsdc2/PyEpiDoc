@@ -484,16 +484,25 @@ class EpiDoc(DocRoot):
     
     def lemmatize(
             self, 
-            lemmatize: Callable[[str], str]
+            lemmatize: Callable[[str], str],
+            where: Literal['main', 'separate']
         ):
 
         """
         Lemmatize all the <w> elements in 
         the EpiDoc document.
+
+        :param lemmatize: a function with one parameter,
+        the form needing lemmatization, returning the 
+        lemma
+
+        :param where: where to put the lemmatized version,
+        either on a separate <div> or on the main <div>.
         """
 
-        if self.edition_by_subtype('simple-lemmatised') is None:
-            pass
+        if where == 'separate':
+            if self.edition_by_subtype('simple-lemmatized') is None:
+                self.create_lemmatized_edition()
 
         for w in self.w_tokens:
             w.lemma = lemmatize(w.text)

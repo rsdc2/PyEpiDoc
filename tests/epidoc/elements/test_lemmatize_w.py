@@ -7,7 +7,6 @@ unlemmatized_path = 'epidoc/elements/files/unlemmatized/'
 lemmatized_path = 'epidoc/elements/files/lemmatized/'
 
 
-
 def test_set_lemma():
     """
     Test that can set the lemma attribute
@@ -16,7 +15,7 @@ def test_set_lemma():
 
     remove_file(lemmatized_path + 'lemmatized.xml')
 
-    doc = EpiDoc(unlemmatized_path + 'lemmatize.xml')
+    doc = EpiDoc(unlemmatized_path + 'unlemmatized.xml')
     ws = doc.w_tokens
     w = ws[0]
     assert w.text == 'σώματος'
