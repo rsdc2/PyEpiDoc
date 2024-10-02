@@ -12,18 +12,18 @@ def test_set_lemma():
     Test that can set the lemma attribute
     of a token element
     """
-
-    remove_file(lemmatized_path + 'lemmatized.xml')
+    filename = 'lemmatized.xml'
+    remove_file(lemmatized_path + filename)
 
     doc = EpiDoc(unlemmatized_path + 'unlemmatized.xml')
     ws = doc.w_tokens
     w = ws[0]
-    assert w.text == 'σώματος'
+    assert w.text_desc == 'σώματος'
 
     w.lemma = 'σῶμα'
     
-    doc.to_xml_file(lemmatized_path + 'lemmatized.xml')
+    doc.to_xml_file(lemmatized_path + filename)
     
-    doc_ = EpiDoc(lemmatized_path + 'lemmatized.xml')
+    doc_ = EpiDoc(lemmatized_path + filename)
 
     assert doc_.w_tokens[0].lemma == 'σῶμα'

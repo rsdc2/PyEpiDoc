@@ -73,6 +73,12 @@ class Body(EpiDocElement):
                     child_for_target.remove_children()
                     target_elem._e.append(child_for_target._e)
                     append_children(EpiDocElement(child), child_for_target)
+                else: # i.e. tag to be excluded
+                    # Add the text content
+                    if len(target_elem.child_elems) == 0:
+                        target_elem.text = target_elem.text + child.text
+                    else:
+                        target_elem.child_elements[-1].tail = child.text
 
         append_children(source, target)
         return target
