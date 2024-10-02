@@ -11,6 +11,7 @@ dummy_lemmatizer: Callable[[str], str] = lambda form: 'lemma'
 
 
 def test_lemmatize_on_main_edition():
+    
     """
     Test that calling the `lemmatize` method 
     on an EpiDoc document produces a lemmatized version
@@ -32,6 +33,7 @@ def test_lemmatize_on_main_edition():
 
 
 def test_lemmatize_on_separate_edition():
+
     """
     Test that calling the `lemmatize` method 
     on an EpiDoc document produces a lemmatized version
