@@ -268,6 +268,16 @@ class EpiDoc(DocRoot):
 
         return set(combined)
     
+    @property
+    def edition_main(self) -> Edition | None:
+        
+        """
+        Return the main edition (i.e. not transliteration or
+        lemmatized edition).
+        """
+        
+        return self.body.edition_by_subtype(subtype=None)
+
     def edition_by_subtype(self, subtype: str | None) -> Edition | None:
         
         """
@@ -532,6 +542,15 @@ class EpiDoc(DocRoot):
             w.lemma = lemmatize(w.text)
 
     @property
+    def main_edition(self) -> Edition | None:
+        """
+        Return the main edition of the document, i.e. not
+        the transliteration or the lemmatized editions
+        """
+
+        return self.edition_main
+
+    @property
     def mainlang(self) -> Optional[str]:
         if self.textlang is None:
             return None
@@ -669,8 +688,8 @@ class EpiDoc(DocRoot):
 
         prettified_str: bytes = etree.tostring(
             element_or_tree=self.e,
-            xml_declaration=True,
-            pretty_print=True
+            xml_declaration=True, # type: ignore
+            pretty_print=True # type: ignore
         )
         
         parser = etree.XMLParser(
@@ -685,7 +704,7 @@ class EpiDoc(DocRoot):
 
         prettified_doc = EpiDoc(tree)
         prettified_doc.prettify_editions()
-        
+
         return prettified_doc
 
     def prettify_editions(
@@ -716,11 +735,13 @@ class EpiDoc(DocRoot):
     
     @property
     def _pyepidoc_module_path(self) -> Path:
+        
         """
         Returns the path of the pyepidoc module.
         Indended for use with obtaining the path 
         of the rng validation file.
         """
+
         return Path(inspect.getfile(pyepidoc))
     
     @property
@@ -755,12 +776,32 @@ class EpiDoc(DocRoot):
         return list(role_names)
 
     def set_ids(self, base: Base=100) -> None:
+        
         """
-        Put IDs (xml:id) on all elements of the edition,
-        in place
+        Put @xml:id on all elements of the edition,
+        in place. There are two options, using either
+        Base 52 or Base 100. Should keep any id that 
+        already exist on an element.
         """
+
         for edition in self.editions():
             edition.set_ids(base)
+
+    def set_n_ids(self, interval: int = 5) -> EpiDoc:
+        
+        """
+        Put @n on certain elements in the edition
+
+        :param interval: the interval between ids, e.g. 
+        with 5, it will be 5, 10, 15, 20 etc.
+        """
+
+        if self.main_edition is None:
+            raise ValueError('No main edition found to set'
+                             '@n ids on.')
+        
+        self.main_edition.set_n_ids(interval=interval)
+        return self
 
     def space_tokens(self) -> None:
         for edition in self.editions():
@@ -1028,3 +1069,4 @@ class EpiDoc(DocRoot):
     def w_tokens(self) -> list[Token]:
         return list(chain(*[edition.w_tokens 
                             for edition in self.editions()]))
+    

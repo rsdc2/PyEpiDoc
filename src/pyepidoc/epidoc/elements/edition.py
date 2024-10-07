@@ -287,6 +287,7 @@ class Edition(EpiDocElement):
 
     @property
     def lgs(self) -> list[Ab]:
+        
         """
         Returns all the <ab> elements in an edition 
         as a |list| of |Lg|.
@@ -297,6 +298,7 @@ class Edition(EpiDocElement):
 
     @property
     def ls(self) -> list[Ab]:
+        
         """
         Returns all the <ab> elements in an edition 
         as a |list| of |L|s.
@@ -304,6 +306,19 @@ class Edition(EpiDocElement):
 
         return [L(element._e) 
             for element in self.get_desc_elems_by_name(['l'])]
+
+    @property
+    def n_id_tokens(self) -> list[EpiDocElement]:
+        
+        """
+        Get all the tokens in the edition that should 
+        receive an `@n` id.
+        """
+
+        elems = self.get_desc_elems_by_name(
+            ['w', 'orig']
+        )
+        return list(map(EpiDocElement, elems))
 
     @property
     def no_space(self) -> list[EpiDocElement]:
@@ -320,6 +335,13 @@ class Edition(EpiDocElement):
         prettify(spaceunit=spaceunit, number=number, edition=self)
 
     def set_ids(self, base: Base=52, compress: bool=True) -> None:
+        """
+        Put @xml:id on all elements of the edition,
+        in place. There are two options, using either
+        Base 52 or Base 100. Should keep any id that 
+        already exist on an element.
+        """
+
         for i, elem in enumerate(self.text_elems, 1):
             # Find out how long the element part of the ID should be
             elem_id_length = ids.elem_id_length_from_base(base)
@@ -332,7 +354,26 @@ class Edition(EpiDocElement):
             id_xml = self.id_isic + '-' + elem_id
 
             # Set the ID, leave the compression to the element
-            elem.set_id(id_xml, base, compress)
+            elem.set_id(
+                id=id_xml, 
+                base=base, 
+                compress=compress
+            )
+
+    def set_n_ids(self, interval: int = 5) -> Edition:
+
+        """
+        Put @n on certain elements in the edition
+
+        :param interval: the interval between ids, e.g. 
+        with 5, it will be 5, 10, 15, 20 etc.
+        """
+
+        for i, elem in enumerate(self.n_id_tokens):
+            val = i * interval
+            elem.set_attrib('n', str(val))
+
+        return self
 
     def space_tokens(self) -> None:
 
@@ -456,3 +497,4 @@ class Edition(EpiDocElement):
     @property
     def w_tokens(self) -> list[Token]:
         return [Token(word) for word in self.get_desc(['w'])]
+    

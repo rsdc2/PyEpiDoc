@@ -35,7 +35,6 @@ def test_id_100_correct_compression(uncompressed, compressed, _):
     assert compress(uncompressed, 100) == compressed
 
 
-
 def generate_isic_ids(doc_ids_count: int=10, elem_ids_count: int=10):
     """
     :param doc_ids_count: Number of I.Sicily document IDs to generate

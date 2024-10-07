@@ -331,9 +331,14 @@ class BaseElement(Showable):
         raise TypeError('XPath result is of the wrong type.')
 
     def get_desc_elems_by_name(self, 
-        elem_names: Union[list[str], str], 
-        attribs: Optional[dict[str, str]]=None
+        elem_names: list[str] | str, 
+        attribs: dict[str, str] | None = None
     ) -> list[BaseElement]:
+        
+        """
+        Get all the descendant elements within a particular
+        set of names in the TEI namespace.
+        """
 
         return [BaseElement(desc) 
             for desc in self.get_desc(elemnames=elem_names, attribs=attribs)]
@@ -678,3 +683,4 @@ class BaseElement(Showable):
             return result
     
         return None
+    
