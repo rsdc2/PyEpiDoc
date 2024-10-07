@@ -1,3 +1,4 @@
+from lxml import etree
 
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.shared import head
@@ -6,6 +7,9 @@ from pyepidoc.epidoc.dom import lang, line
 import pytest
 
 relative_filepaths = {
+    'ugly': 'api/files/prettifying/ugly/ISic000552.xml',
+    'benchmark': 'api/files/prettifying/benchmark/ISic000552.xml',
+    'prettified': 'api/files/prettifying/prettified/ISic000552.xml',
     'ISic000001': 'api/files/single_files_untokenized/ISic000001.xml',
     'ISic000552': 'api/files/single_files_tokenized/ISic000552.xml',
     'persName_nested': 'api/files/persName_nested.xml',
@@ -108,6 +112,22 @@ def test_load_relative_filepath_from_str(filepath:str):
 def test_materialclasses():
     doc = EpiDoc(relative_filepaths['ISic000001'])
     assert doc.materialclasses == ['#material.stone.marble']
+
+
+def test_prettify_doc():
+    """
+    Tests that the entire document is prettified correctly
+    """
+
+    ugly = EpiDoc(relative_filepaths['ugly'])
+    prettified = ugly.prettify_doc()
+    prettified.to_xml_file(relative_filepaths['prettified'])
+    prettified_str = etree.tostring(prettified._e)
+
+    benchmark = EpiDoc(relative_filepaths['benchmark'])
+    benchmark_str = etree.tostring(benchmark._e)
+
+    assert prettified_str == benchmark_str
 
 
 def test_punct():

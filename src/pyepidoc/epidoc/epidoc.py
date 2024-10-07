@@ -5,10 +5,13 @@ from typing import (
     overload,
     Callable
 )
+
+from lxml import etree
 from lxml.etree import (
     _Element, 
     _ElementTree
 )
+
 from pathlib import Path
 from itertools import chain
 import inspect
@@ -656,6 +659,34 @@ class EpiDoc(DocRoot):
             return "HD"
         
         return ""
+
+    def prettify_doc(self) -> EpiDoc:
+
+        """
+        Use prettify function in `lxml` to prettify the document,
+        including the editions
+        """
+
+        prettified_str: bytes = etree.tostring(
+            element_or_tree=self.e,
+            xml_declaration=True,
+            pretty_print=True
+        )
+        
+        parser = etree.XMLParser(
+            load_dtd=False,
+            resolve_entities=False,
+            remove_blank_text=True
+        )
+        tree: _ElementTree = etree.fromstring(
+            text=prettified_str, 
+            parser=parser
+        )
+
+        prettified_doc = EpiDoc(tree)
+        prettified_doc.prettify_editions()
+        
+        return prettified_doc
 
     def prettify_editions(
         self, 

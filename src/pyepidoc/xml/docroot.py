@@ -54,7 +54,7 @@ class DocRoot:
         """
         ...
 
-    def __init__(self, inpt: Path | str | _ElementTree):
+    def __init__(self, inpt: Path | str | _ElementTree | _Element):
 
         if isinstance(inpt, Path):
             self._p = inpt
@@ -66,6 +66,10 @@ class DocRoot:
         elif isinstance(inpt, _ElementTree):
             self._e = inpt.getroot()
             return
+
+        elif isinstance(inpt, _Element):
+            self._e = inpt
+            return
         
         elif isinstance(inpt, str):
             self._p = p = Path(inpt)
@@ -75,7 +79,7 @@ class DocRoot:
             return
         
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
-                        'Path, _ElementTree or str.')
+                        'Path, _ElementTree, _Element or str.')
 
     def __bytes__(self) -> bytes:
         """
