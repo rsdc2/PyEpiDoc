@@ -116,7 +116,8 @@ def test_materialclasses():
 
 def test_prettify_doc():
     """
-    Tests that the entire document is prettified correctly
+    Tests that the entire document is prettified correctly.
+    Prettifies both the main document and the editions.
     """
 
     ugly = EpiDoc(relative_filepaths['ugly'])
