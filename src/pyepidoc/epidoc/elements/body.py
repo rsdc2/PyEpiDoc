@@ -12,16 +12,12 @@ from pyepidoc.epidoc.token import Token
 
 from pyepidoc.xml.namespace import Namespace as ns
 
-from pyepidoc.shared.constants import (A_TO_Z_SET, 
+from pyepidoc.shared.constants import ( 
                          TEINS, 
-                         XMLNS, 
-                         SubsumableRels,
-                         ROMAN_NUMERAL_CHARS,
-                         VALID_BASES)
+                         XMLNS)
 
 from pyepidoc.shared.utils import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
-from typing import Optional
 
 
 class Body(EpiDocElement):    
@@ -80,7 +76,6 @@ class Body(EpiDocElement):
             last_child = maxone(target_elem.child_elements, None, False, -1)
             if last_child is not None:
                 last_child.tail = '\n' + edition_indent
-
 
         target_ab = maxone(target.abs, None, True, 0)
         if target_ab is None:
