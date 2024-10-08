@@ -201,12 +201,13 @@
                     <lb n="3"/><w n="10"><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g ref="#interpunct">·</g> <w n="15"><expan><abbr>a</abbr><ex>nnis</ex></expan></w> <g ref="#interpunct">·</g> <num value="6">VI</num>
                 </ab>
             </div>
-            <div type="edition" subtype="simple-lemmatized" xml:space="preserve"><ab>
+            <div type="edition" subtype="simple-lemmatized" xml:space="preserve">
+				<ab>
 					<w n="0" lemma="lemma">Dis</w>
 					<w n="5" lemma="lemma">manibus</w>
 					<w n="10" lemma="lemma">vixit</w>
 					<w n="15" lemma="lemma">annis</w>
-					</ab>
+				</ab>
 			</div>
 			<div type="apparatus" resp="#JP">
                 <listApp>

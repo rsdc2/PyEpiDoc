@@ -4,10 +4,11 @@
 from __future__ import annotations
 
 from itertools import chain
-
-from lxml.etree import _Element 
 from typing import Optional, Sequence
 import re
+
+from lxml import etree
+from lxml.etree import _Element 
 
 from pyepidoc.xml import BaseElement
 from pyepidoc.shared.constants import XMLNS
@@ -15,6 +16,15 @@ from pyepidoc.shared import default_str
 from pyepidoc.shared.types import Base
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.utils import maxone
+
+from pyepidoc.xml.namespace import Namespace as ns
+
+from pyepidoc.shared.constants import (A_TO_Z_SET, 
+                         TEINS, 
+                         XMLNS, 
+                         SubsumableRels,
+                         ROMAN_NUMERAL_CHARS,
+                         VALID_BASES)
 
 from .. import ids
 from ..element import EpiDocElement
@@ -81,7 +91,10 @@ def prettify(
 
         return prevs
 
-    def get_parents_for_first_children(elements:Sequence[BaseElement]) -> Sequence[BaseElement]:
+    def get_parents_for_first_children(
+            elements:Sequence[BaseElement]
+            ) -> Sequence[BaseElement]:
+
         """
         Returns parent elements for all first children
         """
@@ -193,10 +206,10 @@ class Edition(EpiDocElement):
         if self.get_attrib('type') != 'edition':
             raise TypeError('Element type attribute should be "edition".')
         
-    def 
 
     @property
     def abs(self) -> list[Ab]:
+        
         """
         Returns all the <ab> elements in an edition 
         as a |list| of |Ab|.
@@ -204,6 +217,30 @@ class Edition(EpiDocElement):
 
         return [Ab(element._e) 
             for element in self.get_desc_elems_by_name(['ab'])]
+
+    def append_empty_ab(self) -> Ab:
+        
+        """
+        Append an empty <ab> after all elements in the 
+        <div type=edition> element.
+        """
+
+        edition_indent = 4 * '\t'
+        if len(self.child_elements) == 0:
+            self.text = '\n' + edition_indent
+        else:
+            self.child_elements[-1].text = '\n' + edition_indent
+
+        # Create internal <ab> element: TEI requires this
+        # and insert it into the Edition element
+        ab_elem = etree.Element(
+            _tag = ns.give_ns('ab', TEINS),
+            attrib = None,
+            nsmap = None
+        )
+
+        self._e.append(ab_elem)
+        return Ab(ab_elem)
 
     @property
     def compound_tokens(self) -> list[EpiDocElement]:
@@ -248,6 +285,7 @@ class Edition(EpiDocElement):
                 for gap in self.get_desc('gap')]
 
     def get_desc_tokens(self, include_nested: bool=False) -> list[Token]:
+
         """
         :param include_nested: if true, returns all the descendant tokens,
         including tokens within tokens; if false, ignores tokens within 

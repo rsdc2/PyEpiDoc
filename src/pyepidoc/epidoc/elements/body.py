@@ -77,19 +77,16 @@ class Body(EpiDocElement):
                     desc_for_target.tail = '\n' + ab_indent
                     target_elem._e.append(desc_for_target._e)
 
+            last_child = maxone(target_elem.child_elements, None, False, -1)
+            if last_child is not None:
+                last_child.tail = '\n' + edition_indent
+
 
         target_ab = maxone(target.abs, None, True, 0)
         if target_ab is None:
             # No <ab> so create one
             print('Warning: No <ab> present in target edition so adding one')
-            ab_elem = etree.Element(
-                _tag = ns.give_ns('ab', TEINS),
-                attrib = None,
-                nsmap = None
-            )
-            target.text = '\n' + edition_indent
-            target._e.append(ab_elem)
-            target_ab = ab_elem
+            target_ab = target.append_empty_ab()
 
         target_ab.text = '\n' + ab_indent
         append_ws(source, EpiDocElement(target_ab))
@@ -102,7 +99,8 @@ class Body(EpiDocElement):
             lang: str | None = None) -> Edition:
 
         """
-        Add an edition of the specified subtype to the Body
+        Add an edition of the specified subtype to the Body,
+        and insert it directly after the main edition.
         """
  
         # Create the edition element
@@ -123,17 +121,10 @@ class Body(EpiDocElement):
             (self.children[-1].tail or '') + '\n' + 3 * '\t'
 
         # Create internal <ab> element: TEI requires this
-        # and insert it into the Edition element
-            ab_elem = etree.Element(
-                _tag = ns.give_ns('ab', TEINS),
-                attrib = None,
-                nsmap = None
-            )
-            target.text = '\n' + edition_indent
-            target._e.append(ab_elem)
-            target_ab = ab_elem
+        # and append it to the Edition element
+        new_edition.append_empty_ab()
 
-        # Insert after the main edition
+        # Insert the new edition after the main edition
         main_edition = self.edition_by_subtype(None)
         if main_edition is None:
             raise ValueError("No main edition present.")
