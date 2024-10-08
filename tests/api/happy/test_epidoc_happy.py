@@ -7,21 +7,21 @@ from pyepidoc.epidoc.dom import lang, line
 import pytest
 
 relative_filepaths = {
-    'ugly': 'api/files/prettifying/ugly/ISic000552.xml',
-    'benchmark': 'api/files/prettifying/benchmark/ISic000552.xml',
-    'prettified': 'api/files/prettifying/prettified/ISic000552.xml',
-    'ISic000001': 'api/files/single_files_untokenized/ISic000001.xml',
-    'ISic000552': 'api/files/single_files_tokenized/ISic000552.xml',
-    'persName_nested': 'api/files/persName_nested.xml',
-    'line_1': 'api/files/line_1.xml',
-    'line_2': 'api/files/line_2.xml',
-    'gap': 'api/files/gap.xml',
-    'comma': 'api/files/comma.xml',
-    'leiden': 'api/files/leiden.xml',
-    'abbr': 'api/files/abbr.xml'
+    'ugly': 'tests/api/files/prettifying/ugly/ISic000552.xml',
+    'benchmark': 'tests/api/files/prettifying/benchmark/ISic000552.xml',
+    'prettified': 'tests/api/files/prettifying/prettified/ISic000552.xml',
+    'ISic000001': 'tests/api/files/single_files_untokenized/ISic000001.xml',
+    'ISic000552': 'tests/api/files/single_files_tokenized/ISic000552.xml',
+    'persName_nested': 'tests/api/files/persName_nested.xml',
+    'line_1': 'tests/api/files/line_1.xml',
+    'line_2': 'tests/api/files/line_2.xml',
+    'gap': 'tests/api/files/gap.xml',
+    'comma': 'tests/api/files/comma.xml',
+    'leiden': 'tests/api/files/leiden.xml',
+    'abbr': 'tests/api/files/abbr.xml'
 }
 
-line_2_output = 'api/files/line_2_output.xml'
+line_2_output = 'tests/api/files/line_2_output.xml'
 
 
 def test_collect_tokens():

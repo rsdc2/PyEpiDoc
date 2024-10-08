@@ -3,7 +3,7 @@ from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.shared import contains
 
 def test_abbr():
-    doc = EpiDoc('api/files/abbreviations/multiplication.xml')
+    doc = EpiDoc('tests/api/files/abbreviations/multiplication.xml')
 
     assert len(doc.expans) == 1
 

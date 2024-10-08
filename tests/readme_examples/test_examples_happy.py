@@ -4,13 +4,13 @@ from pyepidoc.epidoc.enums import TextClass
 from pyepidoc.shared.file import str_to_file
 
 
-corpus_folderpath = "api/files/corpus"
+corpus_folderpath = "tests/api/files/corpus"
 
 
 def test_tokens_example():
     from pyepidoc import EpiDoc
 
-    doc = EpiDoc("readme_examples/files/input/ISic000001_tokenized.xml")
+    doc = EpiDoc("tests/readme_examples/files/input/ISic000001_tokenized.xml")
 
     tokens = doc.tokens_no_nested
     tokens_str = ' '.join([str(token) for token in tokens])
@@ -20,16 +20,16 @@ def test_tokens_example():
 
 def test_tokenize_example():
     # Load the EpiDoc file
-    doc = EpiDoc("readme_examples/files/input/ISic000032_untokenized.xml")
+    doc = EpiDoc("tests/readme_examples/files/input/ISic000032_untokenized.xml")
 
     # Tokenize the edition with default settings
     doc.tokenize()
 
     # Save the results to a new XML file
-    doc.to_xml_file("readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
+    doc.to_xml_file("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
 
-    tokenized_doc = EpiDoc("readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
-    tokenized_benchmark = EpiDoc("readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")
+    tokenized_doc = EpiDoc("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
+    tokenized_benchmark = EpiDoc("tests/readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")
     try:
         # breakpoint()
         assert [str(word) for word in tokenized_doc.tokens_no_nested] == [str(word) for word in tokenized_benchmark.tokens_no_nested]

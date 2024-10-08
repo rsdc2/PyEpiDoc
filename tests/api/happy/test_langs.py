@@ -10,10 +10,10 @@ from pyepidoc.epidoc.dom import lang
 import pytest
 
 tests = [
-    ('api/files/langs_1.xml', ['la', 'grc'], 'la', 'grc'), 
-    ('api/files/langs_2.xml', ['la', 'grc'], 'la', 'grc'),
-    ('api/files/langs_3.xml', ['la', 'grc'], 'la', 'grc'),
-    ('api/files/langs_4.xml', ['la'], 'la', 'la'),
+    ('tests/api/files/langs_1.xml', ['la', 'grc'], 'la', 'grc'), 
+    ('tests/api/files/langs_2.xml', ['la', 'grc'], 'la', 'grc'),
+    ('tests/api/files/langs_3.xml', ['la', 'grc'], 'la', 'grc'),
+    ('tests/api/files/langs_4.xml', ['la'], 'la', 'la'),
 ]
 
 

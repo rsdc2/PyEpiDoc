@@ -1,8 +1,8 @@
 from pyepidoc import EpiDocCorpus
 from pathlib import Path
 
-corpus_folderpath = "api/files/corpus"
-corpus_role_name_folderpath = "api/files/corpus_role_name"
+corpus_folderpath = 'tests/api/files/corpus'
+corpus_role_name_folderpath = 'tests/api/files/corpus_role_name'
 
 
 def test_load_corpus_local():

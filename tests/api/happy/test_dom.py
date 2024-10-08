@@ -5,18 +5,18 @@ import pytest
 
 
 relative_filepaths = {
-    'ISic000001': 'api/files/single_files_untokenized/ISic000001.xml',
-    'ISic000552': 'api/files/single_files_tokenized/ISic000552.xml',
-    'persName_nested': 'api/files/persName_nested.xml',
-    'langs_1': 'api/files/langs_1.xml',
-    'langs_2': 'api/files/langs_2.xml',
-    'langs_3': 'api/files/langs_3.xml',
-    'line_1': 'api/files/line_1.xml',
-    'line_2': 'api/files/line_2.xml',
-    'gap': 'api/files/gap.xml',
-    'comma': 'api/files/comma.xml',
-    'leiden': 'api/files/leiden.xml',
-    'abbr': 'api/files/abbr.xml'
+    'ISic000001': 'tests/api/files/single_files_untokenized/ISic000001.xml',
+    'ISic000552': 'tests/api/files/single_files_tokenized/ISic000552.xml',
+    'persName_nested': 'tests/api/files/persName_nested.xml',
+    'langs_1': 'tests/api/files/langs_1.xml',
+    'langs_2': 'tests/api/files/langs_2.xml',
+    'langs_3': 'tests/api/files/langs_3.xml',
+    'line_1': 'tests/api/files/line_1.xml',
+    'line_2': 'tests/api/files/line_2.xml',
+    'gap': 'tests/api/files/gap.xml',
+    'comma': 'tests/api/files/comma.xml',
+    'leiden': 'tests/api/files/leiden.xml',
+    'abbr': 'tests/api/files/abbr.xml'
 }
 
 

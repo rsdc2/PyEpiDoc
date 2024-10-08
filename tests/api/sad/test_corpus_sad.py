@@ -2,7 +2,7 @@ import pytest
 from pyepidoc import EpiDocCorpus
 import os
 
-corpus_folderpath = "api/files/corpus"
+corpus_folderpath = 'tests/api/files/corpus'
 
 
 def test_load_corpus_local():

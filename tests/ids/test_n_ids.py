@@ -7,9 +7,9 @@ from pathlib import Path
 
 from pyepidoc import EpiDoc
 
-input_path = Path('ids/files/input')
-output_path = Path('ids/files/output')
-benchmark_path = Path('ids/files/benchmark')
+input_path = Path('tests/ids/files/input')
+output_path = Path('tests/ids/files/output')
+benchmark_path = Path('tests/ids/files/benchmark')
 
 
 def test_set_n_ids():
