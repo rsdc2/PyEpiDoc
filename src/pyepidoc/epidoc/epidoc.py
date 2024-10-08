@@ -197,7 +197,6 @@ class EpiDoc(DocRoot):
         if edition is None:
             raise TypeError('Failed to create a simple lemmatized edition.')
         
-        self.prettify_editions()
         return edition
 
     @property
@@ -513,7 +512,9 @@ class EpiDoc(DocRoot):
         lemma.
 
         :param where: where to put the lemmatized version,
-        either on a separate <div> or on the main <div>.
+        either on a separate <div> or on the main <div>. 
+        If a separate edition is not present, one is created 
+        containing copies of the elements that need lemmatizing.
         """
 
         main_edition = self.edition_by_subtype(None)
@@ -523,7 +524,8 @@ class EpiDoc(DocRoot):
         if where == 'separate':
             # Create a separate lemmatized edition if not already
             # present
-            if self.edition_by_subtype('simple-lemmatized') is None:
+            lemmatized_edition = self.edition_by_subtype('simple-lemmatized') 
+            if lemmatized_edition is None:
                 
                 lemmatized_edition = self.create_lemmatized_edition()
                 self.body.copy_edition_ws(
@@ -532,6 +534,7 @@ class EpiDoc(DocRoot):
                 )
 
             edition = lemmatized_edition
+
         elif where == 'main':
             edition = main_edition
         else:

@@ -89,7 +89,8 @@ class Body(EpiDocElement):
         """
         Add an edition of the specified subtype to the Body
         """
-
+ 
+        # Create the edition element
         edition_elem = etree.Element(
             _tag = ns.give_ns('div', TEINS), 
             attrib = dict_remove_none({
@@ -102,9 +103,17 @@ class Body(EpiDocElement):
         )
         
         new_edition = Edition(edition_elem)
-        new_edition.tail = '\n' + 2 * '\t'
-        self.children[-1].tail = (self.children[-1].tail or '') + '\n' + 3 * '\t'
-        self._e.append(edition_elem)
+        new_edition.tail = '\n' + 3 * '\t'
+        self.children[-1].tail = \
+            (self.children[-1].tail or '') + '\n' + 3 * '\t'
+
+        # Insert after the main edition
+        main_edition = self.edition_by_subtype(None)
+        if main_edition is None:
+            raise ValueError("No main edition present.")
+        
+        main_edition_idx = self._e.index(main_edition._e, None, None)
+        self._e.insert(main_edition_idx + 1, edition_elem)
         return new_edition
 
     def edition_by_subtype(self, subtype: str | None) -> Edition | None:
