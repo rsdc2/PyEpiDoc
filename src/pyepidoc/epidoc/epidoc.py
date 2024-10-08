@@ -175,11 +175,12 @@ class EpiDoc(DocRoot):
         
         return self
     
-    def create_lemmatized_edition(self) -> Edition:
+    def _create_lemmatized_edition(self) -> Edition:
 
         """
-        Add a new edition to the document, containing the text
-        of all the tokens with lemmata.
+        Add a new edition to the document, ready to contain
+        lemmatized elements, but no words are copied
+        or lemmatized.
         Raises an error if the edition already exists, or
         if the edition could not be created.
         """
@@ -189,7 +190,7 @@ class EpiDoc(DocRoot):
         if lemmatized_edition is not None:
             raise ValueError('Lemmatized edition already present.')
 
-        # Create edition if it does not exist
+        # Create edition if it does not already exist
         self.body.create_edition('simple-lemmatized')
         edition = self.body.edition_by_subtype('simple-lemmatized')
 
@@ -527,7 +528,7 @@ class EpiDoc(DocRoot):
             lemmatized_edition = self.edition_by_subtype('simple-lemmatized') 
             if lemmatized_edition is None:
                 
-                lemmatized_edition = self.create_lemmatized_edition()
+                lemmatized_edition = self._create_lemmatized_edition()
                 self.body.copy_edition_ws(
                     main_edition, 
                     lemmatized_edition

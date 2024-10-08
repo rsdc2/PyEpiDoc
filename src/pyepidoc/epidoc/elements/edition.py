@@ -193,6 +193,8 @@ class Edition(EpiDocElement):
         if self.get_attrib('type') != 'edition':
             raise TypeError('Element type attribute should be "edition".')
         
+    def 
+
     @property
     def abs(self) -> list[Ab]:
         """

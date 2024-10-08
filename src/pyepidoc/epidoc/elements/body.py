@@ -56,7 +56,8 @@ class Body(EpiDocElement):
         :param tags_to_include: a list of tag names (no namespaces)
         to include in the copy. If this is None, all elements are copied.
         """
-        indent = 4 * '\t'
+        edition_indent = 4 * '\t'
+        ab_indent = 5 * '\t'
 
         def append_ws(
                 source_elem: EpiDocElement, 
@@ -73,11 +74,25 @@ class Body(EpiDocElement):
                     desc_for_target = EpiDocElement(deepcopy(desc_elem._e))
                     desc_for_target.remove_children()
                     desc_for_target.text = desc_elem.text_desc
-                    desc_for_target.tail = '\n' + indent
+                    desc_for_target.tail = '\n' + ab_indent
                     target_elem._e.append(desc_for_target._e)
 
-        target.text = '\n' + indent
-        append_ws(source, target)
+
+        target_ab = maxone(target.abs, None, True, 0)
+        if target_ab is None:
+            # No <ab> so create one
+            print('Warning: No <ab> present in target edition so adding one')
+            ab_elem = etree.Element(
+                _tag = ns.give_ns('ab', TEINS),
+                attrib = None,
+                nsmap = None
+            )
+            target.text = '\n' + edition_indent
+            target._e.append(ab_elem)
+            target_ab = ab_elem
+
+        target_ab.text = '\n' + ab_indent
+        append_ws(source, EpiDocElement(target_ab))
         target.child_elements[-1].tail = '\n' + 3 * '\t'
         return target
 
@@ -91,7 +106,7 @@ class Body(EpiDocElement):
         """
  
         # Create the edition element
-        edition_elem = etree.Element(
+        edition_elem: _Element = etree.Element(
             _tag = ns.give_ns('div', TEINS), 
             attrib = dict_remove_none({
                 'type': 'edition', 
@@ -106,6 +121,17 @@ class Body(EpiDocElement):
         new_edition.tail = '\n' + 3 * '\t'
         self.children[-1].tail = \
             (self.children[-1].tail or '') + '\n' + 3 * '\t'
+
+        # Create internal <ab> element: TEI requires this
+        # and insert it into the Edition element
+            ab_elem = etree.Element(
+                _tag = ns.give_ns('ab', TEINS),
+                attrib = None,
+                nsmap = None
+            )
+            target.text = '\n' + edition_indent
+            target._e.append(ab_elem)
+            target_ab = ab_elem
 
         # Insert after the main edition
         main_edition = self.edition_by_subtype(None)
