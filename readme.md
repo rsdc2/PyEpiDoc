@@ -210,9 +210,8 @@ The token will be subsumed into a neighbouring ```<w>``` token regardless of the
 
 with ```pytest``` installed (the dev installation will do this for you):
 
-1. Navigate to the ```tests/``` folder. 
 
-2. To run all the tests:
+2. To run all the tests, in the project root directory, type:
 
     ```
     pytest
