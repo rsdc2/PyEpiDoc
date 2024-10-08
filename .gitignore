@@ -30,3 +30,4 @@ validation
 .ipynb_checkpoints
 examples_
 unlemmatized_full.xml
+**/output/*.xml

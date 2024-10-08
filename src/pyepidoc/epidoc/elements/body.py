@@ -1,6 +1,7 @@
 
 from __future__ import annotations
 from copy import deepcopy
+from typing import Literal
 
 from lxml import etree
 from lxml.etree import _Element
@@ -41,8 +42,7 @@ class Body(EpiDocElement):
     def copy_edition_ws(
             self,
             source: Edition,
-            target: Edition
-    ) -> Edition:
+            target: Edition) -> Edition:
         
         """
         Copies the <w> elements from one edition to another within
@@ -91,20 +91,21 @@ class Body(EpiDocElement):
     def create_edition(
             self, 
             subtype: str | None = None, 
-            lang: str | None = None) -> Edition:
+            lang: str | None = None,
+            xmlspace_preserve: Literal['preserve', None] = None) -> Edition:
 
         """
         Add an edition of the specified subtype to the Body,
         and insert it directly after the main edition.
         """
- 
+
         # Create the edition element
         edition_elem: _Element = etree.Element(
             _tag = ns.give_ns('div', TEINS), 
             attrib = dict_remove_none({
                 'type': 'edition', 
                 'subtype': subtype,
-                ns.give_ns('space', XMLNS): 'preserve',
+                ns.give_ns('space', XMLNS): xmlspace_preserve,
                 'lang': lang
             }),
             nsmap = None

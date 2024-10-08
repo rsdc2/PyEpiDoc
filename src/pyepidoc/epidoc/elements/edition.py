@@ -410,6 +410,9 @@ class Edition(EpiDocElement):
         """
 
         for i, elem in enumerate(self.n_id_tokens):
+            if elem.get_attrib('n') != None:
+                raise AttributeError(f'@n attribute already set '
+                                 'on element {elem}.')
             val = i * interval
             elem.set_attrib('n', str(val))
 
