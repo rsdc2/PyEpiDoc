@@ -53,6 +53,8 @@ def test_copy_edition_content():
     # Copy the edition content
     doc.body.copy_edition_ws(source, target)
 
+    doc.prettify_doc('pyepidoc')
+
     # Check edition content copied correctly
     doc_ = save_and_reload(
         doc, 
@@ -85,6 +87,9 @@ def test_copy_edition_content_parametrized_no_lemmas():
     doc.body.copy_edition_ws(
         source, 
         target)
+
+    
+    doc = doc.prettify_doc('pyepidoc')
 
     # Check edition content copied correctly
     doc_ = save_and_reload(

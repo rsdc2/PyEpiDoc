@@ -52,8 +52,8 @@ class Body(EpiDocElement):
         :param tags_to_include: a list of tag names (no namespaces)
         to include in the copy. If this is None, all elements are copied.
         """
-        edition_indent = 4 * '\t'
-        ab_indent = 5 * '\t'
+        # edition_indent = 4 * '\t'
+        # ab_indent = 5 * '\t'
 
         def append_ws(
                 source_elem: EpiDocElement, 
@@ -70,12 +70,12 @@ class Body(EpiDocElement):
                     desc_for_target = EpiDocElement(deepcopy(desc_elem._e))
                     desc_for_target.remove_children()
                     desc_for_target.text = desc_elem.text_desc
-                    desc_for_target.tail = '\n' + ab_indent
+                    # desc_for_target.tail = '\n' + ab_indent
                     target_elem._e.append(desc_for_target._e)
 
             last_child = maxone(target_elem.child_elements, None, False, -1)
-            if last_child is not None:
-                last_child.tail = '\n' + edition_indent
+            # if last_child is not None:
+            #     last_child.tail = '\n' + edition_indent
 
         target_ab = maxone(target.abs, None, True, 0)
         if target_ab is None:
@@ -83,9 +83,9 @@ class Body(EpiDocElement):
             print('Warning: No <ab> present in target edition so adding one')
             target_ab = target.append_empty_ab()
 
-        target_ab.text = '\n' + ab_indent
+        # target_ab.text = '\n' + ab_indent
         append_ws(source, EpiDocElement(target_ab))
-        target.child_elements[-1].tail = '\n' + 3 * '\t'
+        # target.child_elements[-1].tail = '\n' + 3 * '\t'
         return target
 
     def create_edition(

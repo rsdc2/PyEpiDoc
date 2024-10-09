@@ -544,6 +544,8 @@ class EpiDoc(DocRoot):
 
         for w in edition.w_tokens:
             w.lemma = lemmatize(w.text)
+        
+        self.prettify_doc('pyepidoc')
 
     @property
     def main_edition(self) -> Edition | None:
@@ -697,7 +699,7 @@ class EpiDoc(DocRoot):
 
         elif prettifier == 'pyepidoc':
 
-            return self._prettify_with_pyepidoc(SpaceUnit.Space, 4)
+            return self._prettify_with_pyepidoc(" ", 4)
     
         else:
             raise TypeError('Prettifier must either be '
@@ -727,37 +729,37 @@ class EpiDoc(DocRoot):
         )
 
         prettified_doc = EpiDoc(tree)
-        prettified_doc.prettify_editions()
+        prettified_doc.prettify_main_edition()
 
         return prettified_doc
     
     def _prettify_with_pyepidoc(
             self, 
-            space_unit: SpaceUnit,
-            multiplier: int) -> EpiDoc:
+            space_unit = SpaceUnit.Space,
+            multiplier: int = 4) -> EpiDoc:
         """
         Use pyepidoc's internal prettifier to 
         deep copy the file and prettify
         the document.
         """
 
-        # Copy the file
-        prettified_str: bytes = etree.tostring(
-            element_or_tree=self.e,
-            xml_declaration=True # type: ignore
-        )
+        # # Copy the file
+        # prettified_str: bytes = etree.tostring(
+        #     element_or_tree=self.e,
+        #     xml_declaration=True # type: ignore
+        # )
         
-        parser = etree.XMLParser(
-            load_dtd=False,
-            resolve_entities=False
-        )
+        # parser = etree.XMLParser(
+        #     load_dtd=False,
+        #     resolve_entities=False
+        # )
 
-        tree: _ElementTree = etree.fromstring(
-            text=prettified_str, 
-            parser=parser
-        )
+        # tree: _ElementTree = etree.fromstring(
+        #     text=prettified_str, 
+        #     parser=parser
+        # )
 
-        epidoc = EpiDoc(tree)
+        epidoc = self
 
         for i, desc in enumerate([BaseElement(epidoc.e)] + list(epidoc.desc_elems), 0): 
 
@@ -765,7 +767,7 @@ class EpiDoc(DocRoot):
 
                 if len(desc.child_elements) > 0:
                     
-                    desc.text = "\n" + (desc.ancestor_count + 1) * 4 * " "
+                    desc.text = "\n" + (desc.ancestor_count + 1) * multiplier * str(space_unit)
                 
                 if desc.parent is not None and \
                     desc.parent.last_child is not None and \
@@ -777,7 +779,7 @@ class EpiDoc(DocRoot):
 
         return epidoc
 
-    def prettify_editions(
+    def prettify_main_edition(
         self, 
         spaceunit=SpaceUnit.Space, 
         number=4, 
@@ -793,8 +795,10 @@ class EpiDoc(DocRoot):
         if verbose: 
             print(f'Prettifying {self.id}...')
 
-        for edition in self.editions():
-            edition.prettify(spaceunit=spaceunit, number=number)
+        # for edition in self.editions():
+        #     edition.prettify(spaceunit=spaceunit, number=number)
+        if self.main_edition is not None:
+            self.main_edition.prettify(spaceunit, 4)
 
     @property
     def publication_stmt(self) -> Optional[EpiDocElement]:
@@ -1063,7 +1067,7 @@ class EpiDoc(DocRoot):
             self.set_ids(100)
             
         if prettify_edition:
-            self.prettify_editions(spaceunit=SpaceUnit.Space, number=4)
+            self.prettify_main_edition(spaceunit=SpaceUnit.Space, number=4)
 
         return self
 

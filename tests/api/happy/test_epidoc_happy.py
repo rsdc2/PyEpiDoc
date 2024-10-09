@@ -145,7 +145,7 @@ def test_prettify_doc_with_pyepidoc():
     prettified = ugly.prettify_doc('pyepidoc')
     prettified.to_xml_file(relative_filepaths['prettified_pyepidoc'])
 
-
+    assert False
 
 def test_punct():
     """
