@@ -683,11 +683,31 @@ class EpiDoc(DocRoot):
         
         return ""
 
-    def prettify_doc(self) -> EpiDoc:
+    def prettify_doc(
+            self, 
+            prettifier: Literal['lxml', 'pyepidoc']) -> EpiDoc:
 
         """
         Use prettify function in `lxml` to prettify the document,
         including the editions
+        """
+
+        if prettifier == 'lxml':
+            return self._prettify_with_lxml()
+
+        elif prettifier == 'pyepidoc':
+
+            return self._prettify_with_pyepidoc(SpaceUnit.Space, 4)
+    
+        else:
+            raise TypeError('Prettifier must either be '
+                            'lxml or pyepidoc.')
+
+    def _prettify_with_lxml(self) -> EpiDoc:
+
+        """
+        Use the prettifier in `lxml` to prettify the 
+        xml file.
         """
 
         prettified_str: bytes = etree.tostring(
@@ -710,6 +730,52 @@ class EpiDoc(DocRoot):
         prettified_doc.prettify_editions()
 
         return prettified_doc
+    
+    def _prettify_with_pyepidoc(
+            self, 
+            space_unit: SpaceUnit,
+            multiplier: int) -> EpiDoc:
+        """
+        Use pyepidoc's internal prettifier to 
+        deep copy the file and prettify
+        the document.
+        """
+
+        # Copy the file
+        prettified_str: bytes = etree.tostring(
+            element_or_tree=self.e,
+            xml_declaration=True # type: ignore
+        )
+        
+        parser = etree.XMLParser(
+            load_dtd=False,
+            resolve_entities=False
+        )
+
+        tree: _ElementTree = etree.fromstring(
+            text=prettified_str, 
+            parser=parser
+        )
+
+        epidoc = EpiDoc(tree)
+
+        for i, desc in enumerate([BaseElement(epidoc.e)] + list(epidoc.desc_elems), 0): 
+
+            if not desc.xmlspace_preserve_in_ancestors:
+
+                if len(desc.child_elements) > 0:
+                    
+                    desc.text = "\n" + (desc.ancestor_count + 1) * 4 * " "
+                
+                if desc.parent is not None and \
+                    desc.parent.last_child is not None and \
+                        desc.parent.last_child.id_internal == desc.id_internal:
+                    
+                    desc.tail = "\n" + (desc.ancestor_count - 1) * "\t"
+                else:
+                    desc.tail = "\n" + (desc.ancestor_count) * "\t"
+
+        return epidoc
 
     def prettify_editions(
         self, 

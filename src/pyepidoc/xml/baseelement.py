@@ -107,6 +107,16 @@ class BaseElement(Showable):
         return self.__repr__()
 
     @property
+    def ancestor_count(self) -> int:
+
+        """
+        Return the number of ancestors of the current 
+        element, excluding self.
+        """
+
+        return len(self.ancestors_excl_self)
+
+    @property
     def ancestors_incl_self(self) -> ExtendableSeq[BaseElement]:
 
         """
@@ -621,6 +631,26 @@ class BaseElement(Showable):
             pretty_print=True # type: ignore
         ) 
     
+    @property
+    def xmlspace_preserve(self) -> bool:
+        """
+        Return true if @xml:space = "preserve"
+        """
+
+        return self.get_attrib("space", XMLNS) == "preserve"
+
+    @property
+    def xmlspace_preserve_in_ancestors(self) -> bool:
+        """
+        Return true if @xml:space = "preserve" in any ancestors
+        """
+
+        for ancestor in self.ancestors_incl_self:
+            if ancestor.xmlspace_preserve:
+                return True
+            
+        return False
+
     @property
     def xml_str(self) -> str:
 

@@ -9,7 +9,8 @@ import pytest
 relative_filepaths = {
     'ugly': 'tests/api/files/prettifying/ugly/ISic000552.xml',
     'benchmark': 'tests/api/files/prettifying/benchmark/ISic000552.xml',
-    'prettified': 'tests/api/files/prettifying/prettified/ISic000552.xml',
+    'prettified_lxml': 'tests/api/files/prettifying/prettified/ISic000552_prettified_lxml.xml',
+    'prettified_pyepidoc': 'tests/api/files/prettifying/prettified/ISic000552_prettified_pyepidoc.xml',
     'ISic000001': 'tests/api/files/single_files_untokenized/ISic000001.xml',
     'ISic000552': 'tests/api/files/single_files_tokenized/ISic000552.xml',
     'persName_nested': 'tests/api/files/persName_nested.xml',
@@ -114,21 +115,36 @@ def test_materialclasses():
     assert doc.materialclasses == ['#material.stone.marble']
 
 
-def test_prettify_doc():
+def test_prettify_doc_with_lxml():
     """
-    Tests that the entire document is prettified correctly.
+    Tests that the entire document is prettified correctly
+    using lxml's inbuilt prettifier.
     Prettifies both the main document and the editions.
     """
 
     ugly = EpiDoc(relative_filepaths['ugly'])
-    prettified = ugly.prettify_doc()
-    prettified.to_xml_file(relative_filepaths['prettified'])
+    prettified = ugly.prettify_doc('lxml')
+    prettified.to_xml_file(relative_filepaths['prettified_lxml'])
     prettified_str = etree.tostring(prettified._e)
 
     benchmark = EpiDoc(relative_filepaths['benchmark'])
     benchmark_str = etree.tostring(benchmark._e)
 
     assert prettified_str == benchmark_str
+
+
+def test_prettify_doc_with_pyepidoc():
+
+    """
+    Tests that the entire document is prettified correctly
+    using pyepidoc's prettifier.
+    Prettifies both the main document and the editions.
+    """
+
+    ugly = EpiDoc(relative_filepaths['ugly'])
+    prettified = ugly.prettify_doc('pyepidoc')
+    prettified.to_xml_file(relative_filepaths['prettified_pyepidoc'])
+
 
 
 def test_punct():
