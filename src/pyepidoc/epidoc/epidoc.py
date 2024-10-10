@@ -752,7 +752,7 @@ class EpiDoc(DocRoot):
 
         epidoc = self
 
-        for desc in [BaseElement(epidoc.e)] + list(epidoc.desc_elems): 
+        for desc in list(epidoc.desc_elems): 
             
             # Don't touch descdendant nodes containing @xml:space = "preserve"
             if not desc.xmlspace_preserve_in_ancestors:
@@ -761,7 +761,8 @@ class EpiDoc(DocRoot):
                 # child elements
                 if len(desc.child_elements) > 0:
                     desc.text = "\n" + \
-                        (desc.ancestor_count + 1) * multiplier * space_unit
+                        (desc.ancestor_count + 1) * multiplier * space_unit + \
+                        desc.text.strip()
 
                 # Add new line and tabs after tag
                 if desc.parent is not None and \
@@ -770,10 +771,22 @@ class EpiDoc(DocRoot):
                     
                     # If last child, add one fewer tab so that closing tag
                     # has correct alignment
-                    desc.tail = "\n" + (desc.ancestor_count - 1) * "\t"
+                    tail_to_append = "\n" + (desc.ancestor_count - 1) * "\t"
+
+                    if desc.tail is None:
+                        desc.tail = tail_to_append
+                    else:
+                        desc.tail = desc.tail.strip() + tail_to_append
                 else:
                     desc.tail = "\n" + (desc.ancestor_count) * "\t"
 
+        # Root element
+        # Remove trailing text
+        self.root_elem.tail = ""
+        self.root_elem.text = "\n\t" + self.root_elem.text.strip() \
+            if len(self.desc_elems) > 0 \
+            else "\n\t" + self.root_elem.text.strip()
+        
         return epidoc
 
     def prettify_main_edition(

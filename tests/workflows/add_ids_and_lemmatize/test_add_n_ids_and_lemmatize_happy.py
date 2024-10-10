@@ -12,6 +12,11 @@ from .paths import *
 
 def test_add_n_ids_and_lemmatize():
 
+    """
+    Test that adds @n attributes and lemmatised words correctly
+    as a separate <div>
+    """
+
     doc = EpiDoc(INPUT / Path('ISic000001_happy.xml'))
 
     doc.set_n_ids()

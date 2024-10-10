@@ -21,7 +21,8 @@ from lxml.etree import (
     DocumentInvalid
 )
 
-from ..shared.constants import TEINS, XMLNS
+from pyepidoc.shared.constants import TEINS, XMLNS
+from pyepidoc.xml.baseelement import BaseElement
 from .baseelement import BaseElement
 from .errors import handle_xmlsyntaxerror
 
@@ -33,14 +34,14 @@ class DocRoot:
     _valid: Optional[bool] = None
 
     @overload
-    def __init__(self, inpt:Path):
+    def __init__(self, inpt: Path):
         """
         :param inpt: Path containing the filepath of the EpiDoc XML file.
         """
         ...
 
     @overload
-    def __init__(self, inpt:str):
+    def __init__(self, inpt: str):
         """
         :param inpt: str containing the filepath of the EpiDoc XML file.
         """
@@ -325,7 +326,11 @@ class DocRoot:
         return '\n'.join([str(x) for x in self.processing_instructions])
 
     @property
-    def roottree(self) -> _ElementTree:
+    def root_elem(self) -> BaseElement:
+        return BaseElement(self.e)
+
+    @property
+    def root_tree(self) -> _ElementTree:
         return self.e.getroottree()
 
     @property
@@ -370,7 +375,7 @@ class DocRoot:
         
         schematron_doc = etree.parse(fp_, parser=None)
         schematron = isoschematron.Schematron(schematron_doc)
-        return schematron.validate(self.roottree)
+        return schematron.validate(self.root_tree)
 
     def validate_by_relaxng(
             self, 
@@ -389,7 +394,7 @@ class DocRoot:
         relaxng = etree.RelaxNG(relax_ng_doc)
         
         try:
-            roottree_ = deepcopy(self.roottree)
+            roottree_ = deepcopy(self.root_tree)
             roottree_.xinclude()
             relaxng.assertValid(roottree_)
             msg = (f'{self._p} is valid EpiDoc according to the '
