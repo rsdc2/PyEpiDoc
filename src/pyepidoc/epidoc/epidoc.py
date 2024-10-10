@@ -699,7 +699,7 @@ class EpiDoc(DocRoot):
 
         elif prettifier == 'pyepidoc':
 
-            return self._prettify_with_pyepidoc(" ", 4)
+            return self._prettify_with_pyepidoc(SpaceUnit.Space.value, 4)
     
         else:
             raise TypeError('Prettifier must either be '
@@ -735,40 +735,24 @@ class EpiDoc(DocRoot):
     
     def _prettify_with_pyepidoc(
             self, 
-            space_unit = SpaceUnit.Space,
+            space_unit: str,
             multiplier: int = 4) -> EpiDoc:
         """
-        Use pyepidoc's internal prettifier to 
-        deep copy the file and prettify
-        the document.
+        Use pyepidoc's internal prettifier to prettify the document.
         """
-
-        # # Copy the file
-        # prettified_str: bytes = etree.tostring(
-        #     element_or_tree=self.e,
-        #     xml_declaration=True # type: ignore
-        # )
-        
-        # parser = etree.XMLParser(
-        #     load_dtd=False,
-        #     resolve_entities=False
-        # )
-
-        # tree: _ElementTree = etree.fromstring(
-        #     text=prettified_str, 
-        #     parser=parser
-        # )
 
         epidoc = self
 
-        for i, desc in enumerate([BaseElement(epidoc.e)] + list(epidoc.desc_elems), 0): 
-
+        for desc in [BaseElement(epidoc.e)] + list(epidoc.desc_elems): 
+            
+            # Don't touch descdendant nodes containing @xml:space = "preserve"
             if not desc.xmlspace_preserve_in_ancestors:
 
                 if len(desc.child_elements) > 0:
                     
                     desc.text = "\n" + (desc.ancestor_count + 1) * multiplier * str(space_unit)
                 
+                # Add new line and tabs after tag
                 if desc.parent is not None and \
                     desc.parent.last_child is not None and \
                         desc.parent.last_child.id_internal == desc.id_internal:
@@ -798,7 +782,7 @@ class EpiDoc(DocRoot):
         # for edition in self.editions():
         #     edition.prettify(spaceunit=spaceunit, number=number)
         if self.main_edition is not None:
-            self.main_edition.prettify(spaceunit, 4)
+            self.main_edition.prettify(spaceunit, number)
 
     @property
     def publication_stmt(self) -> Optional[EpiDocElement]:

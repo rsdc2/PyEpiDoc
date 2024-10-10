@@ -112,9 +112,6 @@ class Body(EpiDocElement):
         )
         
         new_edition = Edition(edition_elem)
-        new_edition.tail = '\n' + 3 * '\t'
-        self.children[-1].tail = \
-            (self.children[-1].tail or '') + '\n' + 3 * '\t'
 
         # Create internal <ab> element: TEI requires this
         # and append it to the Edition element

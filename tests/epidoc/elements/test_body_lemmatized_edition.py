@@ -88,7 +88,6 @@ def test_copy_edition_content_parametrized_no_lemmas():
         source, 
         target)
 
-    
     doc = doc.prettify_doc('pyepidoc')
 
     # Check edition content copied correctly

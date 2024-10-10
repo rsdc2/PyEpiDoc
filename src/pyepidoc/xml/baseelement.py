@@ -643,9 +643,10 @@ class BaseElement(Showable):
     def xmlspace_preserve_in_ancestors(self) -> bool:
         """
         Return true if @xml:space = "preserve" in any ancestors
+        excluding self
         """
 
-        for ancestor in self.ancestors_incl_self:
+        for ancestor in self.ancestors_excl_self:
             if ancestor.xmlspace_preserve:
                 return True
             
