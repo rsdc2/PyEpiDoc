@@ -409,7 +409,7 @@ class Edition(EpiDocElement):
         with 5, it will be 5, 10, 15, 20 etc.
         """
 
-        for i, elem in enumerate(self.n_id_tokens):
+        for i, elem in enumerate(self.n_id_tokens, 1):
             if elem.get_attrib('n') != None:
                 raise AttributeError(f'@n attribute already set '
                                  'on element {elem}.')
