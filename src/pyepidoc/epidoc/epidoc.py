@@ -139,6 +139,11 @@ class EpiDoc(DocRoot):
 
     @property
     def body(self) -> Body:
+
+        """
+        Return the body element of the XML file
+        as a `Body` object.
+        """
         
         body = maxone(self.get_desc(['body']))
 
