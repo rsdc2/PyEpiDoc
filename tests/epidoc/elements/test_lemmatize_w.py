@@ -21,7 +21,7 @@ def test_set_lemma():
     assert w.text_desc == 'σώματος'
 
     w.lemma = 'σῶμα'
-    doc = doc.prettify_doc('pyepidoc')
+    doc = doc.prettify('pyepidoc')
     doc.to_xml_file(lemmatized_path + filename)
     
     doc_ = EpiDoc(lemmatized_path + filename)

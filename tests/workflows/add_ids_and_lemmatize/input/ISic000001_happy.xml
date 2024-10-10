@@ -203,7 +203,7 @@
             <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
                 <ab>
                     <lb n="1"/><w>D<hi rend="tall">i</hi>s</w> <g ref="#interpunct">·</g> <w><expan><abbr>man</abbr><ex>ibus</ex></expan></w>
-                    <lb n="2"/><g ref="#interpunct">·</g> <persName type="attested"><name>Zet<hi rend="ligature">hi</hi></name></persName>
+        <lb n="2"/><g ref="#interpunct">·</g> <persName type="attested"><name>Zet<hi rend="ligature">hi</hi></name></persName>
                     <lb n="3"/><w><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g ref="#interpunct">·</g> <w><expan><abbr>a</abbr><ex>nnis</ex></expan></w> <g ref="#interpunct">·</g> <num value="6">VI</num>
                 </ab>
             </div>

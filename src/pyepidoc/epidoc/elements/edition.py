@@ -72,7 +72,7 @@ def prettify(
     newlinetags = ['div', 'ab', 'lg', 'l', 'lb']
 
 
-    def _get_multiplier(element:BaseElement) -> int:
+    def _get_multiplier(element: BaseElement) -> int:
         if element.tag.name in chain(
             AtomicTokenType.values(),
             CompoundTokenType.values(),
@@ -83,8 +83,16 @@ def prettify(
             return element.depth + 1
         raise ValueError("Cannot find multiplier for this element.")
 
-    def _get_prevs(elements:Sequence[BaseElement]) -> Sequence[BaseElement]:
-        prevs:list[BaseElement] = []
+    def _get_previous_siblings(
+            elements: Sequence[BaseElement]) -> Sequence[BaseElement]:
+        
+        """
+        Returns a list containing each element that precedes another 
+        element in the input sequence. 
+        """
+
+        prevs: list[BaseElement] = []
+
         for element in elements:
             if element.previous_sibling is not None:
                 prevs += [element.previous_sibling]
@@ -92,14 +100,15 @@ def prettify(
         return prevs
 
     def get_parents_for_first_children(
-            elements:Sequence[BaseElement]
+            elements: Sequence[BaseElement]
             ) -> Sequence[BaseElement]:
 
         """
         Returns parent elements for all first children
         """
 
-        parents:list[BaseElement] = [] 
+        parents: list[BaseElement] = [] 
+
         for element in elements:
             if element.previous_sibling is None: # Explain why only gives parents if previous sibling is None
                 if element.parent is not None:
@@ -107,32 +116,33 @@ def prettify(
         
         return parents
 
-    def prettify_lb(lb:BaseElement) -> None:
+    def prettify_lb(lb: BaseElement) -> None:
         first_parent = lb.get_first_parent_by_name(['lg', 'ab', 'div'])
+
         if first_parent is None:
             return
 
         lb.tail = ''.join([
-            default_str(lb.tail),
+            default_str(lb.tail).strip(),
             "\n",
             (spaceunit.value * number) * (first_parent.depth + 1)
         ])
 
-    def prettify_prev(element:BaseElement) -> None:
+    def prettify_prev(element: BaseElement) -> None:
         element.tail = ''.join([
             default_str(element.tail),
             "\n",
             (spaceunit.value * number) * element.depth
         ])
 
-    def prettify_first_child(element:BaseElement) -> None:
+    def prettify_first_child(element: BaseElement) -> None:
         element.text = ''.join([
             default_str(element.text).strip(),
             "\n",
             spaceunit.value * number * (element.depth + 1)
         ])
 
-    def prettify_parent_of_lb(element:BaseElement) -> None:
+    def prettify_parent_of_lb(element: BaseElement) -> None:
         first_parent = element.get_first_parent_by_name(['lg', 'ab', 'div'])
         if first_parent is None:
             return
@@ -143,7 +153,7 @@ def prettify(
             (spaceunit.value * number) * (first_parent.depth + 1)
         ])
 
-    def prettify_closing_tags(elements:Sequence[BaseElement]) -> None:
+    def prettify_closing_tags(elements: Sequence[BaseElement]) -> None:
         for element in elements:
             if element.child_elements == []:
                 continue
@@ -151,7 +161,7 @@ def prettify(
             lastchild.tail = ''.join([
                 default_str(lastchild.tail).strip(),
                 "\n",
-                (spaceunit.value * number) * (_get_multiplier(element) - 1)
+                spaceunit.value * number * (_get_multiplier(element) - 1)
             ])
             
     # Do the pretty-printing
@@ -162,11 +172,13 @@ def prettify(
             for ab in desc_elems:
                 prettify_first_child(ab)
 
-        prevs = _get_prevs(desc_elems)
+        prevs = _get_previous_siblings(desc_elems)
 
         for prev in prevs:
             if tag == 'lb':
-                prettify_lb(prev)
+                # I.e. prettify the element immediately before the <lb>
+                prettify_lb(prev) 
+
             else:
                 prettify_prev(prev)
 
@@ -190,7 +202,9 @@ class Edition(EpiDocElement):
     """
 
     def __init__(self, e:Optional[_Element | EpiDocElement | BaseElement]=None):
-        if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None:
+        if type(e) not in [_Element, EpiDocElement, BaseElement] and \
+            e is not None:
+            
             raise TypeError('e should be _Element or Element type, or None.')
 
         if type(e) is _Element:
@@ -205,7 +219,6 @@ class Edition(EpiDocElement):
 
         if self.get_attrib('type') != 'edition':
             raise TypeError('Element type attribute should be "edition".')
-        
 
     @property
     def abs(self) -> list[Ab]:
@@ -225,14 +238,9 @@ class Edition(EpiDocElement):
         <div type=edition> element.
         """
 
-        edition_indent = 4 * '\t'
-        if len(self.child_elements) == 0:
-            self.text = '\n' + edition_indent
-        else:
-            self.child_elements[-1].text = '\n' + edition_indent
-
         # Create internal <ab> element: TEI requires this
         # and insert it into the Edition element
+
         ab_elem = etree.Element(
             _tag = ns.give_ns('ab', TEINS),
             attrib = None,

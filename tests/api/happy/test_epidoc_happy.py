@@ -125,7 +125,7 @@ def test_prettify_doc_with_lxml():
     """
 
     ugly = EpiDoc(relative_filepaths['ugly'])
-    prettified = ugly.prettify_doc('lxml')
+    prettified = ugly.prettify('lxml')
     prettified.to_xml_file(relative_filepaths['prettified_lxml'])
     prettified_str = etree.tostring(prettified._e)
 
@@ -144,7 +144,7 @@ def test_prettify_doc_with_pyepidoc():
     """
 
     ugly = EpiDoc(relative_filepaths['ugly'])
-    prettified = ugly.prettify_doc('pyepidoc')
+    prettified = ugly.prettify('pyepidoc')
 
     assert save_reload_and_compare(
         doc=prettified,

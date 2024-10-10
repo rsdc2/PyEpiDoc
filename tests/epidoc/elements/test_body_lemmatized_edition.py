@@ -22,7 +22,7 @@ def test_create_lemmatized_edition():
     # Create the edition
     doc = EpiDoc(unlemmatized_path + 'unlemmatized.xml')
     doc.body.create_edition('simple-lemmatized')
-    doc.prettify_doc('pyepidoc')
+    doc.prettify('pyepidoc')
 
     # Save and check that the edition is there
     doc_ = save_and_reload(doc, lemmatized_path + filename)
@@ -54,7 +54,7 @@ def test_copy_edition_content():
     # Copy the edition content
     doc.body.copy_edition_ws(source, target)
 
-    doc.prettify_doc('pyepidoc')
+    doc.prettify('pyepidoc')
 
     # Check edition content copied correctly
     doc_ = save_and_reload(
@@ -89,7 +89,7 @@ def test_copy_edition_content_parametrized_no_lemmas():
         source, 
         target)
 
-    doc = doc.prettify_doc('pyepidoc')
+    doc = doc.prettify('pyepidoc')
 
     # Check edition content copied correctly
     doc_ = save_and_reload(

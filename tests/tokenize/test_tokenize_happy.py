@@ -129,6 +129,9 @@ def test_tokenize_special_cases(tokenize_type:str):
 
 
 xml_to_tokenize = [
+    ('<abbr>a</abbr>',
+     '<w><abbr>a</abbr></w>'),
+
     ('<roleName type="civic" subtype="duumviralis">d<hi rend="apex">u</hi>mviralium</roleName>',
      '<roleName type="civic" subtype="duumviralis"><w>d<hi rend="apex">u</hi>mviralium</w></roleName>'),
 

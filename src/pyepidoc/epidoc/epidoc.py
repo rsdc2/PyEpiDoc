@@ -550,7 +550,7 @@ class EpiDoc(DocRoot):
         for w in edition.w_tokens:
             w.lemma = lemmatize(w.text)
         
-        self.prettify_doc('pyepidoc')
+        self.prettify('pyepidoc')
 
     @property
     def main_edition(self) -> Edition | None:
@@ -666,6 +666,12 @@ class EpiDoc(DocRoot):
 
     @property
     def pers_names(self) -> list[PersName]:
+
+        """
+        Return a list of <persName> elements wrapped in
+        PersName objects.
+        """
+
         if self.editions() == []:
             return []
         
@@ -690,29 +696,37 @@ class EpiDoc(DocRoot):
         
         return ""
 
-    def prettify_doc(
+    def prettify(
             self, 
-            prettifier: Literal['lxml', 'pyepidoc']) -> EpiDoc:
+            prettifier: Literal['lxml', 'pyepidoc'],
+            prettify_main_edition: bool = True) -> EpiDoc:
 
         """
-        Use prettify function in `lxml` to prettify the document,
-        including the editions.
+        Use prettify function in `lxml` to prettify the whole document.
 
         :param prettifier: 'lxml' uses the prettifier in lxml. Note
         that this will deep copy the epidoc file. 'pyepidoc' uses 
         the internal prettifier, which does not deep copy the file.
+
+        :param prettify_main_edition: If True, aligns the main edition
+        on <lb> elements.
         """
 
         if prettifier == 'lxml':
-            return self._prettify_with_lxml()
+            self = self._prettify_with_lxml()
 
         elif prettifier == 'pyepidoc':
 
-            return self._prettify_with_pyepidoc(SpaceUnit.Space.value, 4)
+            self._prettify_with_pyepidoc(SpaceUnit.Space.value, 4)
     
         else:
             raise TypeError('Prettifier must either be '
                             'lxml or pyepidoc.')
+
+        if prettify_main_edition:
+            self.prettify_main_edition(SpaceUnit.Space, 4)
+
+        return self
 
     def _prettify_with_lxml(self) -> EpiDoc:
 
@@ -738,7 +752,6 @@ class EpiDoc(DocRoot):
         )
 
         prettified_doc = EpiDoc(tree)
-        prettified_doc.prettify_main_edition()
 
         return prettified_doc
     
@@ -805,8 +818,6 @@ class EpiDoc(DocRoot):
         if verbose: 
             print(f'Prettifying {self.id}...')
 
-        # for edition in self.editions():
-        #     edition.prettify(spaceunit=spaceunit, number=number)
         if self.main_edition is not None:
             self.main_edition.prettify(spaceunit, number)
 
