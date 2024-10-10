@@ -691,7 +691,11 @@ class EpiDoc(DocRoot):
 
         """
         Use prettify function in `lxml` to prettify the document,
-        including the editions
+        including the editions.
+
+        :param prettifier: 'lxml' uses the prettifier in lxml. Note
+        that this will deep copy the epidoc file. 'pyepidoc' uses 
+        the internal prettifier, which does not deep copy the file.
         """
 
         if prettifier == 'lxml':
@@ -709,7 +713,7 @@ class EpiDoc(DocRoot):
 
         """
         Use the prettifier in `lxml` to prettify the 
-        xml file.
+        xml file. Deepcopies the file.
         """
 
         prettified_str: bytes = etree.tostring(
@@ -748,20 +752,19 @@ class EpiDoc(DocRoot):
             # Don't touch descdendant nodes containing @xml:space = "preserve"
             if not desc.xmlspace_preserve_in_ancestors:
 
+                # Only insert a new line and tab as first child if there are 
+                # child elements
                 if len(desc.child_elements) > 0:
-                    
                     desc.text = "\n" + \
                         (desc.ancestor_count + 1) * multiplier * space_unit
-                else: 
-                    # desc.text = "\n" + \
-                    #     (desc.ancestor_count) * multiplier * space_unit    
-                    pass
-                
+
                 # Add new line and tabs after tag
                 if desc.parent is not None and \
                     desc.parent.last_child is not None and \
                         desc.parent.last_child.id_internal == desc.id_internal:
                     
+                    # If last child, add one fewer tab so that closing tag
+                    # has correct alignment
                     desc.tail = "\n" + (desc.ancestor_count - 1) * "\t"
                 else:
                     desc.tail = "\n" + (desc.ancestor_count) * "\t"
