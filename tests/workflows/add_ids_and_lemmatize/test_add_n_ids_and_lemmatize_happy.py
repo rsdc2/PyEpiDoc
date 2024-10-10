@@ -5,6 +5,8 @@ Testing the workflow:
 """
 from pathlib import Path
 from pyepidoc import EpiDoc
+from pyepidoc.shared.testing import save_reload_and_compare
+
 from .paths import *
 
 
@@ -17,4 +19,7 @@ def test_add_n_ids_and_lemmatize():
     doc.to_xml_file(OUTPUT / Path('ISic000001_happy.xml'))
 
     # Need to add test here
-    assert False
+    assert save_reload_and_compare(
+        doc,
+        OUTPUT / Path('ISic000001_happy.xml'), 
+        BENCHMARK / Path('ISic000001_happy.xml'))

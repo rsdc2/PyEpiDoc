@@ -68,10 +68,6 @@ tests = [
 ]
 
 
-
-
-
-
 def get_path_vars(tokenize_type:str) -> tuple[str, str, str, str, str, str]:
     filename = f'{tokenize_type}.xml'
     untokenized_folderpath = 'tests/tokenize/files/untokenized'
