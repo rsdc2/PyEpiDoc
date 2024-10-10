@@ -22,6 +22,7 @@ def test_create_lemmatized_edition():
     # Create the edition
     doc = EpiDoc(unlemmatized_path + 'unlemmatized.xml')
     doc.body.create_edition('simple-lemmatized')
+    doc.prettify_doc('pyepidoc')
 
     # Save and check that the edition is there
     doc_ = save_and_reload(doc, lemmatized_path + filename)

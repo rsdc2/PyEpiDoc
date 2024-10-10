@@ -750,7 +750,12 @@ class EpiDoc(DocRoot):
 
                 if len(desc.child_elements) > 0:
                     
-                    desc.text = "\n" + (desc.ancestor_count + 1) * multiplier * str(space_unit)
+                    desc.text = "\n" + \
+                        (desc.ancestor_count + 1) * multiplier * space_unit
+                else: 
+                    # desc.text = "\n" + \
+                    #     (desc.ancestor_count) * multiplier * space_unit    
+                    pass
                 
                 # Add new line and tabs after tag
                 if desc.parent is not None and \
