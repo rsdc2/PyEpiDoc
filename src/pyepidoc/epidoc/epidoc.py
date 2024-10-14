@@ -534,7 +534,7 @@ class EpiDoc(DocRoot):
             if lemmatized_edition is None:
                 
                 lemmatized_edition = self._create_lemmatized_edition()
-                self.body.copy_edition_ws(
+                self.body.copy_edition_items_to_appear_in_lemmatized_edition(
                     main_edition, 
                     lemmatized_edition
                 )
@@ -550,7 +550,7 @@ class EpiDoc(DocRoot):
         for w in edition.w_tokens:
             w.lemma = lemmatize(w.text)
         
-        self.prettify('pyepidoc')
+        self.prettify(prettifier='pyepidoc')
 
     @property
     def main_edition(self) -> Edition | None:
@@ -570,18 +570,6 @@ class EpiDoc(DocRoot):
     @property
     def mean_date(self) -> int | None:
         return self.date_mean
-
-    @property
-    def otherlangs(self) -> list[str]:
-        if self.textlang is None:
-            return []
-        
-        otherlangs = self.textlang.get_attrib('otherLangs')
-        
-        if otherlangs is None:
-            return []
-
-        return otherlangs.split()
 
     @property
     def lemmata(self) -> set[str]:
@@ -663,6 +651,18 @@ class EpiDoc(DocRoot):
             return 'None'
         
         return str(result)
+    
+    @property
+    def otherlangs(self) -> list[str]:
+        if self.textlang is None:
+            return []
+        
+        otherlangs = self.textlang.get_attrib('otherLangs')
+        
+        if otherlangs is None:
+            return []
+
+        return otherlangs.split()
 
     @property
     def pers_names(self) -> list[PersName]:

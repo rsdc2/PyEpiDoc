@@ -39,25 +39,24 @@ class Body(EpiDocElement):
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self.tag}> element.')
 
-    def copy_edition_ws(
+    def copy_edition_items_to_appear_in_lemmatized_edition(
             self,
             source: Edition,
             target: Edition) -> Edition:
         
         """
-        Copies the <w> elements from one edition to another within
-        the body, and returns a reference the edition 
-        receiving the new information.
+        Copies the elements due to appear in the lemmatized edition.
+
+        NB this method does not actually carry out the
+        lemmatization.
 
         :param tags_to_include: a list of tag names (no namespaces)
         to include in the copy. If this is None, all elements are copied.
         """
-        # edition_indent = 4 * '\t'
-        # ab_indent = 5 * '\t'
 
-        def append_ws(
+        def append_items(
                 source_elem: EpiDocElement, 
-                target_elem: EpiDocElement):
+                target_elem: EpiDocElement) -> None:
             
             """
             Recursive function appending children of elements
@@ -66,26 +65,21 @@ class Body(EpiDocElement):
 
             for desc_elem in source_elem.desc_elems:
                 
-                if desc_elem.tag.name == 'w':
+                if desc_elem.tag.name in ['w', 'orig', 'gap']:
                     desc_for_target = EpiDocElement(deepcopy(desc_elem._e))
                     desc_for_target.remove_children()
                     desc_for_target.text = desc_elem.text_desc
-                    # desc_for_target.tail = '\n' + ab_indent
                     target_elem._e.append(desc_for_target._e)
 
-            last_child = maxone(target_elem.child_elements, None, False, -1)
-            # if last_child is not None:
-            #     last_child.tail = '\n' + edition_indent
-
         target_ab = maxone(target.abs, None, True, 0)
+
         if target_ab is None:
             # No <ab> so create one
             print('Warning: No <ab> present in target edition so adding one')
             target_ab = target.append_empty_ab()
 
-        # target_ab.text = '\n' + ab_indent
-        append_ws(source, EpiDocElement(target_ab))
-        # target.child_elements[-1].tail = '\n' + 3 * '\t'
+        append_items(source, EpiDocElement(target_ab))
+
         return target
 
     def create_edition(

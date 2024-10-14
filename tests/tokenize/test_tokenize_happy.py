@@ -119,13 +119,25 @@ def test_model_headers():
 @pytest.mark.parametrize("tokenize_type", tests)
 def test_tokenize_special_cases(tokenize_type:str):
     # Tokenize the files
-    tokenized_epidoc, tokenized_benchmark = tokenize_epidoc(tokenize_type=tokenize_type)
+    tokenized_epidoc, tokenized_benchmark = \
+        tokenize_epidoc(tokenize_type=tokenize_type)
 
     # Do the tests    
-    assert [str(word) for word in tokenized_epidoc.tokens_no_nested] == [str(word) for word in tokenized_benchmark.tokens_no_nested]
-    assert [word.xml_byte_str for word in tokenized_epidoc.tokens_no_nested] == [word.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]
-    assert [word.xml_byte_str for word in tokenized_epidoc.compound_words] == [word.xml_byte_str for word in tokenized_benchmark.compound_words]
-    assert [edition.xml_byte_str for edition in tokenized_epidoc.editions()] == [edition.xml_byte_str for edition in tokenized_benchmark.editions()]
+    if [str(word) for word in tokenized_epidoc.tokens_no_nested] != [str(word) for word in tokenized_benchmark.tokens_no_nested]:
+        breakpoint()
+        assert False
+    
+    if [word.xml_byte_str for word in tokenized_epidoc.tokens_no_nested] != [word.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]:
+        breakpoint()
+        assert False
+    
+    if [word.xml_byte_str for word in tokenized_epidoc.compound_words] != [word.xml_byte_str for word in tokenized_benchmark.compound_words]:
+        breakpoint()
+        assert False
+
+    if [edition.xml_byte_str for edition in tokenized_epidoc.editions()] != [edition.xml_byte_str for edition in tokenized_benchmark.editions()]:
+        breakpoint()
+        assert False
 
 
 xml_to_tokenize = [
