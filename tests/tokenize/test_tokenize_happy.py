@@ -124,19 +124,19 @@ def test_tokenize_special_cases(tokenize_type:str):
 
     # Do the tests    
     if [str(word) for word in tokenized_epidoc.tokens_no_nested] != [str(word) for word in tokenized_benchmark.tokens_no_nested]:
-        breakpoint()
+        # breakpoint()
         assert False
     
     if [word.xml_byte_str for word in tokenized_epidoc.tokens_no_nested] != [word.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]:
-        breakpoint()
+        # breakpoint()
         assert False
     
     if [word.xml_byte_str for word in tokenized_epidoc.compound_words] != [word.xml_byte_str for word in tokenized_benchmark.compound_words]:
-        breakpoint()
+        # breakpoint()
         assert False
 
     if [edition.xml_byte_str for edition in tokenized_epidoc.editions()] != [edition.xml_byte_str for edition in tokenized_benchmark.editions()]:
-        breakpoint()
+        # breakpoint()
         assert False
 
 
