@@ -268,7 +268,7 @@ class Edition(EpiDocElement):
         for ab in self.abs:
             ab.convert_ids(oldbase, newbase)
 
-    def convert_words_to_names(self) -> Edition:
+    def convert_ws_to_names(self) -> Edition:
         for ab in self.abs:
             ab.convert_words_to_names()
         

@@ -178,7 +178,7 @@ class EpiDoc(DocRoot):
         if self.main_edition is None:
             raise ValueError('No main edition. Not converting <w> to <name>.')
 
-        self.main_edition.convert_words_to_names()
+        self.main_edition.convert_ws_to_names()
         
         return self
     
@@ -1102,7 +1102,7 @@ class EpiDoc(DocRoot):
             set_ids: bool = False,
             convert_ws_to_names: bool = False,
             verbose: bool = True,
-            ws_inside_names_and_nums: bool = False
+            insert_ws_inside_names_and_nums: bool = False
         ) -> EpiDoc:
         
         """
@@ -1120,7 +1120,7 @@ class EpiDoc(DocRoot):
 
         :param verbose: If True, prints a message with the id of the file that is being tokenized.
 
-        :param ws_inside_names_and_nums: If True, inserts <w> tag inside <name> and <num> tags
+        :param insert_ws_inside_names_and_nums: If True, inserts <w> tag inside <name> and <num> tags
         """
 
         if verbose: 
@@ -1136,6 +1136,9 @@ class EpiDoc(DocRoot):
         
         if convert_ws_to_names:
             self.convert_ws_to_names()
+
+        if insert_ws_inside_names_and_nums:
+            self.main_edition.insert_w_inside_name_and_num()
 
         if set_ids:
             self.set_ids(base=100)
