@@ -24,9 +24,8 @@ def test_lemmatize_on_main_edition():
     filename = 'lemmatized_main_edition_with_dummy.xml'
     remove_file(lemmatized_path + filename)
 
-    doc = EpiDoc(unlemmatized_path + 'unlemmatized.xml')
+    doc = EpiDoc(unlemmatized_path + 'unlemmatized_single_token.xml')
     doc.lemmatize(dummy_lemmatizer, 'main')
-    # doc = doc.prettify_doc('pyepidoc')
 
     # Check correct
     doc_ = save_and_reload(doc, lemmatized_path + filename)
@@ -37,7 +36,7 @@ def test_lemmatize_on_main_edition():
 
 
 unlemmatized_filenames = [
-    'unlemmatized.xml',
+    'unlemmatized_single_token.xml',
     'unlemmatized_full.xml'] 
 
 @pytest.mark.parametrize(

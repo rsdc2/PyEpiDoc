@@ -13,9 +13,9 @@ tests = map(make_path, [
     'convert_ids_2'
 ])
 
-input_path = Path('tests/ids/files/input')
-output_path = Path('tests/ids/files/output')
-benchmark_path = Path('tests/ids/files/benchmark')
+input_path = Path('tests/workflows/ids/files/input')
+output_path = Path('tests/workflows/ids/files/output')
+benchmark_path = Path('tests/workflows/ids/files/benchmark')
 
 
 @pytest.mark.parametrize('filename', tests)
