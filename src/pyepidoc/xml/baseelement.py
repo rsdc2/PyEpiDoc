@@ -224,7 +224,15 @@ class BaseElement(Showable):
         descs = _descs if type(_descs) is list else []
         return [BaseElement(desc) for desc in descs 
                     if isinstance(desc, _Element)]
-    
+
+    def desc_elems_by_local_name(self, localname: str) -> list[BaseElement]:
+        """
+        Return a list of all the descendant elements
+        with the localname matching `localname`
+        """
+        return [elem for elem in self.desc_elems
+                if elem.tag.name == localname]
+
     @property
     def desc_elem_names(self) -> list[str]:
         """
