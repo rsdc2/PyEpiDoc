@@ -171,12 +171,14 @@ class EpiDoc(DocRoot):
     
     def convert_ws_to_names(self) -> EpiDoc:
         """
-        Converts all <w> to <name> in place if they 
+        Converts all <w> to <name> in the main edition, in place, if they 
         begin with a capital.
         """
         
-        for edition in self.editions():
-            edition.convert_words_to_names()
+        if self.main_edition is None:
+            raise ValueError('No main edition. Not converting <w> to <name>.')
+
+        self.main_edition.convert_words_to_names()
         
         return self
     
@@ -1053,6 +1055,7 @@ class EpiDoc(DocRoot):
         dst: Path, 
         verbose=True
     ) -> None:
+        
         ...
 
     @overload
@@ -1060,6 +1063,7 @@ class EpiDoc(DocRoot):
         self,
         dst: str
     ) -> None:
+        
         ...
 
     def to_xml_file(
@@ -1092,23 +1096,40 @@ class EpiDoc(DocRoot):
         return len(self.tokens_no_nested)
 
     def tokenize(
-        self, 
-        add_space_between_words: bool=True,
-        prettify_edition: bool=True,
-        set_ids: bool=False,
-        convert_ws_to_names: bool=False,
-        verbose: bool=True
-    ) -> EpiDoc:
+            self, 
+            add_space_between_words: bool = True,
+            prettify_edition: bool = True,
+            set_ids: bool = False,
+            convert_ws_to_names: bool = False,
+            verbose: bool = True,
+            ws_inside_names_and_nums: bool = False
+        ) -> EpiDoc:
         
         """
-        Tokenizes the EpiDoc document in place.
+        Tokenizes the EpiDoc document, in place.
+
+        :param add_space_between_words: if True, adds a space
+        between token elements
+
+        :param prettify_edition: if True, prettify the <div type="edition"> element (overriding xml:space="preserve")
+
+        :param set_ids: sets full ids on the tokenized elements
+
+        :param convert_ws_to_names: attempts to convert <w> elements to <name>
+        on the basis of capital letters
+
+        :param verbose: If True, prints a message with the id of the file that is being tokenized.
+
+        :param ws_inside_names_and_nums: If True, inserts <w> tag inside <name> and <num> tags
         """
 
         if verbose: 
             print(f'Tokenizing {self.id}...')
 
-        for edition in self.editions():
-            edition.tokenize()
+        if self.main_edition is None:
+            raise ValueError('No main edition to tokenize')
+        
+        self.main_edition.tokenize()
 
         if add_space_between_words:
             self.space_tokens()
@@ -1117,10 +1138,13 @@ class EpiDoc(DocRoot):
             self.convert_ws_to_names()
 
         if set_ids:
-            self.set_ids(100)
+            self.set_ids(base=100)
             
         if prettify_edition:
-            self.prettify_main_edition(spaceunit=SpaceUnit.Space, number=4)
+            self.prettify_main_edition(
+                spaceunit=SpaceUnit.Space, 
+                number=4
+            )
 
         return self
 

@@ -153,6 +153,27 @@ class BaseElement(Showable):
             .replace(' ', '')
             .replace('\t', ''))
 
+    @property
+    def child_elements(self) -> Sequence[BaseElement]:
+        if self._e is None:
+            return []
+            
+        _children: list[_Element] = self._e.getchildren()
+        return [BaseElement(child) for child in _children]
+
+    @property
+    def child_node_names(self) -> list[str]:
+        children = self.child_nodes
+        return list(map(localname, children))
+
+    @property
+    def child_nodes(self) -> list[_Element | _ElementUnicodeResult]:
+        return self.xpath('child::node()')
+    
+    @property
+    def children(self) -> Sequence[BaseElement]:
+        return self.child_elements
+
     @staticmethod
     def _compile_attribs(attribs: Optional[dict[str, str]]) -> str:
         if attribs is None:
@@ -174,26 +195,13 @@ class BaseElement(Showable):
 
         return op(equal_id1[-1], equal_id2[-1])
 
-    @property
-    def child_elements(self) -> Sequence[BaseElement]:
-        if self._e is None:
-            return []
-            
-        _children: list[_Element] = self._e.getchildren()
-        return [BaseElement(child) for child in _children]
+    def contains(self, localname: str) -> bool:
+        """
+        Return True if any descendant node has an element with the tag
+        given in `localname`
+        """
 
-    @property
-    def child_node_names(self) -> list[str]:
-        children = self.child_nodes
-        return list(map(localname, children))
-
-    @property
-    def child_nodes(self) -> list[_Element | _ElementUnicodeResult]:
-        return self.xpath('child::node()')
-    
-    @property
-    def children(self) -> Sequence[BaseElement]:
-        return self.child_elements
+        return len(self.desc_elems_by_local_name(localname=localname)) > 0
 
     @property
     def depth(self) -> int:
@@ -249,6 +257,11 @@ class BaseElement(Showable):
 
     @property
     def desc_nodes(self) -> list[_Element | _ElementUnicodeResult]:
+
+        """
+        Return all descendant nodes
+        """
+
         return self._e.xpath('.//node()')
 
     @property
@@ -530,11 +543,14 @@ class BaseElement(Showable):
 
     def remove_children(self) -> BaseElement:
         """
-        Remove all children, but keep all other properties the same
+        Remove all children, including text, 
+        but keep all other properties the same
         """
 
         for child in self.child_elements:
             self._e.remove(child._e)
+        
+        self.text = ""
 
         return self
 

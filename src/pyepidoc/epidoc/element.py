@@ -105,6 +105,49 @@ class EpiDocElement(BaseElement, Showable):
     Provides basic services for all EpiDoc elements.
     """
 
+    @overload
+    def __init__(
+        self, 
+        e: EpiDocElement,
+        final_space: bool = False
+    ):
+        ...
+
+    @overload
+    def __init__(
+        self, 
+        e: BaseElement,
+        final_space: bool = False
+    ):
+        ...
+
+    @overload
+    def __init__(
+        self, 
+        e: _Element,
+        final_space: bool = False
+    ):
+        ...
+
+    def __init__(
+        self, 
+        e: _Element | EpiDocElement | BaseElement,
+        final_space: bool = False
+    ):
+        error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
+
+        if not isinstance(e, (_Element, EpiDocElement, BaseElement)) and e is not None:
+            raise TypeError(error_msg)
+
+        if isinstance(e, _Element):
+            self._e = e
+        elif isinstance(e, EpiDocElement):
+            self._e = e.e
+        elif isinstance(e, BaseElement):
+            self._e = e.e
+
+        self._final_space = final_space
+
     def __add__(self, other:Optional[EpiDocElement]) -> list[EpiDocElement]:
         """
         Handles appending |Element|s.
@@ -189,49 +232,6 @@ class EpiDocElement(BaseElement, Showable):
             
         return [EpiDocElement(self_e, self._final_space), EpiDocElement(other_e, other._final_space)]
 
-    @overload
-    def __init__(
-        self, 
-        e: EpiDocElement,
-        final_space:bool = False
-    ):
-        ...
-
-    @overload
-    def __init__(
-        self, 
-        e: BaseElement,
-        final_space:bool = False
-    ):
-        ...
-
-    @overload
-    def __init__(
-        self, 
-        e: _Element,
-        final_space:bool = False
-    ):
-        ...
-
-    def __init__(
-        self, 
-        e: _Element | EpiDocElement | BaseElement,
-        final_space: bool = False
-    ):
-        error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-
-        if not isinstance(e, (_Element, EpiDocElement, BaseElement)) and e is not None:
-            raise TypeError(error_msg)
-
-        if isinstance(e, _Element):
-            self._e = e
-        elif isinstance(e, EpiDocElement):
-            self._e = e.e
-        elif isinstance(e, BaseElement):
-            self._e = e.e
-
-        self._final_space = final_space
-
     # def __eq__(self, other) -> bool:
     #     if not isinstance(other, EpiDocElement):
     #         return False
@@ -280,10 +280,39 @@ class EpiDocElement(BaseElement, Showable):
         return [EpiDocElement(abbr) 
                 for abbr in self.get_desc_elems_by_name('am')]
 
+    def append_element_or_text(
+            self, 
+            item: _Element | _ElementUnicodeResult | str | BaseElement) -> EpiDocElement:
 
+        """
+        Append either element or text to an element
+        """
+
+        if isinstance(item, (_ElementUnicodeResult, str)):
+            if self.last_child is None:
+                self.text += item
+        
+            else:
+                if self.last_child.tail is None:
+                    self.last_child.tail = item
+                else:
+                    self.last_child.tail += item
+
+        elif isinstance(item, BaseElement):
+            self.e.append(item.e)
+
+        elif isinstance(item, _Element):
+            self.e.append(item)
+
+        else:
+            raise TypeError('Expected _Element or _ElementUnicodeResult')
+        
+        return self
 
     def append_space(self) -> EpiDocElement:
-        """Appends a space to the element in place."""
+        """
+        Appends a space to the element in place.
+        """
 
         if self._e is None:
             return self
@@ -332,6 +361,20 @@ class EpiDocElement(BaseElement, Showable):
             return 
         
         self.id_xml = ids.convert(current_id, oldbase, newbase)
+
+    @staticmethod
+    def create(localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
+        """
+        Create a new EpiDocElement in the TEI namespace with local name `localname` and `attributes`
+        """
+
+        tag = ns.give_ns(localname, TEINS)
+        elem = etree.Element(
+            tag, 
+            {k: v for k, v in attributes.items()}, 
+            None
+        )
+        return EpiDocElement(elem)
     
     @property
     def depth(self) -> int:

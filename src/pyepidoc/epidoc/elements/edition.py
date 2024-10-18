@@ -260,6 +260,10 @@ class Edition(EpiDocElement):
 
     def convert_ids(self, oldbase: Base, newbase: Base) -> None:
 
+        """
+        Convert full IDs between bases
+        """
+        
         # TODO This needs to be more general than abs
         for ab in self.abs:
             ab.convert_ids(oldbase, newbase)
@@ -292,7 +296,7 @@ class Edition(EpiDocElement):
         return [EpiDocElement(gap) 
                 for gap in self.get_desc('gap')]
 
-    def get_desc_tokens(self, include_nested: bool=False) -> list[Token]:
+    def get_desc_tokens(self, include_nested: bool = False) -> list[Token]:
 
         """
         :param include_nested: if true, returns all the descendant tokens,
@@ -315,7 +319,6 @@ class Edition(EpiDocElement):
                     SetRelation.intersection
                 )
             
-
             desc = map(Token, self.get_desc(AtomicTokenType.values()))
             
             return list(filter(has_not_token_ancestor, desc))        
@@ -324,6 +327,44 @@ class Edition(EpiDocElement):
     def id_carriers(self) -> list[EpiDocElement]:
         return list(chain(*[ab.id_carriers 
                             for ab in self.abs]))
+
+    @staticmethod
+    def _insert_w_inside_tag(element: EpiDocElement) -> EpiDocElement:
+
+        """
+        Enclose contents of `element` in <w> element. If already contains
+        a <w> element returns the element unchanged
+        """
+
+        desc_nodes = element.desc_nodes
+        w = EpiDocElement.create('w')
+
+        for node in desc_nodes:
+            w.append_element_or_text(node)
+
+        element.remove_children()
+
+        element.append_element_or_text(w)
+        return element
+
+    def insert_w_inside_name_and_num(
+            self,
+            ignore_if_contains_ws: bool = True) -> Edition:
+
+        """
+        Enclose contents of <name> and <num> tags in <w> tag,
+        in place. By default does nothing if already contains a <w> 
+        element.
+        """
+        for elemname in ['name', 'num']:
+
+            for name in self.desc_elems_by_local_name(elemname):
+                if name.contains('w') and ignore_if_contains_ws:
+                    return self
+                else:
+                    self._insert_w_inside_tag(EpiDocElement(name))
+
+        return self
 
     @property
     def lang(self):
