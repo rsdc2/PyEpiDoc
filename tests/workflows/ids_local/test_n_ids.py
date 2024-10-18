@@ -7,9 +7,9 @@ from pathlib import Path
 
 from pyepidoc import EpiDoc
 
-input_path = Path('tests/workflows/ids/files/input')
-output_path = Path('tests/workflows/ids/files/output')
-benchmark_path = Path('tests/workflows/ids/files/benchmark')
+input_path = Path('tests/workflows/ids_full/files/input')
+output_path = Path('tests/workflows/ids_full/files/output')
+benchmark_path = Path('tests/workflows/ids_full/files/benchmark')
 
 
 def test_set_n_ids():
@@ -17,4 +17,5 @@ def test_set_n_ids():
     with_n_ids = doc.set_n_ids()
     with_n_ids.to_xml_file(output_path / Path('set_n_ids_1.xml'))
 
-    assert [token.get_attrib('n') for token in with_n_ids.w_tokens] == ['5', '10']
+    assert [token.get_attrib('n') 
+            for token in with_n_ids.w_tokens] == ['5', '10']

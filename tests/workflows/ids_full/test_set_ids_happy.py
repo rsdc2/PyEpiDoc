@@ -9,20 +9,20 @@ from pyepidoc import EpiDoc
 make_path = lambda s: Path(s + '.xml') 
 
 tests = map(make_path, [
-    'convert_ids_1',
-    'convert_ids_2'
+    'set_ids_1', 
+    'ISic001470'
 ])
 
-input_path = Path('tests/workflows/ids/files/input')
-output_path = Path('tests/workflows/ids/files/output')
-benchmark_path = Path('tests/workflows/ids/files/benchmark')
+input_path = Path('tests/workflows/ids_full/files/input')
+output_path = Path('tests/workflows/ids_full/files/output')
+benchmark_path = Path('tests/workflows/ids_full/files/benchmark')
 
 
 @pytest.mark.parametrize('filename', tests)
-def test_convert_ids_in_epidoc(filename: Path):
-    # Convert the IDs
+def test_set_ids_in_epidoc(filename: Path):
+    # Set the IDs
     doc = EpiDoc(input_path / filename)
-    doc.convert_ids(52, 100)
+    doc.set_ids(base=100)
     doc.to_xml_file(output_path / filename)
 
     # Output to a new XML file
@@ -32,6 +32,4 @@ def test_convert_ids_in_epidoc(filename: Path):
     # Check the ids
     assert output.ids == benchmark.ids
     assert output.ids != []
-    
-    # Do the tests    
     
