@@ -3,8 +3,8 @@ from pyepidoc.epidoc.elements.w import W
 
 from pyepidoc.shared.file import remove_file
 
-unlemmatized_path = 'tests/epidoc/elements/files/unlemmatized/'
-lemmatized_path = 'tests/epidoc/elements/files/lemmatized/'
+unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
+lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
 
 
 def test_set_lemma():

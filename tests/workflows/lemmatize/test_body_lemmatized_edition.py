@@ -4,8 +4,8 @@ from pyepidoc.shared.testing import save_and_reload
 
 import pytest
 
-unlemmatized_path = 'tests/epidoc/elements/files/unlemmatized/'
-lemmatized_path = 'tests/epidoc/elements/files/lemmatized/'
+unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
+lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
 
 
 def test_create_lemmatized_edition():
