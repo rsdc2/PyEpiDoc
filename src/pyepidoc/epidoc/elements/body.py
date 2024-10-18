@@ -125,7 +125,8 @@ class Body(EpiDocElement):
         """
         Return any edition with the required subtype 
         parameter. If subtype is None, tries to return
-        an edition that has no subtype attribute.
+        an edition that has no subtype attribute, i.e.
+        the 'main' edition.
         """
 
         # Find the edition with the correct subtype.

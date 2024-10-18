@@ -553,6 +553,15 @@ class EpiDoc(DocRoot):
         self.prettify(prettifier='pyepidoc')
 
     @property
+    def lemmatized_edition(self) -> Edition | None:
+        """
+        Return the 'simple-lemmatized' edition, if it exists,
+        or None if not.
+        """
+
+        return self.body.edition_by_subtype('simple-lemmatized')
+
+    @property
     def main_edition(self) -> Edition | None:
         """
         Return the main edition of the document, i.e. not

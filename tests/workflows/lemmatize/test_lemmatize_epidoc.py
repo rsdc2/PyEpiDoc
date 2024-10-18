@@ -17,8 +17,8 @@ def test_lemmatize_on_main_edition():
     
     """
     Test that calling the `lemmatize` method 
-    on an EpiDoc document produces a lemmatized version
-    on the main edition.
+    on an EpiDoc document puts lemmata on the main 
+    <div type="edition"/> element.
     """
 
     filename = 'lemmatized_main_edition_with_dummy.xml'
@@ -37,7 +37,9 @@ def test_lemmatize_on_main_edition():
 
 unlemmatized_filenames = [
     'unlemmatized_single_token.xml',
-    'unlemmatized_full.xml'] 
+    'unlemmatized_full.xml',
+    'unlemmatized_with_gap_and_orig.xml'
+] 
 
 @pytest.mark.parametrize(
         "unlemmatized_filename", 
@@ -48,19 +50,18 @@ def test_lemmatize_on_separate_edition(
 
     """
     Test that calling the `lemmatize` method 
-    on an EpiDoc document produces a lemmatized version
-    on a separate edition.
+    on an EpiDoc document produces a separate
+    <div type="edition"/> element.
     """
-    
-    filename = 'lemmatized_separate_edition_with_dummy.xml'
-    remove_file(lemmatized_path + filename)
+
+    remove_file(lemmatized_path + unlemmatized_filename)
 
     doc = EpiDoc(unlemmatized_path + unlemmatized_filename)
     doc.lemmatize(dummy_lemmatizer, 'separate')
-    doc.to_xml_file(lemmatized_path + filename)
+    doc.to_xml_file(lemmatized_path + unlemmatized_filename)
 
     # Check correct
-    doc_ = save_and_reload(doc, lemmatized_path + filename)
+    doc_ = save_and_reload(doc, lemmatized_path + unlemmatized_filename)
     edition_ = doc_.body.edition_by_subtype('simple-lemmatized')
 
     assert edition_ is not None

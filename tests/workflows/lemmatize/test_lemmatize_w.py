@@ -8,10 +8,12 @@ lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
 
 
 def test_set_lemma():
+    
     """
     Test that can set the lemma attribute
     of a token element
     """
+
     filename = 'lemmatized.xml'
     remove_file(lemmatized_path + filename)
 
