@@ -15,7 +15,8 @@ benchmark_path = Path('tests/workflows/ids_local/files/benchmark')
 
 paths = [
     ('set_n_ids_1.xml', ['5', '10']),
-    ('set_n_ids_2.xml', ['5', '10', '15', '20']) # Check that ignore <gap/> element
+    ('set_n_ids_2.xml', ['5', '10', '15', '20']) 
+            # Check that ignore <gap/> element
 ]
 
 @pytest.mark.parametrize('filename_with_result', paths)
