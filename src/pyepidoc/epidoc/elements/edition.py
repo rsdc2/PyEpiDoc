@@ -356,7 +356,7 @@ class Edition(EpiDocElement):
             for element in self.get_desc_elems_by_name(['l'])]
 
     @property
-    def n_id_tokens(self) -> list[EpiDocElement]:
+    def n_id_elements(self) -> list[EpiDocElement]:
         
         """
         Get all the tokens in the edition that should 
@@ -417,7 +417,7 @@ class Edition(EpiDocElement):
         with 5, it will be 5, 10, 15, 20 etc.
         """
 
-        for i, elem in enumerate(self.n_id_tokens, 1):
+        for i, elem in enumerate(self.n_id_elements, 1):
             if elem.get_attrib('n') != None:
                 raise AttributeError(f'@n attribute already set '
                                  'on element {elem}.')

@@ -599,6 +599,19 @@ class EpiDoc(DocRoot):
         return list(names)
 
     @property
+    def n_id_elements(self) -> list[EpiDocElement]:
+
+        """
+        Get all the tokens in the main edition that should 
+        receive an `@n` id.
+        """
+
+        if self.edition_main is None:
+            raise ValueError('No main edition. Cannot extract n_id elements.')
+
+        return self.edition_main.n_id_elements
+
+    @property
     def nums(self) -> list[Num]:
         edition = self.editions()[0]
         if edition is None:
@@ -882,6 +895,16 @@ class EpiDoc(DocRoot):
         for edition in self.editions():
             edition.set_ids(base)
 
+    def set_full_ids(self, base: Base=100) -> None:
+        """
+        Put @xml:id on all elements of the edition,
+        in place. There are two options, using either
+        Base 52 or Base 100. Should keep any id that 
+        already exist on an element.
+        """
+
+        self.set_ids(base)
+
     def set_n_ids(self, interval: int = 5) -> EpiDoc:
         
         """
@@ -1101,13 +1124,6 @@ class EpiDoc(DocRoot):
         return self.tokens_no_nested
 
     @property
-    def tokens_list_str(self) -> list[str]:
-        """
-        :return: tokens as a list of strings
-        """
-        return [str(token) for token in self.tokens]
-
-    @property
     def tokens_incl_nested(self) -> list[Token]:
         """
         :return: a list of all the tokens in the document, 
@@ -1116,6 +1132,13 @@ class EpiDoc(DocRoot):
         tokens = chain(*[edition.tokens_incl_nested 
                          for edition in self.editions()])
         return list(tokens)        
+
+    @property
+    def tokens_list_str(self) -> list[str]:
+        """
+        :return: tokens as a list of strings
+        """
+        return [str(token) for token in self.tokens]
 
     @property
     def tokens_no_nested(self) -> list[Token]:
@@ -1138,7 +1161,7 @@ class EpiDoc(DocRoot):
 
         return list(chain(*[edition.tokens_normalized 
                             for edition in self.editions()]))
-    
+
     @property
     def translation_text(self) -> str:
         """
