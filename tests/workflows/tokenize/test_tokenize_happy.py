@@ -3,11 +3,16 @@ from pathlib import Path
 from lxml import etree
 
 from pyepidoc.shared.file import remove_file
+from pyepidoc.shared.testing import save_reload_and_compare
 from pyepidoc.epidoc.scripts import tokenize
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.elements.ab import Ab
 from pyepidoc.xml.utils import abify
 
+
+input_path = Path('tests/workflows/tokenize/files/untokenized')
+output_path = Path('tests/workflows/tokenize/files/tokenized_output')
+benchmark_path = Path('tests/workflows/tokenize/files/tokenized_benchmark')
 
 tests = [
     'space',
@@ -116,8 +121,24 @@ def test_model_headers():
     assert tokenized_epidoc.processing_instructions_str == tokenized_benchmark.processing_instructions_str
 
 
+def test_tokenize_insert_ws():
+    
+    """
+    Tests that tokenizes and inserts <w> elements inside <name> and <num>
+    """
+
+    filename = Path('insert_w_in_name.xml')
+    doc = EpiDoc(input_path / filename)
+    doc.tokenize(insert_ws_inside_names_and_nums=True)
+    assert save_reload_and_compare(
+        doc, 
+        output_path / filename, 
+        benchmark_path / filename
+    ) == True
+
+
 @pytest.mark.parametrize("tokenize_type", tests)
-def test_tokenize_special_cases(tokenize_type:str):
+def test_tokenize_special_cases(tokenize_type: str):
     # Tokenize the files
     tokenized_epidoc, tokenized_benchmark = \
         tokenize_epidoc(tokenize_type=tokenize_type)
