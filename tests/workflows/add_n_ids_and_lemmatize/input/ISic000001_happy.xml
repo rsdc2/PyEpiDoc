@@ -207,14 +207,6 @@
                     <lb n="3"/><w><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g ref="#interpunct">·</g> <w><expan><abbr>a</abbr><ex>nnis</ex></expan></w> <g ref="#interpunct">·</g> <num value="6">VI</num>
                 </ab>
             </div>
-			<div type="edition" subtype="simple-lemmatized">
-                <ab>
-                    <w n="5" lemma="lemma">Dis</w>
-					<w n="10" lemma="lemma">manibus</w>
-					<w n="15" lemma="lemma">vixit</w>
-					<w n="20" lemma="lemma">annis</w>
-				</ab>
-			</div>
 			<div type="apparatus" resp="#JP">
                 <listApp>
                     <app>
