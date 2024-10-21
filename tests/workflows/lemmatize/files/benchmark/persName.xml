@@ -4,9 +4,15 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
     <text>
         <body>
-        <div type="edition" xml:space="preserve" xml:lang="grc">
+            <div type="edition" xml:space="preserve" xml:lang="grc">
                 <ab>
                     <persName><name><w>Decimus</w></name><name><w>Maximus</w></name></persName>
+                </ab>
+            </div>
+            <div type="edition" subtype="simple-lemmatized">
+                <ab>
+                    <w lemma="lemma">Decimus</w>
+                    <w lemma="lemma">Maximus</w>
                 </ab>
             </div>
         </body>

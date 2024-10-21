@@ -44,7 +44,8 @@ filenames_with_tag_counts = [
     ('single_token.xml', {'w': 1, 'orig': 0, 'gap': 0}),
     ('ISic000001.xml', {'w': 6, 'orig': 0, 'gap': 0}),
     ('gap_and_orig.xml', {'w': 2, 'orig': 1, 'gap': 1}),
-    ('textpart_fragment_physical.xml', {'w': 0, 'gap': 4, 'orig': 2})
+    ('textpart_fragment_physical.xml', {'w': 0, 'gap': 4, 'orig': 2}),
+    ('persName.xml', {'w': 2, 'gap': 0, 'orig': 0})
 ] 
 @pytest.mark.parametrize(
         "filename_with_tag_counts", 
