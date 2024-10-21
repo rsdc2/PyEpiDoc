@@ -2,26 +2,20 @@
 <?xml-model href="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="../schematron/ircyr-checking.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
-	<text>
-        <!-- ISic.000001 -->
-		<body>
+    <text>
+        <body>
             <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
                 <ab>
                     <lb n="1"/><w n="2">D<hi rend="tall">i</hi>s</w> <g n="4" ref="#interpunct">·</g> <w n="6"><expan><abbr>man</abbr><ex>ibus</ex></expan></w>
                     <lb n="2"/><g n="8" ref="#interpunct">·</g> <persName type="attested"><name><w n="10">Zet<hi rend="ligature">hi</hi></w></name></persName>
-                    <lb n="3"/><w n="12"><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g n="14" ref="#interpunct">·</g> <w n="16"><expan><abbr>a</abbr><ex>nnis</ex></expan></w> <g n="18" ref="#interpunct">·</g> <num value="6"><w n="20">VI</w></num>
+                    <lb n="3"/><w n="12"><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g n="14"  ref="#interpunct">·</g> <w n="16"><expan><abbr>a</abbr><ex>nnis</ex></expan></w> <g n="18" ref="#interpunct">·</g> <num value="6"><w n="20">VI</w></num>
                 </ab>
             </div>
-			<div type="edition" subtype="simple-lemmatized">
+            <div type="edition" subtype="simple-lemmatised">
                 <ab>
-                    <w n="2" lemma="lemma">Dis</w>
-					<w n="6" lemma="lemma">manibus</w>
-					<w n="10" lemma="lemma">Zethi</w>
-					<w n="12" lemma="lemma">vixit</w>
-					<w n="16" lemma="lemma">annis</w>
-					<w n="20" lemma="lemma">VI</w>
-				</ab>
-			</div>
-		</body>
-	</text>
+                    <w n="2" lemma="di">Dis</w> <w n="6" lemma="manes">manibus</w> <w n="10" lemma="Zethus">Zethi</w> <w n="12" lemma="vivo">vixit</w> <w n="16" lemma="annus">annis</w> <w n="20" lemma="sex">VI</w>
+                </ab>
+            </div>
+        </body>
+    </text>
 </TEI>

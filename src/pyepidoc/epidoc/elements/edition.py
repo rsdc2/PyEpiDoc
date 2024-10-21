@@ -116,6 +116,14 @@ def prettify(
         
         return parents
 
+    def prettify_first_child(element: BaseElement) -> None:
+        element.text = ''.join([
+            default_str(element.text).strip(),
+            "\n",
+            spaceunit.value * number * (element.depth + 1)
+        ]
+    )
+
     def prettify_lb(lb: BaseElement) -> None:
         first_parent = lb.get_first_parent_by_name(['lg', 'ab', 'div'])
 
@@ -130,16 +138,9 @@ def prettify(
 
     def prettify_prev(element: BaseElement) -> None:
         element.tail = ''.join([
-            default_str(element.tail),
+            default_str(element.tail).strip(),
             "\n",
             (spaceunit.value * number) * element.depth
-        ])
-
-    def prettify_first_child(element: BaseElement) -> None:
-        element.text = ''.join([
-            default_str(element.text).strip(),
-            "\n",
-            spaceunit.value * number * (element.depth + 1)
         ])
 
     def prettify_parent_of_lb(element: BaseElement) -> None:
@@ -190,7 +191,11 @@ def prettify(
             else:
                 prettify_first_child(parent)
 
-        prettify_closing_tags(edition.get_desc_elems_by_name(['ab', 'l', 'lg' 'lb', 'div']))
+        prettify_closing_tags(
+            edition.get_desc_elems_by_name(
+                ['ab', 'l', 'lg' 'lb', 'div']
+                )
+            )
         
     return edition
 
@@ -420,7 +425,11 @@ class Edition(EpiDocElement):
             )
         ]
 
-    def prettify(self, spaceunit:SpaceUnit, number:int) -> None:
+    def prettify(self, spaceunit: SpaceUnit, number: int) -> None:
+        """
+        Prettify the edition text. Since this is within xml:space = "preserve",
+        this involves ignoring this directive.
+        """
         prettify(spaceunit=spaceunit, number=number, edition=self)
 
     def set_ids(self, base: Base=52, compress: bool=True) -> None:

@@ -293,7 +293,6 @@ class DocRoot:
         
         except XMLSyntaxError as e:
             print('XMLSyntaxError in _e_from_file')
-            breakpoint()
             handle_xmlsyntaxerror(e)
             return _ElementTree()        
 

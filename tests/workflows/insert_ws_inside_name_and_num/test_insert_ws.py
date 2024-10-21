@@ -6,7 +6,7 @@ elements.
 from pathlib import Path
 import pytest
 from pyepidoc import EpiDoc
-from pyepidoc.shared.testing import save_reload_and_compare
+from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 
 input_path = Path('tests/workflows/insert_ws_inside_name_and_num/files/input')
 output_path = Path('tests/workflows/insert_ws_inside_name_and_num/files/output')
@@ -31,4 +31,4 @@ def test_insert_ws(filename: str):
     
     doc.main_edition.insert_w_inside_name_and_num()
 
-    assert save_reload_and_compare(doc, output_path / Path(filename), benchmark_path / Path(filename)) == True
+    assert save_reload_and_compare_with_benchmark(doc, output_path / Path(filename), benchmark_path / Path(filename)) == True

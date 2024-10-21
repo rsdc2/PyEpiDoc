@@ -2,7 +2,7 @@ from lxml import etree
 
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.shared import head
-from pyepidoc.shared.testing import save_reload_and_compare
+from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 from pyepidoc.epidoc.dom import lang, line
 
 import pytest
@@ -146,10 +146,10 @@ def test_prettify_doc_with_pyepidoc():
     ugly = EpiDoc(relative_filepaths['ugly'])
     prettified = ugly.prettify('pyepidoc')
 
-    assert save_reload_and_compare(
+    assert save_reload_and_compare_with_benchmark(
         doc=prettified,
         target_path=relative_filepaths['prettified_pyepidoc'],
-        benchmark=relative_filepaths['benchmark_pyepidoc']
+        benchmark_path=relative_filepaths['benchmark_pyepidoc']
     )
 
 
