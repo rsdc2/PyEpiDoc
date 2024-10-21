@@ -9,6 +9,7 @@ from typing import (
     cast,
     overload
 )
+from copy import deepcopy
 
 from ..shared.classes import Showable, ExtendableSeq
 import operator
@@ -213,7 +214,11 @@ class BaseElement(Showable):
         """
 
         return len(self.desc_elems_by_local_name(localname=localname)) > 0
+    
+    def deepcopy(self) -> BaseElement:
 
+        return BaseElement(deepcopy(self._e))
+    
     @property
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""

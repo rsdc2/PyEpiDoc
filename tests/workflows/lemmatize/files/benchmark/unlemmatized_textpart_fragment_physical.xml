@@ -18,14 +18,20 @@
                 </div>
             </div>
 			<div type="edition" subtype="simple-lemmatized">
-                <ab>
-                    <gap reason="lost" extent="unknown" unit="character"></gap>
-					<orig>ΕΡΩ</orig>
-					<gap reason="lost" extent="unknown" unit="character"></gap>
-					<gap reason="lost" extent="unknown" unit="character"></gap>
-					<orig>ΚΤΩΝΧ</orig>
-					<gap reason="lost" extent="unknown" unit="character"></gap>
-				</ab>
+                <div type="textpart" subtype="fragment-physical" n="A" corresp="#frB">
+                    <ab>
+                        <gap reason="lost" extent="unknown" unit="character"></gap>
+                        <orig>ΕΡΩ</orig>
+                        <gap reason="lost" extent="unknown" unit="character"></gap>
+                    </ab>
+                </div>
+                <div>
+                    <ab>
+                        <gap reason="lost" extent="unknown" unit="character"></gap>
+                        <orig>ΚΤΩΝΧ</orig>
+                        <gap reason="lost" extent="unknown" unit="character"></gap>
+                    </ab>
+                </div>
 			</div>
 		</body>
 	</text>

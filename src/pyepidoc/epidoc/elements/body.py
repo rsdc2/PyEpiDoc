@@ -16,7 +16,9 @@ from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.shared.constants import ( 
                          TEINS, 
                          XMLNS,
-                         SEPARATE_LEMMATIZED_EDITION_ITEMS)
+                         SEPARATE_LEMMATIZED_ITEMS, 
+                         SEPARATE_LEMMATIZED_CONTAINER_ITEMS,
+                         SEPARATE_LEMMATIZED_TEXT_ITEMS)
 
 from pyepidoc.shared.utils import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
@@ -64,23 +66,26 @@ class Body(EpiDocElement):
             to the new Edition.
             """
 
-            for desc_elem in source_elem.desc_elems:
+            for child in source_elem.child_elems:
                 
-                if desc_elem.tag.name in SEPARATE_LEMMATIZED_EDITION_ITEMS:
-                    desc_for_target = EpiDocElement(deepcopy(desc_elem._e))
-                    desc_for_target.remove_children()
-                    desc_for_target.remove_attr('id', XMLNS)
-                    desc_for_target.text = desc_elem.text_desc
-                    target_elem._e.append(desc_for_target._e)
+                child_for_target = child.deepcopy()
 
-        target_ab = maxone(target.abs, None, True, 0)
+                if child.tag.name in SEPARATE_LEMMATIZED_CONTAINER_ITEMS:
+                    child_for_target.remove_children()
+                    child_for_target.remove_attr('id', XMLNS)
+                    target_elem._e.append(child_for_target._e)
+                    append_items(child, child_for_target)
 
-        if target_ab is None:
-            # No <ab> so create one
-            print('Warning: No <ab> present in target edition so adding one')
-            target_ab = target.append_empty_ab()
+                if child.tag.name == 'ab':
+                    for desc in child.desc_elems:
+                        desc_for_target = desc.deepcopy()
+                        if desc.tag.name in SEPARATE_LEMMATIZED_TEXT_ITEMS:
+                            desc_for_target.remove_children()
+                            desc_for_target.remove_attr('id', XMLNS)
+                            desc_for_target.text = desc.text_desc
+                            child_for_target._e.append(desc_for_target._e)                            
 
-        append_items(source, EpiDocElement(target_ab))
+        append_items(source, EpiDocElement(target))
 
         return target
 
@@ -108,10 +113,6 @@ class Body(EpiDocElement):
         )
         
         new_edition = Edition(edition_elem)
-
-        # Create internal <ab> element: TEI requires this
-        # and append it to the Edition element
-        new_edition.append_empty_ab()
 
         # Insert the new edition after the main edition
         main_edition = self.edition_by_subtype(None)

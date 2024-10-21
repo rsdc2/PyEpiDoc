@@ -376,6 +376,9 @@ class EpiDocElement(BaseElement, Showable):
         )
         return EpiDocElement(elem)
     
+    def deepcopy(self) -> EpiDocElement:
+        return EpiDocElement(deepcopy(self._e))
+
     @property
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
