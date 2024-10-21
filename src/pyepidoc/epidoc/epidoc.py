@@ -748,7 +748,7 @@ class EpiDoc(DocRoot):
                             'lxml or pyepidoc.')
 
         if prettify_main_edition:
-            self.prettify_main_edition(SpaceUnit.Space, 4)
+            self.prettify_main_edition(SpaceUnit.Space.value, 4)
 
         return self
 
@@ -808,14 +808,14 @@ class EpiDoc(DocRoot):
                     
                     # If last child, add one fewer tab so that closing tag
                     # has correct alignment
-                    tail_to_append = "\n" + (desc.ancestor_count - 1) * "\t"
+                    tail_to_append = "\n" + (desc.ancestor_count - 1) * space_unit * multiplier
 
                     if desc.tail is None:
                         desc.tail = tail_to_append
                     else:
                         desc.tail = desc.tail.strip() + tail_to_append
                 else:
-                    desc.tail = "\n" + (desc.ancestor_count) * "\t"
+                    desc.tail = "\n" + (desc.ancestor_count) * space_unit * multiplier
 
         # Root element
         # Remove trailing text
@@ -828,15 +828,18 @@ class EpiDoc(DocRoot):
 
     def prettify_main_edition(
         self, 
-        spaceunit=SpaceUnit.Space, 
-        number=4, 
-        verbose=True
+        spaceunit = SpaceUnit.Space.value, 
+        number = 4, 
+        verbose = True
     ) -> None:
 
         """
         Prettify the xml of the <div type="edition"> element; this
         cannot be done automatically using lxml since this element
         will have @xml:space="preserve".
+
+        :param replace_tabs: If True, replaces all tab characters with 
+        the correct multiple of spaceunit.
         """
     
         if verbose: 
@@ -1145,7 +1148,7 @@ class EpiDoc(DocRoot):
             
         if prettify_edition:
             self.prettify_main_edition(
-                spaceunit=SpaceUnit.Space, 
+                spaceunit=SpaceUnit.Space.value, 
                 number=4
             )
 

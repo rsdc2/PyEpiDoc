@@ -4,7 +4,7 @@
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
 	<text>
         <!-- ISic003330 -->
-		<body>
+        <body>
             <div type="edition" xml:space="preserve" xml:lang="grc" resp="#JP">
                 <div type="textpart" subtype="fragment-physical" n="A" corresp="#frA">
                     <ab>
@@ -17,22 +17,22 @@
                     </ab>
                 </div>
             </div>
-			<div type="edition" subtype="simple-lemmatized">
-                <div type="textpart" subtype="fragment-physical" n="A" corresp="#frB">
+            <div type="edition" subtype="simple-lemmatized">
+                <div type="textpart" subtype="fragment-physical" n="A" corresp="#frA">
                     <ab>
                         <gap reason="lost" extent="unknown" unit="character"></gap>
                         <orig>ΕΡΩ</orig>
                         <gap reason="lost" extent="unknown" unit="character"></gap>
                     </ab>
                 </div>
-                <div>
+                <div type="textpart" subtype="fragment-physical" n="B" corresp="#frB">
                     <ab>
                         <gap reason="lost" extent="unknown" unit="character"></gap>
                         <orig>ΚΤΩΝΧ</orig>
                         <gap reason="lost" extent="unknown" unit="character"></gap>
                     </ab>
                 </div>
-			</div>
-		</body>
-	</text>
+            </div>
+        </body>
+    </text>
 </TEI>

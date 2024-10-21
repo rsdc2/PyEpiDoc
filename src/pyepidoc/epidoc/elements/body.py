@@ -68,22 +68,29 @@ class Body(EpiDocElement):
 
             for child in source_elem.child_elems:
                 
-                child_for_target = child.deepcopy()
+                child_copy = child.deepcopy()
 
-                if child.tag.name in SEPARATE_LEMMATIZED_CONTAINER_ITEMS:
-                    child_for_target.remove_children()
-                    child_for_target.remove_attr('id', XMLNS)
-                    target_elem._e.append(child_for_target._e)
-                    append_items(child, child_for_target)
+                if child.tag.name in SEPARATE_LEMMATIZED_CONTAINER_ITEMS and child.tag.name != 'ab':
+                    child_copy.remove_children()
+                    child_copy.remove_attr('id', XMLNS)
+                    target_elem._e.append(child_copy._e)
+                    append_items(child, child_copy)
 
-                if child.tag.name == 'ab':
-                    for desc in child.desc_elems:
-                        desc_for_target = desc.deepcopy()
+                elif child.tag.name == 'ab':
+                    ab = child
+                    ab_copy = child_copy
+                    ab_copy.remove_children()
+                    ab_copy.remove_attr('id', XMLNS)
+                    target_elem._e.append(child_copy._e)
+                    
+                    for desc in ab.desc_elems:
+                        desc_copy = desc.deepcopy()
+
                         if desc.tag.name in SEPARATE_LEMMATIZED_TEXT_ITEMS:
-                            desc_for_target.remove_children()
-                            desc_for_target.remove_attr('id', XMLNS)
-                            desc_for_target.text = desc.text_desc
-                            child_for_target._e.append(desc_for_target._e)                            
+                            desc_copy.remove_children()
+                            desc_copy.remove_attr('id', XMLNS)
+                            desc_copy.text = desc.text_desc
+                            ab_copy._e.append(desc_copy._e)                            
 
         append_items(source, EpiDocElement(target))
 

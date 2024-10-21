@@ -4,7 +4,12 @@ import pytest
 
 from pyepidoc import EpiDoc
 from pyepidoc.shared.file import remove_file 
-from pyepidoc.shared.testing import save_and_reload, save_reload_and_compare_with_benchmark
+from pyepidoc.shared.testing import (
+    save_and_reload, 
+    save_reload_and_compare_with_benchmark
+)
+
+from pyepidoc.shared.constants import SEPARATE_LEMMATIZED_ITEMS
 
 unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
 lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
@@ -80,8 +85,8 @@ def test_lemmatize_on_separate_edition(
         == tag_counts['gap']
     
     # Check that only those elements have been copied across
-    assert lemmatized_ed.desc_elem_name_set - {'w', 'orig', 'gap', 'ab'} \
-        == set()
+    assert lemmatized_ed.desc_elem_name_set - \
+        set(SEPARATE_LEMMATIZED_ITEMS) == set()
     
     assert save_reload_and_compare_with_benchmark(
         doc, 

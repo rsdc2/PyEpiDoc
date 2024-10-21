@@ -9,14 +9,14 @@
                     <w>σώμ<hi>ατος</hi></w> <gap/> <orig>dasg</orig> <w>manibus</w>
                 </ab>
             </div>
-			<div type="edition" subtype="simple-lemmatized">
+            <div type="edition" subtype="simple-lemmatized">
                 <ab>
                     <w lemma="lemma">σώματος</w>
-					<gap></gap>
-					<orig>dasg</orig>
-					<w lemma="lemma">manibus</w>
-				</ab>
-			</div>
-		</body>
-	</text>
+                    <gap></gap>
+                    <orig>dasg</orig>
+                    <w lemma="lemma">manibus</w>
+                </ab>
+            </div>
+        </body>
+    </text>
 </TEI>

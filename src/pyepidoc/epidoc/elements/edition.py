@@ -19,12 +19,14 @@ from pyepidoc.shared.utils import maxone
 
 from pyepidoc.xml.namespace import Namespace as ns
 
-from pyepidoc.shared.constants import (A_TO_Z_SET, 
-                         TEINS, 
-                         XMLNS, 
-                         SubsumableRels,
-                         ROMAN_NUMERAL_CHARS,
-                         VALID_BASES)
+from pyepidoc.shared.constants import (
+    A_TO_Z_SET, 
+    TEINS, 
+    XMLNS, 
+    SubsumableRels,
+    ROMAN_NUMERAL_CHARS,
+    VALID_BASES
+)
 
 from .. import ids
 from ..element import EpiDocElement
@@ -49,9 +51,9 @@ from ..enums import (
 
 
 def prettify(
-    spaceunit:SpaceUnit, 
-    number:int, 
-    edition:Edition
+    spaceunit: str, 
+    number: int, 
+    edition: Edition
 ) -> Edition:
 
     """
@@ -120,7 +122,7 @@ def prettify(
         element.text = ''.join([
             default_str(element.text).strip(),
             "\n",
-            spaceunit.value * number * (element.depth + 1)
+            spaceunit * number * (element.depth + 1)
         ]
     )
 
@@ -133,14 +135,14 @@ def prettify(
         lb.tail = ''.join([
             default_str(lb.tail).strip(),
             "\n",
-            (spaceunit.value * number) * (first_parent.depth + 1)
+            (spaceunit * number) * (first_parent.depth + 1)
         ])
 
     def prettify_prev(element: BaseElement) -> None:
         element.tail = ''.join([
             default_str(element.tail).strip(),
             "\n",
-            (spaceunit.value * number) * element.depth
+            (spaceunit * number) * element.depth
         ])
 
     def prettify_parent_of_lb(element: BaseElement) -> None:
@@ -151,7 +153,7 @@ def prettify(
         element.text = ''.join([
             default_str(element.text).strip(),
             "\n",
-            (spaceunit.value * number) * (first_parent.depth + 1)
+            (spaceunit * number) * (first_parent.depth + 1)
         ])
 
     def prettify_closing_tags(elements: Sequence[BaseElement]) -> None:
@@ -162,7 +164,7 @@ def prettify(
             lastchild.tail = ''.join([
                 default_str(lastchild.tail).strip(),
                 "\n",
-                spaceunit.value * number * (_get_multiplier(element) - 1)
+                spaceunit * number * (_get_multiplier(element) - 1)
             ])
             
     # Do the pretty-printing
@@ -425,12 +427,20 @@ class Edition(EpiDocElement):
             )
         ]
 
-    def prettify(self, spaceunit: SpaceUnit, number: int) -> None:
+    def prettify(
+            self, 
+            spaceunit: str, 
+            number: int
+            ) -> None:
         """
         Prettify the edition text. Since this is within xml:space = "preserve",
         this involves ignoring this directive.
         """
-        prettify(spaceunit=spaceunit, number=number, edition=self)
+        prettify(
+            spaceunit=spaceunit, 
+            number=number, 
+            edition=self
+        )
 
     def set_ids(self, base: Base=52, compress: bool=True) -> None:
         """
