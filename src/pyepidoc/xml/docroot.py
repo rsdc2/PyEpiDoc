@@ -82,57 +82,23 @@ class DocRoot:
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
                         'Path, _ElementTree, _Element or str.')
 
-    def __bytes__(self) -> bytes:
-        """
-        Convert the XML to bytes including processing instructions
-        """
-
-        declaration = \
-            '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
-        processing_instructions = \
-            (self.processing_instructions_str + '\n').encode("utf-8")
-
-        try:
-            b_str = etree.tostring( 
-                self.e, 
-                pretty_print=True,      # type: ignore
-                xml_declaration=False   # type: ignore
-            )
-        except AssertionError as e:
-            print(e)
-            return b''
-
-        return declaration + processing_instructions + b_str
-    
-    def __str__(self) -> str:
-        """
-        Convert the XML to bytes including processing instructions
-        """
-
-        declaration = \
-            '<?xml version="1.0" encoding="UTF-8"?>\n'
-        processing_instructions = \
-            (self.processing_instructions_str + '\n')
-
-        try:
-            s = etree.tostring( 
-                self.e, 
-                pretty_print=True,      # type: ignore
-                encoding='unicode',       # type: ignore
-                xml_declaration=False   # type: ignore
-            )
-        except AssertionError as e:
-            print(e)
-            return ''
-
-        return declaration + processing_instructions + s
-
     @staticmethod
     def _clean_text(text:str):
         return text.strip()\
             .replace('\n', '')\
             .replace(' ', '')\
             .replace('\t', '')
+
+    def _collapse_empty_elements(self) -> DocRoot:
+        """
+        Turn a <tag></tag> to <tag/>
+        """
+
+        for elem in self.desc_elems:
+            if elem.text == '':
+                elem.text = None
+
+        return self
 
     @staticmethod
     def _compile_attribs(attribs: Optional[dict[str, str]]) -> str:
@@ -345,6 +311,58 @@ class DocRoot:
 
         return ''.join(xpath_res)
 
+    def to_byte_str(self, collapse_empty_elements: bool = False) -> bytes:
+        """
+        Convert the XML to bytes including processing instructions
+        """
+
+        declaration = \
+            '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
+        processing_instructions = \
+            (self.processing_instructions_str + '\n').encode("utf-8")
+
+        if collapse_empty_elements:
+            self._collapse_empty_elements()
+
+        try:
+            b_str = etree.tostring( 
+                self.e, 
+                pretty_print=False,      # type: ignore
+                xml_declaration=False   # type: ignore
+            )
+        except AssertionError as e:
+            print(e)
+            return b''
+
+        return declaration + processing_instructions + b_str
+    
+    def to_str(self, collapse_empty_elements: bool = False) -> str:
+        """
+        Convert the XML to bytes including processing instructions
+        """
+
+        declaration = \
+            '<?xml version="1.0" encoding="UTF-8"?>\n'
+        processing_instructions = \
+            (self.processing_instructions_str + '\n')
+
+        if collapse_empty_elements:
+            self._collapse_empty_elements()
+
+        try:
+            s = etree.tostring( 
+                self.e, 
+                pretty_print=False,      # type: ignore
+                encoding='unicode',       # type: ignore
+                xml_declaration=False   # type: ignore
+            )
+        except AssertionError as e:
+            print(e)
+            return ''
+
+        return declaration + processing_instructions + s
+
+
     @property
     def valid(self) -> Optional[bool]:
         """
@@ -413,7 +431,7 @@ class DocRoot:
         """
         Return the element as a byte string
         """
-        return self.__bytes__()
+        return self.to_byte_str(collapse_empty_elements=True)
     
     @property
     def xml_str(self) -> str:
@@ -421,7 +439,7 @@ class DocRoot:
         """
         Return the element as a unicode string
         """
-        return self.__str__()
+        return self.to_str(collapse_empty_elements=True)
     
     def xpath(self, xpathstr: str) -> list[_Element | _ElementUnicodeResult]:
         if self.e is None: 

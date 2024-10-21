@@ -10,7 +10,7 @@ def save_and_reload(doc: EpiDoc, path: str | Path) -> EpiDoc:
     modified files.
     """
 
-    doc.to_xml_file(path)
+    doc.to_xml_file(path, collapse_empty_elements=True)
     return EpiDoc(path)
 
 
@@ -25,7 +25,7 @@ def save_reload_and_compare_with_benchmark(
 
     doc_ = save_and_reload(doc, target_path)
     benchmark_doc = EpiDoc(benchmark_path)
-
+    # breakpoint()
     return doc_.xml_byte_str == benchmark_doc.xml_byte_str
 
 

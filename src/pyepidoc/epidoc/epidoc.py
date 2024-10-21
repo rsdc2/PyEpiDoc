@@ -438,7 +438,7 @@ class EpiDoc(DocRoot):
         if idno_elem is None:
             return 'None'
 
-        return idno_elem.text
+        return idno_elem.text or ''
 
     @property
     def ids(self) -> list[str]:
@@ -550,7 +550,7 @@ class EpiDoc(DocRoot):
                 f'Invalid destination for lemmatized items: {where}')
 
         for w in edition.w_tokens:
-            w.lemma = lemmatize(w.text)
+            w.lemma = lemmatize(w.text or '')
         
         self.prettify(prettifier='pyepidoc')
 
@@ -797,9 +797,9 @@ class EpiDoc(DocRoot):
                 # Only insert a new line and tab as first child if there are 
                 # child elements
                 if len(desc.child_elements) > 0:
-                    desc.text = "\n" + \
+                    desc.text = '\n' + \
                         (desc.ancestor_count + 1) * multiplier * space_unit + \
-                        desc.text.strip()
+                        (desc.text or '').strip()
 
                 # Add new line and tabs after tag
                 if desc.parent is not None and \
@@ -808,21 +808,21 @@ class EpiDoc(DocRoot):
                     
                     # If last child, add one fewer tab so that closing tag
                     # has correct alignment
-                    tail_to_append = "\n" + (desc.ancestor_count - 1) * space_unit * multiplier
+                    tail_to_append = '\n' + (desc.ancestor_count - 1) * space_unit * multiplier
 
                     if desc.tail is None:
                         desc.tail = tail_to_append
                     else:
                         desc.tail = desc.tail.strip() + tail_to_append
                 else:
-                    desc.tail = "\n" + (desc.ancestor_count) * space_unit * multiplier
+                    desc.tail = '\n' + (desc.ancestor_count) * space_unit * multiplier
 
         # Root element
         # Remove trailing text
-        self.root_elem.tail = ""
-        self.root_elem.text = "\n\t" + self.root_elem.text.strip() \
+        self.root_elem.tail = ''
+        self.root_elem.text = '\n' + multiplier * space_unit + (self.root_elem.text or '').strip() \
             if len(self.desc_elems) > 0 \
-            else "\n\t" + self.root_elem.text.strip()
+            else '\n' + space_unit * multiplier + (self.root_elem.text or '').strip()
         
         return epidoc
 
@@ -1056,7 +1056,8 @@ class EpiDoc(DocRoot):
     def to_xml_file(
         self, 
         dst: Path, 
-        verbose=True
+        verbose=True,
+        collapse_empty_elements = False
     ) -> None:
         
         ...
@@ -1064,7 +1065,9 @@ class EpiDoc(DocRoot):
     @overload
     def to_xml_file(
         self,
-        dst: str
+        dst: str,
+        verbose = True,
+        collapse_empty_elements = False
     ) -> None:
         
         ...
@@ -1072,7 +1075,8 @@ class EpiDoc(DocRoot):
     def to_xml_file(
         self, 
         dst: Path | str, 
-        verbose=True
+        verbose=True,
+        collapse_empty_elements = False
     ) -> None:
         
         """
@@ -1092,7 +1096,7 @@ class EpiDoc(DocRoot):
             print(f'Writing {self.id}...')
         
         with open(dst, 'w') as f:
-            f.write(str(self))
+            f.write(self.to_str(collapse_empty_elements))
 
     @property
     def token_count(self) -> int:

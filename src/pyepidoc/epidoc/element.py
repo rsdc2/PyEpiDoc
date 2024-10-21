@@ -290,7 +290,10 @@ class EpiDocElement(BaseElement, Showable):
 
         if isinstance(item, (_ElementUnicodeResult, str)):
             if self.last_child is None:
-                self.text += item
+                if self.text is None:
+                    self.text = item
+                else:
+                    self.text += item
         
             else:
                 if self.last_child.tail is None:
@@ -1183,7 +1186,7 @@ class EpiDocElement(BaseElement, Showable):
         return tail_token_elems
             
     @property
-    def text(self) -> str:
+    def text(self) -> str | None:
         if self._e is None:
             return ''
 

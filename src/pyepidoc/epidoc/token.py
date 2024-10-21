@@ -133,7 +133,7 @@ class Token(EpiDocElement):
         as a |str|.
         """
 
-        return ''.join([abbr.text for abbr in self.abbr_elems])
+        return ''.join([(abbr.text or '') for abbr in self.abbr_elems])
 
     @property
     def case(self) -> Optional[str]:

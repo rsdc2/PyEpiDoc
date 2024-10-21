@@ -297,7 +297,7 @@ class Ab(EpiDocElement):
         """
 
         # Get initial text before any child elements of the <ab>
-        ab_prototokens = self.text.split()  # split the string into tokens
+        ab_prototokens = (self.text or '').split()  # split the string into tokens
 
         # Create token elements from the split string elements
         ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) 

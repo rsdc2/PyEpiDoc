@@ -655,7 +655,7 @@ class BaseElement(Showable):
         self._e.tail = value    # type: ignore
 
     @property
-    def text(self) -> str:
+    def text(self) -> str | None:
         if self._e is None:
             return ''
 
@@ -665,7 +665,7 @@ class BaseElement(Showable):
         return self._e.text
 
     @text.setter
-    def text(self, value:str):
+    def text(self, value: str | None):
         if self._e is None:
             return
 
