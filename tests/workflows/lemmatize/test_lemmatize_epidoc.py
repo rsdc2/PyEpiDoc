@@ -38,7 +38,8 @@ def test_lemmatize_on_main_edition():
 filenames_with_tag_counts = [
     ('unlemmatized_single_token.xml', {'w': 1, 'orig': 0, 'gap': 0}),
     ('unlemmatized_full.xml', {'w': 6, 'orig': 0, 'gap': 0}),
-    ('unlemmatized_with_gap_and_orig.xml', {'w': 2, 'orig': 1, 'gap': 1})
+    ('unlemmatized_with_gap_and_orig.xml', {'w': 2, 'orig': 1, 'gap': 1}),
+    ('unlemmatized_textpart_fragment_physical.xml', {'w': 0, 'gap': 4, 'orig': 2})
 ] 
 
 
@@ -59,7 +60,6 @@ def test_lemmatize_on_separate_edition(
 
     filename, tag_counts = filename_with_tag_names
 
-
     remove_file(lemmatized_path + filename)
 
     doc = EpiDoc(unlemmatized_path + filename)
@@ -71,13 +71,18 @@ def test_lemmatize_on_separate_edition(
     lemmatized_ed = doc_.body.edition_by_subtype('simple-lemmatized')
 
     assert lemmatized_ed is not None
-    assert lemmatized_ed.w_tokens[0].lemma == 'lemma'
-    # breakpoint()
-    assert len(lemmatized_ed.desc_elems_by_local_name('w')) == tag_counts['w']
-    assert len(lemmatized_ed.desc_elems_by_local_name('orig')) == tag_counts['orig']
-    assert len(lemmatized_ed.desc_elems_by_local_name('gap')) == tag_counts['gap']
+    if len(lemmatized_ed.w_tokens) != 0:
+        assert lemmatized_ed.w_tokens[0].lemma == 'lemma'
+
+    assert len(lemmatized_ed.desc_elems_by_local_name('w')) \
+        == tag_counts['w']
+    assert len(lemmatized_ed.desc_elems_by_local_name('orig')) \
+        ==  tag_counts['orig']
+    assert len(lemmatized_ed.desc_elems_by_local_name('gap')) \
+        == tag_counts['gap']
     
     # Check that only those elements have been copied across
-    assert lemmatized_ed.desc_elem_name_set - {'w', 'orig', 'gap', 'ab'} == set()
+    assert lemmatized_ed.desc_elem_name_set - {'w', 'orig', 'gap', 'ab'} \
+        == set()
 
 

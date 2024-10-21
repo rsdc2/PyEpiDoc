@@ -15,7 +15,8 @@ from pyepidoc.xml.namespace import Namespace as ns
 
 from pyepidoc.shared.constants import ( 
                          TEINS, 
-                         XMLNS)
+                         XMLNS,
+                         SEPARATE_LEMMATIZED_EDITION_ITEMS)
 
 from pyepidoc.shared.utils import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
@@ -65,9 +66,10 @@ class Body(EpiDocElement):
 
             for desc_elem in source_elem.desc_elems:
                 
-                if desc_elem.tag.name in ['w', 'orig', 'gap']:
+                if desc_elem.tag.name in SEPARATE_LEMMATIZED_EDITION_ITEMS:
                     desc_for_target = EpiDocElement(deepcopy(desc_elem._e))
                     desc_for_target.remove_children()
+                    desc_for_target.remove_attr('id', XMLNS)
                     desc_for_target.text = desc_elem.text_desc
                     target_elem._e.append(desc_for_target._e)
 

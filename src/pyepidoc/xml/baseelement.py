@@ -143,6 +143,14 @@ class BaseElement(Showable):
             return cast(ExtendableSeq[BaseElement], ancestors[1:])
         return cast(ExtendableSeq[BaseElement], [])
 
+    @property
+    def attrs(self) -> dict[str, str]:
+        """
+        Return the attributes of the element as a dictionary
+        """
+
+        return {k: v for k, v in self.e.attrib}
+
     def _clean_text(self, text: str):
 
         """
@@ -176,6 +184,9 @@ class BaseElement(Showable):
 
     @staticmethod
     def _compile_attribs(attribs: Optional[dict[str, str]]) -> str:
+        """
+        Represent a dictionary of attributes as an XPath string
+        """
         if attribs is None:
             return ''
         return '[' + ''.join([f"@{k}='{attribs[k]}'" 
@@ -541,6 +552,28 @@ class BaseElement(Showable):
         return [BaseElement(sib) for sib in prev_sibs 
                 if type(sib) is _Element]
 
+    def remove_attr(
+            self, 
+            attr_name: str, 
+            namespace: str | None = None,
+            throw_if_not_found: bool = False) -> BaseElement:
+        """
+        Remove an XML attribute with name `attr_name` in
+        namespace `namespace`.
+
+        :param throw_if_not_found: Throw an error if the attribute 
+        does not exist
+        """
+
+        name_with_ns = ns.give_ns(attr_name, namespace)
+        if not name_with_ns in self._e.attrib.keys():
+            if throw_if_not_found:
+                raise AttributeError(f'Attribute {name_with_ns} not found.')
+            else:
+                return self
+        self._e.attrib.pop(name_with_ns)
+        return self
+
     def remove_children(self) -> BaseElement:
         """
         Remove all children, including text, 
@@ -568,9 +601,9 @@ class BaseElement(Showable):
 
     def set_attrib(
         self, 
-        attribname:str, 
-        value:str, 
-        namespace:Optional[str]=None
+        attribname: str, 
+        value: str, 
+        namespace: Optional[str] = None
         ) -> None:
         
         if self._e is None:

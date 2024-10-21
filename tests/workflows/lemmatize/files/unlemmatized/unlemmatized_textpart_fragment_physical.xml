@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.stoa.org/epidoc/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../schematron/ircyr-checking.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>                                                
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <text> <!-- ISic003330 -->
+        <body>
+            <div type="edition" xml:space="preserve" xml:lang="grc" resp="#JP">
+                <div type="textpart" subtype="fragment-physical" n="A" corresp="#frA">
+                    <ab>
+                        <lb n="1" xml:id="DhAAK"/><gap reason="lost" extent="unknown" unit="character" xml:id="DhAAU"/><orig xml:id="DhAAe">ΕΡΩ</orig><gap reason="lost" extent="unknown" unit="character" xml:id="DhAAo"/>
+                    </ab>
+                </div>
+                
+                <div type="textpart" subtype="fragment-physical" n="B" corresp="#frB">
+                    <ab>
+                        <lb n="1" xml:id="DhAAy"/><gap reason="lost" extent="unknown" unit="character" xml:id="DhAAΙ"/><orig xml:id="DhAAΤ"><unclear xml:id="DhAAε">Κ</unclear>ΤΩΝΧ</orig><gap reason="lost" extent="unknown" unit="character" xml:id="DhAAο"/>
+                    </ab>
+                </div>
+            </div>
+        </body>
+    </text>
+</TEI>

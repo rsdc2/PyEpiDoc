@@ -35,3 +35,4 @@ SubsumableRels = [
 ]
 
 VALID_BASES = [52, 100]
+SEPARATE_LEMMATIZED_EDITION_ITEMS = ['orig', 'w', 'gap']
