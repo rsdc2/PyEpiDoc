@@ -17,7 +17,7 @@ def test_set_lemma():
     filename = 'lemmatized.xml'
     remove_file(lemmatized_path + filename)
 
-    doc = EpiDoc(unlemmatized_path + 'unlemmatized_single_token.xml')
+    doc = EpiDoc(unlemmatized_path + 'single_token.xml')
     ws = doc.w_tokens
     w = ws[0]
     assert w.text_desc == 'σώματος'

@@ -20,7 +20,7 @@ def test_create_lemmatized_edition():
     remove_file(lemmatized_path + filename)
     
     # Create the edition
-    doc = EpiDoc(unlemmatized_path + 'unlemmatized_single_token.xml')
+    doc = EpiDoc(unlemmatized_path + 'single_token.xml')
     doc.body.create_edition('simple-lemmatized')
     doc.prettify('pyepidoc')
 
@@ -42,7 +42,7 @@ def test_copy_edition_content():
     remove_file(lemmatized_path + filename)
 
     # Get the doc
-    doc = EpiDoc(unlemmatized_path + 'unlemmatized_single_token.xml')
+    doc = EpiDoc(unlemmatized_path + 'single_token.xml')
 
     # Get the source (main) edition
     source = doc.body.edition_by_subtype(None)
@@ -75,7 +75,7 @@ def test_copy_edition_content_parametrized_no_lemmas():
     remove_file(lemmatized_path + filename)
 
     # Get the doc
-    doc = EpiDoc(unlemmatized_path + 'unlemmatized_single_token.xml')
+    doc = EpiDoc(unlemmatized_path + 'single_token.xml')
 
     # Get the source (main) edition
     source = doc.body.edition_by_subtype(None)

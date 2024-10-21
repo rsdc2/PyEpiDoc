@@ -29,7 +29,7 @@ def test_lemmatize_on_main_edition():
     filename = 'lemmatized_main_edition_with_dummy.xml'
     remove_file(lemmatized_path + filename)
 
-    doc = EpiDoc(unlemmatized_path + 'unlemmatized_single_token.xml')
+    doc = EpiDoc(unlemmatized_path + 'single_token.xml')
     doc.lemmatize(dummy_lemmatizer, 'main')
 
     # Check correct
@@ -41,10 +41,10 @@ def test_lemmatize_on_main_edition():
 
 
 filenames_with_tag_counts = [
-    ('unlemmatized_single_token.xml', {'w': 1, 'orig': 0, 'gap': 0}),
-    ('unlemmatized_full.xml', {'w': 6, 'orig': 0, 'gap': 0}),
-    ('unlemmatized_with_gap_and_orig.xml', {'w': 2, 'orig': 1, 'gap': 1}),
-    ('unlemmatized_textpart_fragment_physical.xml', {'w': 0, 'gap': 4, 'orig': 2})
+    ('single_token.xml', {'w': 1, 'orig': 0, 'gap': 0}),
+    ('ISic000001.xml', {'w': 6, 'orig': 0, 'gap': 0}),
+    ('gap_and_orig.xml', {'w': 2, 'orig': 1, 'gap': 1}),
+    ('textpart_fragment_physical.xml', {'w': 0, 'gap': 4, 'orig': 2})
 ] 
 @pytest.mark.parametrize(
         "filename_with_tag_counts", 
