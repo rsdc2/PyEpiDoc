@@ -18,7 +18,7 @@ the [I.Sicily GitHub wiki](https://github.com/ISicily/ISicily/wiki).
 
 To install PyEpiDoc along with its dependencies (```lxml```):
 
-1. Clone or download the repository;
+1. Clone or download the repository.
 
 2. Navigate into the cloned / downloaded repository.
 
