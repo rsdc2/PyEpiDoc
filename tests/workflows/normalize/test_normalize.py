@@ -27,7 +27,6 @@ def test_token_normalization(inpt: tuple[str, str]):
     xml_str, normalized_form = inpt
     elem = EpiDocElement.from_xml_str(xml_str)
     token = Token(elem.e)
-    breakpoint()
     assert token.normalized_form == normalized_form
 
 
