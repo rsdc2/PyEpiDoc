@@ -321,6 +321,23 @@ class BaseElement(Showable):
         
         return self.child_elements[0]
 
+    @staticmethod
+    def from_xml_str(xml_str: str) -> BaseElement:
+        """
+        Return an element from an XML string
+        """
+        parser = etree.XMLParser(
+            load_dtd=False,
+            resolve_entities=False,
+            remove_blank_text=False
+        )
+        lxml_elem: _Element = etree.fromstring(
+            text=xml_str, 
+            parser=parser
+        )
+
+        return BaseElement(lxml_elem)
+
     @property
     def last_child(self) -> Optional[BaseElement]:
         if self.child_elements == []:
@@ -631,17 +648,18 @@ class BaseElement(Showable):
             return Tag(None, None)
 
         etag = self._e.tag
-        match = re.search(r'\{(.+)\}(.+)', etag)
+        match = re.search(r'(\{(.+)\})?(.+)', etag)
 
         if match is None:
             return Tag(None, None)
 
-        if len(match.groups()) == 0:    # i.e. no namespace: check
-            return Tag('', etag)
-        elif len(match.groups()) > 2:
-            raise ValueError('Too many namespaces.')
+        if len(match.groups()) != 3:
+            raise ValueError('Invalid element name')
 
-        return Tag(match.groups()[0], match.groups()[1])
+        if match.groups()[0] is None:    # i.e. no namespace: check
+            return Tag('', etag)
+        else:
+            return Tag(match.groups()[1], match.groups()[2])
 
     @property
     def tail(self) -> Optional[str]:

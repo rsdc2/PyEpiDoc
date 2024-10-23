@@ -509,7 +509,7 @@ class EpiDoc(DocRoot):
             self, 
             lemmatize: Callable[[str], str],
             where: Literal['main', 'separate']
-        ):
+        ) -> EpiDoc:
 
         """
         Lemmatize all the <w> elements in 
@@ -553,6 +553,8 @@ class EpiDoc(DocRoot):
             w.lemma = lemmatize(w.text or '')
         
         self.prettify(prettifier='pyepidoc')
+
+        return self
 
     @property
     def lemmatized_edition(self) -> Edition | None:
