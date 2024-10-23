@@ -458,6 +458,18 @@ class EpiDoc(DocRoot):
         return list(chain(*[edition.id_carriers 
                             for edition in self.editions()]))
 
+    def insert_w_inside_name_and_num(self) -> EpiDoc:
+        """
+        Enclose contents of <name> and <num> tags in <w> tag,
+        in place for all editions. By default does nothing if already contains a <w> 
+        element.
+        """
+
+        for edition in self.editions(True):
+            edition.insert_w_inside_name_and_num()
+
+        return self
+
     @property
     def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 
