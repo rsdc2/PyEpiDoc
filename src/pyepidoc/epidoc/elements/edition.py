@@ -343,10 +343,12 @@ class Edition(EpiDocElement):
         a <w> element returns the element unchanged
         """
 
-        desc_nodes = element.desc_nodes
+        child_nodes = element.child_nodes
         w = EpiDocElement.create('w')
 
-        for node in desc_nodes:
+        for node in child_nodes:
+            if isinstance(node, _Element):
+                EpiDocElement(node).tail = ''
             w.append_element_or_text(node)
 
         element.remove_children()
@@ -431,7 +433,7 @@ class Edition(EpiDocElement):
             self, 
             spaceunit: str, 
             number: int
-            ) -> None:
+            ) -> Edition:
         """
         Prettify the edition text. Since this is within xml:space = "preserve",
         this involves ignoring this directive.
@@ -441,6 +443,7 @@ class Edition(EpiDocElement):
             number=number, 
             edition=self
         )
+        return self
 
     def set_ids(self, base: Base=52, compress: bool=True) -> None:
         """
