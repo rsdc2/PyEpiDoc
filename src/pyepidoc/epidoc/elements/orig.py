@@ -31,4 +31,10 @@ class Orig(EpiDocElement):
     
     @property
     def normalized_form(self) -> str:
-        return ''
+        if 'choice' in \
+            map(lambda elem: elem.localname, self.ancestors_excl_self):
+            
+            return ''
+    
+        else:
+            return self.text_desc
