@@ -9,6 +9,8 @@ from lxml.etree import _Element
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.epidoc.elements.edition import Edition
+from pyepidoc.epidoc.elements.w import W
+from pyepidoc.epidoc.elements.orig import Orig
 from pyepidoc.epidoc.token import Token
 
 from pyepidoc.xml.namespace import Namespace as ns
@@ -85,15 +87,19 @@ class Body(EpiDocElement):
                     
                     for desc in ab.desc_elems:
                         desc_copy = desc.deepcopy()
+                        desc_copy.remove_children()
+                        desc_copy.remove_attr('id', XMLNS)
 
-                        if desc.tag.name in SEPARATE_LEMMATIZED_TEXT_ITEMS:
-                            desc_copy.remove_children()
-                            desc_copy.remove_attr('id', XMLNS)
-                            desc_copy.text = desc.text_desc
+                        if desc.localname in SEPARATE_LEMMATIZED_TEXT_ITEMS:
+                            if desc.localname == 'w':
+                                desc_copy.text = W(desc.e).normalized_form
+                            elif desc.localname == 'orig':
+                                desc_copy.text = Orig(desc.e).normalized_form
+                            else:
+                                desc_copy.text = Token(desc).normalized_form
                             ab_copy._e.append(desc_copy._e)                            
 
         append_items(source, EpiDocElement(target))
-
         return target
 
     def create_edition(
