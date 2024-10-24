@@ -257,7 +257,7 @@ Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) ([MI
 and [pytest](https://docs.pytest.org/en/7.4.x/) ([MIT](https://github.com/pytest-dev/pytest/blob/main/LICENSE)). Licenses for these dependencies are included in the `LICENSES` directory.
 
 
-## Acknowledgements
+## Acknowledgements and licencing
 
 The software for PyEpiDoc was written by Robert Crellin as part of the Crossreads project at the Faculty of Classics, University of Oxford, and is licensed under the MIT license (see `LICENSES/LICENSE-pyepidoc`). This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 885040, “Crossreads”).
 
