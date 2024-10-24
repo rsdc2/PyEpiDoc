@@ -8,7 +8,9 @@ elements = [
      'evidence="previouseditor">hi</supplied> '
      '<supplied reason="lost" evidence="previouseditor"><g ref="#interpunct">·</g></supplied>'
      '<lb n="5" break="no"/><g ref="#interpunct">·</g> n</w></name></persName>', 
-     'Melanthin')
+     'Melanthin'),
+    ('<w><choice><orig>decebris</orig><reg>decembres</reg></choice></w>',
+     'decembres')
 ]
 
 
@@ -17,7 +19,11 @@ def test_w_normalization(inpt: tuple[str, str]):
 
     xml_str, normalized_form = inpt
     elem = EpiDocElement.from_xml_str(xml_str)
-    w = W(elem.desc_elems_by_local_name('w')[0].e)
+    try:
+        w = W(elem.desc_elems_by_local_name('w')[0].e)
+    except IndexError:
+        w = W(elem.e)
+
     assert w.normalized_form == normalized_form
 
 
