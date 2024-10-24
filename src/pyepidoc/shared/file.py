@@ -12,7 +12,7 @@ class FileMode(Enum):
     w = 'w'
 
 
-def str_to_file(s: str, filepath: str):
+def str_to_file(s: str, filepath: str) -> None:
 
     """
     Saves string s to file at path filepath.
@@ -36,3 +36,14 @@ def remove_file(filepath: str):
 
     except FileExistsError:
         pass
+
+
+def to_path(path: str | Path) -> Path:
+    """
+    Take a str or Path and return a Path
+    """
+
+    if isinstance(path, str):
+        return Path(path)
+    
+    return path
