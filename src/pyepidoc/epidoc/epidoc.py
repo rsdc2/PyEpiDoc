@@ -408,7 +408,7 @@ class EpiDoc(DocRoot):
     def id(self) -> str:
 
         """
-        The document ID, e.g. ISic000001-00001
+        The document ID, e.g. ISic000001
         """
 
         def get_idno_elems(s: str) -> list[BaseElement]:
