@@ -536,7 +536,9 @@ class EpiDocCorpus:
         return EpiDocCorpus(docs)
     
     @staticmethod
-    def from_path(path: Path | str, max_iter: int | None) -> EpiDocCorpus:
+    def from_path(
+        path: Path | str, 
+        max_iter: int | None) -> EpiDocCorpus:
 
         """
         Return an EpiDoc corpus from a folder path
