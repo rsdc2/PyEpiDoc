@@ -38,73 +38,69 @@ class EpiDocCorpus:
 
     _docs: Generator[EpiDoc, None, None] | list[EpiDoc]
 
-    def __add__(self, other: EpiDocCorpus) -> EpiDocCorpus:
-
-        if not isinstance(other, EpiDocCorpus):
-            raise TypeError("Cannot append: item to "
-                            "be appended is of type "
-                            f"{type(other)}; " 
-                            "required: EpiDocCorpus")
-
-        return EpiDocCorpus(list(set(self.docs + other.docs)))
-
     @overload
     def __init__(
         self,
-        inpt: EpiDocCorpus
+        inpt: EpiDocCorpus,
+        max_iter: int | None = None
         ):
 
         """
         :param inpt: EpiDocCorpus object
+
+        :param max_iter: maximum number of items in the corpus. 
+        Only applied where inpt is a path.
         """
         ...
 
     @overload
     def __init__(
         self,
-        inpt: list[EpiDoc]
+        inpt: list[EpiDoc],
+        max_iter: int | None = None
         ):
 
         """
         :param inpt: EpiDocCorpus object
+
+        :param max_iter: maximum number of items in the corpus. 
+        Only applied where inpt is a path.
         """
         ...
 
     @overload
     def __init__(
         self,
-        inpt: str
+        inpt: str,
+        max_iter: int | None = None
     ):
         """
         :param inpt: path to the corpus as a str
+
+        :param max_iter: maximum number of items in the corpus. 
+        Only applied where inpt is a path.
         """
         ...
 
     @overload
     def __init__(
         self,
-        inpt: Path
+        inpt: Path,
+        max_iter: int | None = None
     ):
         """
         :param inpt: path to the corpus as a Path object
+
+        :param max_iter: maximum number of items in the corpus. 
+        Only applied where inpt is a path.
         """
         ...
 
     def __init__(
         self, 
-        inpt: EpiDocCorpus | list[EpiDoc] | str | Path 
+        inpt: EpiDocCorpus | list[EpiDoc] | str | Path,
+        max_iter: int | None = None
     ):
-
-        def _handle_fp(_p: Path) -> None:
-
-            if not _p.exists():
-                raise FileExistsError(f'Directory {inpt} does not exist.')
-            
-            if not _p.is_dir():
-                raise FileExistsError(f'Path {inpt} is not a directory.')
-
-            self._docs = (EpiDoc(fp) for fp in _p.iterdir()
-                          if fp.suffix == '.xml')
 
         # inpt is an EpiDocCorpus
         if isinstance(inpt, EpiDocCorpus):
@@ -121,19 +117,28 @@ class EpiDocCorpus:
                 inpt = cast(list[EpiDoc], inpt)
                 self._docs = [doc for doc in inpt]
 
-            return
+                return
 
+            raise TypeError('First member of list is not of type '
+                            f'EpiDoc, but of type {type(inpt[0])}.')
+        
         # inpt is a path
-        elif isinstance(inpt, str):
-            _handle_fp(Path(inpt))
-            return
-
-        elif isinstance(inpt, Path):
-            _handle_fp(inpt)
+        elif isinstance(inpt, (str, Path)):
+            self._handle_fp(inpt, max_iter=max_iter)
             return
         
         raise TypeError("Invalid input type.")
     
+    def __add__(self, other: EpiDocCorpus) -> EpiDocCorpus:
+
+        if not isinstance(other, EpiDocCorpus):
+            raise TypeError("Cannot append: item to "
+                            "be appended is of type "
+                            f"{type(other)}; " 
+                            "required: EpiDocCorpus")
+
+        return EpiDocCorpus(list(set(self.docs + other.docs)))
+
     def __repr__(self) -> str:
         return f'EpiDocCorpus( doc_count = {self.doc_count} )'
 
@@ -332,8 +337,8 @@ class EpiDocCorpus:
 
     def filter_by_lemmata(
         self, 
-        lemmata:list[str], 
-        set_relation=SetRelation.intersection
+        lemmata: list[str], 
+        set_relation = SetRelation.intersection
     ) -> EpiDocCorpus:
     
         docs = [doc for doc in self.docs
@@ -529,6 +534,17 @@ class EpiDocCorpus:
         ]
 
         return EpiDocCorpus(docs)
+    
+    @staticmethod
+    def from_path(path: Path | str, max_iter: int | None) -> EpiDocCorpus:
+
+        """
+        Return an EpiDoc corpus from a folder path
+
+        :max_iter: Max number of items in the corpus
+        """
+
+        return EpiDocCorpus(path, max_iter)
 
     @property
     def formatted_text(self) -> str:
@@ -547,6 +563,32 @@ class EpiDocCorpus:
             raise ValueError(f"More than one doc with id {id}.")
         
         return docs[0]
+
+    def _handle_fp(self, _p: Path | str, max_iter: int | None = None) -> None:
+
+        if not Path(_p).exists():
+            raise FileExistsError(f'Directory {_p} does not exist.')
+        
+        if not Path(_p).is_dir():
+            raise FileExistsError(f'Path {_p} is not a directory.')
+
+        iterations = 0
+
+        if max_iter is None:
+            self._docs = (EpiDoc(fp) for fp in Path(_p).iterdir()
+                        if fp.suffix == '.xml')
+            return
+        else:
+            docs: list[EpiDoc] = []
+            for fp in Path(_p).iterdir():
+                if fp.suffix == '.xml':
+                    docs += [EpiDoc(fp)]
+                    iterations += 1
+                
+                if iterations > max_iter:
+                    break
+
+            self._docs = docs
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
