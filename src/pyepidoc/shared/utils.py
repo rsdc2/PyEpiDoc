@@ -20,6 +20,18 @@ T = TypeVar('T')
 U = TypeVar('U')
 V = TypeVar('V')
 
+
+def assert_same_length(l1: list, l2: list):
+
+    """
+    Check that two lists are the same length. Raises
+    a ValueError if they aren't.
+    """
+
+    if len(l1) != len(l2):
+        raise ValueError('Lists are not of the same length')
+
+
 def contains(iterable: Iterable[T], item: T) -> bool:
     return item in iterable
 
@@ -192,3 +204,5 @@ def update_set_copy(s1: set, s2: set) -> set:
 def update_set_inplace(set1: set, set2: set):
     set1.update(set2)
     return set1
+
+    
