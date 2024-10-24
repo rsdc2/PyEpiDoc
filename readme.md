@@ -1,4 +1,4 @@
-# PyEpiDoc (α)
+# PyEpiDoc
 
 PyEpiDoc is a Python (>=3.9) library for parsing and interacting with [TEI](https://tei-c.org/) XML
 [EpiDoc](https://epidoc.stoa.org/) files. It has been tested on Python 3.9 on Linux (Ubuntu).
@@ -18,7 +18,7 @@ the [I.Sicily GitHub wiki](https://github.com/ISicily/ISicily/wiki).
 
 To install PyEpiDoc along with its dependencies (```lxml```):
 
-1. Clone or download the repository;
+1. Clone or download the repository.
 
 2. Navigate into the cloned / downloaded repository.
 
@@ -61,10 +61,11 @@ To install PyEpiDoc along with its dependencies (```lxml```) and development dep
 
 ## Running the Jupyter Notebooks
 
-A couple of Jupyter notebooks are included in the repository to provide example usage:
+Jupyter notebooks are included in the repository under `notebooks/` to provide example usage:
 
 - `getting_started.ipynb`
 - `abbreviations.ipynb`
+- `setting_ids.ipynb`
 
 For instructions on installing Jupyter notebook, see https://docs.jupyter.org/en/latest/install/notebook-classic.html. Alternatively, see also https://jupyter.org/install.
 
@@ -210,9 +211,8 @@ The token will be subsumed into a neighbouring ```<w>``` token regardless of the
 
 with ```pytest``` installed (the dev installation will do this for you):
 
-1. Navigate to the ```tests/``` folder. 
 
-2. To run all the tests:
+2. To run all the tests, in the project root directory, type:
 
     ```
     pytest
@@ -261,6 +261,6 @@ and [pytest](https://docs.pytest.org/en/7.4.x/) ([MIT](https://github.com/pytest
 
 The software for PyEpiDoc was written by Robert Crellin as part of the Crossreads project at the Faculty of Classics, University of Oxford, and is licensed under the BSD 3-clause license. This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 885040, “Crossreads”).
 
-Example and test ```.xml``` files, contained in the ```examples/``` and ```tests/``` subfolders, as well as in the source code, are either directly form, or derived from, the [I.Sicily corpus](https://github.com/ISicily/ISicily), which are made available under the [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/).
+Example and test ```.xml``` files, contained in the ```examples/```, ```example_corpus/``` and ```tests/``` subfolders, as well as in the source code, are either directly form, or derived from, the [I.Sicily corpus](https://github.com/ISicily/ISicily), which are made available under the [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/) (see ```LICENSES/```).
 
 For further details and acknowledgements on the generation of ISicily token IDs (```pyepidoc/epidoc/ids```), see [https://github.com/rsdc2/ISicID](https://github.com/rsdc2/ISicID).
