@@ -829,7 +829,11 @@ class EpiDoc(DocRoot):
                     else:
                         desc.tail = desc.tail.strip() + tail_to_append
                 else:
-                    desc.tail = '\n' + (desc.ancestor_count) * space_unit * multiplier
+                    tail_to_append = '\n' + (desc.ancestor_count) * space_unit * multiplier
+                    if desc.tail is None:
+                        desc.tail = tail_to_append
+                    else:
+                        desc.tail = desc.tail.strip() + tail_to_append
 
         # Root element
         # Remove trailing text
