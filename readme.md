@@ -61,10 +61,11 @@ To install PyEpiDoc along with its dependencies (```lxml```) and development dep
 
 ## Running the Jupyter Notebooks
 
-A couple of Jupyter notebooks are included in the repository to provide example usage:
+Jupyter notebooks are included in the repository under `notebooks/` to provide example usage:
 
 - `getting_started.ipynb`
 - `abbreviations.ipynb`
+- `setting_ids.ipynb`
 
 For instructions on installing Jupyter notebook, see https://docs.jupyter.org/en/latest/install/notebook-classic.html. Alternatively, see also https://jupyter.org/install.
 
