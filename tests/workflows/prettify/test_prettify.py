@@ -4,11 +4,11 @@ from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 
 
 relative_filepaths = {
-    'ugly': 'tests/api/files/prettifying/input/ISic000552.xml',
-    'benchmark_lxml': 'tests/api/files/prettifying/benchmark/ISic000552_prettified_lxml.xml',
-    'benchmark_pyepidoc': 'tests/api/files/prettifying/benchmark/ISic000552_prettified_pyepidoc.xml',
-    'prettified_lxml': 'tests/api/files/prettifying/output/ISic000552_prettified_lxml.xml',
-    'prettified_pyepidoc': 'tests/api/files/prettifying/output/ISic000552_prettified_pyepidoc.xml',
+    'ugly': 'tests/workflows/prettify/input/ISic000552.xml',
+    'benchmark_lxml': 'tests/workflows/prettify/benchmark/ISic000552_prettified_lxml.xml',
+    'benchmark_pyepidoc': 'tests/workflows/prettify/benchmark/ISic000552_prettified_pyepidoc.xml',
+    'prettified_lxml': 'tests/workflows/prettify/output/ISic000552_prettified_lxml.xml',
+    'prettified_pyepidoc': 'tests/workflows/prettify/output/ISic000552_prettified_pyepidoc.xml',
 }
 
 
