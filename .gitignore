@@ -13,7 +13,6 @@ env39ju
 env39*
 test.py
 examples/ISic000032_tokenized.xml
-**/tokenized_output/*.xml
 todo.md
 data
 resources.md
@@ -27,3 +26,7 @@ out
 *.sch
 validation
 .ipynb_checkpoints
+examples_
+**/output/*.xml
+**/lemmatized/*.xml
+**/tokenized_output/*.xml
