@@ -117,22 +117,22 @@ def test_materialclasses():
     assert doc.materialclasses == ['#material.stone.marble']
 
 
-def test_prettify_doc_with_lxml():
-    """
-    Tests that the entire document is prettified correctly
-    using lxml's inbuilt prettifier.
-    Prettifies both the main document and the editions.
-    """
+# def test_prettify_doc_with_lxml():
+#     """
+#     Tests that the entire document is prettified correctly
+#     using lxml's inbuilt prettifier.
+#     Prettifies both the main document and the editions.
+#     """
 
-    ugly = EpiDoc(relative_filepaths['ugly'])
-    prettified = ugly.prettify('lxml')
-    prettified.to_xml_file(relative_filepaths['prettified_lxml'])
-    prettified_str = etree.tostring(prettified._e)
+#     ugly = EpiDoc(relative_filepaths['ugly'])
+#     prettified = ugly.prettify('lxml')
+#     prettified.to_xml_file(relative_filepaths['prettified_lxml'])
+#     prettified_str = etree.tostring(prettified._e)
 
-    benchmark = EpiDoc(relative_filepaths['benchmark_lxml'])
-    benchmark_str = etree.tostring(benchmark._e)
+#     benchmark = EpiDoc(relative_filepaths['benchmark_lxml'])
+#     benchmark_str = etree.tostring(benchmark._e)
 
-    assert prettified_str == benchmark_str
+#     assert prettified_str == benchmark_str
 
 
 def test_prettify_doc_with_pyepidoc():

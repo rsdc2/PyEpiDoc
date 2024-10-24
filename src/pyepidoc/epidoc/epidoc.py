@@ -736,7 +736,7 @@ class EpiDoc(DocRoot):
 
     def prettify(
             self, 
-            prettifier: Literal['lxml', 'pyepidoc'],
+            prettifier: Literal['pyepidoc'] = 'pyepidoc',
             prettify_main_edition: bool = True) -> EpiDoc:
 
         """
@@ -751,7 +751,8 @@ class EpiDoc(DocRoot):
         """
 
         if prettifier == 'lxml':
-            self = self._prettify_with_lxml()
+            # self = self._prettify_with_lxml()
+            raise NotImplementedError()
 
         elif prettifier == 'pyepidoc':
 
