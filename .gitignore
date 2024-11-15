@@ -11,6 +11,7 @@ env38
 env310
 env39ju
 env39*
+.env*
 test.py
 examples/ISic000032_tokenized.xml
 **/tokenized_output/*.xml
