@@ -111,6 +111,42 @@ def test_materialclasses():
     assert doc.materialclasses == ['#material.stone.marble']
 
 
+# def test_prettify_doc_with_lxml():
+#     """
+#     Tests that the entire document is prettified correctly
+#     using lxml's inbuilt prettifier.
+#     Prettifies both the main document and the editions.
+#     """
+
+#     ugly = EpiDoc(relative_filepaths['ugly'])
+#     prettified = ugly.prettify('lxml')
+#     prettified.to_xml_file(relative_filepaths['prettified_lxml'])
+#     prettified_str = etree.tostring(prettified._e)
+
+#     benchmark = EpiDoc(relative_filepaths['benchmark_lxml'])
+#     benchmark_str = etree.tostring(benchmark._e)
+
+#     assert prettified_str == benchmark_str
+
+
+def test_prettify_doc_with_pyepidoc():
+
+    """
+    Tests that the entire document is prettified correctly
+    using pyepidoc's prettifier.
+    Prettifies both the main document and the editions.
+    """
+
+    ugly = EpiDoc(relative_filepaths['ugly'])
+    prettified = ugly.prettify('pyepidoc')
+
+    assert save_reload_and_compare_with_benchmark(
+        doc=prettified,
+        target_path=relative_filepaths['prettified_pyepidoc'],
+        benchmark_path=relative_filepaths['benchmark_pyepidoc']
+    )
+
+
 def test_punct():
     """
     Tests that comma is removed from string version of token

@@ -736,7 +736,7 @@ class EpiDoc(DocRoot):
 
     def prettify(
             self, 
-            prettifier: Literal['lxml', 'pyepidoc'],
+            prettifier: Literal['pyepidoc'] = 'pyepidoc',
             prettify_main_edition: bool = True) -> EpiDoc:
 
         """
@@ -751,7 +751,8 @@ class EpiDoc(DocRoot):
         """
 
         if prettifier == 'lxml':
-            self = self._prettify_with_lxml()
+            # self = self._prettify_with_lxml()
+            raise NotImplementedError()
 
         elif prettifier == 'pyepidoc':
 
@@ -1114,8 +1115,8 @@ class EpiDoc(DocRoot):
         if verbose: 
             print(f'Writing {self.id}...')
         
-        with open(dst, 'w') as f:
-            f.write(self.to_str(collapse_empty_elements))
+        with open(dst, 'wb') as f:
+            f.write(self.to_byte_str(collapse_empty_elements))
 
     @property
     def token_count(self) -> int:
