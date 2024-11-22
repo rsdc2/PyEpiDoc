@@ -31,3 +31,4 @@ validation
 .ipynb_checkpoints
 examples_
 **/output/*.xml
+localpaths.txt
