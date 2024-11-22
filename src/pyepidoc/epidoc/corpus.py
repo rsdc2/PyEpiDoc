@@ -202,14 +202,16 @@ class EpiDocCorpus:
         try:
             for doc in self._docs:
                 _docs += [doc]
-                _ = doc.id
-            # return list(sorted(self._docs, key=lambda doc: doc.id))
+                _ = doc.id # Check ID valid
+            
+            return list(sorted(_docs, key=lambda doc: doc.id))
+        
         except XMLSyntaxError as e:
             print('XMLSyntaxError in docs')
             print(e)
             return []
         except Exception as e:
-            print(f'Could not retrieve id in {_docs[-1].filename}. Original error message: ')
+            print(f'Error processing {_docs[-1].filename}. This may be to do with retrieving the ID. Original error message: ')
             print(e)
             return []
 
