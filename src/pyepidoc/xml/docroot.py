@@ -135,6 +135,10 @@ class DocRoot:
     @property
     def e(self) -> _Element:
         return self._e
+    
+    @property
+    def filename(self) -> str:
+        return self._p.stem
 
     def get_desc(self, 
         elemnames:Union[list[str], str], 
