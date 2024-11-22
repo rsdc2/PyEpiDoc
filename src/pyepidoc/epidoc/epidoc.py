@@ -421,7 +421,8 @@ class EpiDoc(DocRoot):
             'Epigraphische Datenbank Heidelberg': 'localID',
             'I.Sicily': 'filename',
             'Università di Bologna': 'localID',
-            'King’s College London': 'filename'
+            'King’s College London': 'filename',
+            "Centre for Computing in the Humanities, King's College London": 'ircyr2012'
         }
 
         if self.authority is None:
