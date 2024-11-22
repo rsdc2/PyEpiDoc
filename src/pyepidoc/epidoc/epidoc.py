@@ -422,7 +422,7 @@ class EpiDoc(DocRoot):
             'I.Sicily': 'filename',
             'Università di Bologna': 'localID',
             'King’s College London': 'filename',
-            "Centre for Computing in the Humanities, King's College London": 'ircyr2012'
+            "Centre for Computing in the Humanities, King's College London": 'filename'
         }
 
         if self.authority is None:
@@ -648,11 +648,15 @@ class EpiDoc(DocRoot):
 
     @property
     def not_after(self) -> Optional[int]:
-        return self._get_daterange_attrib('notAfter-custom')
+        not_after_custom = self._get_daterange_attrib('notAfter-custom')
+        not_after = self._get_daterange_attrib('notAfter')
+        return not_after_custom or not_after
 
     @property
     def not_before(self) -> Optional[int]:
-        return self._get_daterange_attrib('notBefore-custom')
+        not_before_custom = self._get_daterange_attrib('notBefore-custom')
+        not_before = self._get_daterange_attrib('notBefore')
+        return not_before_custom or not_before
 
     @property
     def orig_date(self) -> Optional[EpiDocElement]:
