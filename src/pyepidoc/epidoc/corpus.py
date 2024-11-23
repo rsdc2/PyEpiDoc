@@ -327,13 +327,17 @@ class EpiDocCorpus:
     def filter_by_languages(self, 
         langs: list[str], 
         set_relation: Callable[[set, set], bool]=SetRelation.intersection,
-        language_attr: Literal['langs'] | Literal['div_langs']='langs'
+        language_attr: Literal['langs'] | Literal['div_langs']='div_langs'
     ) -> EpiDocCorpus:
         
         """
         Returns a copy of the corpus filtered by the 
-        languages provided in the 'langs' parameter.
-        Uses the 'textLang' element in the EpiDoc.
+        languages 
+
+        :param langauge_attr: If this is set to 'langs',
+        uses the 'textLang' element in the EpiDoc. If this is 
+        set to 'div_langs', looks at the @xml:lang attribute
+        on the <div> elements in the edition.
         """
 
         docs = [doc for doc in self.docs
