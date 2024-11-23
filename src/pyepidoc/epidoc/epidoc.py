@@ -1040,11 +1040,24 @@ class EpiDoc(DocRoot):
 
         return self.text('xml')
 
-    def _get_textclasses(self, throw_if_more_than_one: bool):
+    def _get_textclasses(
+            self, 
+            throw_if_more_than_one: bool) -> list[str]:
+        """
+        Returns a list of text classes in the document
+
+        :param throw_if_more_than_one: if True, throws an error if 
+        more than one <textClass> element is present (as appears to be 
+        the case if IRCyr, where the first element is empty). 
+        If False, returns the results from the last <textClass> 
+        element.
+        """
         try:
+            textclass_elems = self.get_desc('textClass')
             textclass_e = maxone(
                 self.get_desc('textClass'), 
-                throw_if_more_than_one=throw_if_more_than_one)
+                throw_if_more_than_one=throw_if_more_than_one,
+                idx=len(textclass_elems) - 1)
             
         except ValueError as e:
             raise ValueError(f'Could not return a textClass from {self.id}. '
@@ -1071,6 +1084,17 @@ class EpiDoc(DocRoot):
 
     @property
     def textclasses(self) -> list[str]:
+        """
+        Returns textclass information from the <textClass> element.
+        At the moment PyEpiDoc assumes that the relevant 
+        information is stored under one or more <term> elements, in the @ana
+        attribute. It also assumes there is only
+        one <textClass> element. If this last assumption is not 
+        valid (as appears to be the case currently for IRCyr),
+        please use the _get_textclasses method directly, with 
+        the `throw_if_more_than_one` parameter set to False. 
+        """
+
         return self._get_textclasses(True)
 
     @property
