@@ -281,9 +281,15 @@ class EpiDoc(DocRoot):
         """
         Return the main edition (i.e. not transliteration or
         lemmatized edition).
+
+        If the @subtype attribute is set to 'unsupplied',
+        this is currently treated as though the 
+        main edition is not present, and None is returned.
         """
         
-        return self.body.edition_by_subtype(subtype=None)
+        return self.body.edition_by_subtype(subtype=None) or \
+            self.body.edition_by_subtype(subtype='PHI') or \
+            self.body.edition_by_subtype(subtype='EDR')
 
     def edition_by_subtype(self, subtype: str | None) -> Edition | None:
         
@@ -296,6 +302,16 @@ class EpiDoc(DocRoot):
         """
 
         return self.body.edition_by_subtype(subtype)
+    
+    @property
+    def _edition_subtypes(self) -> list[str]:
+        """
+        Return a list of edition subtype strings. For 
+        establishing which subtypes exist on the corpus.
+        """
+
+        return [edition.get_attrib('subtype') 
+                for edition in self.editions(include_transliterations=True)]
 
     def editions(self, include_transliterations=False) -> list[Edition]:
 
@@ -1168,7 +1184,8 @@ class EpiDoc(DocRoot):
             set_ids: bool = False,
             convert_ws_to_names: bool = False,
             verbose: bool = True,
-            insert_ws_inside_names_and_nums: bool = False
+            insert_ws_inside_names_and_nums: bool = False,
+            throw_if_no_main_edition: bool = True
         ) -> EpiDoc:
         
         """
@@ -1176,24 +1193,23 @@ class EpiDoc(DocRoot):
 
         :param add_space_between_words: if True, adds a space
         between token elements
-
         :param prettify_edition: if True, prettify the <div type="edition"> element (overriding xml:space="preserve")
-
         :param set_ids: sets full ids on the tokenized elements
-
         :param convert_ws_to_names: attempts to convert <w> elements to <name>
         on the basis of capital letters
-
         :param verbose: If True, prints a message with the id of the file that is being tokenized.
-
         :param insert_ws_inside_names_and_nums: If True, inserts <w> tag inside <name> and <num> tags
+        :param throw_if_no_main_edition: Throw an error if there is no main edition
         """
 
         if verbose: 
             print(f'Tokenizing {self.id}...')
 
         if self.main_edition is None:
-            raise ValueError('No main edition to tokenize')
+            if throw_if_no_main_edition:
+                raise ValueError(f'No main edition to tokenize in {self.id}.')
+            else:
+                return self
         
         self.main_edition.tokenize()
 
@@ -1212,7 +1228,8 @@ class EpiDoc(DocRoot):
         if prettify_edition:
             self.prettify_main_edition(
                 spaceunit=SpaceUnit.Space.value, 
-                number=4
+                number=4,
+                verbose=verbose
             )
 
         return self

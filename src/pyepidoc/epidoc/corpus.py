@@ -154,10 +154,19 @@ class EpiDocCorpus:
     def datemax(self) -> int:
         not_befores = [doc.not_before for doc in self.docs 
             if doc.not_after is not None and doc.not_before is not None]
-        dates:list[int] = [doc.date for doc in self.docs 
+        dates = [doc.date for doc in self.docs 
             if doc.date is not None]
 
         return max(not_befores + dates)
+
+    @property
+    def daterange(self) -> tuple[int, int]:
+        """
+        Return the date range of the corpus as a whole
+        as (min, max)
+        """
+
+        return (self.datemin, self.datemax)
 
     @property
     def dateranges(self) -> list[tuple[Optional[int], Optional[int]]]:
@@ -185,16 +194,22 @@ class EpiDocCorpus:
         return len(self.docs)
 
     @staticmethod
-    def _doc_to_xml_file(dstfolder: str | Path, doc: EpiDoc) -> None:
+    def _doc_to_xml_file(
+        dstfolder: str | Path, 
+        doc: EpiDoc,
+        verbose: bool) -> None:
         
-        "Writes out an EpiDoc object to an XML file"
+        """
+        Writes out an EpiDoc object to an XML file
+        """
+
         dstfolder_path = Path(dstfolder)
         if not dstfolder_path.exists():
             raise FileExistsError(f'Folder {dstfolder} does not exist')
 
         dst = dstfolder_path / Path(doc.id + '.xml')
         
-        doc.to_xml_file(dst.absolute())
+        doc.to_xml_file(dst.absolute(), verbose=verbose)
 
     @cached_property
     def docs(self) -> list[EpiDoc]:
@@ -218,13 +233,28 @@ class EpiDocCorpus:
     @cached_property
     def docs_dict(self) -> dict[str, EpiDoc]:
         return {doc.id: doc for doc in self.docs}
-    
-    @cached_property 
+     
+    @property
+    def _edition_subtypes(self) -> set[str]:
+        """
+        Set of all subtypes on the editions 
+        in the corpus
+        """
+        return set(chain(*[doc._edition_subtypes 
+                           for doc in self.docs]))
+
     def empty_corpus(self) -> EpiDocCorpus:
+        """
+        Return a new empty EpiDocCorpus object
+        """
         return EpiDocCorpus([])
 
     @property
     def expans(self) -> list[Expan]:
+        """
+        Return a list of Expan objects, that 
+        contain information about abbreviations
+        """
         return list(chain(*[doc.expans for doc in self.docs]))
 
     def filter_by_dateafter(self, start: int) -> EpiDocCorpus:
@@ -680,12 +710,14 @@ class EpiDocCorpus:
         of the edition, or in the <textLang> element.
 
         :param head: take the top x number of EpiDoc, where x is defined in 
-        @head
+        @head. If `head` is None, returns all multilinguals.
         """
 
         docs = [doc for doc in self.docs if doc.is_multilingual]
-        if len(docs) > head:
+        if head is not None and len(docs) > head:
             return docs[0:head]
+        
+        return docs
 
     @property
     def names(self) -> list[Name]:
@@ -767,33 +799,41 @@ class EpiDocCorpus:
     def tokenize_to_folder(
         self, 
         dstfolder: str | Path, 
-        add_space_between_words: bool=True,
+        add_space_between_w_elements: bool=True,
         prettify_edition: bool=True,
         set_ids: bool=False,
         convert_ws_to_names: bool=True,
-        verbose: bool=True
+        verbose: bool=False
     ) -> None:
 
         """
         Tokenizes the corpus and writes out the files 
         to dstfolder.
+        If a file cannot be tokenized, a message is printed
+        to stdout and the file is not included in the 
+        tokenized corpus.
         """
 
         for doc in sorted(self.docs, key=lambda doc: doc.id):
             if verbose: 
                 print('Tokenizing', doc.id)
 
-            doc.tokenize(
-                prettify_edition=prettify_edition, 
-                add_space_between_words=add_space_between_words, 
-                set_ids=set_ids, 
-                convert_ws_to_names=convert_ws_to_names, 
-                verbose=verbose
-            )
+            try:
+                doc.tokenize(
+                    prettify_edition=prettify_edition, 
+                    add_space_between_words=add_space_between_w_elements, 
+                    set_ids=set_ids, 
+                    convert_ws_to_names=convert_ws_to_names, 
+                    verbose=verbose
+                )
+            except ValueError as e:
+                print(e)
+                continue
             
             self._doc_to_xml_file(
                 dstfolder, 
-                doc
+                doc,
+                verbose
             )
 
     @property
