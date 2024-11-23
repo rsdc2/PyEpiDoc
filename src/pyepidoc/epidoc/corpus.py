@@ -734,8 +734,12 @@ class EpiDocCorpus:
 
     @cached_property
     def textclasses(self) -> set[str]:
+        return self._get_textclasses(True)
+    
+    def _get_textclasses(self, throw_if_more_than_one: bool, ) -> set[str]:
         return set([textclass for doc in self.docs 
-                    for textclass in doc.textclasses])
+                    for textclass in doc._get_textclasses(
+                        throw_if_more_than_one=throw_if_more_than_one)])
 
     def to_txt(self, dst: str) -> None:
         """

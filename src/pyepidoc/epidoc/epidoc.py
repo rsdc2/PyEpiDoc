@@ -1040,9 +1040,16 @@ class EpiDoc(DocRoot):
 
         return self.text('xml')
 
-    @property
-    def textclasses(self) -> list[str]:
-        textclass_e = maxone(self.get_desc('textClass'))
+    def _get_textclasses(self, throw_if_more_than_one: bool):
+        try:
+            textclass_e = maxone(
+                self.get_desc('textClass'), 
+                throw_if_more_than_one=throw_if_more_than_one)
+            
+        except ValueError as e:
+            raise ValueError(f'Could not return a textClass from {self.id}. '
+                             'This is likely because the element was either '
+                             'not present, or because there were more than one.')
 
         if textclass_e is None:
             return []
@@ -1061,6 +1068,10 @@ class EpiDoc(DocRoot):
                 functions += ana_term.split()
 
         return functions
+
+    @property
+    def textclasses(self) -> list[str]:
+        return self._get_textclasses(True)
 
     @property
     def textlang(self) -> Optional[EpiDocElement]:
