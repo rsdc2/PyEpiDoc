@@ -1,4 +1,5 @@
 from lxml import etree
+from pathlib import Path
 
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.shared import head
@@ -6,6 +7,8 @@ from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 from pyepidoc.epidoc.dom import lang, line
 
 import pytest
+
+test_files_path = "tests/api/files/"
 
 relative_filepaths = {
     'ugly': 'tests/api/files/prettifying/ugly/ISic000552.xml',
@@ -55,6 +58,38 @@ def test_collect_normalized():
         'Flamma', 
         'secutor'
     ]
+
+files_and_ids = [
+    ("ISic000001.xml", "ISic000001"),
+    ("ISic000552.xml", "ISic000552")
+]
+@pytest.mark.parametrize(["filename", "doc_id"], files_and_ids)
+def test_doc_id(filename: str, doc_id: str):
+    """
+    Test that document ID collected correctly
+    """
+
+    fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(fp)
+    assert doc.id == doc_id 
+
+
+files_and_ids = [
+    ("ISic000001.xml", (50, 300)),
+    ("ISic000552.xml", (200, 500)),
+    ("ISic000001_dateNotBefore.xml", (50, 300))
+]
+@pytest.mark.parametrize(["filename", "date_range"], files_and_ids)
+def test_date_not_before(filename: str, date_range: tuple[int | None, int | None]):
+    """
+    Test that document daterange collected correctly depending on whether
+    the document uses @notBefore or @notBefore-Custom
+    """
+
+    fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(fp)
+    assert doc.date_range == date_range
+
 
 
 def test_leiden_plus_text():
