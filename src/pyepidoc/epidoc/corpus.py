@@ -702,6 +702,15 @@ class EpiDocCorpus:
         """
 
         return set(chain(*[doc.materialclasses for doc in self.docs]))
+    
+    @property
+    def mean_token_count(self) -> float:
+        """
+        Return the mean number of tokens in each document
+        """
+
+        total = sum([doc.token_count for doc in self.docs])
+        return total / self.doc_count
 
     def multilinguals(self, head: Optional[int]=None) -> list[EpiDoc]:
         """
