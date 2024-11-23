@@ -673,8 +673,19 @@ class EpiDocCorpus:
 
         return set(chain(*[doc.materialclasses for doc in self.docs]))
 
-    def multilinguals(self, head:Optional[int]=None) -> list[EpiDoc]:
-        return [doc for doc in self.docs if doc.is_multilingual]
+    def multilinguals(self, head: Optional[int]=None) -> list[EpiDoc]:
+        """
+        Return a list of EpiDoc objects where there is more than 
+        one language mentioned in either the @xml:lang attribute 
+        of the edition, or in the <textLang> element.
+
+        :param head: take the top x number of EpiDoc, where x is defined in 
+        @head
+        """
+
+        docs = [doc for doc in self.docs if doc.is_multilingual]
+        if len(docs) > head:
+            return docs[0:head]
 
     @property
     def names(self) -> list[Name]:
