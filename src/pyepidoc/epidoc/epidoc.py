@@ -473,7 +473,7 @@ class EpiDoc(DocRoot):
 
     @property
     def is_multilingual(self) -> bool:
-        return len(self.div_langs) > 1 
+        return len(self.div_langs) > 1 or len(self.langs) > 1
 
     def _get_daterange_attrib(self, attrib_name:str) -> Optional[int]:
         if self.orig_date is None:
