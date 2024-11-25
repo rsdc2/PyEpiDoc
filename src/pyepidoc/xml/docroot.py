@@ -331,6 +331,7 @@ class DocRoot:
         try:
             b_str = etree.tostring( 
                 self.e, 
+                encoding='utf-8',   # type: ignore
                 pretty_print=False,      # type: ignore
                 xml_declaration=False   # type: ignore
             )
