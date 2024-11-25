@@ -8,7 +8,7 @@ from typing import Optional, Sequence
 import re
 
 from lxml import etree
-from lxml.etree import _Element 
+from lxml.etree import _Element, _ElementUnicodeResult, _Comment
 
 from pyepidoc.xml import BaseElement
 from pyepidoc.shared.constants import XMLNS
@@ -266,7 +266,6 @@ class Edition(EpiDocElement):
         ]
 
     def convert_ids(self, oldbase: Base, newbase: Base) -> None:
-
         """
         Convert full IDs between bases
         """
@@ -317,9 +316,7 @@ class Edition(EpiDocElement):
 
         if include_nested:
             return list(desc)
-
         else:
-
             def has_not_token_ancestor(t: Token) -> bool:
                 return not t.has_ancestors_by_names(
                     AtomicTokenType.values(),
@@ -374,6 +371,22 @@ class Edition(EpiDocElement):
                     self._insert_w_inside_tag(EpiDocElement(name))
 
         return self
+
+    @property
+    def is_empty(self) -> bool:
+
+        """
+        Return True if the edition is present but does 
+        not contain any non-comment nodes
+        """
+        
+        if self.get_attrib('supplied') == 'unsupplied':
+            return True
+
+        if self.has_only_whitespace:
+            return True
+        
+        return all([ab.has_only_whitespace for ab in self.abs])
 
     @property
     def lang(self):

@@ -59,11 +59,12 @@ def test_collect_normalized():
         'secutor'
     ]
 
-files_and_ids = [
+
+test_date_not_before_files_and_ids = [
     ("ISic000001.xml", "ISic000001"),
     ("ISic000552.xml", "ISic000552")
 ]
-@pytest.mark.parametrize(["filename", "doc_id"], files_and_ids)
+@pytest.mark.parametrize(["filename", "doc_id"], test_date_not_before_files_and_ids)
 def test_doc_id(filename: str, doc_id: str):
     """
     Test that document ID collected correctly
@@ -74,12 +75,28 @@ def test_doc_id(filename: str, doc_id: str):
     assert doc.id == doc_id 
 
 
-files_and_ids = [
+test_doc_main_edition_is_empty_files = [
+    'ISic000001_empty_main_edition.xml',
+    'ISic000001_empty_main_edition_ab.xml'
+]
+@pytest.mark.parametrize("filename", test_doc_main_edition_is_empty_files)
+def test_doc_main_edition_is_empty(filename: str):
+    """
+    Test that can recognise a main edition that is empty, i.e.
+    no usable / tokenizable content
+    """
+    path = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(path)
+
+    assert doc.main_edition.is_empty
+    
+
+test_date_not_before_files_and_ids = [
     ("ISic000001.xml", (50, 300)),
     ("ISic000552.xml", (200, 500)),
     ("ISic000001_dateNotBefore.xml", (50, 300))
 ]
-@pytest.mark.parametrize(["filename", "date_range"], files_and_ids)
+@pytest.mark.parametrize(["filename", "date_range"], test_date_not_before_files_and_ids)
 def test_date_not_before(filename: str, date_range: tuple[int | None, int | None]):
     """
     Test that document daterange collected correctly depending on whether
@@ -89,7 +106,6 @@ def test_date_not_before(filename: str, date_range: tuple[int | None, int | None
     fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
     doc = EpiDoc(fp)
     assert doc.date_range == date_range
-
 
 
 def test_leiden_plus_text():

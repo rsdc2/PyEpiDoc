@@ -154,11 +154,15 @@ class Body(EpiDocElement):
             subtype_editions = [ed for ed in self.editions(True)
                         if ed.subtype == subtype]
 
-        return maxone(
-            subtype_editions, 
-            defaultval=None, 
-            throw_if_more_than_one=True
-        )
+        try:
+            return maxone(
+                subtype_editions, 
+                defaultval=None, 
+                throw_if_more_than_one=True
+            )
+        except ValueError as e:
+            raise ValueError(f"There is more than one edition present "
+                             f"with the subtype {subtype}.")
 
     def editions(self, include_transliterations=False) -> list[Edition]:
 

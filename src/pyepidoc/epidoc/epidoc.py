@@ -274,7 +274,7 @@ class EpiDoc(DocRoot):
         combined = textpart_langs + edition_langs
 
         return set(combined)
-    
+
     @property
     def edition_main(self) -> Edition | None:
         
@@ -286,10 +286,14 @@ class EpiDoc(DocRoot):
         this is currently treated as though the 
         main edition is not present, and None is returned.
         """
-        
-        return self.body.edition_by_subtype(subtype=None) or \
-            self.body.edition_by_subtype(subtype='PHI') or \
-            self.body.edition_by_subtype(subtype='EDR')
+        try:
+            return self.body.edition_by_subtype(subtype=None) 
+                # or \
+                # self.body.edition_by_subtype(subtype='PHI') or \
+                # self.body.edition_by_subtype(subtype='EDR')
+        except ValueError as e:
+            raise ValueError(f"Encountered the following error in {self.id}:\n"
+                             f"{e.args[0]}")
 
     def edition_by_subtype(self, subtype: str | None) -> Edition | None:
         
@@ -387,6 +391,12 @@ class EpiDoc(DocRoot):
             return set(self.langs)
         
         raise ValueError(f'Invalid lang_attr {lang_attr}')
+
+    @property
+    def has_no_main_edition(self) -> bool:
+        return self.main_edition is None or \
+            self.main_edition.is_empty or \
+            self.edition_by_subtype('unsupplied') is not None
 
     def has_gap(self, reasons: list[str]=[]) -> bool:
 

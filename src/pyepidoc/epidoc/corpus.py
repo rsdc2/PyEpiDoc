@@ -229,6 +229,16 @@ class EpiDocCorpus:
             print(f'Error processing {_docs[-1].filename}. This may be to do with retrieving the ID. Original error message: ')
             print(e)
             return []
+        
+    @property
+    def docs_with_no_main_edition(self) -> list[EpiDoc]:
+        """
+        Return a list of EpiDoc objects where the 
+        main edition is empty or None
+        """
+        return [doc for doc in self.docs
+                if doc.main_edition is None or 
+                    doc.has_no_main_edition]
 
     @cached_property
     def docs_dict(self) -> dict[str, EpiDoc]:
@@ -242,6 +252,8 @@ class EpiDocCorpus:
         """
         return set(chain(*[doc._edition_subtypes 
                            for doc in self.docs]))
+
+
 
     def empty_corpus(self) -> EpiDocCorpus:
         """
@@ -828,13 +840,16 @@ class EpiDocCorpus:
                 print('Tokenizing', doc.id)
 
             try:
-                doc.tokenize(
-                    prettify_edition=prettify_edition, 
-                    add_space_between_words=add_space_between_w_elements, 
-                    set_ids=set_ids, 
-                    convert_ws_to_names=convert_ws_to_names, 
-                    verbose=verbose
-                )
+                if not doc.has_no_main_edition:
+                    doc.tokenize(
+                        prettify_edition=prettify_edition, 
+                        add_space_between_words=add_space_between_w_elements, 
+                        set_ids=set_ids, 
+                        convert_ws_to_names=convert_ws_to_names, 
+                        verbose=verbose
+                    )
+                else: 
+                    print(f'Could not tokenize {doc.id}: no main edition found.')
             except ValueError as e:
                 print(e)
                 continue

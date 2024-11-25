@@ -272,13 +272,22 @@ class BaseElement(Showable):
         return set(self.desc_elem_names)
 
     @property
-    def desc_nodes(self) -> list[_Element | _ElementUnicodeResult]:
+    def desc_nodes(self) -> list[_Element | _ElementUnicodeResult | _Comment]:
 
         """
-        Return all descendant nodes
+        Return all descendant nodes of any kind including comments
         """
 
         return self._e.xpath('.//node()')
+    
+    @property
+    def desc_non_comments(self) -> list[_Element | _ElementUnicodeResult]:
+
+        """
+        Return all descendant nodes excluding comments
+        """
+        return [node for node in self.desc_nodes
+                if not isinstance(node, _Comment)]
 
     @property
     def dict_desc(self) -> dict:
@@ -514,6 +523,25 @@ class BaseElement(Showable):
         Sets the value of the xml:id attribute in the XML file.
         """
         self.set_attrib('id', id_value, namespace=XMLNS)
+
+    @property
+    def has_only_whitespace(self) -> bool:
+
+        """
+        Return True if the element contains only comments 
+        and whitespace
+        """
+
+        non_comment_nodes = self.desc_non_comments
+        element_nodes = [node for node in non_comment_nodes
+                            if isinstance(node, _Element)]
+        text_nodes = [node for node in non_comment_nodes
+                            if isinstance(node, _ElementUnicodeResult)]
+        
+        if len(element_nodes) == 0:
+            return ''.join(text_nodes).strip() == ''
+        
+        return False
 
     @property
     def localname(self) -> str:
