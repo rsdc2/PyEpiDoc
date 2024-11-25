@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from lxml import etree
 from pathlib import Path
 
@@ -88,15 +90,15 @@ def test_doc_main_edition_is_empty(filename: str):
     path = Path(test_files_path + "single_files_untokenized") / Path(filename)
     doc = EpiDoc(path)
 
-    assert doc.main_edition.is_empty
+    assert doc.main_edition is not None and doc.main_edition.is_empty
     
 
-test_date_not_before_files_and_ids = [
+test_date_not_before_files_and_ids2 = [
     ("ISic000001.xml", (50, 300)),
     ("ISic000552.xml", (200, 500)),
     ("ISic000001_dateNotBefore.xml", (50, 300))
 ]
-@pytest.mark.parametrize(["filename", "date_range"], test_date_not_before_files_and_ids)
+@pytest.mark.parametrize(["filename", "date_range"], test_date_not_before_files_and_ids2)
 def test_date_not_before(filename: str, date_range: tuple[int | None, int | None]):
     """
     Test that document daterange collected correctly depending on whether

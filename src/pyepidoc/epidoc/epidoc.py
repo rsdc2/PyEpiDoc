@@ -314,8 +314,9 @@ class EpiDoc(DocRoot):
         establishing which subtypes exist on the corpus.
         """
 
-        return [edition.get_attrib('subtype') 
-                for edition in self.editions(include_transliterations=True)]
+        return remove_none([edition.get_attrib('subtype') 
+                for edition in self.editions(include_transliterations=True)
+                ])
 
     def editions(self, include_transliterations=False) -> list[Edition]:
 

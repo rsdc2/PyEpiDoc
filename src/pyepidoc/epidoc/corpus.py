@@ -231,7 +231,7 @@ class EpiDocCorpus:
             return []
         
     @property
-    def docs_with_no_main_edition(self) -> list[EpiDoc]:
+    def docs_with_no_or_empty_main_edition(self) -> list[EpiDoc]:
         """
         Return a list of EpiDoc objects where the 
         main edition is empty or None
@@ -775,7 +775,8 @@ class EpiDocCorpus:
             doc.set_ids()
             self._doc_to_xml_file(
                 dstfolder=dstfolder, 
-                doc=doc)
+                doc=doc,
+                verbose=verbose)
 
     @cached_property
     def size(self) -> int:
