@@ -32,3 +32,4 @@ validation
 examples_
 **/output/*.xml
 localpaths.txt
+prettified
