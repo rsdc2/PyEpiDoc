@@ -13,11 +13,6 @@ import pytest
 test_files_path = "tests/api/files/"
 
 relative_filepaths = {
-    'ugly': 'tests/api/files/prettifying/ugly/ISic000552.xml',
-    'benchmark_lxml': 'tests/api/files/prettifying/benchmark/ISic000552_prettified_lxml.xml',
-    'benchmark_pyepidoc': 'tests/api/files/prettifying/benchmark/ISic000552_prettified_pyepidoc.xml',
-    'prettified_lxml': 'tests/api/files/prettifying/prettified/ISic000552_prettified_lxml.xml',
-    'prettified_pyepidoc': 'tests/api/files/prettifying/prettified/ISic000552_prettified_pyepidoc.xml',
     'ISic000001': 'tests/api/files/single_files_untokenized/ISic000001.xml',
     'ISic000552': 'tests/api/files/single_files_tokenized/ISic000552.xml',
     'persName_nested': 'tests/api/files/persName_nested.xml',
@@ -160,7 +155,7 @@ def test_lines():
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths.values())
-def test_load_relative_filepath_from_str(filepath:str):
+def test_load_relative_filepath_from_str(filepath: str):
     doc = EpiDoc(filepath)
     assert doc.tokens_normalized != []
 
@@ -169,6 +164,10 @@ def test_materialclasses():
     doc = EpiDoc(relative_filepaths['ISic000001'])
     assert doc.materialclasses == ['#material.stone.marble']
 
+    # 'benchmark_lxml': 'tests/api/files/prettifying/benchmark/ISic000552_prettified_lxml.xml',
+    # 'benchmark_pyepidoc': 'tests/api/files/prettifying/benchmark/ISic000552_prettified_pyepidoc.xml',
+    # 'prettified_lxml': 'tests/api/files/prettifying/prettified/ISic000552_prettified_lxml.xml',
+    # 'prettified_pyepidoc': 'tests/api/files/prettifying/prettified/ISic000552_prettified_pyepidoc.xml',
 
 # def test_prettify_doc_with_lxml():
 #     """
@@ -188,7 +187,14 @@ def test_materialclasses():
 #     assert prettified_str == benchmark_str
 
 
-def test_prettify_doc_with_pyepidoc():
+prettify_pyepidoc_paths = [
+    ('tests/api/files/prettifying/ugly/ISic000552.xml',
+        'tests/api/files/prettifying/prettified/ISic000552_prettified_pyepidoc.xml',
+        'tests/api/files/prettifying/benchmark/ISic000552_prettified_pyepidoc.xml'
+        )
+]
+@pytest.mark.parametrize(("ugly", "prettified", "benchmark"), prettify_pyepidoc_paths)
+def test_prettify_doc_with_pyepidoc(ugly: str, prettified: str, benchmark: str):
 
     """
     Tests that the entire document is prettified correctly
@@ -196,13 +202,13 @@ def test_prettify_doc_with_pyepidoc():
     Prettifies both the main document and the editions.
     """
 
-    ugly = EpiDoc(relative_filepaths['ugly'])
-    prettified = ugly.prettify('pyepidoc')
+    ugly_doc = EpiDoc(ugly)
+    prettified_doc = ugly_doc.prettify('pyepidoc')
 
     assert save_reload_and_compare_with_benchmark(
-        doc=prettified,
-        target_path=relative_filepaths['prettified_pyepidoc'],
-        benchmark_path=relative_filepaths['benchmark_pyepidoc']
+        doc=prettified_doc,
+        target_path=prettified,
+        benchmark_path=benchmark
     )
 
 
