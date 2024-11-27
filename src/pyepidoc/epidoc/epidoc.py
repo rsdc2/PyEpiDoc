@@ -925,6 +925,12 @@ class EpiDoc(DocRoot):
         if self.main_edition is not None:
             self.main_edition.prettify(spaceunit, number)
 
+    def print_leiden(self) -> None:
+        """
+        Print Leiden text to stdout
+        """
+        print(self.text_leiden)
+
     @property
     def publication_stmt(self) -> Optional[EpiDocElement]:
         publication_stmt = maxone(self.get_desc('publicationStmt'))
