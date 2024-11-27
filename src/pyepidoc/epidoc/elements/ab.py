@@ -264,8 +264,8 @@ class Ab(EpiDocElement):
             )
 
         def remove_subsets(
-            acc:list[list[EpiDocElement]], 
-            sequence:list[EpiDocElement]
+            acc: list[list[EpiDocElement]], 
+            sequence: list[EpiDocElement]
         ) -> list[list[EpiDocElement]]:
             
             if any([SetRelation.propersubset(set(sequence), set(acc_item))
