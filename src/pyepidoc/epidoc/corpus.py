@@ -889,4 +889,4 @@ class EpiDocCorpus:
         Filter abbreviations according to a predicate
         """
 
-        return list(filter(predicate, self._docs))
+        return EpiDocCorpus(list(filter(predicate, self._docs)))

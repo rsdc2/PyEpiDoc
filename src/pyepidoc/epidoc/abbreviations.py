@@ -91,7 +91,7 @@ class Abbreviations:
         Filter abbreviations according to a predicate
         """
 
-        return list(filter(predicate, self._expans))
+        return Abbreviations(list(filter(predicate, self._expans)))
     
     def where_ancestor_is(self, localname: str) -> Abbreviations:
         """
