@@ -18,6 +18,7 @@ from lxml.etree import XMLSyntaxError
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.utils import maxone, top, remove_none
 from pyepidoc.shared.numbers import percentage
+from pyepidoc.shared.string import format_year
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
@@ -687,7 +688,7 @@ class EpiDocCorpus:
 
         return  (
             f'Document count:\t\t{self.doc_count}\n'
-            f'Date range:\t\t{self.daterange[0]}--{self.daterange[1]}\n'
+            f'Date range:\t\t{format_year(self.daterange[0])}--{format_year(self.daterange[1])}\n'
             f'Token count:\t\t{self.token_count}\n'
             f'Names count:\t\t{len(self.names)}\n'
             f'Abbreviations:\t\t{abbreviations}\n'
