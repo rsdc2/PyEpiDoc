@@ -134,7 +134,7 @@ def test_date_range(filename: str, date_range: tuple[int | None, int | None]):
 
     fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
     doc = EpiDoc(fp)
-    assert doc.date_range == date_range
+    assert doc.daterange == date_range
 
 
 def test_leiden_plus_text():

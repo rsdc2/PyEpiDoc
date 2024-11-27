@@ -220,17 +220,17 @@ class EpiDoc(DocRoot):
             return None
 
     @property
-    def date_range(self) -> tuple[Optional[int], Optional[int]]:
-        _date_range = (self.not_before, self.not_after)
+    def daterange(self) -> tuple[Optional[int], Optional[int]]:
+        _daterange = (self.not_before, self.not_after)
 
-        if _date_range == (None, None):
+        if _daterange == (None, None):
             return (self.date, self.date)
         
-        return _date_range
+        return _daterange
         
     @property
     def date_mean(self) -> Optional[int]:
-        not_before, not_after = self.date_range
+        not_before, not_after = self.daterange
         if not_before is None or not_after is None:
             return None
     

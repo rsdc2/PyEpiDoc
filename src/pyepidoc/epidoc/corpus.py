@@ -168,7 +168,7 @@ class EpiDocCorpus:
 
     @property
     def dateranges(self) -> list[tuple[Optional[int], Optional[int]]]:
-        return [doc.date_range for doc in self.docs]
+        return [doc.daterange for doc in self.docs]
 
     @property
     def datemean(self) -> Optional[int]:
