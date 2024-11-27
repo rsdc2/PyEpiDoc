@@ -48,7 +48,15 @@ class DocRoot:
         ...
 
     @overload
-    def __init__(self, inpt:_ElementTree):
+    def __init__(self, inpt: _ElementTree):
+        """
+        :param inpt: an lxml _Element tree object representing an
+            lxml document
+        """
+        ...
+
+    @overload
+    def __init__(self, inpt: BaseElement):
         """
         :param inpt: an lxml _Element tree object representing an
             lxml document
@@ -84,7 +92,7 @@ class DocRoot:
             return
         
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
-                        'Path, _ElementTree, _Element or str.')
+                        'Path, _ElementTree, _Element, BaseElement or str.')
 
     @staticmethod
     def _clean_text(text:str):
