@@ -6,7 +6,8 @@ from typing import (
     overload, 
     cast, 
     Literal, 
-    Generator
+    Generator,
+    SupportsIndex
 )
 from functools import cached_property
 from itertools import chain
@@ -14,6 +15,10 @@ from pathlib import Path
 
 from lxml.etree import XMLSyntaxError  
 
+from pyepidoc.shared.classes import SetRelation
+from pyepidoc.shared.utils import maxone, top, remove_none
+
+from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .token import Token
@@ -24,9 +29,6 @@ from .elements.num import Num
 from .enums import TextClass
 from .elements.role_name import RoleName
 from .elements.pers_name import PersName
-from pyepidoc.shared.classes import SetRelation
-
-from ..shared import maxone, top, remove_none
 
 
 class EpiDocCorpus:
@@ -139,8 +141,18 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(list(set(self.docs + other.docs)))
 
+    def __getitem__(self, i: SupportsIndex) -> EpiDoc:
+        return self.docs[i]
+
     def __repr__(self) -> str:
         return f'EpiDocCorpus( doc_count = {self.doc_count} )'
+
+    @property
+    def abbreviations(self) -> Abbreviations:
+        """
+        Return an abbreviations object for doing queries on abbreviations
+        """
+        return Abbreviations(self.expans)
 
     @property
     def datemax(self) -> int:
