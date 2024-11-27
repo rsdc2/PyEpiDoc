@@ -19,8 +19,7 @@ keywords = ["XML", "EpiDoc", "TEI"]
 [project.optional-dependencies]
 dev = [
     "pytest >= 7.4.0",
-    "mypy >= 1.8",
-    "coverage >= 7.6.8"
+    "mypy >= 1.8"
 ]
 
 ju = [
