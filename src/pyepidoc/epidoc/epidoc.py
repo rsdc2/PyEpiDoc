@@ -498,6 +498,32 @@ class EpiDoc(DocRoot):
 
         return self
 
+    def is_after(self, start: int) -> bool:
+        """
+        Return True eif either @notBefore is greater than 
+        `end` or @date is greater than `end`
+        """
+
+        if self.not_before is not None and self.not_before >= start:
+            return True
+        
+        if self.date is not None and self.date >= start:
+            return True
+
+    def is_before(self, end: int) -> bool:
+        """
+        Return True if either @notAfter is less than `end`
+        or @date is less than `end`.
+        """
+
+        if self.not_after is not None and self.not_after <= end:
+            return True
+        
+        if self.date is not None and self.date <= end:
+            return True
+        
+        return False
+            
     @property
     def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 or len(self.langs) > 1
