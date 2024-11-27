@@ -676,10 +676,14 @@ class EpiDocCorpus:
     
     @property
     def info(self) -> str:
+
+        """
+        Provide key statistical information about the corpus
+        """
+
         abbreviations = self.abbreviations.count
         suspensions = self.abbreviations.suspensions.count
         suspensions_in_names = self.abbreviations.suspensions.where_ancestor_is('name').count
-
 
         return  (
             f'Document count:\t\t{self.doc_count}\n'
