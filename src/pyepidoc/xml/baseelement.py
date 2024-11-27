@@ -464,9 +464,13 @@ class BaseElement(Showable):
         return [ancestor for ancestor in self.ancestors_incl_self 
             if ancestor.tag.name in ancestor_names]
 
-    def has_ancestor_by_name(self, name: str) -> bool:
+    def has_ancestor_by_name(self, localname: str) -> bool:
+        """
+        :param localname: the localname of the ancestor element
+        that is being sought.
+        """
         names = map(lambda elem: elem.localname, self.ancestors_excl_self)
-        return name in names
+        return localname in names
 
     def has_ancestors_by_names(
             self, 
