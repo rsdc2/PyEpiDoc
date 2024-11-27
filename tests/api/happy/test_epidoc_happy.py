@@ -88,13 +88,45 @@ def test_doc_main_edition_is_empty(filename: str):
     assert doc.main_edition is not None and doc.main_edition.is_empty
     
 
-test_date_not_before_files_and_ids2 = [
+test_is_after_inputs = [
+    ("ISic000001.xml", 50),
+    ("ISic000552.xml", 200),
+    ("ISic000001_dateNotBefore.xml", 50)
+]
+@pytest.mark.parametrize(["filename", "date_after"], test_is_after_inputs)
+def test_is_after_date(filename: str, date_after: int):
+    """
+    
+    """
+
+    fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(fp)
+    assert doc.is_after(date_after)
+    
+
+test_is_before_inputs = [
+    ("ISic000001.xml", 300),
+    ("ISic000552.xml", 500),
+    ("ISic000001_dateNotBefore.xml", 300)
+]
+@pytest.mark.parametrize(["filename", "date_before"], test_is_before_inputs)
+def test_is_before_date(filename: str, date_before: int):
+    """
+    
+    """
+
+    fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(fp)
+    assert doc.is_before(date_before)
+
+
+test_date_range_inputs = [
     ("ISic000001.xml", (50, 300)),
     ("ISic000552.xml", (200, 500)),
     ("ISic000001_dateNotBefore.xml", (50, 300))
 ]
-@pytest.mark.parametrize(["filename", "date_range"], test_date_not_before_files_and_ids2)
-def test_date_not_before(filename: str, date_range: tuple[int | None, int | None]):
+@pytest.mark.parametrize(["filename", "date_range"], test_date_range_inputs)
+def test_date_range(filename: str, date_range: tuple[int | None, int | None]):
     """
     Test that document daterange collected correctly depending on whether
     the document uses @notBefore or @notBefore-Custom
