@@ -883,3 +883,10 @@ class EpiDocCorpus:
     
     def top(self, length=10) -> EpiDocCorpus:
         return EpiDocCorpus(list(top(self.docs, length)))
+
+    def where(self, predicate: Callable[[EpiDoc], bool]) -> EpiDocCorpus:
+        """
+        Filter abbreviations according to a predicate
+        """
+
+        return list(filter(predicate, self._docs))

@@ -6,6 +6,7 @@ convenience methods for operating on abbreviations
 from __future__ import annotations
 
 from typing import (
+    Callable,
     SupportsIndex,
     overload
 )
@@ -84,6 +85,13 @@ class Abbreviations:
 
         return Abbreviations([abbr for abbr in self._expans 
                if contains(abbr.abbr_types, AbbrType.multiplication)])
+    
+    def where(self, predicate: Callable[[Expan], bool]) -> Abbreviations:
+        """
+        Filter abbreviations according to a predicate
+        """
+
+        return list(filter(predicate, self._expans))
     
     def where_ancestor_is(self, localname: str) -> Abbreviations:
         """
