@@ -5,7 +5,10 @@ convenience methods for operating on abbreviations
 
 from __future__ import annotations
 
-from typing import SupportsIndex
+from typing import (
+    SupportsIndex,
+    overload
+)
 
 from .elements.expan import Expan
 from pyepidoc.shared.utils import top, contains, listfilter
@@ -91,4 +94,15 @@ class Abbreviations:
         return Abbreviations(
             [expan for expan in self._expans
              if expan.has_ancestor_by_name(localname)]
+        )
+    
+    def where_ancestor_is_not(self, localname: str) -> Abbreviations:
+        """
+        Filter for elements without a certain localname among ancestor elements
+        e.g. 'name'
+        """
+
+        return Abbreviations(
+            [expan for expan in self._expans
+             if not expan.has_ancestor_by_name(localname)]
         )
