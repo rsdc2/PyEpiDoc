@@ -153,6 +153,10 @@ class EpiDocCorpus:
         Return an abbreviations object for doing queries on abbreviations
         """
         return Abbreviations(self.expans)
+    
+    @property
+    def count(self) -> int:
+        return self.doc_count
 
     @property
     def datemax(self) -> int:
