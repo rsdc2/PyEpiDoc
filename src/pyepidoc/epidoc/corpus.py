@@ -16,7 +16,8 @@ from pathlib import Path
 from lxml.etree import XMLSyntaxError  
 
 from pyepidoc.shared.classes import SetRelation
-from pyepidoc.shared.utils import maxone, top, remove_none, percentage
+from pyepidoc.shared.utils import maxone, top, remove_none
+from pyepidoc.shared.numbers import percentage
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
