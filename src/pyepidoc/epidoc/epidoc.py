@@ -60,7 +60,7 @@ class EpiDoc(DocRoot):
     
     def __init__(
             self, 
-            inpt: Path | str | _ElementTree,
+            inpt: Path | str | _ElementTree | BaseElement,
             validate_on_load: bool=False,
             verbose: bool=True):
         
