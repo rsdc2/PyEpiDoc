@@ -26,7 +26,7 @@ from .elements.role_name import RoleName
 from .elements.pers_name import PersName
 from pyepidoc.shared.classes import SetRelation
 
-from ..shared import maxone, top
+from ..shared import maxone, top, remove_none
 
 
 class EpiDocCorpus:
@@ -143,21 +143,19 @@ class EpiDocCorpus:
         return f'EpiDocCorpus( doc_count = {self.doc_count} )'
 
     @property
-    def datemin(self) -> int:
-        not_afters = [doc.not_after 
-                      for doc in self.docs if doc.not_after is not None]
-        dates = [doc.date for doc in self.docs if doc.date is not None]
-
-        return min(not_afters + dates)
-
-    @property
     def datemax(self) -> int:
-        not_befores = [doc.not_before for doc in self.docs 
-            if doc.not_after is not None and doc.not_before is not None]
+        not_afters = remove_none([doc.not_after for doc in self.docs])
         dates = [doc.date for doc in self.docs 
             if doc.date is not None]
 
-        return max(not_befores + dates)
+        return max(not_afters + dates)
+
+    @property
+    def datemin(self) -> int:
+        not_befores = remove_none([doc.not_before for doc in self.docs])
+        dates = [doc.date for doc in self.docs if doc.date is not None]
+
+        return min(not_befores + dates)
 
     @property
     def daterange(self) -> tuple[int, int]:
@@ -270,16 +268,19 @@ class EpiDocCorpus:
         return list(chain(*[doc.expans for doc in self.docs]))
 
     def filter_by_dateafter(self, start: int) -> EpiDocCorpus:
-        docs = [doc for doc in self.docs
-            if (doc.not_before is not None and doc.not_before >= start) 
-            or (doc.date is not None and doc.date >= start)]
+        docs = [doc for doc in self.docs if doc.is_after(start)]
+
+        return EpiDocCorpus(docs)
+    
+    def filter_by_datebefore(self, end: int) -> EpiDocCorpus:
+        docs = [doc for doc in self.docs if doc.is_before(end)]
 
         return EpiDocCorpus(docs)
 
     def filter_by_daterange(self, start: int, end: int) -> EpiDocCorpus:
+        
         docs = [doc for doc in self.docs
-            if doc.not_before is not None and doc.not_after is not None
-            and doc.not_before >= start and doc.not_after <= end]
+            if doc.is_after(start) and doc.is_before(end)]
         
         return EpiDocCorpus(docs)
 
@@ -641,7 +642,10 @@ class EpiDocCorpus:
                 
                 if iterations > max_iter:
                     break
-
+            
+            if iterations == 0:
+                print('WARNING: No .xml files found in '
+                      f'{_p}')
             self._docs = docs
 
     @property
