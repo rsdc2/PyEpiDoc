@@ -8,13 +8,15 @@ from __future__ import annotations
 from typing import (
     Callable,
     SupportsIndex,
-    overload
+    overload,
+    TypeVar
 )
 
 from .elements.expan import Expan
 from pyepidoc.shared.utils import top, contains, listfilter
 from pyepidoc.epidoc.enums import AbbrType
 
+T = TypeVar('T')
 
 class Abbreviations:
     """
@@ -47,6 +49,12 @@ class Abbreviations:
         list of <expan> elements
         """
         return len(self._expans)
+    
+    def map[T](self, func: Callable[[Expan], T]) -> list[T]:
+        """
+        Map a function to the abbreviations
+        """
+        return list(map(func, self._expans))
 
     @property
     def suspensions(self) -> Abbreviations:
