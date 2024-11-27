@@ -1,0 +1,94 @@
+"""
+Collection class for abbreviations grouping and containing
+convenience methods for operating on abbreviations
+"""
+
+from __future__ import annotations
+
+from typing import SupportsIndex
+
+from .elements.expan import Expan
+from pyepidoc.shared.utils import top, contains, listfilter
+from pyepidoc.epidoc.enums import AbbrType
+
+
+class Abbreviations:
+    """
+    Collection class for abbreviations grouping and containing
+    convenience methods for operating on abbreviations
+    """
+
+    _expans: list[Expan]
+
+    def __init__(self, expans: Abbreviations):
+        self._expans = expans
+
+    def __getitem__(self, i: SupportsIndex) -> Expan:
+        return self._expans[i]
+
+    def __repr__(self) -> str:
+        return f'Abbreviations({self._expans})'
+    
+    @property
+    def count(self) -> int:
+        """
+        Alias for length property
+        """
+        return self.length
+
+    @property
+    def length(self) -> int:
+        """
+        Return the number of items in the underlying
+        list of <expan> elements
+        """
+        return len(self._expans)
+
+    @property
+    def suspensions(self) -> Abbreviations:
+        """
+        Return all the suspensions
+        """
+
+        return Abbreviations([abbr for abbr in self._expans 
+               if contains(abbr.abbr_types, AbbrType.suspension)])
+
+    @property
+    def contractions(self) -> Abbreviations:
+        """
+        Return all the contractions
+        """
+
+        return Abbreviations([abbr for abbr in self._expans 
+               if contains(abbr.abbr_types, AbbrType.contraction)])
+
+    @property
+    def contractions_with_suspension(self) -> Abbreviations:
+        """
+        Return all the contractions with suspension
+        """
+
+        return Abbreviations([abbr for abbr in self._expans 
+               if contains(
+                   abbr.abbr_types, 
+                   AbbrType.contraction_with_suspension)])
+    
+    @property
+    def multiplications(self) -> Abbreviations:
+        """
+        Return all the contractions with suspension
+        """
+
+        return Abbreviations([abbr for abbr in self._expans 
+               if contains(abbr.abbr_types, AbbrType.multiplication)])
+    
+    def where_ancestor_is(self, localname: str) -> Abbreviations:
+        """
+        Filter for elements with a certain localname among ancestor elements
+        e.g. 'name'
+        """
+
+        return Abbreviations(
+            [expan for expan in self._expans
+             if expan.has_ancestor_by_name(localname)]
+        )
