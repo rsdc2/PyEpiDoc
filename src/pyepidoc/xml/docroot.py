@@ -55,7 +55,7 @@ class DocRoot:
         """
         ...
 
-    def __init__(self, inpt: Path | str | _ElementTree | _Element):
+    def __init__(self, inpt: Path | str | _ElementTree | _Element | BaseElement):
 
         if isinstance(inpt, Path):
             self._p = inpt
@@ -70,6 +70,10 @@ class DocRoot:
 
         elif isinstance(inpt, _Element):
             self._e = inpt
+            return
+
+        elif isinstance(inpt, BaseElement):
+            self._e = inpt._e
             return
         
         elif isinstance(inpt, str):
