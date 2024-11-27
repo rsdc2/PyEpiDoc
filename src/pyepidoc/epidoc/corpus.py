@@ -16,7 +16,7 @@ from pathlib import Path
 from lxml.etree import XMLSyntaxError  
 
 from pyepidoc.shared.classes import SetRelation
-from pyepidoc.shared.utils import maxone, top, remove_none
+from pyepidoc.shared.utils import maxone, top, remove_none, percentage
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
@@ -675,11 +675,19 @@ class EpiDocCorpus:
     
     @property
     def info(self) -> str:
+        abbreviations = self.abbreviations.count
+        suspensions = self.abbreviations.suspensions.count
+        suspensions_in_names = self.abbreviations.suspensions.where_ancestor_is('name').count
+
+
         return  (
-            f'Document count:\t{self.doc_count}'
-            f'Date range:\t{self.daterange}'
-            f'Token count:\t{self.token_count}\n'
-            f'Names:\t{len(self.names)}'
+            f'Document count:\t\t{self.doc_count}\n'
+            f'Date range:\t\t{self.daterange[0]}--{self.daterange[1]}\n'
+            f'Token count:\t\t{self.token_count}\n'
+            f'Names count:\t\t{len(self.names)}\n'
+            f'Abbreviations:\t\t{abbreviations}\n'
+            f'  - Suspensions:\t{suspensions} ({percentage(suspensions, abbreviations)})\n'
+            f'    -- in names:\t{suspensions_in_names} ({percentage(suspensions_in_names, suspensions)})'
         )
 
     @property
