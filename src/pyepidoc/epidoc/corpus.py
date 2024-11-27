@@ -672,6 +672,15 @@ class EpiDocCorpus:
     def ids(self) -> list[str]:
         return [doc.id for doc in self.docs
                 if doc.id is not None]
+    
+    @property
+    def info(self) -> str:
+        return  (
+            f'Document count:\t{self.doc_count}'
+            f'Date range:\t{self.daterange}'
+            f'Token count:\t{self.token_count}\n'
+            f'Names:\t{len(self.names)}'
+        )
 
     @property
     def languages(self) -> set[str]:
@@ -779,6 +788,9 @@ class EpiDocCorpus:
             return ''
         
         return doc.prefix
+
+    def print_info(self):
+        print(self.info)
     
     @property
     def role_names(self) -> list[RoleName]:
