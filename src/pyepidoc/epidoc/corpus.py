@@ -685,15 +685,20 @@ class EpiDocCorpus:
         abbreviations = self.abbreviations.count
         suspensions = self.abbreviations.suspensions.count
         suspensions_in_names = self.abbreviations.suspensions.where_ancestor_is('name').count
+        abbrevaitions_in_names = self.abbreviations.where_ancestor_is('name').count
+        names_count = len(self.names)
+        indent = '\t\t\t'
 
         return  (
-            f'Document count:\t\t{self.doc_count}\n'
-            f'Date range:\t\t{format_year(self.daterange[0])}--{format_year(self.daterange[1])}\n'
-            f'Token count:\t\t{self.token_count}\n'
-            f'Names count:\t\t{len(self.names)}\n'
-            f'Abbreviations:\t\t{abbreviations}\n'
-            f'  - Suspensions:\t{suspensions} ({percentage(suspensions, abbreviations)})\n'
-            f'    -- in names:\t{suspensions_in_names} ({percentage(suspensions_in_names, suspensions)})'
+            f'Document count:{indent}{self.doc_count}\n'
+            f'Date range:{indent}{format_year(self.daterange[0])}--{format_year(self.daterange[1])}\n'
+            f'Token count:{indent}{self.token_count}\n'
+            f'  - of which names:\t\t{names_count} ({percentage(names_count, self.token_count)})\n'
+            f'Abbreviations:{indent}{abbreviations}\n'
+            f'  - of which suspensions:\t{suspensions} ({percentage(suspensions, abbreviations)})\n'
+            f'    -- of which names:\t\t{suspensions_in_names} ({percentage(suspensions_in_names, suspensions)})\n'
+            f'    -- % names abbreviated:\t{percentage(suspensions_in_names, names_count)}%\n'
+            f'  - % names abbreviated:\t{percentage(abbrevaitions_in_names, names_count)}%'
         )
 
     @property
