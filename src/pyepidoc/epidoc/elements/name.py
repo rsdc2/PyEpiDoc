@@ -15,6 +15,9 @@ class Name(W):
 
         if self.localname != 'name':
             raise TypeError('Element should be <name>.')
+        
+    def __repr__(self) -> str:
+        return f'Name("{self.leiden_str}")'
 
     @property
     def name_type(self) -> str:
