@@ -18,4 +18,16 @@ class Name(W):
 
     @property
     def name_type(self) -> str:
+        """
+        Returns the @type property on the <name> element
+        if it exists, or the empty string.
+        """
         return self.get_attrib('type') or ""
+    
+    @property
+    def nymref(self) -> str:
+        """
+        Returns the @nymRef property on the <name> element
+        if it exists, or the empty string.
+        """
+        return self.get_attrib('nymRef') or ""
