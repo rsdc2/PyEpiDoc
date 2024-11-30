@@ -500,7 +500,7 @@ class EpiDoc(DocRoot):
 
     def is_after(self, start: int) -> bool:
         """
-        Return True eif either @notBefore is greater than 
+        Return True if either @notBefore is greater than 
         `end` or @date is greater than `end`
         """
 
@@ -509,6 +509,8 @@ class EpiDoc(DocRoot):
         
         if self.date is not None and self.date >= start:
             return True
+        
+        return False
 
     def is_before(self, end: int) -> bool:
         """

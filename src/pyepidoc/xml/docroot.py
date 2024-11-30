@@ -34,6 +34,14 @@ class DocRoot:
     _valid: Optional[bool] = None
 
     @overload
+    def __init__(self, inpt: BaseElement):
+        """
+        :param inpt: an lxml _Element tree object representing an
+            lxml document
+        """
+        ...
+
+    @overload
     def __init__(self, inpt: Path):
         """
         :param inpt: Path containing the filepath of the EpiDoc XML file.
@@ -49,14 +57,6 @@ class DocRoot:
 
     @overload
     def __init__(self, inpt: _ElementTree):
-        """
-        :param inpt: an lxml _Element tree object representing an
-            lxml document
-        """
-        ...
-
-    @overload
-    def __init__(self, inpt: BaseElement):
         """
         :param inpt: an lxml _Element tree object representing an
             lxml document

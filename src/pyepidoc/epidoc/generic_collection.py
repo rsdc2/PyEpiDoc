@@ -64,7 +64,7 @@ class GenericCollection(Generic[T]):
         Return the unique elements in the collection
         """
 
-        return GenericCollection(set(self._values))
+        return GenericCollection(list(set(self._values)))
 
     def where(self, predicate: Callable[[T], bool]) -> GenericCollection[T]:
         """

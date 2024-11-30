@@ -19,15 +19,15 @@ from pyepidoc.epidoc.generic_collection import GenericCollection
 
 T = TypeVar('T')
 
-class Abbreviations:
+class Abbreviations(GenericCollection[Expan]):
     """
     Collection class for abbreviations grouping and containing
     convenience methods for operating on abbreviations
     """
 
-    _expans: list[Expan]
+    _values: list[Expan]
 
-    def __init__(self, expans: Abbreviations):
+    def __init__(self, expans: list[Expan]):
         self._expans = expans
 
     def __getitem__(self, i: SupportsIndex) -> Expan:
@@ -71,7 +71,7 @@ class Abbreviations:
         """
         return len(self._expans)
     
-    def map[T](self, func: Callable[[Expan], T]) -> GenericCollection[T]:
+    def map(self, func: Callable[[Expan], T]) -> GenericCollection[T]:
         """
         Map a function to the abbreviations
         """
