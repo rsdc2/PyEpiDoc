@@ -5,6 +5,7 @@ from typing import (
     overload,
     Callable
 )
+from functools import cached_property
 
 from lxml import etree
 from lxml.etree import (
@@ -221,6 +222,11 @@ class EpiDoc(DocRoot):
 
     @property
     def daterange(self) -> tuple[Optional[int], Optional[int]]:
+        """
+        Return a pair (not_before, not_after). If the document
+        has a single date, the pair (date, date) is a returned.
+        """
+
         _daterange = (self.not_before, self.not_after)
 
         if _daterange == (None, None):
@@ -230,6 +236,18 @@ class EpiDoc(DocRoot):
         
     @property
     def date_mean(self) -> Optional[int]:
+        """
+        Return a single date for the document.
+        If the document has a single `date`, this is
+        returned. Otherwise the mean date is returned,
+        calculated by summing the `not_before` and 
+        `not_after` property and dividing by two, returning
+        as an `int`.
+        """
+
+        if self.date is not None:
+            return self.date
+
         not_before, not_after = self.daterange
         if not_before is None or not_after is None:
             return None
@@ -346,10 +364,14 @@ class EpiDoc(DocRoot):
         
         return [expan for expan in self.expans 
                 if expan.abbr_types == abbr_type]
-                       
+
     @property
     def first_edition(self) -> Optional[Edition]:
-        return self.editions()[0] if self.editions != [] else None
+        """
+        Return the first edition in the document,
+        regardless of its type
+        """
+        return self.editions(True)[0] if self.editions(True) != [] else None
 
     @property
     def formatted_text(self) -> str:
@@ -573,7 +595,7 @@ class EpiDoc(DocRoot):
 
         return langs
     
-    @property
+    @cached_property
     def leiden_text(self) -> str:
         """
         Return the Leiden-formatted text of the inscriptions.
@@ -721,12 +743,20 @@ class EpiDoc(DocRoot):
 
     @property
     def not_after(self) -> Optional[int]:
+        """
+        Return the value of the @notAfter or @notAfter-custom attribute,
+        whichever is present
+        """
         not_after_custom = self._get_daterange_attrib('notAfter-custom')
         not_after = self._get_daterange_attrib('notAfter')
         return not_after_custom or not_after
 
     @property
     def not_before(self) -> Optional[int]:
+        """
+        Return the value of the @notBefore or @notBefore-custom attribute,
+        whichever is present
+        """
         not_before_custom = self._get_daterange_attrib('notBefore-custom')
         not_before = self._get_daterange_attrib('notBefore')
         return not_before_custom or not_before
@@ -949,7 +979,13 @@ class EpiDoc(DocRoot):
         """
         Print Leiden text to stdout
         """
-        print(self.text_leiden)
+        print(self.leiden_text)
+
+    def print_translation(self) -> None:
+        """
+        Print translation text to stdout
+        """
+        print(self.translation_text)
 
     @property
     def publication_stmt(self) -> Optional[EpiDocElement]:
@@ -1093,7 +1129,7 @@ class EpiDoc(DocRoot):
         elems = chain(*[ab.desc_elems for ab in self.abs])
         return list(map(EpiDocElement, elems))
 
-    @property
+    @cached_property
     def text_leiden(self) -> str:
         """
         :return: a string containing the Leiden representation of the
@@ -1352,8 +1388,8 @@ class EpiDoc(DocRoot):
         
         translation_divs = self.get_div_descendants_by_type('translation')
 
-        return '\n'.join(chain(*[EpiDocElement(div).text_desc_compressed_whitespace 
-                       for div in translation_divs]))
+        return '\n'.join([EpiDocElement(div).text_desc_compressed_whitespace 
+                       for div in translation_divs])
     
     def validate(self) -> tuple[bool, str]:
         """
