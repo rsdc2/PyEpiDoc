@@ -173,7 +173,6 @@ class EpiDocCorpus:
     def datemin(self) -> int:
         not_befores = remove_none([doc.not_before for doc in self.docs])
         dates = [doc.date for doc in self.docs if doc.date is not None]
-
         return min(not_befores + dates)
 
     @property
@@ -695,8 +694,11 @@ class EpiDocCorpus:
                       .where_ancestor_is('name')
                       .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
                       .map(lambda elem: Name(elem))
-                      .where(name_predicate)
-                      .count)
+                      .where(name_predicate))
+        name_abbr_unique_docs = (name_abbrs
+            .map(lambda name: EpiDoc(name.root).id)
+            .unique())
+
         names_count = len(self.names(name_predicate))
         indent = '\t\t\t\t'
 
@@ -709,7 +711,8 @@ class EpiDocCorpus:
             f'  - of which suspensions (% abbrs.):\t{suspensions} ({percentage(suspensions, abbreviations)}%)\n'
             f'    -- of which names (% susp.):\t{name_suspensions} ({percentage(name_suspensions, suspensions)}%)\n'
             f'    -- of which names (% names):\t{name_suspensions} ({percentage(name_suspensions, names_count)}%)\n'
-            f'  - name abbreviations (% names):\t{name_abbrs} ({percentage(name_abbrs, names_count)}%)'
+            f'  - name abbreviations (% names):\t{name_abbrs.count} ({percentage(name_abbrs.count, names_count)}%)\n'
+            f'    -- in:{indent}{name_abbr_unique_docs.count} docs ({percentage(name_abbr_unique_docs.count, self.doc_count)}% total docs)'
         )
 
     @property
