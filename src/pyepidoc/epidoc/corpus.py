@@ -687,13 +687,13 @@ class EpiDocCorpus:
         suspensions = self.abbreviations.suspensions.count
         name_suspensions = (self.abbreviations.suspensions
                             .where_ancestor_is('name')
-                            .map(lambda expan: expan.get_ancestors_by_name('name')[0]._e)
+                            .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
                             .map(lambda elem: Name(elem))
                             .where(name_predicate)
                             .count)
         name_abbrs = (self.abbreviations
                       .where_ancestor_is('name')
-                      .map(lambda expan: expan.get_ancestors_by_name('name')[0]._e)
+                      .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
                       .map(lambda elem: Name(elem))
                       .where(name_predicate)
                       .count)
