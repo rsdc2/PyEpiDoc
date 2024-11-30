@@ -678,13 +678,23 @@ class EpiDoc(DocRoot):
         return remove_none([EpiDocElement(e).get_attrib('ana') 
                             for e in material_e])
 
-    @property
-    def names(self) -> list[Name]:
+    def names(self, 
+              predicate: Callable[[Name], bool] = lambda _: True
+              ) -> list[Name]:
+        """
+        Return a list of `Name` objects for all the
+        <name> elements in the document's main edition.
+
+        :param name_predicate: a function containing
+        a condition for whether or not to include a name.
+        Defaults to returning True.
+        """
+
         edition = self.main_edition
         if edition is None:
             return []
         
-        names = map(Name, edition.get_desc('name'))
+        names = filter(predicate, map(Name, edition.get_desc('name')))
         return list(names)
 
     @property
