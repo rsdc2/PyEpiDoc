@@ -15,6 +15,7 @@ from typing import (
 from .elements.expan import Expan
 from pyepidoc.shared.utils import top, contains, listfilter
 from pyepidoc.epidoc.enums import AbbrType
+from pyepidoc.epidoc.generic_collection import GenericCollection
 
 T = TypeVar('T')
 
@@ -36,36 +37,6 @@ class Abbreviations:
         return f'Abbreviations({self._expans})'
     
     @property
-    def count(self) -> int:
-        """
-        Alias for length property
-        """
-        return self.length
-
-    @property
-    def length(self) -> int:
-        """
-        Return the number of items in the underlying
-        list of <expan> elements
-        """
-        return len(self._expans)
-    
-    def map[T](self, func: Callable[[Expan], T]) -> list[T]:
-        """
-        Map a function to the abbreviations
-        """
-        return list(map(func, self._expans))
-
-    @property
-    def suspensions(self) -> Abbreviations:
-        """
-        Return all the suspensions
-        """
-
-        return Abbreviations([abbr for abbr in self._expans 
-               if contains(abbr.abbr_types, AbbrType.suspension)])
-
-    @property
     def contractions(self) -> Abbreviations:
         """
         Return all the contractions
@@ -84,6 +55,28 @@ class Abbreviations:
                if contains(
                    abbr.abbr_types, 
                    AbbrType.contraction_with_suspension)])
+
+    @property
+    def count(self) -> int:
+        """
+        Alias for length property
+        """
+        return self.length
+
+    @property
+    def length(self) -> int:
+        """
+        Return the number of items in the underlying
+        list of <expan> elements
+        """
+        return len(self._expans)
+    
+    def map[T](self, func: Callable[[Expan], T]) -> GenericCollection[T]:
+        """
+        Map a function to the abbreviations
+        """
+        mapped = list(map(func, self._expans))
+        return GenericCollection(mapped)
     
     @property
     def multiplications(self) -> Abbreviations:
@@ -93,6 +86,16 @@ class Abbreviations:
 
         return Abbreviations([abbr for abbr in self._expans 
                if contains(abbr.abbr_types, AbbrType.multiplication)])
+
+    @property
+    def suspensions(self) -> Abbreviations:
+        """
+        Return all the suspensions
+        """
+
+        return Abbreviations([abbr for abbr in self._expans 
+               if contains(abbr.abbr_types, AbbrType.suspension)])
+    
     
     def where(self, predicate: Callable[[Expan], bool]) -> Abbreviations:
         """
