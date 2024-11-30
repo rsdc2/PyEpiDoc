@@ -6,4 +6,7 @@ def percentage(
     """
     Calculate the percentage and round to `decimal_places`
     """
+    if y == 0: 
+        return -1
+
     return round((x / y) * 100, decimal_places)
