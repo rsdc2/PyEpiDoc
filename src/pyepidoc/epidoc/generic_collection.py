@@ -33,7 +33,7 @@ class GenericCollection(Generic[T]):
         return self._values[i]
 
     def __repr__(self) -> str:
-        return f'GenericCollection({self._expans})'
+        return f'GenericCollection({self._values})'
     
     @property
     def count(self) -> int:
