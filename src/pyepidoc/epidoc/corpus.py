@@ -462,7 +462,7 @@ class EpiDocCorpus:
         """
 
         def filter_by_name(doc: EpiDoc) -> bool:
-            doc_names = map(lambda name: name.form, doc.names)
+            doc_names = map(lambda name: name.form, doc.names())
             return set_relation(set(names), set(doc_names))
 
         docs = filter(filter_by_name, self.docs)  
@@ -483,7 +483,7 @@ class EpiDocCorpus:
         """
 
         def filter_by_name(doc: EpiDoc) -> bool:
-            doc_name_types = map(lambda name: name.name_type, doc.names)
+            doc_name_types = map(lambda name: name.name_type, doc.names())
             return set_relation(set(name_types), set(doc_name_types))
 
         docs = filter(filter_by_name, self.docs)  
@@ -676,8 +676,8 @@ class EpiDocCorpus:
         return [doc.id for doc in self.docs
                 if doc.id is not None]
     
-    @property
-    def info(self) -> str:
+    def info(self, 
+             name_predicate: Callable[[Name], bool]) -> str:
 
         """
         Provide key statistical information about the corpus
@@ -685,9 +685,19 @@ class EpiDocCorpus:
 
         abbreviations = self.abbreviations.count
         suspensions = self.abbreviations.suspensions.count
-        name_suspensions = self.abbreviations.suspensions.where_ancestor_is('name').count
-        name_abbrs = self.abbreviations.where_ancestor_is('name').count
-        names_count = len(self.names)
+        name_suspensions = (self.abbreviations.suspensions
+                            .where_ancestor_is('name')
+                            .map(lambda expan: expan.get_ancestors_by_name('name')[0]._e)
+                            .map(lambda elem: Name(elem))
+                            .where(name_predicate)
+                            .count)
+        name_abbrs = (self.abbreviations
+                      .where_ancestor_is('name')
+                      .map(lambda expan: expan.get_ancestors_by_name('name')[0]._e)
+                      .map(lambda elem: Name(elem))
+                      .where(name_predicate)
+                      .count)
+        names_count = len(self.names(name_predicate))
         indent = '\t\t\t\t'
 
         return  (
@@ -789,10 +799,19 @@ class EpiDocCorpus:
         
         return docs
 
-    @property
-    def names(self) -> GenericCollection[Name]:
-        l = list(chain(*[doc.names for doc in self.docs]))
-        return GenericCollection(l)
+    def names(self, 
+              predicate: Callable[[Name], bool] = lambda _: True
+              ) -> GenericCollection[Name]:
+        """
+        Return a list of `Name` objects for all the
+        <name> elements in the document's main edition.
+
+        :param name_predicate: a function containing
+        a condition for whether or not to include a name.
+        Defaults to returning True.
+        """
+        names = list(chain(*[doc.names(predicate) for doc in self.docs]))
+        return GenericCollection(names)
 
     @property
     def nums(self) -> list[Num]:
@@ -810,8 +829,15 @@ class EpiDocCorpus:
         
         return doc.prefix
 
-    def print_info(self):
-        print(self.info)
+    def print_info(self, 
+                   name_predicate: Callable[[Name], bool] = lambda _: True):
+        
+        """
+        Print key statistical information about the corpus
+        to stdout.
+        """
+
+        print(self.info(name_predicate=name_predicate))
     
     @property
     def role_names(self) -> list[RoleName]:
