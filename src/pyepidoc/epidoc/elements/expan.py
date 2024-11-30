@@ -12,6 +12,7 @@ from ..element import EpiDocElement
 from .ex import Ex
 from .abbr import Abbr
 from .am import Am
+from .g import G
 
 from ..enums import AbbrType
 from ..utils import (leiden_str_from_children, 
@@ -92,6 +93,17 @@ class Expan(EpiDocElement):
     @property
     def as_element(self) -> EpiDocElement:
         return EpiDocElement(self.e)
+    
+    def contains_g(self, with_ref: str | None = None) -> bool:
+        """
+        Return True if contains a `<g>` element (optionally with the
+        @ref attribute set)
+        """    
+        gs = map(G, map(lambda elem: elem.e, self.desc_elems_by_local_name('g')))
+        if with_ref is None:
+            return len(list(gs)) > 0
+        
+        return any(map(lambda g: g.ref == with_ref, gs))
 
     @property
     def first_abbr(self) -> Optional[Abbr]:
