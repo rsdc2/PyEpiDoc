@@ -455,7 +455,7 @@ class EpiDoc(DocRoot):
         if self.authority is None:
             return 'None'
         
-        source = id_sources.get(self.authority)
+        source = id_sources.get(self.authority, 'filename')
 
         if source is None:
             return 'None'
@@ -571,6 +571,14 @@ class EpiDoc(DocRoot):
 
         return langs
     
+    @property
+    def leiden_text(self) -> str:
+        """
+        Return the Leiden-formatted text of the inscriptions.
+        Alias for `text_leiden` property.
+        """
+        return self.text_leiden
+
     def lemmatize(
             self, 
             lemmatize: Callable[[str], str],
@@ -670,7 +678,7 @@ class EpiDoc(DocRoot):
 
     @property
     def names(self) -> list[Name]:
-        edition = self.editions()[0]
+        edition = self.main_edition
         if edition is None:
             return []
         
