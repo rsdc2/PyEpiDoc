@@ -505,6 +505,10 @@ class EpiDocElement(BaseElement, Showable):
         """
         
         return len(self.abbr_elems) > 0
+    
+    @property
+    def is_abbreviated(self) -> bool:
+        return self.has_abbr
 
     def has_gap(self, reasons:list[str]=[]) -> bool:
         """
