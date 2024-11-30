@@ -31,6 +31,9 @@ class GenericCollection(Generic[T]):
 
     def __getitem__(self, i: SupportsIndex) -> T:
         return self._values[i]
+    
+    def __len__(self) -> int:
+        return len(self._values)
 
     def __repr__(self) -> str:
         return f'GenericCollection({self._values})'
@@ -50,11 +53,18 @@ class GenericCollection(Generic[T]):
         """
         return len(self._values)
     
-    def map[T, U](self, func: Callable[[T], U]) -> GenericCollection[U]:
+    def map(self, func: Callable[[T], U]) -> GenericCollection[U]:
         """
         Map a function to the abbreviations
         """
         return GenericCollection(list(map(func, self._values)))
+    
+    def unique(self) -> GenericCollection[T]:
+        """
+        Return the unique elements in the collection
+        """
+
+        return GenericCollection(set(self._values))
 
     def where(self, predicate: Callable[[T], bool]) -> GenericCollection[T]:
         """
