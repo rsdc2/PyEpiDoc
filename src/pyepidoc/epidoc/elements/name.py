@@ -1,3 +1,4 @@
+from __future__ import annotations
 from lxml.etree import _Element
 from .w import W
 
@@ -16,6 +17,14 @@ class Name(W):
         if self.localname != 'name':
             raise TypeError('Element should be <name>.')
         
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Name):
+            return False
+        return self.leiden_str == other.leiden_str
+
+    def __hash__(self):
+        return hash(self.leiden_str)
+
     def __repr__(self) -> str:
         return f'Name("{self.leiden_str}")'
 
