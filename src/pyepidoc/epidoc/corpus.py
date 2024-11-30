@@ -19,6 +19,7 @@ from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.utils import maxone, top, remove_none
 from pyepidoc.shared.numbers import percentage
 from pyepidoc.shared.string import format_year
+from pyepidoc.epidoc.generic_collection import GenericCollection
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
@@ -789,8 +790,9 @@ class EpiDocCorpus:
         return docs
 
     @property
-    def names(self) -> list[Name]:
-        return list(chain(*[doc.names for doc in self.docs]))
+    def names(self) -> GenericCollection[Name]:
+        l = list(chain(*[doc.names for doc in self.docs]))
+        return GenericCollection(l)
 
     @property
     def nums(self) -> list[Num]:
