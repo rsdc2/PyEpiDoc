@@ -150,7 +150,7 @@ class EpiDocCorpus:
     def __repr__(self) -> str:
         return f'EpiDocCorpus( doc_count = {self.doc_count} )'
 
-    @property
+    @cached_property
     def abbreviations(self) -> Abbreviations:
         """
         Return an abbreviations object for doing queries on abbreviations
@@ -681,16 +681,16 @@ class EpiDocCorpus:
         """
         Provide key statistical information about the corpus
         """
-
-        abbreviations = self.abbreviations.count
-        suspensions = self.abbreviations.suspensions.count
-        name_suspensions = (self.abbreviations.suspensions
+        abbrs = self.abbreviations.where(lambda abbr: not abbr.has_supplied and not abbr.has_ancestor_by_name('supplied'))
+        abbreviations = abbrs.count
+        suspensions = abbrs.suspensions.count
+        name_suspensions = (abbrs.suspensions
                             .where_ancestor_is('name')
                             .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
                             .map(lambda elem: Name(elem))
                             .where(name_predicate)
                             .count)
-        name_abbrs = (self.abbreviations
+        name_abbrs = (abbrs
                       .where_ancestor_is('name')
                       .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
                       .map(lambda elem: Name(elem))
