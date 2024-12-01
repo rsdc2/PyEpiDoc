@@ -676,12 +676,13 @@ class EpiDocCorpus:
                 if doc.id is not None]
     
     def info(self, 
-             name_predicate: Callable[[Name], bool]) -> str:
+             name_predicate: Callable[[Name], bool],
+             abbr_predicate: Callable[[Expan], bool]) -> str:
 
         """
         Provide key statistical information about the corpus
         """
-        abbrs = self.abbreviations.where(lambda abbr: not abbr.has_supplied and not abbr.has_ancestor_by_name('supplied'))
+        abbrs = self.abbreviations.where(abbr_predicate)
         abbreviations = abbrs.count
         suspensions = abbrs.suspensions.count
         name_suspensions = (abbrs.suspensions
@@ -833,14 +834,16 @@ class EpiDocCorpus:
         return doc.prefix
 
     def print_info(self, 
-                   name_predicate: Callable[[Name], bool] = lambda _: True):
+                   name_predicate: Callable[[Name], bool] = lambda _: True,
+                   abbr_predciate: Callable[[Expan], bool] = lambda _: True):
         
         """
         Print key statistical information about the corpus
         to stdout.
         """
 
-        print(self.info(name_predicate=name_predicate))
+        print(self.info(name_predicate=name_predicate,
+                        abbr_predicate=abbr_predciate))
     
     @property
     def role_names(self) -> list[RoleName]:
