@@ -944,8 +944,9 @@ class EpiDocCorpus:
             )
 
     @property
-    def tokens(self) -> list[Token]:
-        return list(chain(*[doc.tokens_no_nested for doc in self.docs]))
+    def tokens(self) -> GenericCollection[Token]:
+        _tokens = list(chain(*[doc.tokens_no_nested for doc in self.docs]))
+        return GenericCollection(_tokens)
     
     def top(self, length=10) -> EpiDocCorpus:
         return EpiDocCorpus(list(top(self.docs, length)))
