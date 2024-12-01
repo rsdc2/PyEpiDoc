@@ -11,6 +11,7 @@ from typing import (
     overload,
     TypeVar
 )
+from functools import cached_property
 
 from .elements.expan import Expan
 from pyepidoc.shared.utils import top, contains, listfilter
@@ -36,7 +37,7 @@ class Abbreviations(GenericCollection[Expan]):
     def __repr__(self) -> str:
         return f'Abbreviations({self._expans})'
     
-    @property
+    @cached_property
     def contractions(self) -> Abbreviations:
         """
         Return all the contractions
@@ -45,7 +46,7 @@ class Abbreviations(GenericCollection[Expan]):
         return Abbreviations([abbr for abbr in self._expans 
                if contains(abbr.abbr_types, AbbrType.contraction)])
 
-    @property
+    @cached_property
     def contractions_with_suspension(self) -> Abbreviations:
         """
         Return all the contractions with suspension
@@ -78,7 +79,7 @@ class Abbreviations(GenericCollection[Expan]):
         mapped = list(map(func, self._expans))
         return GenericCollection(mapped)
     
-    @property
+    @cached_property
     def multiplications(self) -> Abbreviations:
         """
         Return all the contractions with suspension
@@ -87,7 +88,7 @@ class Abbreviations(GenericCollection[Expan]):
         return Abbreviations([abbr for abbr in self._expans 
                if contains(abbr.abbr_types, AbbrType.multiplication)])
 
-    @property
+    @cached_property
     def suspensions(self) -> Abbreviations:
         """
         Return all the suspensions
