@@ -677,11 +677,13 @@ class EpiDocCorpus:
     
     def info(self, 
              name_predicate: Callable[[Name], bool],
-             abbr_predicate: Callable[[Expan], bool]) -> str:
+             abbr_predicate: Callable[[Expan], bool],
+             token_predicate: Callable[[Token], bool]) -> str:
 
         """
         Provide key statistical information about the corpus
         """
+        tokens = self.tokens.where(token_predicate)
         abbrs = self.abbreviations.where(abbr_predicate)
         abbreviations = abbrs.count
         suspensions = abbrs.suspensions.count
@@ -706,8 +708,8 @@ class EpiDocCorpus:
         return  (
             f'Document count:{indent}{self.doc_count}\n'
             f'Date range:{indent}{format_year(self.daterange[0])}--{format_year(self.daterange[1])}\n'
-            f'Token count:{indent}{self.token_count}\n'
-            f'  - of which names (% tokens):\t\t{names_count} ({percentage(names_count, self.token_count)}%)\n'
+            f'Token count:{indent}{tokens.count}\n'
+            f'  - of which names (% tokens):\t\t{names_count} ({percentage(names_count, tokens.count)}%)\n'
             f'Abbreviations:{indent}{abbreviations}\n'
             f'  - of which suspensions (% abbrs.):\t{suspensions} ({percentage(suspensions, abbreviations)}%)\n'
             f'    -- of which names (% susp.):\t{name_suspensions} ({percentage(name_suspensions, suspensions)}%)\n'
@@ -835,7 +837,8 @@ class EpiDocCorpus:
 
     def print_info(self, 
                    name_predicate: Callable[[Name], bool] = lambda _: True,
-                   abbr_predciate: Callable[[Expan], bool] = lambda _: True):
+                   abbr_predciate: Callable[[Expan], bool] = lambda _: True,
+                   token_predicate: Callable[[Token], bool] = lambda _: True):
         
         """
         Print key statistical information about the corpus
@@ -843,7 +846,8 @@ class EpiDocCorpus:
         """
 
         print(self.info(name_predicate=name_predicate,
-                        abbr_predicate=abbr_predciate))
+                        abbr_predicate=abbr_predciate,
+                        token_predicate=token_predicate))
     
     @property
     def role_names(self) -> list[RoleName]:
