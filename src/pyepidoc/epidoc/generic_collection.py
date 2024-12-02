@@ -13,6 +13,7 @@ from typing import (
     TypeVar,
     Hashable
 )
+from functools import reduce
 
 from pyepidoc.shared.utils import top, contains, listfilter
 
@@ -79,6 +80,13 @@ class GenericCollection(Generic[T]):
         Map a function to the abbreviations
         """
         return GenericCollection(list(map(func, self._values)))
+    
+    def reduce(self, func: Callable[[T, T], T], initial: T) -> T:
+        """
+        Reduce the colleciton to a single value
+        """
+        reduction = reduce(func, self._values, initial)
+        return reduction
     
     def sort(self, key=lambda x: x, reverse: bool=False) -> GenericCollection[T]:
         """
