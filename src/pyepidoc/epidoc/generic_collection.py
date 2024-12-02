@@ -83,7 +83,7 @@ class GenericCollection(Generic[T]):
     
     def reduce(self, func: Callable[[T, T], T], initial: T) -> T:
         """
-        Reduce the colleciton to a single value
+        Reduce the collection to a single value
         """
         reduction = reduce(func, self._values, initial)
         return reduction
