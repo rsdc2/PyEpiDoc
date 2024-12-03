@@ -962,5 +962,6 @@ class EpiDocCorpus:
         """
         Filter abbreviations according to a predicate
         """
-
-        return EpiDocCorpus(list(filter(predicate, self._docs)))
+        docs = [doc for doc in self.docs 
+                             if predicate(doc)]
+        return EpiDocCorpus(docs)

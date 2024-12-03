@@ -87,7 +87,7 @@ class GenericCollection(Generic[T]):
         """
         reduction = reduce(func, self._values, initial)
         return reduction
-    
+
     def sort(self, key=lambda x: x, reverse: bool=False) -> GenericCollection[T]:
         """
         Sort the values according to a key function
