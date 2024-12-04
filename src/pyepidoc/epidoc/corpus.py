@@ -7,7 +7,8 @@ from typing import (
     cast, 
     Literal, 
     Generator,
-    SupportsIndex
+    SupportsIndex,
+    TypeVar
 )
 from functools import cached_property
 from itertools import chain
@@ -33,6 +34,7 @@ from .enums import TextClass
 from .elements.role_name import RoleName
 from .elements.pers_name import PersName
 
+T = TypeVar('T')
 
 class EpiDocCorpus:
 
@@ -771,7 +773,13 @@ class EpiDocCorpus:
             return places_with_freq
 
         return places
-
+    
+    def map(self, func: Callable[[EpiDoc], T]) -> GenericCollection[T]:
+        """
+        Map a function to the abbreviations
+        """
+        return GenericCollection(list(map(func, self.docs)))
+    
     @property
     def materialclasses(self) -> set[str]:
         """
