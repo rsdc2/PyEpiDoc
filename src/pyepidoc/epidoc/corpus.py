@@ -856,7 +856,7 @@ class EpiDocCorpus:
         print(self.info(name_predicate=name_predicate,
                         abbr_predicate=abbr_predciate,
                         token_predicate=token_predicate))
-    
+
     @property
     def role_names(self) -> list[RoleName]:
         return list(chain(*[doc.role_names for doc in self.docs]))
@@ -897,6 +897,10 @@ class EpiDocCorpus:
     @cached_property
     def textclasses(self) -> set[str]:
         return self._get_textclasses(True)
+    
+    @cached_property
+    def texttypes(self) -> GenericCollection[str]:
+        return GenericCollection(remove_none([doc.texttype for doc in self.docs]))
     
     def _get_textclasses(self, throw_if_more_than_one: bool, ) -> set[str]:
         return set([textclass for doc in self.docs 
