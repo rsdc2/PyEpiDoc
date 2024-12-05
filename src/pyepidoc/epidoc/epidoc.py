@@ -1225,6 +1225,22 @@ class EpiDoc(DocRoot):
             return None
 
         return textlang
+    
+    @property
+    def texttype(self) -> str | None:
+        """
+        Used by IRCyr to store text type (text class) 
+        information
+        """
+
+        elem = maxone([desc for desc in self.desc_elems
+                if desc.localname == 'rs' and desc.get_attrib('type') == 'textType'],
+                throw_if_more_than_one=False)
+        
+        if elem is None:
+            return None
+        else:
+            return EpiDocElement(elem).text
 
     @overload   
     def to_xml_file(
