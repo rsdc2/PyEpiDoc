@@ -81,6 +81,20 @@ class GenericCollection(Generic[T]):
         """
         return GenericCollection(list(map(func, self._values)))
     
+    def print(self):
+        """
+        Print the values
+        """
+        print(self._values)
+
+    def print_frequencies(self):
+        """
+        Pretty print frequencies
+        """
+        freqs = self.frequencies()
+        for label, freq in freqs:
+            print(f"{label}:{(int(20 - (len(label) + 1)) * ' ')}{freq}")
+
     def reduce(self, func: Callable[[T, T], T], initial: T) -> T:
         """
         Reduce the collection to a single value
