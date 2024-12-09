@@ -28,13 +28,16 @@ class Expan(EpiDocElement):
     Will normally contain <abbr> and <ex> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be _Element type or None.')
+    def __init__(self, e: _Element | EpiDocElement):
+        if not isinstance(e, (_Element, EpiDocElement)):
+            raise TypeError('e should be _Element or EpiDocElement type.')
 
-        self._e = e
+        if isinstance(e, _Element):
+            self._e = e
+        elif isinstance(e, EpiDocElement):
+            self._e = e._e
 
-        if localname(e) != 'expan':
+        if localname(self._e) != 'expan':
             raise TypeError(f'Element should be of type <expan>, '
                             f'but is of type <{localname(e)}>.')
 
