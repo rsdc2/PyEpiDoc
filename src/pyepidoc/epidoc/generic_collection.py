@@ -93,7 +93,10 @@ class GenericCollection(Generic[T]):
         """
         freqs = self.frequencies()
         for label, freq in freqs:
-            print(f"{label}:{(int(20 - (len(label) + 1)) * ' ')}{freq}")
+            if hasattr(label, '__len__'):
+                print(f"{label}:{(int(20 - (len(label) + 1)) * ' ')}{freq}")
+            else:
+                print(f"{label}:{(int(20 - (len(str(label)) + 1)) * ' ')}{freq}")
 
     def reduce(self, func: Callable[[T, T], T], initial: T) -> T:
         """
