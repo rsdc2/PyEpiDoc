@@ -900,7 +900,8 @@ class EpiDocCorpus:
     
     @cached_property
     def texttypes(self) -> GenericCollection[str]:
-        return GenericCollection(remove_none([doc.texttype for doc in self.docs]))
+        no_nones = remove_none([doc.texttype for doc in self.docs])
+        return GenericCollection([texttype.lower() for texttype in no_nones])
     
     def _get_textclasses(self, throw_if_more_than_one: bool, ) -> set[str]:
         return set([textclass for doc in self.docs 
