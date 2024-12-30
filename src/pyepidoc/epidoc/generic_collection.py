@@ -20,7 +20,9 @@ from pyepidoc.shared.utils import top, contains, listfilter
 T = TypeVar('T')
 U = TypeVar('U')
 
+
 class GenericCollection(Generic[T]):
+    
     """
     Collection class for abbreviations grouping and containing
     convenience methods for operating on abbreviations
