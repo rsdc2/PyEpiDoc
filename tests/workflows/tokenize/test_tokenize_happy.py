@@ -15,6 +15,7 @@ output_path = Path('tests/workflows/tokenize/files/tokenized_output')
 benchmark_path = Path('tests/workflows/tokenize/files/tokenized_benchmark')
 
 tests = [
+    'abbr_lone',
     'space',
     'expan', 
     'plain', 
