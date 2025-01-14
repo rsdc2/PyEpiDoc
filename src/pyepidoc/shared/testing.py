@@ -2,6 +2,7 @@ from __future__ import annotations
 from pathlib import Path
 from pyepidoc import EpiDoc
 
+
 def save_and_reload(doc: EpiDoc, path: str | Path) -> EpiDoc:
     
     """
@@ -14,6 +15,16 @@ def save_and_reload(doc: EpiDoc, path: str | Path) -> EpiDoc:
     return EpiDoc(path)
 
 
+def save_and_reload_to_file_object(doc: EpiDoc) -> EpiDoc:
+    """
+    Saves an EpiDoc file object and reloads the EpiDoc file from the object; 
+    for use in testing to check properties of modified files.
+    """
+
+    f = doc.to_xml_file_object(collapse_empty_elements=True)
+    return EpiDoc(f)
+
+
 def save_reload_and_compare_with_benchmark(
         doc: EpiDoc, 
         target_path: str | Path, 
@@ -23,11 +34,6 @@ def save_reload_and_compare_with_benchmark(
     Saves an EpiDoc file, reloads it and checks it against a benchmark file.
     """
 
-    doc_ = save_and_reload(doc, target_path)
+    doc_ = save_and_reload_to_file_object(doc)
     benchmark_doc = EpiDoc(benchmark_path)
-    # breakpoint()
     return doc_.xml_byte_str == benchmark_doc.xml_byte_str
-
-
-
-        

@@ -2,9 +2,11 @@ import pytest
 from pathlib import Path
 from lxml import etree
 
+from ...config import FILE_WRITE_MODE
+
 from pyepidoc.shared.file import remove_file
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
-from pyepidoc.epidoc.scripts import tokenize
+from pyepidoc.epidoc.scripts import tokenize, tokenize_to_file_object
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.elements.ab import Ab
 from pyepidoc.xml.utils import abify
@@ -116,9 +118,28 @@ def tokenize_epidoc(tokenize_type: str) -> tuple[EpiDoc, EpiDoc]:
     return tokenized_epidoc, tokenized_benchmark
 
 
+def tokenize_epidoc_using_file_object(tokenize_type: str) -> tuple[EpiDoc, EpiDoc]:
+    (_, untokenized_folderpath, _, _, _, benchmark_filepath) = get_path_vars(tokenize_type)
+    
+    tokenized_file = tokenize_to_file_object(
+        src_folderpath=untokenized_folderpath, 
+        filename=tokenize_type,
+        space_words=True,
+        set_ids=False
+    )
+    tokenized_epidoc = EpiDoc(tokenized_file)
+    tokenized_benchmark = EpiDoc(benchmark_filepath)
+    return tokenized_epidoc, tokenized_benchmark
+
+
 def test_model_headers():
     # Tokenize the files
-    tokenized_epidoc, tokenized_benchmark = tokenize_epidoc(tokenize_type='xml_model_headers_1')
+    if FILE_WRITE_MODE == 'file_object':
+        tokenize_func = tokenize_epidoc_using_file_object
+    else:
+        tokenize_func = tokenize_epidoc
+
+    tokenized_epidoc, tokenized_benchmark = tokenize_func(tokenize_type='xml_model_headers_1')
     assert tokenized_epidoc.processing_instructions_str == tokenized_benchmark.processing_instructions_str
 
 
@@ -140,25 +161,26 @@ def test_tokenize_insert_ws():
 
 @pytest.mark.parametrize("tokenize_type", tests)
 def test_tokenize_special_cases(tokenize_type: str):
+    if FILE_WRITE_MODE == 'file_object':
+        tokenize_func = tokenize_epidoc_using_file_object
+    else:
+        tokenize_func = tokenize_epidoc
+
     # Tokenize the files
     tokenized_epidoc, tokenized_benchmark = \
-        tokenize_epidoc(tokenize_type=tokenize_type)
+        tokenize_func(tokenize_type=tokenize_type)
 
     # Do the tests    
     if [str(word) for word in tokenized_epidoc.tokens_no_nested] != [str(word) for word in tokenized_benchmark.tokens_no_nested]:
-        # breakpoint()
         assert False
     
     if [word.xml_byte_str for word in tokenized_epidoc.tokens_no_nested] != [word.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]:
-        # breakpoint()
         assert False
     
     if [word.xml_byte_str for word in tokenized_epidoc.compound_words] != [word.xml_byte_str for word in tokenized_benchmark.compound_words]:
-        # breakpoint()
         assert False
 
     if [edition.xml_byte_str for edition in tokenized_epidoc.editions()] != [edition.xml_byte_str for edition in tokenized_benchmark.editions()]:
-        # breakpoint()
         assert False
 
 

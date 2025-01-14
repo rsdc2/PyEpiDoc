@@ -17,6 +17,7 @@ from pathlib import Path
 from itertools import chain
 import inspect
 import re
+import io
 
 import pyepidoc
 from pyepidoc.xml.docroot import DocRoot
@@ -1287,6 +1288,13 @@ class EpiDoc(DocRoot):
         
         with open(dst, 'wb') as f:
             f.write(self.to_byte_str(collapse_empty_elements))
+
+    def to_xml_file_object(self, collapse_empty_elements: bool = False) -> io.BytesIO:
+        """
+        Write the file to a file object in memory, rather than
+        to a file on disk
+        """
+        return io.BytesIO(self.to_byte_str(collapse_empty_elements))
 
     @property
     def token_count(self) -> int:
