@@ -8,6 +8,8 @@ from pyepidoc.shared import head
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 from pyepidoc.epidoc.dom import lang, line
 
+from ...config import FILE_WRITE_MODE
+
 import pytest
 
 test_files_path = "tests/api/files/"
@@ -240,7 +242,8 @@ def test_prettify_doc_with_pyepidoc(ugly: str, prettified: str, benchmark: str):
     assert save_reload_and_compare_with_benchmark(
         doc=prettified_doc,
         target_path=prettified,
-        benchmark_path=benchmark
+        benchmark_path=benchmark,
+        output_write_mode=FILE_WRITE_MODE
     )
 
 

@@ -155,7 +155,8 @@ def test_tokenize_insert_ws():
     assert save_reload_and_compare_with_benchmark(
         doc, 
         output_path / filename, 
-        benchmark_path / filename
+        benchmark_path / filename,
+        FILE_WRITE_MODE
     ) == True
 
 

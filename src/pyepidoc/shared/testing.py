@@ -1,6 +1,8 @@
 from __future__ import annotations
 from pathlib import Path
+from typing import Literal
 from pyepidoc import EpiDoc
+from pyepidoc.shared.types import FileWriteMode
 
 
 def save_and_reload(doc: EpiDoc, path: str | Path) -> EpiDoc:
@@ -28,12 +30,16 @@ def save_and_reload_to_file_object(doc: EpiDoc) -> EpiDoc:
 def save_reload_and_compare_with_benchmark(
         doc: EpiDoc, 
         target_path: str | Path, 
-        benchmark_path: str | Path) -> bool:
+        benchmark_path: str | Path,
+        output_write_mode: FileWriteMode) -> bool:
 
     """
     Saves an EpiDoc file, reloads it and checks it against a benchmark file.
     """
-
-    doc_ = save_and_reload_to_file_object(doc)
+    if output_write_mode == 'file_object':
+        doc_ = save_and_reload_to_file_object(doc)
+    elif output_write_mode == 'file_on_disk':
+        doc_ = save_and_reload(doc, target_path)
+        
     benchmark_doc = EpiDoc(benchmark_path)
     return doc_.xml_byte_str == benchmark_doc.xml_byte_str

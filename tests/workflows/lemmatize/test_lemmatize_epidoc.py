@@ -10,6 +10,7 @@ from pyepidoc.shared.testing import (
 )
 
 from pyepidoc.shared.constants import SEPARATE_LEMMATIZED_ITEMS
+from ...config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
 lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
@@ -92,5 +93,6 @@ def test_lemmatize_on_separate_edition(
     assert save_reload_and_compare_with_benchmark(
         doc, 
         lemmatized_path + filename, 
-        benchmark_path + filename
+        benchmark_path + filename,
+        FILE_WRITE_MODE
     ) == True
