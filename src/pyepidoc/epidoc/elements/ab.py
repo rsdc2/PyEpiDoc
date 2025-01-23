@@ -15,7 +15,6 @@ from ..enums import (
     TokenCarrier, 
     AtomicTokenType, 
     CompoundTokenType,
-    SpaceSeparated,
     NoSpace,
     OrigTextType
 )
@@ -192,19 +191,6 @@ class Ab(EpiDocElement):
     def set_ids(self, id: Optional[str], base: Base=52) -> None:
         for idcarrier in self.id_carriers:
             idcarrier.set_id(id, base)
-
-    @property
-    def space_separated(self) -> list[EpiDocElement]:
-        """
-        :return: a |list| of |Element|s that should be separated by spaces,
-        and the next sibling is not an Element that should not be separated
-        from the previous element by a space.
-        """
-
-        elems = [EpiDocElement(item) 
-                 for item in self.get_desc(SpaceSeparated.values())]
-        return [elem for elem in elems 
-                if elem.next_sibling not in self.no_space]
     
     @property
     def textparts(self) -> list[TextPart]:

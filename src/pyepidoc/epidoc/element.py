@@ -7,6 +7,7 @@ from typing import (
     overload
 )
 
+
 from pyepidoc.shared.classes import Showable, ExtendableSeq
 from pyepidoc.xml.baseelement import BaseElement
 
@@ -39,7 +40,9 @@ from .enums import (
     CompoundTokenType, 
     AtomicNonTokenType,
     SubatomicTagType,
-    AlwaysSubsumable
+    AlwaysSubsumable,
+    SpaceSeparated,
+    NoSpace
 )
 from . import ids
 from pyepidoc.shared import maxoneT, head, last, to_lower
@@ -231,15 +234,6 @@ class EpiDocElement(BaseElement, Showable):
                         return [EpiDocElement(self_e, other._final_space)]
             
         return [EpiDocElement(self_e, self._final_space), EpiDocElement(other_e, other._final_space)]
-
-    # def __eq__(self, other) -> bool:
-    #     if not isinstance(other, EpiDocElement):
-    #         return False
-        
-    #     return self.e == other.e
-
-    # def __hash__(self) -> int:
-    #     return hash(self.e)
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
@@ -924,6 +918,17 @@ class EpiDocElement(BaseElement, Showable):
             return [self.nonword_element]
 
         return []
+    
+    @property
+    def no_space(self) -> list[EpiDocElement]:
+        """
+        :return: |Element|s that should not be separated by spaces.
+        """
+        return [EpiDocElement(item) for item 
+            in self.get_desc(
+                NoSpace.values() 
+            )
+        ]
 
     @property
     def parent(self) -> Optional[EpiDocElement]:
@@ -1082,6 +1087,28 @@ class EpiDocElement(BaseElement, Showable):
                 self.id_xml = ids.compress(id, base)
             else:
                 self.id_xml = id
+
+    
+    def space_tokens(self) -> None:
+
+        """
+        Separates tokens by spaces, as long as they should be separated by spaces
+        and the following token is not among the tokens that should be separated
+        from previous by a space
+        """
+
+        for elem in self.space_separated:            
+            elem.append_space()
+
+    @property
+    def space_separated(self) -> list[EpiDocElement]:
+        """
+        :return: |Element|s that should be separated by spaces
+        """
+        elems = [EpiDocElement(item) 
+                 for item in self.get_desc(SpaceSeparated.values())]
+        return [elem for elem in elems 
+                if elem.next_sibling not in self.no_space]
 
     def _subsumable_by(self, other:EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 

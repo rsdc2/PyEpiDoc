@@ -100,6 +100,7 @@ class SpaceSeparated(EnumerableEnum):
     Foreign = 'foreign'
     
     G = 'g'
+    Gap = 'gap'
 
 
 class NoSpace(EnumerableEnum):

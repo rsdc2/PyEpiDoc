@@ -431,17 +431,6 @@ class Edition(EpiDocElement):
         )
         return list(map(EpiDocElement, elems))
 
-    @property
-    def no_space(self) -> list[EpiDocElement]:
-        """
-        :return: |Element|s that should not be separated by spaces.
-        """
-        return [EpiDocElement(item) for item 
-            in self.get_desc(
-                NoSpace.values() 
-            )
-        ]
-
     def prettify(
             self, 
             spaceunit: str, 
@@ -501,27 +490,6 @@ class Edition(EpiDocElement):
             elem.set_attrib('n', str(val))
 
         return self
-
-    def space_tokens(self) -> None:
-
-        """
-        Separates tokens by spaces, as long as they should be separated by spaces
-        and the following token is not among the tokens that should be separated
-        from previous by a space
-        """
-
-        for elem in self.space_separated:
-            elem.append_space()
-
-    @property
-    def space_separated(self) -> list[EpiDocElement]:
-        """
-        :return: |Element|s that should be separated by spaces
-        """
-        elems = [EpiDocElement(item) 
-                 for item in self.get_desc(SpaceSeparated.values())]
-        return [elem for elem in elems 
-                if elem.next_sibling not in self.no_space]
 
     @property
     def subtype(self) -> Optional[str]:
