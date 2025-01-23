@@ -101,18 +101,25 @@ class SpaceSeparated(EnumerableEnum):
     
     G = 'g'
     Gap = 'gap'
+    Unclear = 'unclear'
+    Supplied = 'supplied'
 
 
 class NoSpace(EnumerableEnum):
+    """
+    When spacing tokens, if any of <note>, <unclear> or <supplied>
+    follow the token to be spaced, any space that may have
+    been introduced will be cancelled.
+    """
     Note = 'note'
-
+    Unclear = 'unclear'
+    Supplied = 'supplied'
 
 class ContainerType(EnumerableEnum):
     Ab = 'ab'
     Lg = 'lg'
     L = 'l'
     Div = 'div'
-
 
 class CompoundTokenType(EnumerableEnum):
     PersName = 'persName'

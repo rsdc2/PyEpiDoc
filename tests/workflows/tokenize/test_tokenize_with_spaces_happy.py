@@ -21,19 +21,29 @@ xml_to_tokenize = [
      (
          '<gap reason="lost" extent="unknown" unit="character"/> <g ref="#interpunct">·</g>',
          '<gap reason="lost" extent="unknown" unit="character"/> <g ref="#interpunct">·</g>'
+     ),
+     (
+         '<unclear><g ref="#ivy-leaf">❦</g></unclear> <num value="17">XVII</num>',
+         '<unclear><g ref="#ivy-leaf">❦</g></unclear> <num value="17">XVII</num>'
+     ),
+     (
+         '<supplied reason="undefined" evidence="previouseditor"><g ref="#interpunct">·</g></supplied> <num value="40"><w n="40">μ</w></num>',
+         '<supplied reason="undefined" evidence="previouseditor"><g ref="#interpunct">·</g></supplied> <num value="40"><w n="40">μ</w></num>'
      )
 ]
 
 
 @pytest.mark.parametrize("xml_pair", xml_to_tokenize)
 def test_tokenize_epidoc_fragments_with_spaces(xml_pair: tuple[str, str]):
-
+    
+    # Arrange
     xml_pair_abs = tuple(map(abify, xml_pair))
 
     xml, tokenized_xml = xml_pair_abs
     untokenized = Ab(etree.fromstring(xml, None))
     tokenized_benchmark = Ab(etree.fromstring(tokenized_xml, None))
 
+    # Act
     tokenized = untokenized.tokenize()
 
     if tokenized is None:
@@ -58,5 +68,5 @@ def test_tokenize_epidoc_fragments_with_spaces(xml_pair: tuple[str, str]):
         # breakpoint()
         pass
 
+    # Assert
     assert tokenized_str == benchmark_str
-    # assert tokenized.tokens != []
