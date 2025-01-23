@@ -114,6 +114,14 @@ class NoSpaceBefore(EnumerableEnum):
     Note = 'note'
     Unclear = 'unclear'
 
+
+class DoNotPrettifyChildren(EnumerableEnum):
+    """
+    Do not prettify the children of these elements
+    """
+    Provenance = 'provenance'
+
+
 class ContainerType(EnumerableEnum):
     Ab = 'ab'
     Lg = 'lg'

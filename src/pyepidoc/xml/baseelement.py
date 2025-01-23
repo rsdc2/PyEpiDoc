@@ -243,11 +243,10 @@ class BaseElement(Showable):
 
         if self._e is None:
             return []
-
-        _descs = self._e.xpath('.//*')
-        descs = _descs if type(_descs) is list else []
-        return [BaseElement(desc) for desc in descs 
-                    if isinstance(desc, _Element)]
+        
+        return [BaseElement(item) 
+                for item in self.e.iterdescendants(tag=None)
+                 if isinstance(item, _Element)]
 
     def desc_elems_by_local_name(self, localname: str) -> list[BaseElement]:
         """
@@ -605,6 +604,58 @@ class BaseElement(Showable):
 
         return [BaseElement(sib) for sib in prev_sibs 
                 if type(sib) is _Element]
+    
+    def prettify_element_with_pyepidoc(
+            element: BaseElement,
+            space_unit: str,
+            multiplier: int = 4,
+            exclude: list[str] | None = None) -> BaseElement:
+        """
+        Prettify a BaseElement and all descendant elements
+
+        :param exclude: list of element names whose children 
+            should not be prettified
+        """
+        if exclude is None: exclude = []
+
+        for desc in [element] + list(element.desc_elems): 
+
+            # Don't touch descdendant nodes containing @xml:space = "preserve"
+            if desc.xmlspace_preserve_in_ancestors:
+                continue
+
+            # breakpoint()
+            if set(map(lambda d: d.localname, desc.ancestors_excl_self)).intersection(set(exclude)) != set():
+                continue
+
+            # Only insert a new line and tab as first child if there are 
+            # child elements
+            if len(desc.child_elements) > 0 and desc.localname not in exclude:
+                desc.text = '\n' + \
+                    (desc.ancestor_count + 1) * multiplier * space_unit + \
+                    (desc.text or '').strip()
+
+            # Add new line and tabs after tag
+            if desc.parent is not None and \
+                desc.parent.last_child is not None and \
+                    desc.parent.last_child.id_internal == desc.id_internal:
+                
+                # If last child, add one fewer tab so that closing tag
+                # has correct alignment
+                tail_to_append = '\n' + (desc.ancestor_count - 1) * space_unit * multiplier
+
+                if desc.tail is None:
+                    desc.tail = tail_to_append
+                else:
+                    desc.tail = desc.tail.strip() + tail_to_append
+            else:
+                tail_to_append = '\n' + (desc.ancestor_count) * space_unit * multiplier
+                if desc.tail is None:
+                    desc.tail = tail_to_append
+                else:
+                    desc.tail = desc.tail.strip() + tail_to_append
+
+        return element
 
     def remove_attr(
             self, 

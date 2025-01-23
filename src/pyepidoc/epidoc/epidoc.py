@@ -912,39 +912,10 @@ class EpiDoc(DocRoot):
         """
 
         epidoc = self
-
-        for desc in list(epidoc.desc_elems): 
-            
-            # Don't touch descdendant nodes containing @xml:space = "preserve"
-            if not desc.xmlspace_preserve_in_ancestors:
-
-                # Only insert a new line and tab as first child if there are 
-                # child elements
-                if len(desc.child_elements) > 0:
-                    desc.text = '\n' + \
-                        (desc.ancestor_count + 1) * multiplier * space_unit + \
-                        (desc.text or '').strip()
-
-                # Add new line and tabs after tag
-                if desc.parent is not None and \
-                    desc.parent.last_child is not None and \
-                        desc.parent.last_child.id_internal == desc.id_internal:
-                    
-                    # If last child, add one fewer tab so that closing tag
-                    # has correct alignment
-                    tail_to_append = '\n' + (desc.ancestor_count - 1) * space_unit * multiplier
-
-                    if desc.tail is None:
-                        desc.tail = tail_to_append
-                    else:
-                        desc.tail = desc.tail.strip() + tail_to_append
-                else:
-                    tail_to_append = '\n' + (desc.ancestor_count) * space_unit * multiplier
-                    if desc.tail is None:
-                        desc.tail = tail_to_append
-                    else:
-                        desc.tail = desc.tail.strip() + tail_to_append
-
+        epidoc.desc_elems
+        elem = BaseElement(epidoc.e)
+        elem.prettify_element_with_pyepidoc(space_unit, multiplier)
+        
         # Root element
         # Remove trailing text
         self.root_elem.tail = ''
