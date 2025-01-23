@@ -113,7 +113,6 @@ class NoSpace(EnumerableEnum):
     """
     Note = 'note'
     Unclear = 'unclear'
-    Supplied = 'supplied'
 
 class ContainerType(EnumerableEnum):
     Ab = 'ab'
