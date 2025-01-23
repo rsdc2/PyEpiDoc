@@ -15,7 +15,7 @@ from ..enums import (
     TokenCarrier, 
     AtomicTokenType, 
     CompoundTokenType,
-    NoSpace,
+    NoSpaceBefore,
     OrigTextType
 )
 from pyepidoc.shared.classes import SetRelation
@@ -157,7 +157,7 @@ class Ab(EpiDocElement):
 
         return [EpiDocElement(item) for item 
             in self.get_desc(
-                NoSpace.values() 
+                NoSpaceBefore.values() 
             )
         ]
 

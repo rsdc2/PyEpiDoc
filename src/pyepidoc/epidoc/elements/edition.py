@@ -41,7 +41,7 @@ from .textpart import TextPart
 from ..enums import (
     SpaceUnit, 
     SpaceSeparated,
-    NoSpace,
+    NoSpaceBefore,
     TokenCarrier, 
     AtomicTokenType, 
     SubatomicTagType, 

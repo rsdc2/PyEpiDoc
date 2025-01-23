@@ -105,7 +105,7 @@ class SpaceSeparated(EnumerableEnum):
     Supplied = 'supplied'
 
 
-class NoSpace(EnumerableEnum):
+class NoSpaceBefore(EnumerableEnum):
     """
     When spacing tokens, if any of <note>, <unclear> or <supplied>
     follow the token to be spaced, any space that may have

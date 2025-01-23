@@ -42,7 +42,7 @@ from .enums import (
     SubatomicTagType,
     AlwaysSubsumable,
     SpaceSeparated,
-    NoSpace
+    NoSpaceBefore
 )
 from . import ids
 from pyepidoc.shared import maxoneT, head, last, to_lower
@@ -926,7 +926,7 @@ class EpiDocElement(BaseElement, Showable):
         """
         return [EpiDocElement(item) for item 
             in self.get_desc(
-                NoSpace.values() 
+                NoSpaceBefore.values() 
             )
         ]
 
