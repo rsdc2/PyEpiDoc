@@ -111,5 +111,5 @@ def test_prettify_fragment(ugly: str, benchmark: str, _: str):
     prettified = ugly_xml.prettify_element_with_pyepidoc(' ', 4, DoNotPrettifyChildren.values())
 
     # Assert
-    breakpoint()
+    # breakpoint()
     assert benchmark_xml.xml_byte_str.strip() == prettified.xml_byte_str.strip()

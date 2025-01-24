@@ -45,7 +45,8 @@ from .elements.expan import Expan
 from .elements.w import W
 from .enums import (
     SpaceUnit,
-    AbbrType
+    AbbrType,
+    DoNotPrettifyChildren
 )
 
 
@@ -914,7 +915,11 @@ class EpiDoc(DocRoot):
         epidoc = self
         epidoc.desc_elems
         elem = BaseElement(epidoc.e)
-        elem.prettify_element_with_pyepidoc(space_unit, multiplier)
+        elem.prettify_element_with_pyepidoc(
+            space_unit, 
+            multiplier, 
+            exclude=DoNotPrettifyChildren.values()
+        )
         
         # Root element
         # Remove trailing text

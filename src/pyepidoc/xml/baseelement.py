@@ -628,9 +628,19 @@ class BaseElement(Showable):
             if set(map(lambda d: d.localname, desc.ancestors_excl_self)).intersection(set(exclude)) != set():
                 continue
 
+            if type(desc.e) is _Comment and \
+                desc.next_siblings != [] and \
+                desc.parent is not None and \
+                desc.parent.localname not in exclude:
+                
+                desc.tail = '\n'
+            
             # Only insert a new line and tab as first child if there are 
-            # child elements
-            if len(desc.child_elements) > 0 and desc.localname not in exclude:
+            # child elements and the first child is not a comment
+            if len(desc.child_elements) > 0 and \
+                desc.localname not in exclude and \
+                type(desc.children[0].e) is not _Comment:
+                
                 desc.text = '\n' + \
                     (desc.ancestor_count + 1) * multiplier * space_unit + \
                     (desc.text or '').strip()
