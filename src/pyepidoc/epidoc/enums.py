@@ -120,6 +120,7 @@ class DoNotPrettifyChildren(EnumerableEnum):
     Do not prettify the children of these elements
     """
     Provenance = 'provenance'
+    P = 'p'
 
 
 class ContainerType(EnumerableEnum):
