@@ -228,12 +228,12 @@
             <div type="translation">
                 <p>
                     <!-- add xml:lang with language code and translation without markup -->
-                </p>
+				</p>
             </div>
             <div type="commentary">
                 <p>
                     <!--commented out pending revision-->
-                </p>
+				</p>
             </div>
             <div type="bibliography">
                 <listBibl type="edition">
