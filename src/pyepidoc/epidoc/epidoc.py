@@ -33,6 +33,8 @@ from .token import Token
 from .errors import TEINSError, EpiDocValidationError
 from .element import EpiDocElement, BaseElement
 
+from .metadata.title_stmt import TitleStmt
+
 from .elements.ab import Ab
 from .elements.body import Body
 from .elements.edition import Edition
@@ -1218,6 +1220,23 @@ class EpiDoc(DocRoot):
             return None
         else:
             return EpiDocElement(elem).text
+        
+    @property
+    def title_stmt(self) -> TitleStmt:
+        """
+        The <titleStmt/> element of the document,
+        providing details including a series of 
+        <respStmt/>
+        """
+
+        title_stmt_elem = maxone(
+            self.get_desc(["titleStmt"]),
+            throw_if_more_than_one=True
+        )
+        if title_stmt_elem is None:
+            raise ValueError("No <titleStmt/> element found")
+        
+        return TitleStmt(title_stmt_elem)
 
     @overload   
     def to_xml_file(
