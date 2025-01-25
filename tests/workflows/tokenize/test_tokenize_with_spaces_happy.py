@@ -29,7 +29,12 @@ xml_to_tokenize = [
      (
          '<supplied reason="undefined" evidence="previouseditor"><g ref="#interpunct">·</g></supplied> <num value="40"><w n="40">μ</w></num>',
          '<supplied reason="undefined" evidence="previouseditor"><g ref="#interpunct">·</g></supplied> <num value="40"><w n="40">μ</w></num>'
+     ),
+     (
+         '<w><unclear>abc</unclear> <unclear/></w>',
+         '<w><unclear>abc</unclear><unclear/></w>'
      )
+
 ]
 
 
