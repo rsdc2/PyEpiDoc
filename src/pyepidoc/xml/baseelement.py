@@ -627,12 +627,16 @@ class BaseElement(Showable):
         # Iterate through descendant elements (incl. comments)
         for desc in [element] + list(element.desc_elems): 
 
-            # Don't touch descdendant nodes containing @xml:space = "preserve"
+            # Don't do anything to descdendant nodes containing @xml:space = "preserve"
             if desc.xmlspace_preserve_in_ancestors:
                 continue
 
-            # Do not prettify if an ancestor element is in the set of element names to exclude
+            # Do not prettify element if an ancestor element is in the set of element names to exclude
             if set(map(lambda d: d.localname, desc.ancestors_excl_self)).intersection(set(exclude)) != set():
+                continue
+
+            # Do not prettify if the next sibling is a comment
+            if isinstance(desc.e.getnext(), _Comment):
                 continue
             
             # Do not prettify a comment if its siblings are only 

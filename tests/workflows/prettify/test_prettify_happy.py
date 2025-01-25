@@ -109,6 +109,16 @@ fragments = [
         ('<handNote>\n    <!--ILPalermo-->\n</handNote>'),
         ('<handNote>\n    <!--ILPalermo-->\n</handNote>'),
          'Test that preserves existing spacing of comments'
+    ),
+    (
+        ('<p>xyz<ref>abc</ref></p>'),
+        ('<p>xyz<ref>abc</ref></p>'),
+         'Test that does not pretty print within a <p> element'
+    ),
+    (
+        ('<x><a/><b/><!--comment--><c/></x>'),
+        ('<x>\n    <a/>\n    <b/><!--comment-->\n    <c/>\n</x>'),
+         'Test that does not pretty print within a <p> element'
     )
 
 ]
@@ -127,4 +137,8 @@ def test_prettify_fragment(ugly: str, benchmark: str, _: str):
     prettified = ugly_xml.prettify_element_with_pyepidoc(' ', 4, DoNotPrettifyChildren.values())
 
     # Assert
-    assert benchmark_xml.xml_byte_str.strip() == prettified.xml_byte_str.strip()
+    result = benchmark_xml.xml_byte_str.strip() == prettified.xml_byte_str.strip()
+    if not result:
+        breakpoint()
+        pass
+    assert result
