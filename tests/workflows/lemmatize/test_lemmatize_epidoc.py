@@ -62,19 +62,15 @@ def test_lemmatize_on_separate_edition(
     correct elements are copied across (i.e. only
     <w>, <orig> and <gap>).
     """
-
+    # Arrange
     filename, tag_counts = filename_with_tag_counts
-
-    remove_file(lemmatized_path + filename)
-
     doc = EpiDoc(unlemmatized_path + filename)
+
+    # Act
     doc.lemmatize(dummy_lemmatizer, 'separate')
-    doc.to_xml_file(lemmatized_path + filename)
+    lemmatized_ed = doc.body.edition_by_subtype('simple-lemmatized')
 
-    # Check correct
-    doc_ = save_and_reload(doc, lemmatized_path + filename)
-    lemmatized_ed = doc_.body.edition_by_subtype('simple-lemmatized')
-
+    # Assert
     assert lemmatized_ed is not None
     if len(lemmatized_ed.w_tokens) != 0:
         assert lemmatized_ed.w_tokens[0].lemma == 'lemma'
@@ -95,4 +91,4 @@ def test_lemmatize_on_separate_edition(
         lemmatized_path + filename, 
         benchmark_path + filename,
         FILE_WRITE_MODE
-    ) == True
+    )
