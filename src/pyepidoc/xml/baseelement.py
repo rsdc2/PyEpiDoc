@@ -623,6 +623,7 @@ class BaseElement(Showable):
         """
         if exclude is None: exclude = []
 
+        
         # Iterate through descendant elements (incl. comments)
         for desc in [element] + list(element.desc_elems): 
 

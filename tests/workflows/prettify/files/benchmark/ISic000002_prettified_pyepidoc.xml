@@ -204,28 +204,11 @@
         <body>
             <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP #LT">
                 <ab>
-                    <lb n="1"/><w n="5"><expan><abbr>D</abbr><ex>is</ex></expan></w> <g ref="#interpunct">·</g> <w n="10"><expan><abbr>M</abbr><ex>anibus</ex></expan></w> <g ref="#interpunct">·</g> <w n="15"><expan><abbr>s</abbr><ex>acrum</ex></expan></w>
-                    <lb n="2"/><persName type="attested"><name type="nomen"><w n="20">Lurius</w></name> <g ref="#interpunct">·</g> <name type="cognomen"><w n="25">Zosimus</w></name></persName>
-                    <lb n="3"/><w n="30"><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g ref="#interpunct">·</g> <w n="35">annis</w> <g ref="#interpunct">·</g> <num value="7"><w n="40">VII</w></num>
-                    <lb n="4"/><persName type="attested"><name type="nomen"><w n="45">Luria</w></name> <g ref="#interpunct">·</g> <name type="cognomen"><w n="50">Melant<supplied reason="undefined" evidence="previouseditor">hi</supplied> <supplied reason="lost" evidence="previouseditor"><g ref="#interpunct">·</g></supplied>
-                    <lb n="5" break="no"/><g ref="#interpunct">·</g>n</w></name></persName> <g ref="#interpunct">·</g> <w n="55">suo</w> <g ref="#interpunct">·</g> <w n="60">filio</w> <g ref="#interpunct">·</g> <w n="65">fecit</w> <g ref="#interpunct">·</g>
-                </ab>
-            </div>
-            <div type="edition" subtype="simple-lemmatized">
-                <ab>
-                    <w n="5" lemma="dis">Dis</w>
-                    <w n="10" lemma="manes">Manibus</w>
-                    <w n="15" lemma="sacrum">sacrum</w>
-                    <w n="20" lemma="Lurius">Lurius</w>
-                    <w n="25" lemma="Zosimus">Zosimus</w>
-                    <w n="30" lemma="vivo">vixit</w>
-                    <w n="35" lemma="annus">annis</w>
-                    <w n="40" lemma="VII">VII</w>
-                    <w n="45" lemma="Luria">Luria</w>
-                    <w n="50" lemma="Melanthis">Melanthin</w>
-                    <w n="55" lemma="suus">suo</w>
-                    <w n="60" lemma="filius">filio</w>
-                    <w n="65" lemma="facio">fecit</w>
+                    <lb n="1"/><w><expan><abbr>D</abbr><ex>is</ex></expan></w> <g ref="#interpunct">·</g> <w><expan><abbr>M</abbr><ex>anibus</ex></expan></w> <g ref="#interpunct">·</g> <w><expan><abbr>s</abbr><ex>acrum</ex></expan></w>
+                    <lb n="2"/><persName type="attested"><name type="nomen">Lurius</name> <g ref="#interpunct">·</g> <name type="cognomen">Zosimus</name></persName>
+                    <lb n="3"/><w><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g ref="#interpunct">·</g> <w>annis</w> <g ref="#interpunct">·</g> <num value="7">VII</num>
+                    <lb n="4"/><persName type="attested"><name type="nomen">Luria</name> <g ref="#interpunct">·</g> <name type="cognomen">Melant<supplied reason="undefined" evidence="previouseditor">hi</supplied> <supplied reason="lost" evidence="previouseditor"><g ref="#interpunct">·</g></supplied>
+                    <lb n="5" break="no"/><g ref="#interpunct">·</g> n</name></persName> <g ref="#interpunct">·</g> <w>suo</w> <g ref="#interpunct">·</g> <w>filio</w> <g ref="#interpunct">·</g> <w>fecit</w> <g ref="#interpunct">·</g>
                 </ab>
             </div>
             <div type="apparatus" resp="#JP">

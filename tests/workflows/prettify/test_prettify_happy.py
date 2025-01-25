@@ -104,6 +104,11 @@ fragments = [
         ('<handNote><!--ILPalermo--><!--ILPalermo--></handNote>'),
         ('<handNote><!--ILPalermo--><!--ILPalermo--></handNote>'),
          'Test that an element whose children are only comments is ignored for prettifying'
+    ),
+    (
+        ('<handNote>\n    <!--ILPalermo-->\n</handNote>'),
+        ('<handNote>\n    <!--ILPalermo-->\n</handNote>'),
+         'Test that preserves existing spacing of comments'
     )
 
 ]
