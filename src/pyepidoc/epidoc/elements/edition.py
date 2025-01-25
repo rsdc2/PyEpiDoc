@@ -46,7 +46,8 @@ from ..enums import (
     AtomicTokenType, 
     SubatomicTagType, 
     CompoundTokenType, 
-    ContainerType
+    ContainerType,
+    NIDElements
 )
 
 
@@ -426,9 +427,7 @@ class Edition(EpiDocElement):
         receive an `@n` id.
         """
 
-        elems = self.get_desc_elems_by_name(
-            ['w', 'orig']
-        )
+        elems = self.get_desc_elems_by_name(NIDElements.values())
         return list(map(EpiDocElement, elems))
 
     def prettify(
