@@ -94,7 +94,18 @@ fragments = [
         ('<handNote><!--ILPalermo--><locus from="line1" to="line1">Line 1</locus></handNote>'),
         ('<handNote><!--ILPalermo-->\n    <locus from="line1" to="line1">Line 1</locus>\n</handNote>'),
          'Test that comments are not put on a new line'
+    ),
+    (
+        ('<handNote><!--ILPalermo--></handNote>'),
+        ('<handNote><!--ILPalermo--></handNote>'),
+         'Test that an element whose children are only comments is ignored for prettifying'
+    ),
+    (
+        ('<handNote><!--ILPalermo--><!--ILPalermo--></handNote>'),
+        ('<handNote><!--ILPalermo--><!--ILPalermo--></handNote>'),
+         'Test that an element whose children are only comments is ignored for prettifying'
     )
+
 ]
 @pytest.mark.parametrize(("ugly", "benchmark", "_"), fragments)
 def test_prettify_fragment(ugly: str, benchmark: str, _: str):
@@ -111,5 +122,4 @@ def test_prettify_fragment(ugly: str, benchmark: str, _: str):
     prettified = ugly_xml.prettify_element_with_pyepidoc(' ', 4, DoNotPrettifyChildren.values())
 
     # Assert
-    # breakpoint()
     assert benchmark_xml.xml_byte_str.strip() == prettified.xml_byte_str.strip()

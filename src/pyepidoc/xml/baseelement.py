@@ -162,6 +162,11 @@ class BaseElement(Showable):
             .replace(' ', '')
             .replace('\t', ''))
 
+    @property 
+    def child_comments(self) -> Sequence[BaseElement]:
+        return [child for child in self.child_nodes
+                if isinstance(child, _Comment)]
+
     @property
     def child_elements(self) -> Sequence[BaseElement]:
         if self._e is None:
@@ -624,17 +629,17 @@ class BaseElement(Showable):
             if desc.xmlspace_preserve_in_ancestors:
                 continue
 
-            # breakpoint()
+            # Do not prettify if an ancestor element is in the set of element names to exclude
             if set(map(lambda d: d.localname, desc.ancestors_excl_self)).intersection(set(exclude)) != set():
                 continue
-
-            if type(desc.e) is _Comment and \
-                desc.next_siblings != [] and \
-                desc.parent is not None and \
-                desc.parent.localname not in exclude:
-                
-                desc.tail = '\n'
             
+            # Do not prettify a comment if its siblings are only 
+            # comments
+            if isinstance(desc.e, _Comment) and \
+                desc.parent is not None and \
+                len(desc.parent.child_comments) == len(desc.parent.child_nodes):
+                continue
+
             # Only insert a new line and tab as first child if there are 
             # child elements and the first child is not a comment
             if len(desc.child_elements) > 0 and \
