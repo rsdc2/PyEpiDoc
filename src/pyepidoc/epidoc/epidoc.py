@@ -34,6 +34,7 @@ from .errors import TEINSError, EpiDocValidationError
 from .element import EpiDocElement, BaseElement
 
 from .metadata.title_stmt import TitleStmt
+from .metadata.resp_stmt import RespStmt
 
 from .elements.ab import Ab
 from .elements.body import Body
@@ -610,7 +611,8 @@ class EpiDoc(DocRoot):
     def lemmatize(
             self, 
             lemmatize: Callable[[str], str],
-            where: Literal['main', 'separate']
+            where: Literal['main', 'separate'],
+            resp_stmt: RespStmt | None = None
         ) -> EpiDoc:
 
         """
@@ -655,7 +657,8 @@ class EpiDoc(DocRoot):
             w.lemma = lemmatize(w.text or '')
         
         self.prettify(prettifier='pyepidoc')
-
+        if resp_stmt is not None: 
+            self.title_stmt.append_resp_stmt(resp_stmt)
         return self
 
     @property

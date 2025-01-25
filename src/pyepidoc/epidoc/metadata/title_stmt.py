@@ -8,6 +8,14 @@ class TitleStmt(EpiDocElement):
     <respStmt>
     """
 
+    def append_resp_stmt(
+        self,
+        resp_stmt: RespStmt
+    ) -> TitleStmt:
+        
+        self.e.append(resp_stmt.e)
+        return self
+
     def append_new_resp_stmt(
         self,
         name: str, 
