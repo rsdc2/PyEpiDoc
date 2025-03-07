@@ -90,14 +90,15 @@ class Body(EpiDocElement):
                         desc_copy.remove_children()
                         desc_copy.remove_attr('id', XMLNS)
 
-                        if desc.localname in SEPARATE_LEMMATIZED_TEXT_ITEMS:
+                        if desc.localname in SEPARATE_LEMMATIZED_TEXT_ITEMS and not desc.localname == 'orig':
                             if desc.localname == 'w':
                                 desc_copy.text = W(desc.e).normalized_form
-                            elif desc.localname == 'orig':
-                                desc_copy.text = Orig(desc.e).normalized_form
                             else:
                                 desc_copy.text = Token(desc).normalized_form
-                            ab_copy._e.append(desc_copy._e)                            
+                            ab_copy._e.append(desc_copy._e)          
+                        elif desc.localname == 'orig' and not desc.has_parent('choice'):       
+                            desc_copy.text = Orig(desc.e).normalized_form        
+                            ab_copy._e.append(desc_copy._e)   
 
         append_items(source, EpiDocElement(target))
         return target
