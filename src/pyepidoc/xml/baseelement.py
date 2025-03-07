@@ -351,6 +351,9 @@ class BaseElement(Showable):
 
         return BaseElement(lxml_elem)
 
+    def has_parent(self, localname: str) -> bool:
+        return self.parent is not None and self.parent.localname == localname
+
     @property
     def last_child(self) -> Optional[BaseElement]:
         if self.child_elements == []:
