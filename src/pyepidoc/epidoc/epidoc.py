@@ -612,7 +612,8 @@ class EpiDoc(DocRoot):
             self, 
             lemmatize: Callable[[str], str],
             where: Literal['main', 'separate'],
-            resp_stmt: RespStmt | None = None
+            resp_stmt: RespStmt | None = None,
+            verbose = False
         ) -> EpiDoc:
 
         """
@@ -656,7 +657,7 @@ class EpiDoc(DocRoot):
         for w in edition.w_tokens:
             w.lemma = lemmatize(w.text or '')
         
-        self.prettify(prettifier='pyepidoc')
+        self.prettify(prettifier='pyepidoc', verbose=verbose)
         if resp_stmt is not None: 
             self.title_stmt.append_resp_stmt(resp_stmt)
         return self
@@ -852,7 +853,8 @@ class EpiDoc(DocRoot):
     def prettify(
             self, 
             prettifier: Literal['pyepidoc'] = 'pyepidoc',
-            prettify_main_edition: bool = True) -> EpiDoc:
+            prettify_main_edition: bool = True,
+            verbose = False) -> EpiDoc:
 
         """
         Use prettify function in `lxml` to prettify the whole document.
@@ -878,7 +880,7 @@ class EpiDoc(DocRoot):
                             'lxml or pyepidoc.')
 
         if prettify_main_edition:
-            self.prettify_main_edition(SpaceUnit.Space.value, 4)
+            self.prettify_main_edition(SpaceUnit.Space.value, 4, verbose=verbose)
 
         return self
 
