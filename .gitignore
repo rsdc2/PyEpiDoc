@@ -34,3 +34,4 @@ examples_
 localpaths.txt
 **/prettified/*.xml
 .coverage
+.VSCodeCounter
