@@ -181,6 +181,7 @@ def test_tokenize_special_cases(tokenize_type: str):
     if [word.xml_byte_str for word in tokenized_epidoc.compound_words] != [word.xml_byte_str for word in tokenized_benchmark.compound_words]:
         assert False
 
+    # breakpoint()
     if [edition.xml_byte_str for edition in tokenized_epidoc.editions()] != [edition.xml_byte_str for edition in tokenized_benchmark.editions()]:
         assert False
 
@@ -318,7 +319,7 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
     result = tokenized_str == benchmark_str
     
     if not result:
-        breakpoint()
+        # breakpoint()
         pass
 
     assert tokenized_str == benchmark_str

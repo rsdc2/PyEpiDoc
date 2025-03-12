@@ -63,14 +63,11 @@
             </publicationStmt>
             <sourceDesc>
                 <msDesc>
-                    <msIdentifier>
-                        <!--Default country and region-->
+                    <msIdentifier><!--Default country and region-->
                         <country>Italy</country>
                         <region>Sicily</region>
                         <settlement>Sicily</settlement>
-                        <repository>
-                            <!--Add Repository Here-->
-                        </repository>
+                        <repository><!--Add Repository Here--></repository>
                         <!--No inventory number found-->
                         <!--Adding location for old id numbers if available-->
                         <altIdentifier>
@@ -87,8 +84,7 @@
                             <supportDesc>
                                 <support>
                                     <material ana="#material.stone" ref="http://www.eagle-network.eu/voc/material/lod/2.html">stone</material>
-                                    <dimensions>
-                                        <!--Default values and requires editing-->
+                                    <dimensions><!--Default values and requires editing-->
                                         <height unit="cm"/>
                                         <width unit="cm"/>
                                         <depth unit="cm"/>
@@ -97,16 +93,14 @@
                                 <condition/>
                             </supportDesc>
                             <layoutDesc>
-                                <layout>
-                                    <!--Default value and requires checking-->
+                                <layout><!--Default value and requires checking-->
                                     <rs ana="#execution.chiselled" ref="http://www.eagle-network.eu/voc/writing/lod/1">chiselled</rs>
                                     <damage/>
                                 </layout>
                             </layoutDesc>
                         </objectDesc>
                         <handDesc>
-                            <handNote>
-                                <!--Default value and requires editing-->
+                            <handNote><!--Default value and requires editing-->
                                 <locus from="line1" to="line1">Line 1</locus>
                                 <dimensions type="letterHeight">
                                     <height unit="mm"/>
@@ -216,9 +210,7 @@
                 <p>Flamma, a secutor [gladiator] lived for 30 years, fought 34 times, won 21 times, drew 9 times, was defeated [spared] 4 times. Syrian by nationality. Delicatus built this for a worthy comrade-at-arms</p>
             </div>
             <div type="commentary">
-                <p>
-                    <!--commented out pending revision-->
-                </p>
+                <p><!--commented out pending revision--></p>
             </div>
             <div type="bibliography">
                 <listBibl type="edition">

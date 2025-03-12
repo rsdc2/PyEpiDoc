@@ -27,8 +27,8 @@ from ..shared.classes import Tag
 
 from .namespace import Namespace as ns
 
-from ..shared.constants import TEINS, XMLNS, SubsumableRels
-from ..shared import maxone
+from pyepidoc.shared.constants import TEINS, XMLNS, SubsumableRels
+from pyepidoc.shared import maxone, head
 from pyepidoc.xml.utils import localname
 
 
@@ -162,6 +162,11 @@ class BaseElement(Showable):
             .replace(' ', '')
             .replace('\t', ''))
 
+    @property 
+    def child_comments(self) -> Sequence[BaseElement]:
+        return [child for child in self.child_nodes
+                if isinstance(child, _Comment)]
+
     @property
     def child_elements(self) -> Sequence[BaseElement]:
         if self._e is None:
@@ -243,11 +248,10 @@ class BaseElement(Showable):
 
         if self._e is None:
             return []
-
-        _descs = self._e.xpath('.//*')
-        descs = _descs if type(_descs) is list else []
-        return [BaseElement(desc) for desc in descs 
-                    if isinstance(desc, _Element)]
+        
+        return [BaseElement(item) 
+                for item in self.e.iterdescendants(tag=None)
+                 if isinstance(item, _Element)]
 
     def desc_elems_by_local_name(self, localname: str) -> list[BaseElement]:
         """
@@ -347,6 +351,9 @@ class BaseElement(Showable):
 
         return BaseElement(lxml_elem)
 
+    def has_parent(self, localname: str) -> bool:
+        return self.parent is not None and self.parent.localname == localname
+
     @property
     def last_child(self) -> Optional[BaseElement]:
         if self.child_elements == []:
@@ -403,7 +410,24 @@ class BaseElement(Showable):
 
         raise TypeError('XPath result is of the wrong type.')
 
-    def get_desc_elems_by_name(self, 
+    def get_desc_tei_elem(self, 
+        elem_name: str, 
+        attribs: dict[str, str] | None = None,
+        throw_if_more_than_one: bool = False
+    ) -> BaseElement | None:
+        
+        """
+        Get first descendant TEI namespace element with the specified
+        name and attributes
+        """
+
+        return maxone(
+            lst=self.get_desc_tei_elems([elem_name], attribs=attribs),
+            defaultval=None,
+            throw_if_more_than_one=throw_if_more_than_one
+        )
+
+    def get_desc_tei_elems(self, 
         elem_names: list[str] | str, 
         attribs: dict[str, str] | None = None
     ) -> list[BaseElement]:
@@ -605,6 +629,74 @@ class BaseElement(Showable):
 
         return [BaseElement(sib) for sib in prev_sibs 
                 if type(sib) is _Element]
+    
+    def prettify_element_with_pyepidoc(
+            element: BaseElement,
+            space_unit: str,
+            multiplier: int = 4,
+            exclude: list[str] | None = None) -> BaseElement:
+        """
+        Prettify a BaseElement and all descendant elements
+
+        :param exclude: list of element names whose children 
+            should not be prettified
+        """
+        if exclude is None: exclude = []
+
+        
+        # Iterate through descendant elements (incl. comments)
+        for desc in [element] + list(element.desc_elems): 
+
+            # Don't do anything to descdendant nodes containing @xml:space = "preserve"
+            if desc.xmlspace_preserve_in_ancestors:
+                continue
+
+            # Do not prettify element if an ancestor element is in the set of element names to exclude
+            if set(map(lambda d: d.localname, desc.ancestors_excl_self)).intersection(set(exclude)) != set():
+                continue
+
+            # Do not prettify if the next sibling is a comment
+            if isinstance(desc.e.getnext(), _Comment):
+                continue
+            
+            # Do not prettify a comment if its siblings are only 
+            # comments
+            if isinstance(desc.e, _Comment) and \
+                desc.parent is not None and \
+                len(desc.parent.child_comments) == len(desc.parent.child_nodes):
+                continue
+
+            # Only insert a new line and tab as first child if there are 
+            # child elements and the first child is not a comment
+            if len(desc.child_elements) > 0 and \
+                desc.localname not in exclude and \
+                type(desc.children[0].e) is not _Comment:
+                
+                desc.text = '\n' + \
+                    (desc.ancestor_count + 1) * multiplier * space_unit + \
+                    (desc.text or '').strip()
+
+            # Add new line and tabs after tag
+            if desc.parent is not None and \
+                desc.parent.last_child is not None and \
+                    desc.parent.last_child.id_internal == desc.id_internal:
+                
+                # If last child, add one fewer tab so that closing tag
+                # has correct alignment
+                tail_to_append = '\n' + (desc.ancestor_count - 1) * space_unit * multiplier
+
+                if desc.tail is None:
+                    desc.tail = tail_to_append
+                else:
+                    desc.tail = desc.tail.strip() + tail_to_append
+            else:
+                tail_to_append = '\n' + (desc.ancestor_count) * space_unit * multiplier
+                if desc.tail is None:
+                    desc.tail = tail_to_append
+                else:
+                    desc.tail = desc.tail.strip() + tail_to_append
+
+        return element
 
     def remove_attr(
             self, 

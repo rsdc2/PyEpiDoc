@@ -1,7 +1,7 @@
 
 class TEINSError(Exception):
-    def __init__(self):
-        self.args = ('No TEI namespace "http://www.tei-c.org/ns/1.0" present',)
+    def __init__(self, msg: str = ""):
+        self.args = (f'TEI namespace error: + {msg}',)
 
 
 class EpiDocValidationError(Exception):

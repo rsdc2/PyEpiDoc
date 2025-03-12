@@ -2,8 +2,7 @@
 <?xml-model href="https://epidoc.stoa.org/schema/latest/tei-epidoc.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="../schematron/ircyr-checking.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en">
-    <teiHeader>
-        <!-- Slightly modified with <w> token within <name> and <num> -->
+    <teiHeader> <!-- Slightly modified with <w> token within <name> and <num> -->
         <fileDesc>
             <titleStmt>
                 <title>Funerary inscription of Zethus</title>
@@ -80,8 +79,7 @@
                                     <p>Marble plaque, employed as cover of a small sarcophagus</p>
                                     <material ana="#material.stone.marble" ref="http://www.eagle-network.eu/voc/material/lod/48.html">marble</material>
                                     <objectType ana="#object.plaque" ref="https://www.eagle-network.eu/voc/objtyp/lod/259.html">plaque</objectType>
-                                    <dimensions>
-                                        <!--from ILPalermo-->
+                                    <dimensions><!--from ILPalermo-->
                                         <height unit="cm">17.5</height>
                                         <width unit="cm">29.3</width>
                                         <depth unit="cm">1.5-2</depth>
@@ -98,8 +96,7 @@
                             </layoutDesc>
                         </objectDesc>
                         <handDesc>
-                            <handNote>
-                                <!--ILPalermo-->
+                            <handNote><!--ILPalermo-->
                                 <locus from="line1" to="line1">Line 1</locus>
                                 <dimensions type="letterHeight">
                                     <height unit="mm">32-35</height>
@@ -229,14 +226,11 @@
                 </listApp>
             </div>
             <div type="translation">
-                <p>
-                    <!-- add xml:lang with language code and translation without markup -->
-                </p>
+                <p><!-- add xml:lang with language code and translation without markup --></p>
             </div>
             <div type="commentary">
-                <p>
-                    <!--commented out pending revision-->
-                </p>
+                <p><!--commented out pending revision-->
+                   </p>
             </div>
             <div type="bibliography">
                 <listBibl type="edition">

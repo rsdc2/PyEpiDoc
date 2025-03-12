@@ -50,6 +50,13 @@ class DocRoot:
         ...
 
     @overload
+    def __init__(self, inpt: BytesIO):
+        """
+        :param inpt: BytesIO object containing an in-memory version of the file.
+        """
+        ...
+
+    @overload
     def __init__(self, inpt: str):
         """
         :param inpt: str containing the filepath of the EpiDoc XML file.

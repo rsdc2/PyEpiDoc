@@ -41,12 +41,13 @@ from .textpart import TextPart
 from ..enums import (
     SpaceUnit, 
     SpaceSeparated,
-    NoSpace,
+    NoSpaceBefore,
     TokenCarrier, 
     AtomicTokenType, 
     SubatomicTagType, 
     CompoundTokenType, 
-    ContainerType
+    ContainerType,
+    NIDElements
 )
 
 
@@ -169,7 +170,7 @@ def prettify(
             
     # Do the pretty-printing
     for tag in newlinetags:
-        desc_elems = edition.get_desc_elems_by_name(elem_names=[tag])
+        desc_elems = edition.get_desc_tei_elems(elem_names=[tag])
 
         if tag in ['ab', 'lg']:
             for ab in desc_elems:
@@ -194,7 +195,7 @@ def prettify(
                 prettify_first_child(parent)
 
         prettify_closing_tags(
-            edition.get_desc_elems_by_name(
+            edition.get_desc_tei_elems(
                 ['ab', 'l', 'lg' 'lb', 'div']
                 )
             )
@@ -236,7 +237,7 @@ class Edition(EpiDocElement):
         """
 
         return [Ab(element._e) 
-            for element in self.get_desc_elems_by_name(['ab'])]
+            for element in self.get_desc_tei_elems(['ab'])]
 
     def append_empty_ab(self) -> Ab:
         
@@ -282,7 +283,7 @@ class Edition(EpiDocElement):
 
     @property
     def divs(self) -> list[BaseElement]:
-        return self.get_desc_elems_by_name(['div'])
+        return self.get_desc_tei_elems(['div'])
 
     @property
     def edition_text(self) -> str:
@@ -405,7 +406,7 @@ class Edition(EpiDocElement):
         """
 
         return [Lg(element._e) 
-            for element in self.get_desc_elems_by_name(['lg'])]
+            for element in self.get_desc_tei_elems(['lg'])]
 
     @property
     def ls(self) -> list[Ab]:
@@ -416,7 +417,7 @@ class Edition(EpiDocElement):
         """
 
         return [L(element._e) 
-            for element in self.get_desc_elems_by_name(['l'])]
+            for element in self.get_desc_tei_elems(['l'])]
 
     @property
     def n_id_elements(self) -> list[EpiDocElement]:
@@ -426,21 +427,8 @@ class Edition(EpiDocElement):
         receive an `@n` id.
         """
 
-        elems = self.get_desc_elems_by_name(
-            ['w', 'orig']
-        )
+        elems = self.get_desc_tei_elems(NIDElements.values())
         return list(map(EpiDocElement, elems))
-
-    @property
-    def no_space(self) -> list[EpiDocElement]:
-        """
-        :return: |Element|s that should not be separated by spaces.
-        """
-        return [EpiDocElement(item) for item 
-            in self.get_desc(
-                NoSpace.values() 
-            )
-        ]
 
     def prettify(
             self, 
@@ -457,6 +445,13 @@ class Edition(EpiDocElement):
             edition=self
         )
         return self
+    
+    @property
+    def resp(self) -> str | None:
+        """
+        Return the @resp attribute value for the edition
+        """
+        return self.get_attrib('resp')
 
     def set_ids(self, base: Base=52, compress: bool=True) -> None:
         """
@@ -501,27 +496,6 @@ class Edition(EpiDocElement):
             elem.set_attrib('n', str(val))
 
         return self
-
-    def space_tokens(self) -> None:
-
-        """
-        Separates tokens by spaces, as long as they should be separated by spaces
-        and the following token is not among the tokens that should be separated
-        from previous by a space
-        """
-
-        for elem in self.space_separated:
-            elem.append_space()
-
-    @property
-    def space_separated(self) -> list[EpiDocElement]:
-        """
-        :return: |Element|s that should be separated by spaces
-        """
-        elems = [EpiDocElement(item) 
-                 for item in self.get_desc(SpaceSeparated.values())]
-        return [elem for elem in elems 
-                if elem.next_sibling not in self.no_space]
 
     @property
     def subtype(self) -> Optional[str]:
