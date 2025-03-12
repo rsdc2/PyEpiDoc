@@ -105,6 +105,12 @@ class SpaceSeparated(EnumerableEnum):
     Supplied = 'supplied'
 
 
+class NIDElements(EnumerableEnum):
+    W = 'w'
+    Orig = 'orig'
+    G = 'g'
+
+
 class NoSpaceBefore(EnumerableEnum):
     """
     When spacing tokens, if any of <note>, <unclear> or <supplied>
