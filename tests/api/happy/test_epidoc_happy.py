@@ -4,6 +4,7 @@ from lxml import etree
 from pathlib import Path
 
 from pyepidoc.epidoc.epidoc import EpiDoc
+from pyepidoc.epidoc.metadata.title_stmt import TitleStmt
 from pyepidoc.shared import head
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 from pyepidoc.epidoc.dom import lang, line
@@ -222,3 +223,14 @@ def test_reproduces_processing_instructions():
     assert all([str(instr) in list(map(str, doc.processing_instructions)) 
                 for instr in doc_.processing_instructions])
     
+
+def test_can_get_title_stmt():
+
+    # Arrange
+    epidoc = EpiDoc(relative_filepaths['ISic000001'])
+
+    # Act
+    title_stmt = epidoc.title_stmt
+
+    # Assert
+    assert isinstance(title_stmt, TitleStmt)

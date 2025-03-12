@@ -151,11 +151,10 @@ class EpiDocElement(BaseElement, Showable):
 
         self._final_space = final_space
 
-    def __add__(self, other:Optional[EpiDocElement]) -> list[EpiDocElement]:
+    def __add__(self, other: Optional[EpiDocElement]) -> list[EpiDocElement]:
         """
         Handles appending |Element|s.
         """
-        # breakpoint()
         # Handle cases where other is None
         if other is None:
             return [self]
@@ -238,7 +237,6 @@ class EpiDocElement(BaseElement, Showable):
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
         content = ''.join([
-            # '{', self.tag.ns, '}', 
             "'",
             self.tag.name, 
             "'",
@@ -261,7 +259,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(abbr) 
-                for abbr in self.get_desc_elems_by_name('abbr')]
+                for abbr in self.get_desc_tei_elems('abbr')]
         
     @property
     def am_elems(self) -> Sequence[EpiDocElement]:
@@ -272,7 +270,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(abbr) 
-                for abbr in self.get_desc_elems_by_name('am')]
+                for abbr in self.get_desc_tei_elems('am')]
 
     def append_element_or_text(
             self, 
@@ -359,8 +357,8 @@ class EpiDocElement(BaseElement, Showable):
         
         self.id_xml = ids.convert(current_id, oldbase, newbase)
 
-    @staticmethod
-    def create(localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
+    @classmethod
+    def create(cls, localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
         """
         Create a new EpiDocElement in the TEI namespace with local name `localname` and `attributes`
         """
@@ -406,7 +404,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(ex) 
-                for ex in self.get_desc_elems_by_name('ex')]
+                for ex in self.get_desc_tei_elems('ex')]
 
     @property
     def expan_elems(self) -> Sequence[EpiDocElement]:
@@ -416,7 +414,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(expan) 
-                for expan in self.get_desc_elems_by_name('expan')]
+                for expan in self.get_desc_tei_elems('expan')]
 
     @property
     def final_tailtoken_boundary(self) -> bool:
@@ -806,7 +804,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(expan) 
-                for expan in self.get_desc_elems_by_name([
+                for expan in self.get_desc_tei_elems([
                     'abbr',
                     'ex',
                     # 'expan',

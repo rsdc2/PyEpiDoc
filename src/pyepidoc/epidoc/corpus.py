@@ -162,6 +162,9 @@ class EpiDocCorpus:
     @property
     def count(self) -> int:
         return self.doc_count
+    
+    def get_count_for_lang(self, lang: str) -> int:
+        return self.filter_by_languages([lang]).count
 
     @property
     def datemax(self) -> int:
@@ -660,7 +663,7 @@ class EpiDocCorpus:
                     docs += [EpiDoc(fp)]
                     iterations += 1
                 
-                if iterations > max_iter:
+                if iterations >= max_iter:
                     break
             
             if iterations == 0:
