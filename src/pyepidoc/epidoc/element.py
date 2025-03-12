@@ -155,7 +155,6 @@ class EpiDocElement(BaseElement, Showable):
         """
         Handles appending |Element|s.
         """
-        # breakpoint()
         # Handle cases where other is None
         if other is None:
             return [self]
@@ -238,7 +237,6 @@ class EpiDocElement(BaseElement, Showable):
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
         content = ''.join([
-            # '{', self.tag.ns, '}', 
             "'",
             self.tag.name, 
             "'",
