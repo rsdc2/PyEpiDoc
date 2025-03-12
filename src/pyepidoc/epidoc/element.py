@@ -7,6 +7,7 @@ from typing import (
     overload
 )
 
+
 from pyepidoc.shared.classes import Showable, ExtendableSeq
 from pyepidoc.xml.baseelement import BaseElement
 
@@ -39,7 +40,9 @@ from .enums import (
     CompoundTokenType, 
     AtomicNonTokenType,
     SubatomicTagType,
-    AlwaysSubsumable
+    AlwaysSubsumable,
+    SpaceSeparated,
+    NoSpaceBefore
 )
 from . import ids
 from pyepidoc.shared import maxoneT, head, last, to_lower
@@ -148,11 +151,10 @@ class EpiDocElement(BaseElement, Showable):
 
         self._final_space = final_space
 
-    def __add__(self, other:Optional[EpiDocElement]) -> list[EpiDocElement]:
+    def __add__(self, other: Optional[EpiDocElement]) -> list[EpiDocElement]:
         """
         Handles appending |Element|s.
         """
-        # breakpoint()
         # Handle cases where other is None
         if other is None:
             return [self]
@@ -232,19 +234,9 @@ class EpiDocElement(BaseElement, Showable):
             
         return [EpiDocElement(self_e, self._final_space), EpiDocElement(other_e, other._final_space)]
 
-    # def __eq__(self, other) -> bool:
-    #     if not isinstance(other, EpiDocElement):
-    #         return False
-        
-    #     return self.e == other.e
-
-    # def __hash__(self) -> int:
-    #     return hash(self.e)
-
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
         content = ''.join([
-            # '{', self.tag.ns, '}', 
             "'",
             self.tag.name, 
             "'",
@@ -267,7 +259,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(abbr) 
-                for abbr in self.get_desc_elems_by_name('abbr')]
+                for abbr in self.get_desc_tei_elems('abbr')]
         
     @property
     def am_elems(self) -> Sequence[EpiDocElement]:
@@ -278,7 +270,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(abbr) 
-                for abbr in self.get_desc_elems_by_name('am')]
+                for abbr in self.get_desc_tei_elems('am')]
 
     def append_element_or_text(
             self, 
@@ -365,8 +357,8 @@ class EpiDocElement(BaseElement, Showable):
         
         self.id_xml = ids.convert(current_id, oldbase, newbase)
 
-    @staticmethod
-    def create(localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
+    @classmethod
+    def create(cls, localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
         """
         Create a new EpiDocElement in the TEI namespace with local name `localname` and `attributes`
         """
@@ -412,7 +404,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(ex) 
-                for ex in self.get_desc_elems_by_name('ex')]
+                for ex in self.get_desc_tei_elems('ex')]
 
     @property
     def expan_elems(self) -> Sequence[EpiDocElement]:
@@ -422,7 +414,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(expan) 
-                for expan in self.get_desc_elems_by_name('expan')]
+                for expan in self.get_desc_tei_elems('expan')]
 
     @property
     def final_tailtoken_boundary(self) -> bool:
@@ -505,6 +497,10 @@ class EpiDocElement(BaseElement, Showable):
         """
         
         return len(self.abbr_elems) > 0
+    
+    @property
+    def is_abbreviated(self) -> bool:
+        return self.has_abbr
 
     def has_gap(self, reasons:list[str]=[]) -> bool:
         """
@@ -808,7 +804,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         return [EpiDocElement(expan) 
-                for expan in self.get_desc_elems_by_name([
+                for expan in self.get_desc_tei_elems([
                     'abbr',
                     'ex',
                     # 'expan',
@@ -920,6 +916,17 @@ class EpiDocElement(BaseElement, Showable):
             return [self.nonword_element]
 
         return []
+    
+    @property
+    def no_space(self) -> list[EpiDocElement]:
+        """
+        :return: |Element|s that should not be separated by spaces.
+        """
+        return [EpiDocElement(item) for item 
+            in self.get_desc(
+                NoSpaceBefore.values() 
+            )
+        ]
 
     @property
     def parent(self) -> Optional[EpiDocElement]:
@@ -1078,6 +1085,28 @@ class EpiDocElement(BaseElement, Showable):
                 self.id_xml = ids.compress(id, base)
             else:
                 self.id_xml = id
+
+    
+    def space_tokens(self) -> None:
+
+        """
+        Separates tokens by spaces, as long as they should be separated by spaces
+        and the following token is not among the tokens that should be separated
+        from previous by a space
+        """
+
+        for elem in self.space_separated:            
+            elem.append_space()
+
+    @property
+    def space_separated(self) -> list[EpiDocElement]:
+        """
+        :return: |Element|s that should be separated by spaces
+        """
+        elems = [EpiDocElement(item) 
+                 for item in self.get_desc(SpaceSeparated.values())]
+        return [elem for elem in elems 
+                if elem.next_sibling not in self.no_space]
 
     def _subsumable_by(self, other:EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 

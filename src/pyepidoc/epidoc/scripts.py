@@ -1,5 +1,5 @@
-from typing import Optional
 from pathlib import Path
+from io import BytesIO
 
 from .enums import (
     SpaceUnit
@@ -17,7 +17,6 @@ def tokenize(
     set_ids: bool
 ) -> None:
 
-    
     for filename in isic_ids:
         src = Path(src_folderpath) / Path(filename + '.xml')
         dst = Path(dst_folderpath) / Path(filename + '.xml')
@@ -32,6 +31,28 @@ def tokenize(
         )
 
         doc.to_xml_file(dst)
+
+
+def tokenize_to_file_object(
+    src_folderpath: str, 
+    filename: str,
+    space_words: bool,
+    set_ids: bool
+) -> BytesIO:
+    
+    src = Path(src_folderpath) / Path(filename + '.xml')
+
+    doc = EpiDoc(src)
+    doc.tokenize(
+        prettify_edition=True, 
+        add_space_between_words=space_words, 
+        set_ids=set_ids, 
+        convert_ws_to_names=True, 
+        verbose=False
+    )
+
+    f = doc.to_xml_file_object()
+    return f
 
 
 def tokenize_corpus(
