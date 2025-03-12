@@ -18,6 +18,7 @@ from itertools import chain
 import inspect
 import re
 import io
+from io import BytesIO
 
 import pyepidoc
 from pyepidoc.xml.docroot import DocRoot
@@ -68,7 +69,7 @@ class EpiDoc(DocRoot):
     
     def __init__(
             self, 
-            inpt: Path | str | _ElementTree | BaseElement,
+            inpt: Path | BytesIO | str | _ElementTree | BaseElement,
             validate_on_load: bool=False,
             verbose: bool=True):
         
@@ -119,7 +120,7 @@ class EpiDoc(DocRoot):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
     
-    def _append_new_lemmatized_edition(self) -> Edition:
+    def _append_new_lemmatized_edition(self, resp: RespStmt | None = None) -> Edition:
 
         """
         Add a new edition to the document, ready to contain
@@ -135,7 +136,7 @@ class EpiDoc(DocRoot):
             raise ValueError('Lemmatized edition already present.')
 
         # Create edition if it does not already exist
-        self.body.create_edition('simple-lemmatized')
+        self.body.create_edition('simple-lemmatized', resp=resp)
         edition = self.body.edition_by_subtype('simple-lemmatized')
 
         # Raise an error if could not be created
@@ -153,6 +154,10 @@ class EpiDoc(DocRoot):
         return self
 
     def _append_resp_stmt(self, resp_stmt: RespStmt) -> EpiDoc:
+        """
+        Add a <respStmt> element to the `<titleStmt>`. Creates the necessary element  
+        hierarchy if not present.
+        """
         if resp_stmt is not None: 
             if self.title_stmt is None:
                 if self.file_desc is None:
@@ -169,9 +174,16 @@ class EpiDoc(DocRoot):
         Return True if uses TEI namespaces;
         raises an AssertionError if not
         """
+        if self.e is None:
+            raise TypeError("No root element present")
+        
+        nsmap: dict[str, str] = self.e.nsmap
 
-        if not 'http://www.tei-c.org/ns/1.0' in self.e.nsmap.values():
-            raise TEINSError()
+        if nsmap is None:
+             raise TEINSError("No namespaces are specified")
+
+        if not 'http://www.tei-c.org/ns/1.0' in nsmap.values():
+            raise TEINSError("TEI namespace is not present in the nsmap")
         
         return True
 
@@ -706,15 +718,14 @@ class EpiDoc(DocRoot):
             raise ValueError('No main edition could be found.')
 
         if where == 'separate':
-            # Create a separate lemmatized edition if not already
-            # present
+            # Create a separate lemmatized edition if not already present
             lemmatized_edition = self.edition_by_subtype('simple-lemmatized') 
+
             if lemmatized_edition is None:
-                
-                lemmatized_edition = self._append_new_lemmatized_edition()
+                lemmatized_edition = self._append_new_lemmatized_edition(resp=resp_stmt)
                 self.body.copy_edition_items_to_appear_in_lemmatized_edition(
-                    main_edition, 
-                    lemmatized_edition
+                    source=main_edition, 
+                    target=lemmatized_edition
                 )
 
             edition = lemmatized_edition

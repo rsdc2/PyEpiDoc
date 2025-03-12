@@ -7,6 +7,7 @@ from lxml import etree
 from lxml.etree import _Element
 
 from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.epidoc.elements.edition import Edition
 from pyepidoc.epidoc.elements.w import W
@@ -110,6 +111,7 @@ class Body(EpiDocElement):
             self, 
             subtype: str | None = None, 
             lang: str | None = None,
+            resp: RespStmt | None = None,
             xmlspace_preserve: Literal['preserve', None] = None) -> Edition:
 
         """
@@ -124,7 +126,8 @@ class Body(EpiDocElement):
                 'type': 'edition', 
                 'subtype': subtype,
                 ns.give_ns('space', XMLNS): xmlspace_preserve,
-                'lang': lang
+                'lang': lang,
+                'resp': '#' + resp.initials if resp else None
             }),
             nsmap = None
         )

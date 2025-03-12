@@ -445,6 +445,13 @@ class Edition(EpiDocElement):
             edition=self
         )
         return self
+    
+    @property
+    def resp(self) -> str | None:
+        """
+        Return the @resp attribute value for the edition
+        """
+        return self.get_attrib('resp')
 
     def set_ids(self, base: Base=52, compress: bool=True) -> None:
         """
