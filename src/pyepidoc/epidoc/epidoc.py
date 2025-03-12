@@ -975,13 +975,14 @@ class EpiDoc(DocRoot):
         parser = etree.XMLParser(
             load_dtd=False,
             resolve_entities=False,
-            remove_blank_text=True
+            remove_blank_text=True,
         )
-        tree: _ElementTree = etree.fromstring(
+        root_elem: _Element = etree.fromstring(
             text=prettified_str, 
             parser=parser
         )
 
+        tree = root_elem.getroottree()
         prettified_doc = EpiDoc(tree)
 
         return prettified_doc

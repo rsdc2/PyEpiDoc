@@ -6,7 +6,6 @@ from pathlib import Path
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.metadata.title_stmt import TitleStmt
 from pyepidoc.shared import head
-from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 from pyepidoc.epidoc.dom import lang, line
 
 from ...config import FILE_WRITE_MODE
