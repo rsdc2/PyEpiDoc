@@ -14,6 +14,7 @@ from ...config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
 lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
+lemmatized_with_resp_path = 'tests/workflows/lemmatize/files/lemmatized_with_resp/'
 benchmark_path = 'tests/workflows/lemmatize/files/benchmark/'
 
 dummy_lemmatizer: Callable[[str], str] = lambda form: 'lemma'
@@ -100,9 +101,7 @@ def test_lemmatize_on_separate_edition(
 @pytest.mark.parametrize(
         "filename", 
         map(lambda fn: fn[0], filenames_with_tag_counts))
-def test_lemmatize_on_separate_edition_with_resp(
-    filename: str
-):
+def test_lemmatize_on_separate_edition_with_resp(filename: str):
 
     """
     Test that calling the `lemmatize` method 
@@ -120,6 +119,15 @@ def test_lemmatize_on_separate_edition_with_resp(
 
     # Act
     doc.lemmatize(dummy_lemmatizer, 'separate', resp_stmt=resp_stmt)
+    doc.prettify()
+    doc_ = save_and_reload(
+        doc, 
+        lemmatized_with_resp_path + filename, 
+        mode=FILE_WRITE_MODE
+    )
 
     # Assert
-    assert doc.title_stmt.resp_stmts[-1] == resp_stmt
+    if doc_.title_stmt is None: 
+        assert False
+    last_resp_stmt = doc_.title_stmt.resp_stmts[-1]
+    assert last_resp_stmt == resp_stmt
