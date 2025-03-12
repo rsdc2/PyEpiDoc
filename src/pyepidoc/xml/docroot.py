@@ -8,6 +8,7 @@ from typing import (
 )
 from pathlib import Path
 from copy import deepcopy
+from io import BytesIO
 
 from lxml import etree, isoschematron
 from lxml.etree import ( 
@@ -49,6 +50,13 @@ class DocRoot:
         ...
 
     @overload
+    def __init__(self, inpt: BytesIO):
+        """
+        :param inpt: BytesIO object containing an in-memory version of the file.
+        """
+        ...
+
+    @overload
     def __init__(self, inpt: str):
         """
         :param inpt: str containing the filepath of the EpiDoc XML file.
@@ -63,7 +71,7 @@ class DocRoot:
         """
         ...
 
-    def __init__(self, inpt: Path | str | _ElementTree | _Element | BaseElement):
+    def __init__(self, inpt: Path | BytesIO | str | _ElementTree | _Element | BaseElement):
 
         if isinstance(inpt, Path):
             self._p = inpt
@@ -72,6 +80,10 @@ class DocRoot:
             self._e = self._load_e_from_file(inpt)
             return
         
+        elif isinstance(inpt, BytesIO):
+            self._e = self._load_e_from_file(inpt)
+            return
+            
         elif isinstance(inpt, _ElementTree):
             self._e = inpt.getroot()
             return
@@ -239,20 +251,20 @@ class DocRoot:
         
         return []
 
-    def _load_e_from_file(self, filepath: Path) -> _Element:
+    def _load_e_from_file(self, inpt: Path | BytesIO) -> _Element:
 
         """
         Reads the root element from file and returns an
         _Element object representing the XML document
         """
-        return self._load_etree_from_file(filepath=filepath).getroot()
+        return self._load_etree_from_file(inpt=inpt).getroot()
 
-    def _load_etree_from_file(self, filepath: Path) -> _ElementTree:
+    def _load_etree_from_file(self, inpt: Path | BytesIO) -> _ElementTree:
         """
         Reads the root element from file and returns an
         _ElementTree object representing the XML document
         """
-        if not isinstance(filepath, Path):
+        if not isinstance(inpt, (Path, BytesIO)):
             raise TypeError('filepath variable must be of type'
                             'Path')
         
@@ -262,7 +274,7 @@ class DocRoot:
                 resolve_entities=False
             )
             self._roottree: _ElementTree = etree.parse(
-                source=filepath, 
+                source=inpt, 
                 parser=parser
             )
 

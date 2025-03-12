@@ -100,10 +100,33 @@ class SpaceSeparated(EnumerableEnum):
     Foreign = 'foreign'
     
     G = 'g'
+    Gap = 'gap'
+    Unclear = 'unclear'
+    Supplied = 'supplied'
 
 
-class NoSpace(EnumerableEnum):
+class NIDElements(EnumerableEnum):
+    W = 'w'
+    Orig = 'orig'
+    G = 'g'
+
+
+class NoSpaceBefore(EnumerableEnum):
+    """
+    When spacing tokens, if any of <note>, <unclear> or <supplied>
+    follow the token to be spaced, any space that may have
+    been introduced will be cancelled.
+    """
     Note = 'note'
+    Unclear = 'unclear'
+
+
+class DoNotPrettifyChildren(EnumerableEnum):
+    """
+    Do not prettify the children of these elements
+    """
+    Provenance = 'provenance'
+    P = 'p'
 
 
 class ContainerType(EnumerableEnum):
@@ -111,7 +134,6 @@ class ContainerType(EnumerableEnum):
     Lg = 'lg'
     L = 'l'
     Div = 'div'
-
 
 class CompoundTokenType(EnumerableEnum):
     PersName = 'persName'
