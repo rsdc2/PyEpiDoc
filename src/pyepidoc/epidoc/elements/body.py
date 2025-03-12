@@ -90,12 +90,15 @@ class Body(EpiDocElement):
                         desc_copy.remove_children()
                         desc_copy.remove_attr('id', XMLNS)
 
+                        # All lemmatizable elements except 'orig'
                         if desc.localname in SEPARATE_LEMMATIZED_TEXT_ITEMS and not desc.localname == 'orig':
                             if desc.localname == 'w':
                                 desc_copy.text = W(desc.e).normalized_form
                             else:
                                 desc_copy.text = Token(desc).normalized_form
                             ab_copy._e.append(desc_copy._e)          
+                        # 'orig' only included if not part of 'choice', i.e. stands on its own
+                        # otherwise the 'reg' is taken
                         elif desc.localname == 'orig' and not desc.has_parent('choice'):       
                             desc_copy.text = Orig(desc.e).normalized_form        
                             ab_copy._e.append(desc_copy._e)   
