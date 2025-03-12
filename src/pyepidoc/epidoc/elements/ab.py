@@ -51,7 +51,7 @@ class Ab(EpiDocElement):
 
     """
 
-    def __init__(self, e:Optional[_Element | EpiDocElement | BaseElement]=None):
+    def __init__(self, e: Optional[_Element | EpiDocElement | BaseElement]=None):
 
         if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')
@@ -147,7 +147,7 @@ class Ab(EpiDocElement):
     @property
     def lbs(self) -> Sequence[EpiDocElement]:
         return [EpiDocElement(lb) 
-                for lb in self.get_desc_elems_by_name(['lb'])]
+                for lb in self.get_desc_tei_elems(['lb'])]
 
     @property
     def no_space(self) -> list[EpiDocElement]:
