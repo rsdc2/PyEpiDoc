@@ -747,15 +747,6 @@ class EpiDoc(DocRoot):
         return self
 
     @property
-    def lemmatized_edition(self) -> Edition | None:
-        """
-        Return the 'simple-lemmatized' edition, if it exists,
-        or None if not.
-        """
-
-        return self.body.edition_by_subtype('simple-lemmatized')
-
-    @property
     def main_edition(self) -> Edition | None:
         """
         Return the main edition of the document, i.e. not
@@ -1141,6 +1132,15 @@ class EpiDoc(DocRoot):
         
         self.main_edition.set_n_ids(interval=interval)
         return self
+
+    @property
+    def simple_lemmatized_edition(self) -> Edition | None:
+        """
+        Return the 'simple-lemmatized' edition, if it exists,
+        or None if not.
+        """
+
+        return self.body.edition_by_subtype('simple-lemmatized')
 
     def space_tokens(self) -> None:
         for edition in self.editions():

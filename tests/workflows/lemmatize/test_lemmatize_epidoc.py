@@ -162,6 +162,6 @@ def test_lemmatize_on_separate_edition_has_resp_attribute(filename: str):
     )
 
     # Assert
-    if doc_.lemmatized_edition is None: 
+    if doc_.simple_lemmatized_edition is None: 
         assert False
-    assert doc_.lemmatized_edition.resp == '#JB'
+    assert doc_.simple_lemmatized_edition.resp == '#JB'
