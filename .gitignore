@@ -16,6 +16,8 @@ test.py
 examples/ISic000032_tokenized.xml
 **/tokenized_output/*.xml
 **/lemmatized/*.xml
+**/lemmatized_with_resp/*.xml
+**/prettified/*.xml
 todo.md
 data
 resources.md
@@ -31,3 +33,6 @@ validation
 .ipynb_checkpoints
 examples_
 **/output/*.xml
+.VSCodeCounter
+localpaths.txt
+.coverage

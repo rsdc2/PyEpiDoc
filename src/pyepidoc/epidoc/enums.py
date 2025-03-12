@@ -100,6 +100,15 @@ class SpaceSeparated(EnumerableEnum):
     Foreign = 'foreign'
     
     G = 'g'
+    Gap = 'gap'
+    Unclear = 'unclear'
+    Supplied = 'supplied'
+
+
+class N_ID_Elements(EnumerableEnum):
+    W = 'w'
+    Orig = 'orig'
+    G = 'g'
 
 
 class NoSpace(EnumerableEnum):

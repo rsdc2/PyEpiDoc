@@ -46,7 +46,8 @@ from ..enums import (
     AtomicTokenType, 
     SubatomicTagType, 
     CompoundTokenType, 
-    ContainerType
+    ContainerType,
+    N_ID_Elements
 )
 
 
@@ -413,9 +414,7 @@ class Edition(EpiDocElement):
         receive an `@n` id.
         """
 
-        elems = self.get_desc_elems_by_name(
-            ['w', 'orig']
-        )
+        elems = self.get_desc_tei_elems(N_ID_Elements.values())
         return list(map(EpiDocElement, elems))
 
     @property
