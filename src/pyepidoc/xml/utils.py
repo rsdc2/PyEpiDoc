@@ -12,6 +12,13 @@ def abify(s: str):
     return f'<ab xmlns="{TEINS}">{s}</ab>'
 
 
+def editionify(s: str): 
+    """
+    Enclose a string in <ab> tags 
+    """
+    return f'<edition xmlns="{TEINS}">{abify(s)}</edition>'
+
+
 def elem_from_str(xml: str) -> _Element:
     """
     Return an lxml _Element from a string

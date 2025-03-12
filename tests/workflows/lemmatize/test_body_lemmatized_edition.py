@@ -3,6 +3,7 @@ from pyepidoc.shared.file import remove_file
 from pyepidoc.shared.testing import save_and_reload
 
 import pytest
+from ...config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
 lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
@@ -15,9 +16,6 @@ def test_create_lemmatized_edition():
     """
     
     filename = 'lemmatized_edition.xml'
-
-    # Remove a pre-existing file
-    remove_file(lemmatized_path + filename)
     
     # Create the edition
     doc = EpiDoc(unlemmatized_path + 'single_token.xml')
@@ -25,7 +23,11 @@ def test_create_lemmatized_edition():
     doc.prettify('pyepidoc')
 
     # Save and check that the edition is there
-    doc_ = save_and_reload(doc, lemmatized_path + filename)
+    doc_ = save_and_reload(
+        doc, 
+        path=lemmatized_path + filename, 
+        mode=FILE_WRITE_MODE
+    )
     new_edition = doc_.edition_by_subtype('simple-lemmatized')
 
     assert new_edition is not None
@@ -39,7 +41,6 @@ def test_copy_edition_content():
     """
 
     filename = 'lemmatized_edition_with_content_no_lemmas.xml'
-    remove_file(lemmatized_path + filename)
 
     # Get the doc
     doc = EpiDoc(unlemmatized_path + 'single_token.xml')
@@ -59,7 +60,9 @@ def test_copy_edition_content():
     # Check edition content copied correctly
     doc_ = save_and_reload(
         doc, 
-        lemmatized_path + filename)
+        path=lemmatized_path + filename,
+        mode=FILE_WRITE_MODE
+    )
     new_source_edition = doc_.body.edition_by_subtype(None)
     new_target_edition = doc_.body.edition_by_subtype('simple-lemmatized')
 
@@ -72,7 +75,6 @@ def test_copy_edition_content():
 def test_copy_edition_content_parametrized_no_lemmas():
 
     filename = 'lemmatized_edition_with_content_parametrized_no_lemmas.xml'
-    remove_file(lemmatized_path + filename)
 
     # Get the doc
     doc = EpiDoc(unlemmatized_path + 'single_token.xml')
@@ -85,19 +87,18 @@ def test_copy_edition_content_parametrized_no_lemmas():
     target = doc.body.create_edition('simple-lemmatized')
 
     # Copy the edition content
-    doc.body.copy_edition_items_to_appear_in_lemmatized_edition(
-        source, 
-        target)
+    doc.body.copy_edition_items_to_appear_in_lemmatized_edition(source, target)
 
     doc = doc.prettify('pyepidoc')
 
     # Check edition content copied correctly
     doc_ = save_and_reload(
         doc, 
-        lemmatized_path + filename)
+        path=lemmatized_path + filename,
+        mode=FILE_WRITE_MODE
+    )
     new_source_edition = doc_.body.edition_by_subtype(None)
-    new_target_edition = doc_.body.edition_by_subtype(
-        'simple-lemmatized')
+    new_target_edition = doc_.body.edition_by_subtype('simple-lemmatized')
 
     assert new_target_edition is not None
     assert new_source_edition is not None

@@ -6,7 +6,9 @@ from typing import (
     overload, 
     cast, 
     Literal, 
-    Generator
+    Generator,
+    SupportsIndex,
+    TypeVar
 )
 from functools import cached_property
 from itertools import chain
@@ -14,6 +16,13 @@ from pathlib import Path
 
 from lxml.etree import XMLSyntaxError  
 
+from pyepidoc.shared.classes import SetRelation
+from pyepidoc.shared.utils import maxone, top, remove_none
+from pyepidoc.shared.numbers import percentage
+from pyepidoc.shared.string import format_year
+from pyepidoc.epidoc.generic_collection import GenericCollection
+
+from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .token import Token
@@ -24,10 +33,8 @@ from .elements.num import Num
 from .enums import TextClass
 from .elements.role_name import RoleName
 from .elements.pers_name import PersName
-from pyepidoc.shared.classes import SetRelation
 
-from ..shared import maxone, top
-
+T = TypeVar('T')
 
 class EpiDocCorpus:
 
@@ -139,29 +146,52 @@ class EpiDocCorpus:
 
         return EpiDocCorpus(list(set(self.docs + other.docs)))
 
+    def __getitem__(self, i: SupportsIndex) -> EpiDoc:
+        return self.docs[i]
+
     def __repr__(self) -> str:
         return f'EpiDocCorpus( doc_count = {self.doc_count} )'
 
+    @cached_property
+    def abbreviations(self) -> Abbreviations:
+        """
+        Return an abbreviations object for doing queries on abbreviations
+        """
+        return Abbreviations(self.expans)
+    
     @property
-    def datemin(self) -> int:
-        not_afters = [doc.not_after 
-                      for doc in self.docs if doc.not_after is not None]
-        dates = [doc.date for doc in self.docs if doc.date is not None]
-
-        return min(not_afters + dates)
+    def count(self) -> int:
+        return self.doc_count
+    
+    def get_count_for_lang(self, lang: str) -> int:
+        return self.filter_by_languages([lang]).count
 
     @property
     def datemax(self) -> int:
-        not_befores = [doc.not_before for doc in self.docs 
-            if doc.not_after is not None and doc.not_before is not None]
-        dates:list[int] = [doc.date for doc in self.docs 
+        not_afters = remove_none([doc.not_after for doc in self.docs])
+        dates = [doc.date for doc in self.docs 
             if doc.date is not None]
 
-        return max(not_befores + dates)
+        return max(not_afters + dates)
+
+    @property
+    def datemin(self) -> int:
+        not_befores = remove_none([doc.not_before for doc in self.docs])
+        dates = [doc.date for doc in self.docs if doc.date is not None]
+        return min(not_befores + dates)
+
+    @property
+    def daterange(self) -> tuple[int, int]:
+        """
+        Return the date range of the corpus as a whole
+        as (min, max)
+        """
+
+        return (self.datemin, self.datemax)
 
     @property
     def dateranges(self) -> list[tuple[Optional[int], Optional[int]]]:
-        return [doc.date_range for doc in self.docs]
+        return [doc.daterange for doc in self.docs]
 
     @property
     def datemean(self) -> Optional[int]:
@@ -185,53 +215,95 @@ class EpiDocCorpus:
         return len(self.docs)
 
     @staticmethod
-    def _doc_to_xml_file(dstfolder: str | Path, doc: EpiDoc) -> None:
+    def _doc_to_xml_file(
+        dstfolder: str | Path, 
+        doc: EpiDoc,
+        verbose: bool) -> None:
         
-        "Writes out an EpiDoc object to an XML file"
+        """
+        Writes out an EpiDoc object to an XML file
+        """
+
         dstfolder_path = Path(dstfolder)
         if not dstfolder_path.exists():
             raise FileExistsError(f'Folder {dstfolder} does not exist')
 
         dst = dstfolder_path / Path(doc.id + '.xml')
         
-        doc.to_xml_file(dst.absolute())
+        doc.to_xml_file(dst.absolute(), verbose=verbose)
 
     @cached_property
     def docs(self) -> list[EpiDoc]:
+        _docs: list[EpiDoc] = []
         try:
-            return list(sorted(self._docs, key=lambda doc: doc.id))
+            for doc in self._docs:
+                _docs += [doc]
+                _ = doc.id # Check ID valid
+            
+            return list(sorted(_docs, key=lambda doc: doc.id))
+        
         except XMLSyntaxError as e:
             print('XMLSyntaxError in docs')
             print(e)
             return []
         except Exception as e:
-            print('Exception in docs')
+            print(f'Error processing {_docs[-1].filename}. This may be to do with retrieving the ID. Original error message: ')
             print(e)
             return []
+        
+    @property
+    def docs_with_no_or_empty_main_edition(self) -> list[EpiDoc]:
+        """
+        Return a list of EpiDoc objects where the 
+        main edition is empty or None
+        """
+        return [doc for doc in self.docs
+                if doc.main_edition is None or 
+                    doc.has_no_main_edition]
 
     @cached_property
     def docs_dict(self) -> dict[str, EpiDoc]:
         return {doc.id: doc for doc in self.docs}
-    
-    @cached_property 
+     
+    @property
+    def _edition_subtypes(self) -> set[str]:
+        """
+        Set of all subtypes on the editions 
+        in the corpus
+        """
+        return set(chain(*[doc._edition_subtypes 
+                           for doc in self.docs]))
+
+
+
     def empty_corpus(self) -> EpiDocCorpus:
+        """
+        Return a new empty EpiDocCorpus object
+        """
         return EpiDocCorpus([])
 
     @property
     def expans(self) -> list[Expan]:
+        """
+        Return a list of Expan objects, that 
+        contain information about abbreviations
+        """
         return list(chain(*[doc.expans for doc in self.docs]))
 
     def filter_by_dateafter(self, start: int) -> EpiDocCorpus:
-        docs = [doc for doc in self.docs
-            if (doc.not_before is not None and doc.not_before >= start) 
-            or (doc.date is not None and doc.date >= start)]
+        docs = [doc for doc in self.docs if doc.is_after(start)]
+
+        return EpiDocCorpus(docs)
+    
+    def filter_by_datebefore(self, end: int) -> EpiDocCorpus:
+        docs = [doc for doc in self.docs if doc.is_before(end)]
 
         return EpiDocCorpus(docs)
 
     def filter_by_daterange(self, start: int, end: int) -> EpiDocCorpus:
+        
         docs = [doc for doc in self.docs
-            if doc.not_before is not None and doc.not_after is not None
-            and doc.not_before >= start and doc.not_after <= end]
+            if doc.is_after(start) and doc.is_before(end)]
         
         return EpiDocCorpus(docs)
 
@@ -321,13 +393,17 @@ class EpiDocCorpus:
     def filter_by_languages(self, 
         langs: list[str], 
         set_relation: Callable[[set, set], bool]=SetRelation.intersection,
-        language_attr: Literal['langs'] | Literal['div_langs']='langs'
+        language_attr: Literal['langs'] | Literal['div_langs']='div_langs'
     ) -> EpiDocCorpus:
         
         """
         Returns a copy of the corpus filtered by the 
-        languages provided in the 'langs' parameter.
-        Uses the 'textLang' element in the EpiDoc.
+        languages 
+
+        :param langauge_attr: If this is set to 'langs',
+        uses the 'textLang' element in the EpiDoc. If this is 
+        set to 'div_langs', looks at the @xml:lang attribute
+        on the <div> elements in the edition.
         """
 
         docs = [doc for doc in self.docs
@@ -390,7 +466,7 @@ class EpiDocCorpus:
         """
 
         def filter_by_name(doc: EpiDoc) -> bool:
-            doc_names = map(lambda name: name.form, doc.names)
+            doc_names = map(lambda name: name.form, doc.names())
             return set_relation(set(names), set(doc_names))
 
         docs = filter(filter_by_name, self.docs)  
@@ -411,7 +487,7 @@ class EpiDocCorpus:
         """
 
         def filter_by_name(doc: EpiDoc) -> bool:
-            doc_name_types = map(lambda name: name.name_type, doc.names)
+            doc_name_types = map(lambda name: name.name_type, doc.names())
             return set_relation(set(name_types), set(doc_name_types))
 
         docs = filter(filter_by_name, self.docs)  
@@ -587,9 +663,12 @@ class EpiDocCorpus:
                     docs += [EpiDoc(fp)]
                     iterations += 1
                 
-                if iterations > max_iter:
+                if iterations >= max_iter:
                     break
-
+            
+            if iterations == 0:
+                print('WARNING: No .xml files found in '
+                      f'{_p}')
             self._docs = docs
 
     @property
@@ -600,6 +679,49 @@ class EpiDocCorpus:
     def ids(self) -> list[str]:
         return [doc.id for doc in self.docs
                 if doc.id is not None]
+    
+    def info(self, 
+             name_predicate: Callable[[Name], bool],
+             abbr_predicate: Callable[[Expan], bool],
+             token_predicate: Callable[[Token], bool]) -> str:
+
+        """
+        Provide key statistical information about the corpus
+        """
+        tokens = self.tokens.where(token_predicate)
+        abbrs = self.abbreviations.where(abbr_predicate)
+        abbreviations = abbrs.count
+        suspensions = abbrs.suspensions.count
+        name_suspensions = (abbrs.suspensions
+                            .where_ancestor_is('name')
+                            .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
+                            .map(lambda elem: Name(elem))
+                            .where(name_predicate)
+                            .count)
+        name_abbrs = (abbrs
+                      .where_ancestor_is('name')
+                      .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
+                      .map(lambda elem: Name(elem))
+                      .where(name_predicate))
+        name_abbr_unique_docs = (name_abbrs
+            .map(lambda name: EpiDoc(name.root).id)
+            .unique())
+
+        names_count = len(self.names(name_predicate))
+        indent = '\t\t\t\t'
+
+        return  (
+            f'Document count:{indent}{self.doc_count}\n'
+            f'Date range:{indent}{format_year(self.daterange[0])}--{format_year(self.daterange[1])}\n'
+            f'Token count:{indent}{tokens.count}\n'
+            f'  - of which names (% tokens):\t\t{names_count} ({percentage(names_count, tokens.count)}%)\n'
+            f'Abbreviations:{indent}{abbreviations}\n'
+            f'  - of which suspensions (% abbrs.):\t{suspensions} ({percentage(suspensions, abbreviations)}%)\n'
+            f'    -- of which names (% susp.):\t{name_suspensions} ({percentage(name_suspensions, suspensions)}%)\n'
+            f'    -- of which names (% names):\t{name_suspensions} ({percentage(name_suspensions, names_count)}%)\n'
+            f'  - name abbreviations (% names):\t{name_abbrs.count} ({percentage(name_abbrs.count, names_count)}%)\n'
+            f'    -- in:{indent}{name_abbr_unique_docs.count} docs ({percentage(name_abbr_unique_docs.count, self.doc_count)}% total docs)'
+        )
 
     @property
     def languages(self) -> set[str]:
@@ -654,7 +776,13 @@ class EpiDocCorpus:
             return places_with_freq
 
         return places
-
+    
+    def map(self, func: Callable[[EpiDoc], T]) -> GenericCollection[T]:
+        """
+        Map a function to the abbreviations
+        """
+        return GenericCollection(list(map(func, self.docs)))
+    
     @property
     def materialclasses(self) -> set[str]:
         """
@@ -662,13 +790,45 @@ class EpiDocCorpus:
         """
 
         return set(chain(*[doc.materialclasses for doc in self.docs]))
-
-    def multilinguals(self, head:Optional[int]=None) -> list[EpiDoc]:
-        return [doc for doc in self.docs if doc.is_multilingual]
-
+    
     @property
-    def names(self) -> list[Name]:
-        return list(chain(*[doc.names for doc in self.docs]))
+    def mean_token_count(self) -> float:
+        """
+        Return the mean number of tokens in each document
+        """
+
+        total = sum([doc.token_count for doc in self.docs])
+        return total / self.doc_count
+
+    def multilinguals(self, head: Optional[int]=None) -> list[EpiDoc]:
+        """
+        Return a list of EpiDoc objects where there is more than 
+        one language mentioned in either the @xml:lang attribute 
+        of the edition, or in the <textLang> element.
+
+        :param head: take the top x number of EpiDoc, where x is defined in 
+        @head. If `head` is None, returns all multilinguals.
+        """
+
+        docs = [doc for doc in self.docs if doc.is_multilingual]
+        if head is not None and len(docs) > head:
+            return docs[0:head]
+        
+        return docs
+
+    def names(self, 
+              predicate: Callable[[Name], bool] = lambda _: True
+              ) -> GenericCollection[Name]:
+        """
+        Return a list of `Name` objects for all the
+        <name> elements in the document's main edition.
+
+        :param name_predicate: a function containing
+        a condition for whether or not to include a name.
+        Defaults to returning True.
+        """
+        names = list(chain(*[doc.names(predicate) for doc in self.docs]))
+        return GenericCollection(names)
 
     @property
     def nums(self) -> list[Num]:
@@ -685,7 +845,21 @@ class EpiDocCorpus:
             return ''
         
         return doc.prefix
-    
+
+    def print_info(self, 
+                   name_predicate: Callable[[Name], bool] = lambda _: True,
+                   abbr_predciate: Callable[[Expan], bool] = lambda _: True,
+                   token_predicate: Callable[[Token], bool] = lambda _: True):
+        
+        """
+        Print key statistical information about the corpus
+        to stdout.
+        """
+
+        print(self.info(name_predicate=name_predicate,
+                        abbr_predicate=abbr_predciate,
+                        token_predicate=token_predicate))
+
     @property
     def role_names(self) -> list[RoleName]:
         return list(chain(*[doc.role_names for doc in self.docs]))
@@ -701,7 +875,8 @@ class EpiDocCorpus:
             doc.set_ids()
             self._doc_to_xml_file(
                 dstfolder=dstfolder, 
-                doc=doc)
+                doc=doc,
+                verbose=verbose)
 
     @cached_property
     def size(self) -> int:
@@ -724,8 +899,17 @@ class EpiDocCorpus:
 
     @cached_property
     def textclasses(self) -> set[str]:
+        return self._get_textclasses(True)
+    
+    @cached_property
+    def texttypes(self) -> GenericCollection[str]:
+        no_nones = remove_none([doc.texttype for doc in self.docs])
+        return GenericCollection([texttype.lower() for texttype in no_nones])
+    
+    def _get_textclasses(self, throw_if_more_than_one: bool, ) -> set[str]:
         return set([textclass for doc in self.docs 
-                    for textclass in doc.textclasses])
+                    for textclass in doc._get_textclasses(
+                        throw_if_more_than_one=throw_if_more_than_one)])
 
     def to_txt(self, dst: str) -> None:
         """
@@ -742,38 +926,58 @@ class EpiDocCorpus:
     def tokenize_to_folder(
         self, 
         dstfolder: str | Path, 
-        add_space_between_words: bool=True,
+        add_space_between_w_elements: bool=True,
         prettify_edition: bool=True,
         set_ids: bool=False,
         convert_ws_to_names: bool=True,
-        verbose: bool=True
+        verbose: bool=False
     ) -> None:
 
         """
         Tokenizes the corpus and writes out the files 
         to dstfolder.
+        If a file cannot be tokenized, a message is printed
+        to stdout and the file is not included in the 
+        tokenized corpus.
         """
 
         for doc in sorted(self.docs, key=lambda doc: doc.id):
             if verbose: 
                 print('Tokenizing', doc.id)
 
-            doc.tokenize(
-                prettify_edition=prettify_edition, 
-                add_space_between_words=add_space_between_words, 
-                set_ids=set_ids, 
-                convert_ws_to_names=convert_ws_to_names, 
-                verbose=verbose
-            )
+            try:
+                if not doc.has_no_main_edition:
+                    doc.tokenize(
+                        prettify_edition=prettify_edition, 
+                        add_space_between_words=add_space_between_w_elements, 
+                        set_ids=set_ids, 
+                        convert_ws_to_names=convert_ws_to_names, 
+                        verbose=verbose
+                    )
+                else: 
+                    print(f'Could not tokenize {doc.id}: no main edition found.')
+            except ValueError as e:
+                print(e)
+                continue
             
             self._doc_to_xml_file(
                 dstfolder, 
-                doc
+                doc,
+                verbose
             )
 
     @property
-    def tokens(self) -> list[Token]:
-        return list(chain(*[doc.tokens_no_nested for doc in self.docs]))
+    def tokens(self) -> GenericCollection[Token]:
+        _tokens = list(chain(*[doc.tokens_no_nested for doc in self.docs]))
+        return GenericCollection(_tokens)
     
     def top(self, length=10) -> EpiDocCorpus:
         return EpiDocCorpus(list(top(self.docs, length)))
+
+    def where(self, predicate: Callable[[EpiDoc], bool]) -> EpiDocCorpus:
+        """
+        Filter abbreviations according to a predicate
+        """
+        docs = [doc for doc in self.docs 
+                             if predicate(doc)]
+        return EpiDocCorpus(docs)

@@ -12,6 +12,7 @@ from ..element import EpiDocElement
 from .ex import Ex
 from .abbr import Abbr
 from .am import Am
+from .g import G
 
 from ..enums import AbbrType
 from ..utils import (leiden_str_from_children, 
@@ -27,13 +28,16 @@ class Expan(EpiDocElement):
     Will normally contain <abbr> and <ex> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be _Element type or None.')
+    def __init__(self, e: _Element | EpiDocElement):
+        if not isinstance(e, (_Element, EpiDocElement)):
+            raise TypeError('e should be _Element or EpiDocElement type.')
 
-        self._e = e
+        if isinstance(e, _Element):
+            self._e = e
+        elif isinstance(e, EpiDocElement):
+            self._e = e._e
 
-        if localname(e) != 'expan':
+        if localname(self._e) != 'expan':
             raise TypeError(f'Element should be of type <expan>, '
                             f'but is of type <{localname(e)}>.')
 
@@ -92,6 +96,17 @@ class Expan(EpiDocElement):
     @property
     def as_element(self) -> EpiDocElement:
         return EpiDocElement(self.e)
+    
+    def contains_g(self, with_ref: str | None = None) -> bool:
+        """
+        Return True if contains a `<g>` element (optionally with the
+        @ref attribute set)
+        """    
+        gs = map(G, map(lambda elem: elem.e, self.desc_elems_by_local_name('g')))
+        if with_ref is None:
+            return len(list(gs)) > 0
+        
+        return any(map(lambda g: g.ref == with_ref, gs))
 
     @property
     def first_abbr(self) -> Optional[Abbr]:

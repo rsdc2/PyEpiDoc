@@ -1,10 +1,18 @@
+from __future__ import annotations
+
 from lxml import etree
+from pathlib import Path
 
 from pyepidoc.epidoc.epidoc import EpiDoc
+from pyepidoc.epidoc.metadata.title_stmt import TitleStmt
 from pyepidoc.shared import head
 from pyepidoc.epidoc.dom import lang, line
 
+from ...config import FILE_WRITE_MODE
+
 import pytest
+
+test_files_path = "tests/api/files/"
 
 relative_filepaths = {
     'ISic000001': 'tests/api/files/single_files_untokenized/ISic000001.xml',
@@ -49,6 +57,86 @@ def test_collect_normalized():
         'Flamma', 
         'secutor'
     ]
+
+
+test_date_not_before_files_and_ids = [
+    ("ISic000001.xml", "ISic000001"),
+    ("ISic000552.xml", "ISic000552")
+]
+@pytest.mark.parametrize(["filename", "doc_id"], test_date_not_before_files_and_ids)
+def test_doc_id(filename: str, doc_id: str):
+    """
+    Test that document ID collected correctly
+    """
+
+    fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(fp)
+    assert doc.id == doc_id 
+
+
+test_doc_main_edition_is_empty_files = [
+    'ISic000001_empty_main_edition.xml',
+    'ISic000001_empty_main_edition_ab.xml'
+]
+@pytest.mark.parametrize("filename", test_doc_main_edition_is_empty_files)
+def test_doc_main_edition_is_empty(filename: str):
+    """
+    Test that can recognise a main edition that is empty, i.e.
+    no usable / tokenizable content
+    """
+    path = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(path)
+
+    assert doc.main_edition is not None and doc.main_edition.is_empty
+    
+
+test_is_after_inputs = [
+    ("ISic000001.xml", 50),
+    ("ISic000552.xml", 200),
+    ("ISic000001_dateNotBefore.xml", 50)
+]
+@pytest.mark.parametrize(["filename", "date_after"], test_is_after_inputs)
+def test_is_after_date(filename: str, date_after: int):
+    """
+    
+    """
+
+    fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(fp)
+    assert doc.is_after(date_after)
+    
+
+test_is_before_inputs = [
+    ("ISic000001.xml", 300),
+    ("ISic000552.xml", 500),
+    ("ISic000001_dateNotBefore.xml", 300)
+]
+@pytest.mark.parametrize(["filename", "date_before"], test_is_before_inputs)
+def test_is_before_date(filename: str, date_before: int):
+    """
+    
+    """
+
+    fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(fp)
+    assert doc.is_before(date_before)
+
+
+test_date_range_inputs = [
+    ("ISic000001.xml", (50, 300)),
+    ("ISic000552.xml", (200, 500)),
+    ("ISic000001_dateNotBefore.xml", (50, 300))
+]
+@pytest.mark.parametrize(["filename", "date_range"], test_date_range_inputs)
+def test_date_range(filename: str, date_range: tuple[int | None, int | None]):
+    """
+    Test that document daterange collected correctly depending on whether
+    the document uses @notBefore or @notBefore-Custom
+    """
+
+    fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
+    doc = EpiDoc(fp)
+    assert doc.daterange == date_range
 
 
 def test_leiden_plus_text():
@@ -101,7 +189,7 @@ def test_lines():
 
 
 @pytest.mark.parametrize("filepath", relative_filepaths.values())
-def test_load_relative_filepath_from_str(filepath:str):
+def test_load_relative_filepath_from_str(filepath: str):
     doc = EpiDoc(filepath)
     assert doc.tokens_normalized != []
 
@@ -109,6 +197,7 @@ def test_load_relative_filepath_from_str(filepath:str):
 def test_materialclasses():
     doc = EpiDoc(relative_filepaths['ISic000001'])
     assert doc.materialclasses == ['#material.stone.marble']
+    
 
 def test_punct():
     """
@@ -133,3 +222,14 @@ def test_reproduces_processing_instructions():
     assert all([str(instr) in list(map(str, doc.processing_instructions)) 
                 for instr in doc_.processing_instructions])
     
+
+def test_can_get_title_stmt():
+
+    # Arrange
+    epidoc = EpiDoc(relative_filepaths['ISic000001'])
+
+    # Act
+    title_stmt = epidoc.title_stmt
+
+    # Assert
+    assert isinstance(title_stmt, TitleStmt)

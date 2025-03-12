@@ -6,7 +6,7 @@
         <body>
             <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
-                    <lb n="1"/><gap reason="lost" extent="unknown" unit="character"/><w><unclear>a</unclear>e</w> <g ref="#interpunct">·</g>
+                    <lb n="1"/><gap reason="lost" extent="unknown" unit="character"/> <w><unclear>a</unclear>e</w> <g ref="#interpunct">·</g>
                 </ab>
             </div>
         </body>
