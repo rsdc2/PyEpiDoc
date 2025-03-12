@@ -52,7 +52,7 @@ prettify_pyepidoc_paths = [
     ),
     (
         'tests/workflows/prettify/files/input/ISic000002.xml',
-        'tests/workflows/prettify/files//ISic000002_prettified_pyepidoc.xml',
+        'tests/workflows/prettify/files/output/ISic000002_prettified_pyepidoc.xml',
         'tests/workflows/prettify/files/benchmark/ISic000002_prettified_pyepidoc.xml'
     )
 
