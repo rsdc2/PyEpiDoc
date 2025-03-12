@@ -3,7 +3,7 @@ from typing import Callable
 import pytest
 
 from pyepidoc import EpiDoc
-from pyepidoc.shared.file import remove_file 
+from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.shared.testing import (
     save_and_reload, 
     save_reload_and_compare_with_benchmark
@@ -28,13 +28,16 @@ def test_lemmatize_on_main_edition():
     """
 
     filename = 'lemmatized_main_edition_with_dummy.xml'
-    remove_file(lemmatized_path + filename)
 
     doc = EpiDoc(unlemmatized_path + 'single_token.xml')
     doc.lemmatize(dummy_lemmatizer, 'main')
 
     # Check correct
-    doc_ = save_and_reload(doc, lemmatized_path + filename)
+    doc_ = save_and_reload(
+        doc, 
+        path=lemmatized_path + filename, 
+        mode=FILE_WRITE_MODE
+    )
     edition_ = doc_.body.edition_by_subtype(None)
 
     assert edition_ is not None
@@ -92,3 +95,31 @@ def test_lemmatize_on_separate_edition(
         benchmark_path + filename,
         FILE_WRITE_MODE
     )
+
+
+@pytest.mark.parametrize(
+        "filename", 
+        map(lambda fn: fn[0], filenames_with_tag_counts))
+def test_lemmatize_on_separate_edition_with_resp(
+    filename: str
+):
+
+    """
+    Test that calling the `lemmatize` method 
+    on an EpiDoc document with a <respStmt> puts the 
+    <respStmt> on the document
+    """
+    # Arrange
+    doc = EpiDoc(unlemmatized_path + filename)
+    resp_stmt = RespStmt.from_details(
+        name='Joe Bloggs',
+        initials='JB',
+        ref='xyz',
+        resp_text='Lemmatization'
+    )
+
+    # Act
+    doc.lemmatize(dummy_lemmatizer, 'separate', resp_stmt=resp_stmt)
+
+    # Assert
+    assert doc.title_stmt.resp_stmts[-1] == resp_stmt

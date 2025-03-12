@@ -170,7 +170,7 @@ def prettify(
             
     # Do the pretty-printing
     for tag in newlinetags:
-        desc_elems = edition.get_desc_elems_by_name(elem_names=[tag])
+        desc_elems = edition.get_desc_tei_elems(elem_names=[tag])
 
         if tag in ['ab', 'lg']:
             for ab in desc_elems:
@@ -195,7 +195,7 @@ def prettify(
                 prettify_first_child(parent)
 
         prettify_closing_tags(
-            edition.get_desc_elems_by_name(
+            edition.get_desc_tei_elems(
                 ['ab', 'l', 'lg' 'lb', 'div']
                 )
             )
@@ -237,7 +237,7 @@ class Edition(EpiDocElement):
         """
 
         return [Ab(element._e) 
-            for element in self.get_desc_elems_by_name(['ab'])]
+            for element in self.get_desc_tei_elems(['ab'])]
 
     def append_empty_ab(self) -> Ab:
         
@@ -283,7 +283,7 @@ class Edition(EpiDocElement):
 
     @property
     def divs(self) -> list[BaseElement]:
-        return self.get_desc_elems_by_name(['div'])
+        return self.get_desc_tei_elems(['div'])
 
     @property
     def edition_text(self) -> str:
@@ -406,7 +406,7 @@ class Edition(EpiDocElement):
         """
 
         return [Lg(element._e) 
-            for element in self.get_desc_elems_by_name(['lg'])]
+            for element in self.get_desc_tei_elems(['lg'])]
 
     @property
     def ls(self) -> list[Ab]:
@@ -417,7 +417,7 @@ class Edition(EpiDocElement):
         """
 
         return [L(element._e) 
-            for element in self.get_desc_elems_by_name(['l'])]
+            for element in self.get_desc_tei_elems(['l'])]
 
     @property
     def n_id_elements(self) -> list[EpiDocElement]:
@@ -427,7 +427,7 @@ class Edition(EpiDocElement):
         receive an `@n` id.
         """
 
-        elems = self.get_desc_elems_by_name(NIDElements.values())
+        elems = self.get_desc_tei_elems(NIDElements.values())
         return list(map(EpiDocElement, elems))
 
     def prettify(

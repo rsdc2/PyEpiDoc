@@ -147,7 +147,7 @@ class Ab(EpiDocElement):
     @property
     def lbs(self) -> Sequence[EpiDocElement]:
         return [EpiDocElement(lb) 
-                for lb in self.get_desc_elems_by_name(['lb'])]
+                for lb in self.get_desc_tei_elems(['lb'])]
 
     @property
     def no_space(self) -> list[EpiDocElement]:

@@ -27,8 +27,8 @@ from ..shared.classes import Tag
 
 from .namespace import Namespace as ns
 
-from ..shared.constants import TEINS, XMLNS, SubsumableRels
-from ..shared import maxone
+from pyepidoc.shared.constants import TEINS, XMLNS, SubsumableRels
+from pyepidoc.shared import maxone, head
 from pyepidoc.xml.utils import localname
 
 
@@ -410,7 +410,24 @@ class BaseElement(Showable):
 
         raise TypeError('XPath result is of the wrong type.')
 
-    def get_desc_elems_by_name(self, 
+    def get_desc_tei_elem(self, 
+        elem_name: str, 
+        attribs: dict[str, str] | None = None,
+        throw_if_more_than_one: bool = False
+    ) -> BaseElement | None:
+        
+        """
+        Get first descendant TEI namespace element with the specified
+        name and attributes
+        """
+
+        return maxone(
+            lst=self.get_desc_tei_elems([elem_name], attribs=attribs),
+            defaultval=None,
+            throw_if_more_than_one=throw_if_more_than_one
+        )
+
+    def get_desc_tei_elems(self, 
         elem_names: list[str] | str, 
         attribs: dict[str, str] | None = None
     ) -> list[BaseElement]:

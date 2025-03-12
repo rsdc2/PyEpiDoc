@@ -26,11 +26,17 @@ class TitleStmt(EpiDocElement):
         """
         Add a new <respStmt> element to the <titleStmt/> element
         """
-        resp_stmt = RespStmt.new_resp_stmt(name, initials, ref, resp_text)
+        resp_stmt = RespStmt.from_details(name, initials, ref, resp_text)
         self.e.append(resp_stmt.e)
 
         return self
     
+    @staticmethod
+    def from_details(title: str) -> TitleStmt:
+        title_elem = EpiDocElement.create('title')
+        title_elem.text = title
+        return TitleStmt(title_elem)
+
     @property
     def resp_stmts(self) -> list[RespStmt]:
         """
@@ -38,6 +44,6 @@ class TitleStmt(EpiDocElement):
         """
         
         resp_stmt_elems = self.desc_elems_by_local_name("respStmt")
-        return list(map(RespStmt, resp_stmt_elems))
+        return list(map(RespStmt.from_elem, resp_stmt_elems))
 
     

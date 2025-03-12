@@ -35,6 +35,8 @@ from .element import EpiDocElement, BaseElement
 
 from .metadata.title_stmt import TitleStmt
 from .metadata.resp_stmt import RespStmt
+from .metadata.file_desc import FileDesc
+from .metadata.tei_header import TeiHeader
 
 from .elements.ab import Ab
 from .elements.body import Body
@@ -85,7 +87,7 @@ class EpiDoc(DocRoot):
         """
         
         super().__init__(inpt)
-        self.assert_has_TEIns()
+        self.assert_has_tei_ns()
 
         if validate_on_load:
             validation_result, msg = self.validate()
@@ -117,7 +119,52 @@ class EpiDoc(DocRoot):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
     
-    def assert_has_TEIns(self) -> bool:
+    def _append_new_lemmatized_edition(self) -> Edition:
+
+        """
+        Add a new edition to the document, ready to contain
+        lemmatized elements, but no words are copied
+        or lemmatized.
+        Raises an error if the edition already exists, or
+        if the edition could not be created.
+        """
+
+        # Check no lemmatized editions already
+        lemmatized_edition = self.body.edition_by_subtype('simple-lemmatized')
+        if lemmatized_edition is not None:
+            raise ValueError('Lemmatized edition already present.')
+
+        # Create edition if it does not already exist
+        self.body.create_edition('simple-lemmatized')
+        edition = self.body.edition_by_subtype('simple-lemmatized')
+
+        # Raise an error if could not be created
+        if edition is None:
+            raise TypeError('Failed to create a simple lemmatized edition.')
+        
+        return edition
+    
+    def _append_new_tei_header(self) -> EpiDoc:
+        """
+        Insert a <teiHeader> element as the first child
+        """
+        tei_header_elem = TeiHeader.create_tei_header()
+        self.e.insert(0, tei_header_elem.e)
+        return self
+
+    def _append_resp_stmt(self, resp_stmt: RespStmt) -> EpiDoc:
+        if resp_stmt is not None: 
+            if self.title_stmt is None:
+                if self.file_desc is None:
+                    if self.tei_header is None:
+                        self._append_new_tei_header()
+                    self.tei_header.append_new_file_desc() #type: ignore
+                self.file_desc.append_new_title_stmt('') #type: ignore
+            self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
+
+        return self
+    
+    def assert_has_tei_ns(self) -> bool:
         """
         Return True if uses TEI namespaces;
         raises an AssertionError if not
@@ -135,7 +182,7 @@ class EpiDoc(DocRoot):
 
         elem = maxone(self
             .publication_stmt
-            .get_desc_elems_by_name('authority'), 
+            .get_desc_tei_elems('authority'), 
         )
 
         if elem is None:
@@ -187,31 +234,6 @@ class EpiDoc(DocRoot):
         self.main_edition.convert_ws_to_names()
         
         return self
-    
-    def _create_lemmatized_edition(self) -> Edition:
-
-        """
-        Add a new edition to the document, ready to contain
-        lemmatized elements, but no words are copied
-        or lemmatized.
-        Raises an error if the edition already exists, or
-        if the edition could not be created.
-        """
-
-        # Check no lemmatized editions already
-        lemmatized_edition = self.body.edition_by_subtype('simple-lemmatized')
-        if lemmatized_edition is not None:
-            raise ValueError('Lemmatized edition already present.')
-
-        # Create edition if it does not already exist
-        self.body.create_edition('simple-lemmatized')
-        edition = self.body.edition_by_subtype('simple-lemmatized')
-
-        # Raise an error if could not be created
-        if edition is None:
-            raise TypeError('Failed to create a simple lemmatized edition.')
-        
-        return edition
 
     @property
     def date(self) -> Optional[int]:
@@ -271,7 +293,7 @@ class EpiDoc(DocRoot):
 
         elem = maxone(self
             .publication_stmt
-            .get_desc_elems_by_name('distributor'), 
+            .get_desc_tei_elems('distributor'), 
         )
 
         if elem is None:
@@ -369,6 +391,13 @@ class EpiDoc(DocRoot):
         
         return [expan for expan in self.expans 
                 if expan.abbr_types == abbr_type]
+    
+    @property
+    def file_desc(self) -> FileDesc | None:
+        tei_header = self.tei_header
+        if tei_header is None: 
+            return None
+        return tei_header.file_desc
 
     @property
     def first_edition(self) -> Optional[Edition]:
@@ -420,6 +449,48 @@ class EpiDoc(DocRoot):
         
         raise ValueError(f'Invalid lang_attr {lang_attr}')
 
+    def _get_textclasses(
+            self, 
+            throw_if_more_than_one: bool) -> list[str]:
+        """
+        Returns a list of text classes in the document
+
+        :param throw_if_more_than_one: if True, throws an error if 
+        more than one <textClass> element is present (as appears to be 
+        the case if IRCyr, where the first element is empty). 
+        If False, returns the results from the last <textClass> 
+        element.
+        """
+        try:
+            textclass_elems = self.get_desc('textClass')
+            textclass_e = maxone(
+                self.get_desc('textClass'), 
+                throw_if_more_than_one=throw_if_more_than_one,
+                idx=len(textclass_elems) - 1)
+            
+        except ValueError as e:
+            raise ValueError(f'Could not return a textClass from {self.id}. '
+                             'This is likely because the element was either '
+                             'not present, or because there were more than one.')
+
+        if textclass_e is None:
+            return []
+
+        textclass_element = EpiDocElement(textclass_e)
+
+        terms = textclass_element.get_desc_tei_elems('term')
+        terms_with_ana = [term for term in terms 
+                                if term.has_attrib('ana')]
+
+        functions = []
+        for term in terms_with_ana:
+            ana_term = term.get_attrib('ana')
+
+            if ana_term is not None:
+                functions += ana_term.split()
+
+        return functions
+
     @property
     def has_no_main_edition(self) -> bool:
         return self.main_edition is None or \
@@ -469,7 +540,7 @@ class EpiDoc(DocRoot):
             if self.publication_stmt is None:
                 return []
 
-            return self.publication_stmt.get_desc_elems_by_name('idno', {'type': s})            
+            return self.publication_stmt.get_desc_tei_elems('idno', {'type': s})            
 
         id_sources = {
             'Epigraphische Datenbank Heidelberg': 'localID',
@@ -580,7 +651,7 @@ class EpiDoc(DocRoot):
         if lang_usage is None: 
             return []
 
-        languages = lang_usage.get_desc_elems_by_name('language')
+        languages = lang_usage.get_desc_tei_elems('language')
         idents = [language.get_attrib('ident') for language in languages]
         return [ident for ident in idents if ident is not None]
 
@@ -640,7 +711,7 @@ class EpiDoc(DocRoot):
             lemmatized_edition = self.edition_by_subtype('simple-lemmatized') 
             if lemmatized_edition is None:
                 
-                lemmatized_edition = self._create_lemmatized_edition()
+                lemmatized_edition = self._append_new_lemmatized_edition()
                 self.body.copy_edition_items_to_appear_in_lemmatized_edition(
                     main_edition, 
                     lemmatized_edition
@@ -658,8 +729,10 @@ class EpiDoc(DocRoot):
             w.lemma = lemmatize(w.text or '')
         
         self.prettify(prettifier='pyepidoc', verbose=verbose)
-        if resp_stmt is not None: 
-            self.title_stmt.append_resp_stmt(resp_stmt)
+        
+        if resp_stmt:
+            self._append_resp_stmt(resp_stmt)
+        
         return self
 
     @property
@@ -831,7 +904,7 @@ class EpiDoc(DocRoot):
         
         pers_name_elems = (self
             .editions()[0]
-            .get_desc_elems_by_name('persName')
+            .get_desc_tei_elems('persName')
         )
         
         pers_names = map(
@@ -1010,7 +1083,7 @@ class EpiDoc(DocRoot):
         
         role_name_elems = (self
             .editions()[0]
-            .get_desc_elems_by_name('roleName')
+            .get_desc_tei_elems('roleName')
         )
         
         role_names = map(
@@ -1071,8 +1144,12 @@ class EpiDoc(DocRoot):
         return maxone(self.get_desc('TEI'))
 
     @property
-    def tei_header(self) -> Optional[_Element]:
-        return maxone(self.get_desc('teiHeader'))
+    def tei_header(self) -> Optional[TeiHeader]:
+        tei_header_elem = maxone(self.root_elem.get_desc_tei_elems('teiHeader'))
+        if tei_header_elem is None:
+            return None
+        
+        return TeiHeader(tei_header_elem)
 
     def text(
             self, 
@@ -1139,48 +1216,6 @@ class EpiDoc(DocRoot):
 
         return self.text('xml')
 
-    def _get_textclasses(
-            self, 
-            throw_if_more_than_one: bool) -> list[str]:
-        """
-        Returns a list of text classes in the document
-
-        :param throw_if_more_than_one: if True, throws an error if 
-        more than one <textClass> element is present (as appears to be 
-        the case if IRCyr, where the first element is empty). 
-        If False, returns the results from the last <textClass> 
-        element.
-        """
-        try:
-            textclass_elems = self.get_desc('textClass')
-            textclass_e = maxone(
-                self.get_desc('textClass'), 
-                throw_if_more_than_one=throw_if_more_than_one,
-                idx=len(textclass_elems) - 1)
-            
-        except ValueError as e:
-            raise ValueError(f'Could not return a textClass from {self.id}. '
-                             'This is likely because the element was either '
-                             'not present, or because there were more than one.')
-
-        if textclass_e is None:
-            return []
-
-        textclass_element = EpiDocElement(textclass_e)
-
-        terms = textclass_element.get_desc_elems_by_name('term')
-        terms_with_ana = [term for term in terms 
-                                if term.has_attrib('ana')]
-
-        functions = []
-        for term in terms_with_ana:
-            ana_term = term.get_attrib('ana')
-
-            if ana_term is not None:
-                functions += ana_term.split()
-
-        return functions
-
     @property
     def textclasses(self) -> list[str]:
         """
@@ -1227,21 +1262,15 @@ class EpiDoc(DocRoot):
             return EpiDocElement(elem).text
         
     @property
-    def title_stmt(self) -> TitleStmt:
+    def title_stmt(self) -> TitleStmt | None:
         """
-        The <titleStmt/> element of the document,
+        The <titleStmt> element of the document,
         providing details including a series of 
-        <respStmt/>
+        <respStmt>
         """
-
-        title_stmt_elem = maxone(
-            self.get_desc(["titleStmt"]),
-            throw_if_more_than_one=True
-        )
-        if title_stmt_elem is None:
-            raise ValueError("No <titleStmt/> element found")
-        
-        return TitleStmt(title_stmt_elem)
+        if self.file_desc is None:
+            return None
+        return self.file_desc.title_stmt
 
     @overload   
     def to_xml_file(

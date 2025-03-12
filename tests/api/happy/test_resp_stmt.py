@@ -8,7 +8,7 @@ def test_create_resp_stmt():
     # Arrange 
 
     # Act
-    resp_stmt = RespStmt.new_resp_stmt("Robert Crellin", "RC", "xyz", "abc")
+    resp_stmt = RespStmt.from_details("Robert Crellin", "RC", "xyz", "abc")
     resp_stmt_xml = resp_stmt.xml_byte_str    
     # breakpoint()
 
