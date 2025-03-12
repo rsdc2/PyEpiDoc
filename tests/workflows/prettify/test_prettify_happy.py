@@ -46,13 +46,13 @@ test_files_path = "tests/api/files/"
 
 prettify_pyepidoc_paths = [
     (
-        'tests/workflows/prettify/files/ugly/ISic000552.xml',
-        'tests/workflows/prettify/files/prettified/ISic000552_prettified_pyepidoc.xml',
+        'tests/workflows/prettify/files/input/ISic000552.xml',
+        'tests/workflows/prettify/files/output/ISic000552_prettified_pyepidoc.xml',
         'tests/workflows/prettify/files/benchmark/ISic000552_prettified_pyepidoc.xml'
     ),
     (
-        'tests/workflows/prettify/files/ugly/ISic000002.xml',
-        'tests/workflows/prettify/files/prettified/ISic000002_prettified_pyepidoc.xml',
+        'tests/workflows/prettify/files/input/ISic000002.xml',
+        'tests/workflows/prettify/files//ISic000002_prettified_pyepidoc.xml',
         'tests/workflows/prettify/files/benchmark/ISic000002_prettified_pyepidoc.xml'
     )
 

@@ -127,7 +127,7 @@ class Body(EpiDocElement):
                 'subtype': subtype,
                 ns.give_ns('space', XMLNS): xmlspace_preserve,
                 'lang': lang,
-                'resp': '#' + resp.initials if resp else None
+                'resp': '#' + resp.initials if resp and resp.initials else None
             }),
             nsmap = None
         )
