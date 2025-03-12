@@ -4,8 +4,7 @@ from .resp_stmt import RespStmt
 
 class TitleStmt(EpiDocElement):
     """
-    The <titleStmt> node, including collections of
-    <respStmt>
+    The <titleStmt> node, including collections of <respStmt>
     """
 
     def append_resp_stmt(
@@ -33,7 +32,7 @@ class TitleStmt(EpiDocElement):
     
     @staticmethod
     def from_details(title: str) -> TitleStmt:
-        title_elem = EpiDocElement.create('title')
+        title_elem = EpiDocElement.create('titleStmt')
         title_elem.text = title
         return TitleStmt(title_elem)
 
