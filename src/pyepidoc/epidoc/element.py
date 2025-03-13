@@ -137,9 +137,9 @@ class EpiDocElement(BaseElement, Showable):
         e: _Element | EpiDocElement | BaseElement,
         final_space: bool = False
     ):
-        error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-
+        
         if not isinstance(e, (_Element, EpiDocElement, BaseElement)) and e is not None:
+            error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
         if isinstance(e, _Element):
@@ -545,14 +545,14 @@ class EpiDocElement(BaseElement, Showable):
         Unique computed element id based on hierarchical position in the XML document. 
         """
         
-        def _recfunc(acc:list[int], element:Optional[EpiDocElement]) -> list[int]:
+        def _recfunc(acc: list[int], element: Optional[EpiDocElement]) -> list[int]:
             if element is None:
                 return acc 
 
             if element.e is None:
                 return acc
             
-            parent = element.e.getparent()
+            parent: _Element = element.e.getparent()
 
             if parent is None:
                 return acc
@@ -932,10 +932,10 @@ class EpiDocElement(BaseElement, Showable):
     def parent(self) -> Optional[EpiDocElement]:
         if self._e is None:
             return None
-
-        if type(self._e.getparent()) is _Element:    
-            return EpiDocElement(self._e.getparent())
-        elif self._e.getparent() is None:
+        _parent = self._e.getparent()
+        if type(_parent) is _Element:    
+            return EpiDocElement(_parent)
+        elif _parent is None:
             return None
         else:
             raise TypeError('Parent is of incorrect type.')
