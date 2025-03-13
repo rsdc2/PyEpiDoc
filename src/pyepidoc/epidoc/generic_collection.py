@@ -9,13 +9,9 @@ from typing import (
     Callable,
     Generic,
     SupportsIndex,
-    overload,
-    TypeVar,
-    Hashable
+    TypeVar
 )
 from functools import reduce
-
-from pyepidoc.shared.utils import top, contains, listfilter
 
 T = TypeVar('T')
 U = TypeVar('U')
