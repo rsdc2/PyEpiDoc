@@ -52,7 +52,6 @@ def test_xpath(triple: tuple[str, str, list[_Element | _ElementUnicodeResult]]):
     xml, xpath, result = triple
     elem = etree.fromstring(xml, None)
     baseelem = BaseElement(elem)
-    # breakpoint()
     assert baseelem.xpath(xpath) == result
 
 

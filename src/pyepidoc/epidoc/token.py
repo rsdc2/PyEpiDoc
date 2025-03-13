@@ -85,8 +85,6 @@ class Token(EpiDocElement):
     """
     
     def __str__(self) -> str:
-        # raise AttributeError
-        # breakpoint()
         return self.normalized_form
 
     @cached_property

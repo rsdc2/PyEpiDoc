@@ -344,10 +344,9 @@ class EpiDoc(DocRoot):
         main edition is not present, and None is returned.
         """
         try:
-            return self.body.edition_by_subtype(subtype=None) 
-                # or \
-                # self.body.edition_by_subtype(subtype='PHI') or \
-                # self.body.edition_by_subtype(subtype='EDR')
+            return self.body.edition_by_subtype(subtype=None) or \
+                self.body.edition_by_subtype(subtype='PHI') or \
+                self.body.edition_by_subtype(subtype='EDR')
         except ValueError as e:
             raise ValueError(f"Encountered the following error in {self.id}:\n"
                              f"{e.args[0]}")
@@ -635,7 +634,11 @@ class EpiDoc(DocRoot):
             return True
         
         return False
-            
+    
+    @property
+    def is_lemmatizable(self) -> bool:
+        return self.tokens_no_nested.__len__() > 0
+
     @property
     def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 or len(self.langs) > 1
@@ -1153,6 +1156,9 @@ class EpiDoc(DocRoot):
 
     @property
     def tei(self) -> Optional[_Element]:
+        """
+        Return the `<TEI>` root element
+        """
         return maxone(self.get_desc('TEI'))
 
     @property
@@ -1417,7 +1423,7 @@ class EpiDoc(DocRoot):
         return list(tokens)        
 
     @property
-    def tokens_list_str(self) -> list[str]:
+    def tokens_as_strings(self) -> list[str]:
         """
         :return: tokens as a list of strings
         """

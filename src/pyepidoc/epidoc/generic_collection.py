@@ -12,6 +12,8 @@ from typing import (
     TypeVar
 )
 from functools import reduce
+from pathlib import Path
+import os
 
 T = TypeVar('T')
 U = TypeVar('U')
@@ -102,6 +104,21 @@ class GenericCollection(Generic[T]):
         """
         reduction = reduce(func, self._values, initial)
         return reduction
+    
+    def save_values(
+            self, 
+            path: str | Path, 
+            mapfunc: Callable[[T], str] = str) -> None:
+        """
+        Save the values of the underlying list to a file
+
+        :param path: the path to save the file to
+        :mapfunc: a function for transforming the type T to a string
+        """
+
+        with open(path, mode='w') as f:
+            string_values = map(lambda value: mapfunc(value) + '\n', self._values)
+            f.writelines(string_values)
 
     def sort(self, key=lambda x: x, reverse: bool=False) -> GenericCollection[T]:
         """

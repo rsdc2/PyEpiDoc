@@ -712,6 +712,7 @@ class EpiDocCorpus:
 
         return  (
             f'Document count:{indent}{self.doc_count}\n'
+            f'  - of which lemmatizable (tokens > 0): {self.lemmatizable_files().count}\n'
             f'Date range:{indent}{format_year(self.daterange[0])}--{format_year(self.daterange[1])}\n'
             f'Token count:{indent}{tokens.count}\n'
             f'  - of which names (% tokens):\t\t{names_count} ({percentage(names_count, tokens.count)}%)\n'
@@ -727,6 +728,16 @@ class EpiDocCorpus:
     def languages(self) -> set[str]:
         return set([lang for doc in self.docs 
                     for lang in doc.div_langs])
+
+    def lemmatizable_files(self) -> GenericCollection[EpiDoc]:
+        """
+        Return a GenericCollection of EpiDoc objects where the 
+        lemmatizability is greater than 0%.
+        """
+
+        lemmatizable_docs = [doc for doc in self.docs
+                             if doc.is_lemmatizable]
+        return GenericCollection(lemmatizable_docs)
 
     def list_unique_orig_places(
         self,
@@ -829,6 +840,17 @@ class EpiDocCorpus:
         """
         names = list(chain(*[doc.names(predicate) for doc in self.docs]))
         return GenericCollection(names)
+
+    def non_lemmatizable_files(self) -> GenericCollection[EpiDoc]:
+        """
+        Return a GenericCollection of EpiDoc files that contain no
+        lemmatizable elements
+        """
+
+        docs = [doc for doc in self.docs 
+                if not doc.is_lemmatizable]
+        
+        return GenericCollection(docs)
 
     @property
     def nums(self) -> list[Num]:

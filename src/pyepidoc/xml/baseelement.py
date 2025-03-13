@@ -11,7 +11,7 @@ from typing import (
 )
 from copy import deepcopy
 
-from ..shared.classes import Showable, ExtendableSeq
+from ..shared.classes import Showable, ExtendableSeq, SetRelation
 import operator
 import re
 
@@ -499,7 +499,7 @@ class BaseElement(Showable):
     def has_ancestors_by_names(
             self, 
             names: list[str], 
-            setrelation: Callable[[set[str], set[str]], bool]
+            setrelation: Callable[[set[str], set[str]], bool] = SetRelation.intersection
             ) -> bool:
         
         """
