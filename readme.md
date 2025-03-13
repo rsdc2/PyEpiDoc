@@ -24,9 +24,9 @@ To install PyEpiDoc along with its dependencies (```lxml```):
 
 3. From within the cloned repository, install at the ```user``` level with:
 
-    ```
-    pip install . --user
-    ```
+```bash
+pip install . --user
+```
 
 ### In a virtual environment
 
@@ -34,14 +34,18 @@ If you are using a ```venv``` virtual environment:
 
 1. Make sure the virtual environment has been activated, e.g. on Linux:
 
-    ```source env/bin/activate```
+```bash
+source env/bin/activate
+```
 
 2. Install with ```pip```:
 
-    ```pip install .```
+```bash
+pip install .
+```
 
 ## Uninstall
-```
+```bash
 pip uninstall pyepidoc
 ```
 
@@ -81,7 +85,7 @@ Given a tokenized EpiDoc file ```ISic000001.xml``` in an ```examples/``` folder 
 
 ### Load the EpiDoc file
 
-```
+```python
 from pyepidoc import EpiDoc
 
 doc = EpiDoc("examples/ISic000001_tokenized.xml")
@@ -96,7 +100,7 @@ print(doc.edition_text)
 
 ### Print all tokens in an edition (e.g. ```<w>```, ```<name>``` etc.)
 
-```
+```python
 tokens = doc.tokens
 print(' '.join([str(token) for token in tokens]))
 ```
@@ -105,7 +109,7 @@ print(' '.join([str(token) for token in tokens]))
 
 Given an untokenized EpiDoc file ```ISic000032_untokenized.xml``` in an ```examples``` folder in the current working directory:
 
-```
+```python
 from pyepidoc import EpiDoc
 
 # Load the EpiDoc file
@@ -125,7 +129,7 @@ doc.to_xml_file("examples/ISic000032_tokenized.xml")
 
 Given a corpus of EpiDoc XML files in a folder ```corpus/``` in the current working directory, the following code filters the corpus and writes a text file containing the ids of all Latin funerary inscriptions from Catania / Catina:
 
-```
+```python
 from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.enums import TextClass
 from pyepidoc.file.funcs import str_to_file
@@ -156,7 +160,7 @@ There are two ways to validate an EpiDoc XML file:
 
 1. Validate on load, e.g.:
 
-```
+```python
 from pyepidoc import EpiDoc
 
 doc = EpiDoc('examples/ISic000001_tokenized.xml', validate_on_load=True)
@@ -168,7 +172,7 @@ in the `pyepidoc` root directory.
 
 2. Validate against a custom RelaxNG schema:
 
-```
+```python
 from pyepidoc import EpiDoc
 doc = EpiDoc('examples/ISic000001_tokenized.xml')
 
