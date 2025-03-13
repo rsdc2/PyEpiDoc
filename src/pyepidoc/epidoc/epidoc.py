@@ -635,7 +635,11 @@ class EpiDoc(DocRoot):
             return True
         
         return False
-            
+    
+    @property
+    def is_lemmatizable(self) -> bool:
+        return self.tokens_no_nested.__len__() > 0
+
     @property
     def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 or len(self.langs) > 1
