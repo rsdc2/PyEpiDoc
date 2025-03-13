@@ -728,6 +728,24 @@ class EpiDocCorpus:
         return set([lang for doc in self.docs 
                     for lang in doc.div_langs])
 
+    def lemmatizable_files(self) -> GenericCollection[EpiDoc]:
+        """
+        Return a GenericCollection of EpiDoc objects where the 
+        lemmatizability is greater than 0%.
+        """
+
+        def predicate(_doc: EpiDoc) -> bool:
+            if _doc.main_edition is None:
+                return False
+            lemmatizability = _doc.main_edition.lemmatizability
+            if lemmatizability.division_by_zero:
+                return False
+            return _doc.main_edition.lemmatizability.value > 0
+
+        lemmatizable_docs = [doc for doc in self.docs
+                             if predicate(doc)]
+        return GenericCollection(lemmatizable_docs)
+
     def list_unique_orig_places(
         self,
         frequencies:bool=True,

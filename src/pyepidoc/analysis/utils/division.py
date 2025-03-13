@@ -23,6 +23,10 @@ class Division:
     def __str__(self) -> str:
         return f'Division(num: {self._numerator}, denom: {self._denominator}, value: {self._eval()}, pc: {self.percentage(2)})'
 
+    @property
+    def division_by_zero(self) -> bool:
+        return self._denominator == 0
+
     def _eval(self) -> float:
         return self._numerator / self._denominator
 
