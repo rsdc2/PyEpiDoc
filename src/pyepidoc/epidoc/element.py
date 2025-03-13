@@ -6,7 +6,7 @@ from typing import (
     cast,
     overload
 )
-
+import sys
 
 from pyepidoc.shared.classes import Showable, ExtendableSeq
 from pyepidoc.xml.baseelement import BaseElement
@@ -47,6 +47,7 @@ from .enums import (
 from . import ids
 from pyepidoc.shared import maxoneT, head, last, to_lower
 
+sys.setrecursionlimit(10000)
 
 def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     """
