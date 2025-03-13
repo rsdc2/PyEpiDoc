@@ -1,4 +1,3 @@
-from pyepidoc import EpiDoc
 from pyepidoc.epidoc.elements.edition import Edition
 import pytest
 
