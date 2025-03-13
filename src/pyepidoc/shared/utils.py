@@ -93,8 +93,8 @@ def remove_none(l:list[Optional[T]]) -> list[T]:
 def maxone(
     lst:list[T] | Sequence[T], 
     defaultval: Optional[T]=None, 
-    throw_if_more_than_one:bool=True,
-    idx:int=0
+    throw_if_more_than_one: bool=True,
+    idx: int=0
 ) -> Optional[T]:
 
     """

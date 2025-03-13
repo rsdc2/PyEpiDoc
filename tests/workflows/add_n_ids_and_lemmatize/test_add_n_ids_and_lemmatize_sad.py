@@ -10,7 +10,6 @@ from pyepidoc import EpiDoc
 from .paths import *
 
 
-
 def test_add_n_ids_and_lemmatize():
 
     """

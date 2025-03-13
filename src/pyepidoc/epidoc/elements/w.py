@@ -41,6 +41,10 @@ class W(EpiDocElement):
             element_classes, 
             'node'
         )
+    
+    @property
+    def leiden_str(self) -> str:
+        return self.leiden_form
 
     @property
     def lemma(self) -> str | None:

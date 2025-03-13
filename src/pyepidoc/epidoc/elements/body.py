@@ -7,6 +7,7 @@ from lxml import etree
 from lxml.etree import _Element
 
 from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.epidoc.elements.edition import Edition
 from pyepidoc.epidoc.elements.w import W
@@ -90,14 +91,18 @@ class Body(EpiDocElement):
                         desc_copy.remove_children()
                         desc_copy.remove_attr('id', XMLNS)
 
-                        if desc.localname in SEPARATE_LEMMATIZED_TEXT_ITEMS:
+                        # All lemmatizable elements except 'orig'
+                        if desc.localname in SEPARATE_LEMMATIZED_TEXT_ITEMS and not desc.localname == 'orig':
                             if desc.localname == 'w':
                                 desc_copy.text = W(desc.e).normalized_form
-                            elif desc.localname == 'orig':
-                                desc_copy.text = Orig(desc.e).normalized_form
                             else:
                                 desc_copy.text = Token(desc).normalized_form
-                            ab_copy._e.append(desc_copy._e)                            
+                            ab_copy._e.append(desc_copy._e)          
+                        # 'orig' only included if not part of 'choice', i.e. stands on its own
+                        # otherwise the 'reg' is taken
+                        elif desc.localname == 'orig' and not desc.has_parent('choice'):       
+                            desc_copy.text = Orig(desc.e).normalized_form        
+                            ab_copy._e.append(desc_copy._e)   
 
         append_items(source, EpiDocElement(target))
         return target
@@ -106,6 +111,7 @@ class Body(EpiDocElement):
             self, 
             subtype: str | None = None, 
             lang: str | None = None,
+            resp: RespStmt | None = None,
             xmlspace_preserve: Literal['preserve', None] = None) -> Edition:
 
         """
@@ -120,7 +126,8 @@ class Body(EpiDocElement):
                 'type': 'edition', 
                 'subtype': subtype,
                 ns.give_ns('space', XMLNS): xmlspace_preserve,
-                'lang': lang
+                'lang': lang,
+                'resp': '#' + resp.initials if resp and resp.initials else None
             }),
             nsmap = None
         )
@@ -154,11 +161,15 @@ class Body(EpiDocElement):
             subtype_editions = [ed for ed in self.editions(True)
                         if ed.subtype == subtype]
 
-        return maxone(
-            subtype_editions, 
-            defaultval=None, 
-            throw_if_more_than_one=True
-        )
+        try:
+            return maxone(
+                subtype_editions, 
+                defaultval=None, 
+                throw_if_more_than_one=True
+            )
+        except ValueError as e:
+            raise ValueError(f"There is more than one edition present "
+                             f"with the subtype {subtype}.")
 
     def editions(self, include_transliterations=False) -> list[Edition]:
 

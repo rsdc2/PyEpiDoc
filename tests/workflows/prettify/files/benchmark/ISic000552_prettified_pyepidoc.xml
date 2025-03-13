@@ -63,14 +63,11 @@
             </publicationStmt>
             <sourceDesc>
                 <msDesc>
-                    <msIdentifier>
-                        <!--Default country and region-->
+                    <msIdentifier><!--Default country and region-->
                         <country>Italy</country>
                         <region>Sicily</region>
                         <settlement>Sicily</settlement>
-                        <repository>
-                            <!--Add Repository Here-->
-                        </repository>
+                        <repository><!--Add Repository Here--></repository>
                         <!--No inventory number found-->
                         <!--Adding location for old id numbers if available-->
                         <altIdentifier>
@@ -87,8 +84,7 @@
                             <supportDesc>
                                 <support>
                                     <material ana="#material.stone" ref="http://www.eagle-network.eu/voc/material/lod/2.html">stone</material>
-                                    <dimensions>
-                                        <!--Default values and requires editing-->
+                                    <dimensions><!--Default values and requires editing-->
                                         <height unit="cm"/>
                                         <width unit="cm"/>
                                         <depth unit="cm"/>
@@ -97,16 +93,14 @@
                                 <condition/>
                             </supportDesc>
                             <layoutDesc>
-                                <layout>
-                                    <!--Default value and requires checking-->
+                                <layout><!--Default value and requires checking-->
                                     <rs ana="#execution.chiselled" ref="http://www.eagle-network.eu/voc/writing/lod/1">chiselled</rs>
                                     <damage/>
                                 </layout>
                             </layoutDesc>
                         </objectDesc>
                         <handDesc>
-                            <handNote>
-                                <!--Default value and requires editing-->
+                            <handNote><!--Default value and requires editing-->
                                 <locus from="line1" to="line1">Line 1</locus>
                                 <dimensions type="letterHeight">
                                     <height unit="mm"/>
@@ -188,10 +182,10 @@
     <facsimile>
         <surface type="front">
             <graphic n="screen" url="ISic000552_tiled.tif" height="3680px" width="5520px">
-                <desc>I.Sicily with the permission of the Assessorato Regionale dei Beni Culturali e dell&#8217;Identit&#224; Siciliana - Dipartimento dei Beni Culturali e dell&#8217;Identit&#224; Siciliana</desc>
+                <desc>I.Sicily with the permission of the Assessorato Regionale dei Beni Culturali e dell’Identità Siciliana - Dipartimento dei Beni Culturali e dell’Identità Siciliana</desc>
             </graphic>
             <graphic n="print" url="ISic000552.jpg" height="3680px" width="5520px">
-                <desc>I.Sicily with the permission of the Assessorato Regionale dei Beni Culturali e dell&#8217;Identit&#224; Siciliana - Dipartimento dei Beni Culturali e dell&#8217;Identit&#224; Siciliana</desc>
+                <desc>I.Sicily with the permission of the Assessorato Regionale dei Beni Culturali e dell’Identità Siciliana - Dipartimento dei Beni Culturali e dell’Identità Siciliana</desc>
             </graphic>
         </surface>
     </facsimile>
@@ -199,10 +193,10 @@
         <body>
             <div type="edition" xml:space="preserve" xml:lang="la" resp="#AA">
                 <ab>
-                    <lb n="1"/><name>Flamma</name><g ref="#interpunct">&#183;</g><w><choice><sic><expan><abbr>sic</abbr><ex>utor</ex></expan></sic><corr><expan><abbr>sec</abbr><ex>utor</ex></expan></corr></choice></w><g ref="#interpunct">&#183;</g><w><expan><abbr>vix</abbr><ex>it</ex></expan></w><g ref="#interpunct">&#183;</g><w><expan><abbr>an</abbr><ex>nis</ex></expan></w><g ref="#interpunct">&#183;</g><num value="30">XXX</num>
-                    <lb n="2"/><w><choice><orig>pugnat</orig><reg>pugnavit</reg></choice></w><g ref="#interpunct">&#183;</g><num value="34">XXXIIII</num><g ref="#interpunct">&#183;</g><w>vicit</w><g ref="#interpunct">&#183;</g><num value="21">XXI</num>
-                    <lb n="3"/><w>stans</w><g ref="#interpunct">&#183;</g><num value="9">VIIII</num><g ref="#interpunct">&#183;</g><w><expan><abbr>mis</abbr><ex>sus</ex></expan></w><g ref="#interpunct">&#183;</g><num value="4">IIII</num><g ref="#interpunct">&#183;</g><w><expan><abbr>nat</abbr><ex>ione</ex></expan></w><g ref="#interpunct">&#183;</g><w><expan><abbr><hi rend="supraline">S</hi></abbr><ex>y</ex><abbr><hi rend="supraline">rus</hi></abbr></expan></w>
-                    <lb n="4"/><w><choice><orig>hui</orig><reg>huic</reg></choice></w><name>Delicatus</name><g ref="#interpunct">&#183;</g><w>coarmio</w><g ref="#interpunct">&#183;</g><w>merenti</w><g ref="#interpunct">&#183;</g><w>fecit</w>
+                    <lb n="1"/><name>Flamma</name><g ref="#interpunct">·</g><w><choice><sic><expan><abbr>sic</abbr><ex>utor</ex></expan></sic><corr><expan><abbr>sec</abbr><ex>utor</ex></expan></corr></choice></w><g ref="#interpunct">·</g><w><expan><abbr>vix</abbr><ex>it</ex></expan></w><g ref="#interpunct">·</g><w><expan><abbr>an</abbr><ex>nis</ex></expan></w><g ref="#interpunct">·</g><num value="30">XXX</num>
+                    <lb n="2"/><w><choice><orig>pugnat</orig><reg>pugnavit</reg></choice></w><g ref="#interpunct">·</g><num value="34">XXXIIII</num><g ref="#interpunct">·</g><w>vicit</w><g ref="#interpunct">·</g><num value="21">XXI</num>
+                    <lb n="3"/><w>stans</w><g ref="#interpunct">·</g><num value="9">VIIII</num><g ref="#interpunct">·</g><w><expan><abbr>mis</abbr><ex>sus</ex></expan></w><g ref="#interpunct">·</g><num value="4">IIII</num><g ref="#interpunct">·</g><w><expan><abbr>nat</abbr><ex>ione</ex></expan></w><g ref="#interpunct">·</g><w><expan><abbr><hi rend="supraline">S</hi></abbr><ex>y</ex><abbr><hi rend="supraline">rus</hi></abbr></expan></w>
+                    <lb n="4"/><w><choice><orig>hui</orig><reg>huic</reg></choice></w><name>Delicatus</name><g ref="#interpunct">·</g><w>coarmio</w><g ref="#interpunct">·</g><w>merenti</w><g ref="#interpunct">·</g><w>fecit</w>
                 </ab>
             </div>
             <div type="apparatus">
@@ -216,9 +210,7 @@
                 <p>Flamma, a secutor [gladiator] lived for 30 years, fought 34 times, won 21 times, drew 9 times, was defeated [spared] 4 times. Syrian by nationality. Delicatus built this for a worthy comrade-at-arms</p>
             </div>
             <div type="commentary">
-                <p>
-                    <!--commented out pending revision-->
-                </p>
+                <p><!--commented out pending revision--></p>
             </div>
             <div type="bibliography">
                 <listBibl type="edition">

@@ -202,17 +202,17 @@
         <body>
             <div type="edition" xml:space="preserve" xml:lang="la" resp="#JP">
                 <ab>
-                    <lb n="1"/><w n="5">D<hi rend="tall">i</hi>s</w> <g ref="#interpunct">·</g> <w n="10"><expan><abbr>man</abbr><ex>ibus</ex></expan></w>
-                    <lb n="2"/><g ref="#interpunct">·</g> <persName type="attested"><name>Zet<hi rend="ligature">hi</hi></name></persName>
-                    <lb n="3"/><w n="15"><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g ref="#interpunct">·</g> <w n="20"><expan><abbr>a</abbr><ex>nnis</ex></expan></w> <g ref="#interpunct">·</g> <num value="6">VI</num>
+                    <lb n="1"/><w n="5">D<hi rend="tall">i</hi>s</w> <g ref="#interpunct" n="10">·</g> <w n="15"><expan><abbr>man</abbr><ex>ibus</ex></expan></w>
+                    <lb n="2"/><g ref="#interpunct" n="20">·</g> <persName type="attested"><name>Zet<hi rend="ligature">hi</hi></name></persName>
+                    <lb n="3"/><w n="25"><expan><abbr>vix</abbr><ex>it</ex></expan></w> <g ref="#interpunct" n="30">·</g> <w n="35"><expan><abbr>a</abbr><ex>nnis</ex></expan></w> <g ref="#interpunct" n="40">·</g> <num value="6">VI</num>
                 </ab>
             </div>
             <div type="edition" subtype="simple-lemmatized">
                 <ab>
                     <w n="5" lemma="lemma">Dis</w>
-                    <w n="10" lemma="lemma">manibus</w>
-                    <w n="15" lemma="lemma">vixit</w>
-                    <w n="20" lemma="lemma">annis</w>
+                    <w n="15" lemma="lemma">manibus</w>
+                    <w n="25" lemma="lemma">vixit</w>
+                    <w n="35" lemma="lemma">annis</w>
                 </ab>
             </div>
             <div type="apparatus" resp="#JP">
@@ -228,12 +228,12 @@
             <div type="translation">
                 <p>
                     <!-- add xml:lang with language code and translation without markup -->
-                </p>
+				</p>
             </div>
             <div type="commentary">
                 <p>
                     <!--commented out pending revision-->
-                </p>
+				</p>
             </div>
             <div type="bibliography">
                 <listBibl type="edition">

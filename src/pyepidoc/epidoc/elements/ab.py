@@ -15,8 +15,7 @@ from ..enums import (
     TokenCarrier, 
     AtomicTokenType, 
     CompoundTokenType,
-    SpaceSeparated,
-    NoSpace,
+    NoSpaceBefore,
     OrigTextType
 )
 from pyepidoc.shared.classes import SetRelation
@@ -52,7 +51,7 @@ class Ab(EpiDocElement):
 
     """
 
-    def __init__(self, e:Optional[_Element | EpiDocElement | BaseElement]=None):
+    def __init__(self, e: Optional[_Element | EpiDocElement | BaseElement]=None):
 
         if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')
@@ -148,7 +147,7 @@ class Ab(EpiDocElement):
     @property
     def lbs(self) -> Sequence[EpiDocElement]:
         return [EpiDocElement(lb) 
-                for lb in self.get_desc_elems_by_name(['lb'])]
+                for lb in self.get_desc_tei_elems(['lb'])]
 
     @property
     def no_space(self) -> list[EpiDocElement]:
@@ -158,7 +157,7 @@ class Ab(EpiDocElement):
 
         return [EpiDocElement(item) for item 
             in self.get_desc(
-                NoSpace.values() 
+                NoSpaceBefore.values() 
             )
         ]
 
@@ -192,19 +191,6 @@ class Ab(EpiDocElement):
     def set_ids(self, id: Optional[str], base: Base=52) -> None:
         for idcarrier in self.id_carriers:
             idcarrier.set_id(id, base)
-
-    @property
-    def space_separated(self) -> list[EpiDocElement]:
-        """
-        :return: a |list| of |Element|s that should be separated by spaces,
-        and the next sibling is not an Element that should not be separated
-        from the previous element by a space.
-        """
-
-        elems = [EpiDocElement(item) 
-                 for item in self.get_desc(SpaceSeparated.values())]
-        return [elem for elem in elems 
-                if elem.next_sibling not in self.no_space]
     
     @property
     def textparts(self) -> list[TextPart]:
@@ -264,8 +250,8 @@ class Ab(EpiDocElement):
             )
 
         def remove_subsets(
-            acc:list[list[EpiDocElement]], 
-            sequence:list[EpiDocElement]
+            acc: list[list[EpiDocElement]], 
+            sequence: list[EpiDocElement]
         ) -> list[list[EpiDocElement]]:
             
             if any([SetRelation.propersubset(set(sequence), set(acc_item))

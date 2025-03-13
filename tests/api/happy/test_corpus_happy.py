@@ -1,8 +1,13 @@
 from pyepidoc import EpiDocCorpus
 from pathlib import Path
 
-corpus_folderpath = 'tests/api/files/corpus'
-corpus_role_name_folderpath = 'tests/api/files/corpus_role_name'
+CORPUS_FOLDERPATH = 'tests/api/files/corpus'
+CORPUS_ROLENAME_FOLDERPATH = 'tests/api/files/corpus_role_name'
+
+
+def test_daterange():
+    corpus = EpiDocCorpus(inpt=CORPUS_FOLDERPATH)
+    assert corpus.daterange == (1, 300)
 
 
 def test_load_corpus_local():
@@ -10,7 +15,7 @@ def test_load_corpus_local():
     Test that a corpus of files loads correctly.
     """
 
-    corpus = EpiDocCorpus(inpt=corpus_folderpath)
+    corpus = EpiDocCorpus(inpt=CORPUS_FOLDERPATH)
 
     assert corpus.doc_count == 2
     assert corpus.token_count > 0
@@ -21,7 +26,7 @@ def test_load_corpus_root():
     Test that a corpus of files loads correctly.
     """
     
-    corpus = EpiDocCorpus(inpt=Path(corpus_folderpath).absolute())
+    corpus = EpiDocCorpus(inpt=Path(CORPUS_FOLDERPATH).absolute())
 
     assert corpus.doc_count == 2
     assert corpus.token_count > 0
@@ -32,7 +37,7 @@ def test_materialclasses():
     Test identification of material classes
     """
 
-    corpus = EpiDocCorpus(inpt=corpus_folderpath)
+    corpus = EpiDocCorpus(inpt=CORPUS_FOLDERPATH)
 
     assert corpus.materialclasses == {
         '#material.stone.limestone', 
@@ -45,14 +50,14 @@ def test_filter_materialclasses():
     Test filtering of material classes
     """
 
-    corpus = EpiDocCorpus(inpt=corpus_folderpath)
+    corpus = EpiDocCorpus(inpt=CORPUS_FOLDERPATH)
     filtered_corpus = corpus.filter_by_materialclass(
         ['#material.stone'], 
         'substring'
     )
     assert filtered_corpus.doc_count == 2
 
-    corpus = EpiDocCorpus(inpt=corpus_folderpath)
+    corpus = EpiDocCorpus(inpt=CORPUS_FOLDERPATH)
     filtered_corpus = corpus.filter_by_materialclass(
         ['#material.stone.marble'], 
         'equal'
@@ -66,7 +71,7 @@ def test_filter_rolenames():
     Test filtering of role names
     """
 
-    corpus = EpiDocCorpus(inpt=corpus_role_name_folderpath)
+    corpus = EpiDocCorpus(inpt=CORPUS_ROLENAME_FOLDERPATH)
     filtered_corpus = corpus.filter_by_role_name_type(
         ['supracivic']
     ).filter_by_role_name_subtype(['imperator'])

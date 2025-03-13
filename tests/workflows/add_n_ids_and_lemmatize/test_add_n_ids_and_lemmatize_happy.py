@@ -8,7 +8,7 @@ from pyepidoc import EpiDoc
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 
 from .paths import *
-
+from ...config import FILE_WRITE_MODE
 
 def test_add_n_ids_and_lemmatize():
 
@@ -27,4 +27,6 @@ def test_add_n_ids_and_lemmatize():
     assert save_reload_and_compare_with_benchmark(
         doc,
         OUTPUT / Path('ISic000001_happy.xml'), 
-        BENCHMARK / Path('ISic000001_happy.xml'))
+        BENCHMARK / Path('ISic000001_happy.xml'),
+        FILE_WRITE_MODE
+    )

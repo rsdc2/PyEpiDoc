@@ -8,6 +8,7 @@ from typing import (
 )
 from pathlib import Path
 from copy import deepcopy
+from io import BytesIO
 
 from lxml import etree, isoschematron
 from lxml.etree import ( 
@@ -34,9 +35,24 @@ class DocRoot:
     _valid: Optional[bool] = None
 
     @overload
+    def __init__(self, inpt: BaseElement):
+        """
+        :param inpt: an lxml _Element tree object representing an
+            lxml document
+        """
+        ...
+
+    @overload
     def __init__(self, inpt: Path):
         """
         :param inpt: Path containing the filepath of the EpiDoc XML file.
+        """
+        ...
+
+    @overload
+    def __init__(self, inpt: BytesIO):
+        """
+        :param inpt: BytesIO object containing an in-memory version of the file.
         """
         ...
 
@@ -48,14 +64,14 @@ class DocRoot:
         ...
 
     @overload
-    def __init__(self, inpt:_ElementTree):
+    def __init__(self, inpt: _ElementTree):
         """
         :param inpt: an lxml _Element tree object representing an
             lxml document
         """
         ...
 
-    def __init__(self, inpt: Path | str | _ElementTree | _Element):
+    def __init__(self, inpt: Path | BytesIO | str | _ElementTree | _Element | BaseElement):
 
         if isinstance(inpt, Path):
             self._p = inpt
@@ -64,12 +80,20 @@ class DocRoot:
             self._e = self._load_e_from_file(inpt)
             return
         
+        elif isinstance(inpt, BytesIO):
+            self._e = self._load_e_from_file(inpt)
+            return
+            
         elif isinstance(inpt, _ElementTree):
             self._e = inpt.getroot()
             return
 
         elif isinstance(inpt, _Element):
             self._e = inpt
+            return
+
+        elif isinstance(inpt, BaseElement):
+            self._e = inpt._e
             return
         
         elif isinstance(inpt, str):
@@ -80,7 +104,7 @@ class DocRoot:
             return
         
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
-                        'Path, _ElementTree, _Element or str.')
+                        'Path, _ElementTree, _Element, BaseElement or str.')
 
     @staticmethod
     def _clean_text(text:str):
@@ -135,6 +159,10 @@ class DocRoot:
     @property
     def e(self) -> _Element:
         return self._e
+    
+    @property
+    def filename(self) -> str:
+        return self._p.stem
 
     def get_desc(self, 
         elemnames:Union[list[str], str], 
@@ -223,20 +251,20 @@ class DocRoot:
         
         return []
 
-    def _load_e_from_file(self, filepath: Path) -> _Element:
+    def _load_e_from_file(self, inpt: Path | BytesIO) -> _Element:
 
         """
         Reads the root element from file and returns an
         _Element object representing the XML document
         """
-        return self._load_etree_from_file(filepath=filepath).getroot()
+        return self._load_etree_from_file(inpt=inpt).getroot()
 
-    def _load_etree_from_file(self, filepath: Path) -> _ElementTree:
+    def _load_etree_from_file(self, inpt: Path | BytesIO) -> _ElementTree:
         """
         Reads the root element from file and returns an
         _ElementTree object representing the XML document
         """
-        if not isinstance(filepath, Path):
+        if not isinstance(inpt, (Path, BytesIO)):
             raise TypeError('filepath variable must be of type'
                             'Path')
         
@@ -246,7 +274,7 @@ class DocRoot:
                 resolve_entities=False
             )
             self._roottree: _ElementTree = etree.parse(
-                source=filepath, 
+                source=inpt, 
                 parser=parser
             )
 
@@ -327,6 +355,7 @@ class DocRoot:
         try:
             b_str = etree.tostring( 
                 self.e, 
+                encoding='utf-8',   # type: ignore
                 pretty_print=False,      # type: ignore
                 xml_declaration=False   # type: ignore
             )
