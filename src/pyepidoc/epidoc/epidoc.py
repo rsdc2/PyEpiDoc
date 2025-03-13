@@ -1153,6 +1153,9 @@ class EpiDoc(DocRoot):
 
     @property
     def tei(self) -> Optional[_Element]:
+        """
+        Return the `<TEI>` root element
+        """
         return maxone(self.get_desc('TEI'))
 
     @property

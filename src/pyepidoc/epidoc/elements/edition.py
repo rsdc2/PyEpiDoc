@@ -11,6 +11,7 @@ from lxml import etree
 from lxml.etree import _Element, _ElementUnicodeResult, _Comment
 
 from pyepidoc.xml import BaseElement
+from pyepidoc.xml.utils import editionify
 from pyepidoc.analysis.utils.division import Division
 from pyepidoc.shared.constants import XMLNS
 from pyepidoc.shared import default_str
@@ -211,10 +212,10 @@ class Edition(EpiDocElement):
     """
 
     def __init__(self, e:Optional[_Element | EpiDocElement | BaseElement]=None):
-        if type(e) not in [_Element, EpiDocElement, BaseElement] and \
+        if not isinstance(e, (_Element, EpiDocElement, BaseElement)) and \
             e is not None:
             
-            raise TypeError('e should be _Element or Element type, or None.')
+            raise TypeError(f'Input element is of type {type(e)}. It should be _Element or Element type, or None.')
 
         if type(e) is _Element:
             self._e = e
@@ -306,6 +307,21 @@ class Edition(EpiDocElement):
     def formatted_text(self) -> str:
         _text = re.sub(r'\n\s+', '\n', self.text_desc)
         return re.sub(r'(\S)·(\S)', r'\1 · \2', _text)
+    
+    @staticmethod
+    def from_xml_str(
+        xml_str: str, 
+        wrap_in_ab: bool = True) -> Edition:
+        
+        """
+        Take an XML string containing the XML content of an 
+        EpiDoc edition, and return an Edition object. Automatically 
+        wraps in the `<div type="edition">` element 
+
+        :param wrap_with_ab: Wraps the content in an `<ab>` element
+        """
+        
+        return Edition(BaseElement.from_xml_str(editionify(xml_str, wrap_in_ab=wrap_in_ab)))
 
     @property
     def gaps(self) -> list[EpiDocElement]:
