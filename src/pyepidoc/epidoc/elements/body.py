@@ -165,7 +165,7 @@ class Body(EpiDocElement):
             return maxone(
                 subtype_editions, 
                 defaultval=None, 
-                throw_if_more_than_one=True
+                throw_if_more_than_one=False
             )
         except ValueError as e:
             raise ValueError(f"There is more than one edition present "
