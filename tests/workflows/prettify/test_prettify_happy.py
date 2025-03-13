@@ -19,13 +19,6 @@ from ...config import FILE_WRITE_MODE
 
 import pytest
 
-test_files_path = "tests/api/files/"
-
-    # 'benchmark_lxml': 'tests/api/files/prettifying/benchmark/ISic000552_prettified_lxml.xml',
-    # 'benchmark_pyepidoc': 'tests/api/files/prettifying/benchmark/ISic000552_prettified_pyepidoc.xml',
-    # 'prettified_lxml': 'tests/api/files/prettifying/prettified/ISic000552_prettified_lxml.xml',
-    # 'prettified_pyepidoc': 'tests/api/files/prettifying/prettified/ISic000552_prettified_pyepidoc.xml',
-
 # def test_prettify_doc_with_lxml():
 #     """
 #     Tests that the entire document is prettified correctly
