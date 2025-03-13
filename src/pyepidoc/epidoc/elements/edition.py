@@ -11,6 +11,7 @@ from lxml import etree
 from lxml.etree import _Element, _ElementUnicodeResult, _Comment
 
 from pyepidoc.xml import BaseElement
+from pyepidoc.analysis.utils.division import Division
 from pyepidoc.shared.constants import XMLNS
 from pyepidoc.shared import default_str
 from pyepidoc.shared.types import Base
@@ -44,6 +45,7 @@ from ..enums import (
     NoSpaceBefore,
     TokenCarrier, 
     AtomicTokenType, 
+    AtomicNonTokenType,
     SubatomicTagType, 
     CompoundTokenType, 
     ContainerType,
@@ -73,7 +75,6 @@ def prettify(
     """
 
     newlinetags = ['div', 'ab', 'lg', 'l', 'lb']
-
 
     def _get_multiplier(element: BaseElement) -> int:
         if element.tag.name in chain(
@@ -259,6 +260,14 @@ class Edition(EpiDocElement):
         return Ab(ab_elem)
 
     @property
+    def atomic_non_tokens(self) -> list[EpiDocElement]:
+        """
+        Atomic elements that are not analyzable as 'words' 
+        i.e. cannot be lemmatized
+        """
+        return self._get_desc_atomic_non_tokens()
+
+    @property
     def compound_tokens(self) -> list[EpiDocElement]:
         return [EpiDocElement(item) for item 
             in self.get_desc(
@@ -303,7 +312,28 @@ class Edition(EpiDocElement):
         return [EpiDocElement(gap) 
                 for gap in self.get_desc('gap')]
 
-    def get_desc_tokens(self, include_nested: bool = False) -> list[Token]:
+    def _get_desc_atomic_non_tokens(
+            self, 
+            items_with_token_ancestors: bool = False) -> list[EpiDocElement]:
+
+        """
+        Get the atomic non-token descendants e.g. `<orig>`.  
+
+        :param include_within_tokens: If True, includes those items that have
+        token ancestors
+
+        :return: a list of EpiDocElement
+        """
+
+        desc = map(EpiDocElement, self.get_desc(AtomicNonTokenType.values()))
+
+        if items_with_token_ancestors:
+            return list(desc)
+        
+        else:
+            return [item for item in desc if not item.has_ancestors_by_names(AtomicTokenType.values())]
+
+    def _get_desc_tokens(self, include_nested: bool = False) -> list[Token]:
 
         """
         :param include_nested: if true, returns all the descendant tokens,
@@ -396,6 +426,17 @@ class Edition(EpiDocElement):
     @property
     def lbs(self) -> list[EpiDocElement]:
         return list(chain(*[ab.lbs for ab in self.abs]))
+
+    @property
+    def lemmatizability(self) -> Division:
+        """
+        The percentage of atomic tokens that can be lemmtized
+        """
+
+        non_lemmatizable = len(self.atomic_non_tokens)
+        lemmatizable = len(self.tokens_no_nested)
+        total = non_lemmatizable + lemmatizable
+        return Division(lemmatizable, total)
 
     @property
     def lgs(self) -> list[Ab]:
@@ -542,7 +583,7 @@ class Edition(EpiDocElement):
         """
 
         return [Token(word) 
-                for word in self.get_desc_tokens(include_nested=False)]        
+                for word in self._get_desc_tokens(include_nested=False)]        
 
     @property
     def tokens_no_nested(self) -> list[Token]:
@@ -553,7 +594,7 @@ class Edition(EpiDocElement):
         """
 
         return [Token(word) 
-                for word in self.get_desc_tokens(include_nested=False)]
+                for word in self._get_desc_tokens(include_nested=False)]
 
     @property
     def token_g_dividers(self) -> list[EpiDocElement]:

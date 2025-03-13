@@ -106,6 +106,9 @@ class SpaceSeparated(EnumerableEnum):
 
 
 class N_ID_Elements(EnumerableEnum):
+    """
+    These are elements that can receive @n id attributes
+    """
     W = 'w'
     Orig = 'orig'
     G = 'g'
@@ -134,6 +137,7 @@ class ContainerType(EnumerableEnum):
     Lg = 'lg'
     L = 'l'
     Div = 'div'
+
 
 class CompoundTokenType(EnumerableEnum):
     PersName = 'persName'

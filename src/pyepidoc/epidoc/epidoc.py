@@ -1417,7 +1417,7 @@ class EpiDoc(DocRoot):
         return list(tokens)        
 
     @property
-    def tokens_list_str(self) -> list[str]:
+    def tokens_as_strings(self) -> list[str]:
         """
         :return: tokens as a list of strings
         """
