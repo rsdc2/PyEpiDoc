@@ -344,10 +344,9 @@ class EpiDoc(DocRoot):
         main edition is not present, and None is returned.
         """
         try:
-            return self.body.edition_by_subtype(subtype=None) 
-                # or \
-                # self.body.edition_by_subtype(subtype='PHI') or \
-                # self.body.edition_by_subtype(subtype='EDR')
+            return self.body.edition_by_subtype(subtype=None) or \
+                self.body.edition_by_subtype(subtype='PHI') or \
+                self.body.edition_by_subtype(subtype='EDR')
         except ValueError as e:
             raise ValueError(f"Encountered the following error in {self.id}:\n"
                              f"{e.args[0]}")
