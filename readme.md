@@ -274,4 +274,4 @@ and [pytest](https://docs.pytest.org/en/7.4.x/) ([MIT](https://github.com/pytest
 
 ## Funding
 
-- This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 885040, “Crossreads”).
+This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (grant agreement No 885040, “Crossreads”).
