@@ -4,10 +4,6 @@ from lxml import etree
 
 from ...config import FILE_WRITE_MODE
 
-from pyepidoc.shared.file import remove_file
-from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
-from pyepidoc.epidoc.scripts import tokenize, tokenize_to_file_object
-from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.elements.ab import Ab
 from pyepidoc.xml.utils import abify
 
