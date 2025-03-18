@@ -26,7 +26,7 @@ def test_tokenize_example():
     doc.tokenize()
 
     # Save the results to a new XML file
-    doc.to_xml_file("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
+    doc.to_xml_file("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml", overwrite_existing=True)
 
     tokenized_doc = EpiDoc("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
     tokenized_benchmark = EpiDoc("tests/readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")

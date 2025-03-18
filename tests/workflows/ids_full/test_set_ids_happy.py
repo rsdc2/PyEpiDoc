@@ -23,7 +23,7 @@ def test_set_ids_in_epidoc(filename: Path):
     # Set the IDs
     doc = EpiDoc(input_path / filename)
     doc.set_ids(base=100)
-    doc.to_xml_file(output_path / filename)
+    doc.to_xml_file(output_path / filename, overwrite_existing=True)
 
     # Output to a new XML file
     output = EpiDoc(output_path / filename)

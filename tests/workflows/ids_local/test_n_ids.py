@@ -30,7 +30,7 @@ def test_set_n_ids(filename_with_result: tuple[str, list[str]]):
 
     doc = EpiDoc(input_path / Path(filename))
     with_n_ids = doc.set_n_ids()
-    with_n_ids.to_xml_file(output_path / Path(filename))
+    with_n_ids.to_xml_file(output_path / Path(filename), overwrite_existing=True)
 
     assert [token.get_attrib('n') 
             for token in with_n_ids.n_id_elements] == result

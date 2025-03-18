@@ -218,7 +218,8 @@ class EpiDocCorpus:
     def _doc_to_xml_file(
         dstfolder: str | Path, 
         doc: EpiDoc,
-        verbose: bool) -> None:
+        verbose: bool,
+        overwrite_existing: bool) -> None:
         
         """
         Writes out an EpiDoc object to an XML file
@@ -230,7 +231,11 @@ class EpiDocCorpus:
 
         dst = dstfolder_path / Path(doc.id + '.xml')
         
-        doc.to_xml_file(dst.absolute(), verbose=verbose)
+        doc.to_xml_file(
+            dst.absolute(), 
+            verbose=verbose, 
+            overwrite_existing=overwrite_existing
+        )
 
     @cached_property
     def docs(self) -> list[EpiDoc]:
@@ -889,8 +894,13 @@ class EpiDocCorpus:
     def set_ids(
             self, 
             dstfolder: str,
-            verbose=True
+            verbose=True,
+            overwrite_existing=False
         ) -> None:
+
+        """
+        Set ids on the corpus and save to destination folder
+        """
         
         for doc in self.docs:
             if verbose: print(f'Setting ids for {doc.id}...')
@@ -898,7 +908,8 @@ class EpiDocCorpus:
             self._doc_to_xml_file(
                 dstfolder=dstfolder, 
                 doc=doc,
-                verbose=verbose)
+                verbose=verbose,
+                overwrite_existing=overwrite_existing)
 
     @cached_property
     def size(self) -> int:
@@ -933,12 +944,30 @@ class EpiDocCorpus:
                     for textclass in doc._get_textclasses(
                         throw_if_more_than_one=throw_if_more_than_one)])
 
-    def to_txt(self, dst: str) -> None:
+    def save_to_folder(
+            self, 
+            folder_path: str, 
+            verbose: bool = False,
+            overwrite_existing: bool = False) -> None:
         """
-        Writes a .txt file with the text of the documents
+        Write out the corpus files to a folder
+        """
+        print('Saving corpus to ', folder_path)
+        for doc in sorted(self.docs, key=lambda doc: doc.id):
+            self._doc_to_xml_file(
+                folder_path, 
+                doc,
+                verbose,
+                overwrite_existing=overwrite_existing
+            )
+        print('Saving corpus to ', folder_path)
+
+    def save_text(self, filepath: str) -> None:
+        """
+        Write a text file with the text of the documents
         in the corpus.
         """
-        with open(dst, 'w') as f:
+        with open(filepath, 'w') as f:
             f.write(self.formatted_text)
 
     @property
@@ -952,7 +981,8 @@ class EpiDocCorpus:
         prettify_edition: bool=True,
         set_ids: bool=False,
         convert_ws_to_names: bool=True,
-        verbose: bool=False
+        verbose: bool=False,
+        overwrite_existing: bool = False
     ) -> None:
 
         """
@@ -985,7 +1015,8 @@ class EpiDocCorpus:
             self._doc_to_xml_file(
                 dstfolder, 
                 doc,
-                verbose
+                verbose,
+                overwrite_existing=overwrite_existing
             )
 
     @property

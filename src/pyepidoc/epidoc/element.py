@@ -1104,8 +1104,10 @@ class EpiDocElement(BaseElement, Showable):
         """
         :return: |Element|s that should be separated by spaces
         """
-        elems = [EpiDocElement(item) 
-                 for item in self.get_desc(SpaceSeparated.values())]
+        elems = [item
+                 for item in map(EpiDocElement, self.get_desc(SpaceSeparated.values()))
+                 if not item.has_ancestors_by_names(AtomicTokenType.values())]
+        
         return [elem for elem in elems 
                 if elem.next_sibling not in self.no_space]
 
