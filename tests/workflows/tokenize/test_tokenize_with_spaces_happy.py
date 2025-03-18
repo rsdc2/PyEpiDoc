@@ -40,11 +40,11 @@ xml_to_tokenize = [
      ),
      (
          '<orig n="25">Δ</orig> <g ref="#interpunct" n="30">·</g>',
-         '<orig n="25">Δ</orig> <g ref="#interpunct" n="30">·</g>'
+         '<orig n="25">Δ</orig><g ref="#interpunct" n="30">·</g>'
      ),
      (
          '<orig n="25">Δ</orig><g ref="#interpunct" n="30">·</g>',
-         '<orig n="25">Δ</orig> <g ref="#interpunct" n="30">·</g>'
+         '<orig n="25">Δ</orig><g ref="#interpunct" n="30">·</g>'
      )
 
 ]

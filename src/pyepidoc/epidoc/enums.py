@@ -105,7 +105,6 @@ class SpaceSeparated(EnumerableEnum):
     Gap = 'gap'
     Unclear = 'unclear'
     Supplied = 'supplied'
-    Orig = 'orig'
 
 
 class N_ID_Elements(EnumerableEnum):
