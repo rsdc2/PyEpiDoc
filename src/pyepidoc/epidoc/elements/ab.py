@@ -150,7 +150,7 @@ class Ab(EpiDocElement):
                 for lb in self.get_desc_tei_elems(['lb'])]
 
     @property
-    def no_space(self) -> list[EpiDocElement]:
+    def no_space_before(self) -> list[EpiDocElement]:
         """
         :return: a |list| of |Element|s that should not be separated by spaces.
         """
