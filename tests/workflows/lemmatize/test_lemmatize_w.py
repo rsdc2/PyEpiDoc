@@ -1,5 +1,4 @@
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.elements.w import W
 
 from pyepidoc.shared.file import remove_file
 
