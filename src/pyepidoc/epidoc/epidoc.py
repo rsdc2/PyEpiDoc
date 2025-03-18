@@ -740,7 +740,7 @@ class EpiDoc(DocRoot):
                 f'Invalid destination for lemmatized items: {where}')
 
         for w in edition.w_tokens:
-            w.lemma = lemmatize(w.text or '')
+            w.lemma = lemmatize(w.normalized_form or '')
         
         self.prettify(prettifier='pyepidoc', verbose=verbose)
         
