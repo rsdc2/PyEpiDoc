@@ -123,7 +123,7 @@ class NoSpaceBefore(EnumerableEnum):
     been introduced will be cancelled.
     """
     Note = 'note'
-    Unclear = 'unclear'
+    # Unclear = 'unclear'
 
 
 class DoNotPrettifyChildren(EnumerableEnum):
