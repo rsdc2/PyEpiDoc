@@ -1295,7 +1295,8 @@ class EpiDoc(DocRoot):
         self, 
         dst: Path, 
         verbose=True,
-        collapse_empty_elements = False
+        collapse_empty_elements = False,
+        overwrite_existing = False
     ) -> None:
         
         ...
@@ -1305,7 +1306,8 @@ class EpiDoc(DocRoot):
         self,
         dst: str,
         verbose = True,
-        collapse_empty_elements = False
+        collapse_empty_elements = False,
+        overwrite_existing = False
     ) -> None:
         
         ...
@@ -1313,8 +1315,9 @@ class EpiDoc(DocRoot):
     def to_xml_file(
         self, 
         dst: Path | str, 
-        verbose=True,
-        collapse_empty_elements = False
+        verbose = True,
+        collapse_empty_elements = False,
+        overwrite_existing = False
     ) -> None:
         
         """
@@ -1332,8 +1335,13 @@ class EpiDoc(DocRoot):
 
         if verbose: 
             print(f'Writing {self.id}...')
+
+        if overwrite_existing:
+            mode = 'wb'
+        else:
+            mode = 'xb'
         
-        with open(dst, 'wb') as f:
+        with open(dst, mode=mode) as f:
             f.write(self.to_byte_str(collapse_empty_elements))
 
     def to_xml_file_object(self, collapse_empty_elements: bool = False) -> io.BytesIO:

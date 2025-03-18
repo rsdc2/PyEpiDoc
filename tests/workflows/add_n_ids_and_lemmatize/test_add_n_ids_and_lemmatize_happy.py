@@ -21,7 +21,7 @@ def test_add_n_ids_and_lemmatize():
 
     doc.set_n_ids()
     doc.lemmatize(lambda _: 'lemma', where = 'separate')
-    doc.to_xml_file(OUTPUT / Path('ISic000001_happy.xml'))
+    doc.to_xml_file(OUTPUT / Path('ISic000001_happy.xml'), overwrite_existing=True)
 
     # Need to add test here
     assert save_reload_and_compare_with_benchmark(

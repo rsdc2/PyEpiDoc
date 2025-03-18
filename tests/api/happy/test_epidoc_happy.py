@@ -216,7 +216,7 @@ def test_check_ns_on_load():
 
 def test_reproduces_processing_instructions():
     doc = EpiDoc(relative_filepaths['line_2'])
-    doc.to_xml_file(line_2_output)
+    doc.to_xml_file(line_2_output, overwrite_existing=True)
     doc_ = EpiDoc(line_2_output)
     assert len(doc.processing_instructions) == len(doc_.processing_instructions)
     assert all([str(instr) in list(map(str, doc.processing_instructions)) 
