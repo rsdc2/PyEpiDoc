@@ -919,7 +919,7 @@ class EpiDocElement(BaseElement, Showable):
         return []
     
     @property
-    def no_space(self) -> list[EpiDocElement]:
+    def no_space_before(self) -> list[EpiDocElement]:
         """
         :return: |Element|s that should not be separated by spaces.
         """
@@ -1096,20 +1096,22 @@ class EpiDocElement(BaseElement, Showable):
         from previous by a space
         """
 
-        for elem in self.space_separated:            
+        for elem in self.space_separated_elements:            
             elem.append_space()
 
     @property
-    def space_separated(self) -> list[EpiDocElement]:
+    def space_separated_elements(self) -> list[EpiDocElement]:
         """
-        :return: |Element|s that should be separated by spaces
+        :return: |Element|s that should be separated by spaces. Elements
+        contained in an AtomicTokenType element, such as `<w>` will not 
+        have any spaces inserted between them.
         """
         elems = [item
                  for item in map(EpiDocElement, self.get_desc(SpaceSeparated.values()))
                  if not item.has_ancestors_by_names(AtomicTokenType.values())]
         
         return [elem for elem in elems 
-                if elem.next_sibling not in self.no_space]
+                if elem.next_sibling not in self.no_space_before]
 
     def _subsumable_by(self, other:EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 
