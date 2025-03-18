@@ -111,7 +111,12 @@ fragments = [
     (
         ('<x><a/><b/><!--comment--><c/></x>'),
         ('<x>\n    <a/>\n    <b/><!--comment-->\n    <c/>\n</x>'),
-         'Test that does not pretty print within a <p> element'
+         ''
+    ),
+    (
+        ('<change>xyz<ref>ISic000000</ref>zyx</change>'),
+        ('<change>xyz<ref>ISic000000</ref>zyx</change>'),
+         'No newlines within <change>'
     )
 
 ]
@@ -132,6 +137,6 @@ def test_prettify_fragment(ugly: str, benchmark: str, _: str):
     # Assert
     result = benchmark_xml.xml_byte_str.strip() == prettified.xml_byte_str.strip()
     if not result:
-        breakpoint()
+        # breakpoint()
         pass
     assert result
