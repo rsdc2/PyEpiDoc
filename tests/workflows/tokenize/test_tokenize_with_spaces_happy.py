@@ -34,9 +34,17 @@ xml_to_tokenize = [
          '<w><unclear>abc</unclear> <unclear/></w>',
          '<w><unclear>abc</unclear><unclear/></w>'
      ),
-    (
+     (
          '<w n="25">vix<unclear>i</unclear> <supplied reason="lost">t</supplied></w>',
          '<w n="25">vix<unclear>i</unclear><supplied reason="lost">t</supplied></w>'
+     ),
+     (
+         '<orig n="25">Δ</orig> <g ref="#interpunct" n="30">·</g>',
+         '<orig n="25">Δ</orig> <g ref="#interpunct" n="30">·</g>'
+     ),
+     (
+         '<orig n="25">Δ</orig><g ref="#interpunct" n="30">·</g>',
+         '<orig n="25">Δ</orig> <g ref="#interpunct" n="30">·</g>'
      )
 
 ]

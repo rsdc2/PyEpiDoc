@@ -23,9 +23,11 @@ class SubatomicTagType(EnumerableEnum):
     C = 'c' # Character element
 
 
-# Elements that contain text that would not be 
-# included in a normalized form of the text
 class OrigTextType(EnumerableEnum):  
+    """
+    Elements that contain text that would not be 
+    included in a normalized form of the text
+    """
     # Del = 'del'
     # Surplus = 'surplus'
     Orig = 'orig'
@@ -103,6 +105,7 @@ class SpaceSeparated(EnumerableEnum):
     Gap = 'gap'
     Unclear = 'unclear'
     Supplied = 'supplied'
+    Orig = 'orig'
 
 
 class N_ID_Elements(EnumerableEnum):
@@ -130,6 +133,7 @@ class DoNotPrettifyChildren(EnumerableEnum):
     """
     Provenance = 'provenance'
     P = 'p'
+    Change = 'change'
 
 
 class ContainerType(EnumerableEnum):
@@ -261,7 +265,6 @@ class TextClass(EnumerableEnum):
     
     def __str__(self) -> str:
         return self.value
-
 
 
 class SpaceUnit(Enum):
