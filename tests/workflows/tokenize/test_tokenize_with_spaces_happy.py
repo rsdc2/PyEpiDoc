@@ -33,6 +33,10 @@ xml_to_tokenize = [
      (
          '<w><unclear>abc</unclear> <unclear/></w>',
          '<w><unclear>abc</unclear><unclear/></w>'
+     ),
+    (
+         '<w n="25">vix<unclear>i</unclear> <supplied reason="lost">t</supplied></w>',
+         '<w n="25">vix<unclear>i</unclear><supplied reason="lost">t</supplied></w>'
      )
 
 ]
