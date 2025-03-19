@@ -131,7 +131,7 @@ class EpiDocCorpus:
         
         # inpt is a path
         elif isinstance(inpt, (str, Path)):
-            self._handle_fp(inpt, max_iter=max_iter)
+            self._handle_fp(Path(inpt), max_iter=max_iter)
             return
         
         raise TypeError("Invalid input type.")
