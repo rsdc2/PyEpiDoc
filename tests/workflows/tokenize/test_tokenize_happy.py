@@ -286,7 +286,11 @@ xml_to_tokenize = [
             '<name>Marci</name>'
         '</supplied>' 
      '</persName>'
-     )
+     ),
+    (
+     'fecerunt.',
+         '<w>fecerunt.</w>'
+     ),
 ]
 
 

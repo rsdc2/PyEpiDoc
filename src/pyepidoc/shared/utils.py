@@ -21,15 +21,26 @@ U = TypeVar('U')
 V = TypeVar('V')
 
 
-def assert_same_length(l1: list, l2: list):
+def assert_same_length(
+        l1: list[T], 
+        l2: list[U],
+        func1: Callable[[T], str] = lambda x: str(x),
+        func2: Callable[[U], str] = lambda x: str(x)):
 
     """
     Check that two lists are the same length. Raises
     a ValueError if they aren't.
+
+    :param l1: the first list, of type T
+    :param l2: the second list, of type U
+    :param func1: a function to transform an object of type T to a string
+    :param func2: a function to transform an object of type U to a string
     """
 
     if len(l1) != len(l2):
-        raise ValueError('Lists are not of the same length')
+        raise ValueError(f'List 1 (length = {len(l1)}) is not the same length as List 2 (length = {len(l2)}):\n'
+                         f'\t- List 1: {list(map(lambda x: func1(x), l1))}\n'
+                         f'\t- List 2: {list(map(lambda x: func2(x), l2))}')
 
 
 def contains(iterable: Iterable[T], item: T) -> bool:
