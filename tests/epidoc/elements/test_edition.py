@@ -16,4 +16,18 @@ def test_edition_lemmatizability(xml_str: str, expected: float):
 
     # Assert
     assert lemmatizability.percentage() == expected
-    
+
+
+@pytest.mark.parametrize(['xml_str', 'expected'], [
+    ('<roleName type="civic" subtype="duumvir"><w><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></w></roleName>', 1),
+    ('<num value="2" xml:id="AJΤRU"><w><hi rend="supraline" xml:id="AJΤRe">II</hi></w></num>', 1)
+])
+def test_tokens_no_nested_count(xml_str: str, expected: float):
+    # Arrange
+    edition = Edition.from_xml_str(xml_str=xml_str)
+
+    # Act
+    tokens = edition.tokens_no_nested
+
+    # Assert
+    assert len(tokens) == expected
