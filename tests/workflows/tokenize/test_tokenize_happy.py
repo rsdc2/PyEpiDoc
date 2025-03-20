@@ -287,10 +287,14 @@ xml_to_tokenize = [
         '</supplied>' 
      '</persName>'
      ),
-    (
-     'fecerunt.',
-         '<w>fecerunt.</w>'
+     (
+      'fecerunt.',
+      '<w>fecerunt.</w>'
      ),
+     ( # Check that does not tokenize more than once
+         '<roleName type="civic" subtype="duumvir"><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></roleName>',
+         '<roleName type="civic" subtype="duumvir"><w><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></w></roleName>'
+     )
 ]
 
 
