@@ -13,6 +13,7 @@ from .ex import Ex
 from .abbr import Abbr
 from .am import Am
 from .g import G
+from .choice import Choice
 
 from ..enums import AbbrType
 from ..utils import (leiden_str_from_children, 
@@ -39,7 +40,7 @@ class Expan(EpiDocElement):
 
         if localname(self._e) != 'expan':
             raise TypeError(f'Element should be of type <expan>, '
-                            f'but is of type <{localname(e)}>.')
+                            f'but is of type <{localname(self._e)}>.')
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
@@ -127,7 +128,8 @@ class Expan(EpiDocElement):
             'ex': Ex,
             'hi': Hi, 
             'lb': Lb,
-            'supplied': Supplied
+            'supplied': Supplied,
+            'choice': Choice
         }
 
         return element_classes

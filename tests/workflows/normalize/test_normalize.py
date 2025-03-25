@@ -10,7 +10,9 @@ elements = [
      '<lb n="5" break="no"/><g ref="#interpunct">·</g> n</w></name></persName>', 
      'Melanthin'),
     ('<w><choice><orig>decebris</orig><reg>decembres</reg></choice></w>',
-     'decembres')
+     'decembres'),
+    ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
+     'evocato')
 ]
 
 
