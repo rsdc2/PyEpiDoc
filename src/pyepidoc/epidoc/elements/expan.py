@@ -13,7 +13,6 @@ from .ex import Ex
 from .abbr import Abbr
 from .am import Am
 from .g import G
-from .choice import Choice
 
 from ..enums import AbbrType
 from ..utils import (leiden_str_from_children, 
@@ -121,6 +120,7 @@ class Expan(EpiDocElement):
         from .hi import Hi
         from .lb import Lb
         from .supplied import Supplied
+        from .choice import Choice
 
         element_classes: dict[str, type] = {
             'abbr': Abbr,
