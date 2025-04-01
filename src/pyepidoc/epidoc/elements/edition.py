@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Literal
 import re
 
 from lxml import etree
@@ -374,6 +374,34 @@ class Edition(EpiDocElement):
             
             return list(filter(has_not_token_ancestor, desc))        
 
+    def get_text(
+            self, 
+            type: Literal['leiden', 'normalized', 'xml']) -> str:
+        
+        """
+        :param type: the type of text wanted, whether
+        the Leiden version or a normalized version (i.e. with all the 
+        abbreviations expanded), or the raw text content of the descendant
+        XML nodes
+        :return: the edition text of the document
+        """
+        
+        if type == 'leiden':
+
+            leiden = ' '.join([token.leiden_plus_form for token in self.atomic])
+            
+            leiden_ = re.sub(r'\|\s+?\|', '|', leiden)
+            leiden__ = re.sub(r'·\s+?·', '·', leiden_)
+        
+            return leiden__.replace('|', '\n')
+        
+        elif type == 'normalized':
+            return ' '.join(self.tokens_normalized_list_str)
+        
+        elif type == 'xml':
+            return self.text_desc_compressed_whitespace
+
+
     @property
     def id_carriers(self) -> list[EpiDocElement]:
         return list(chain(*[ab.id_carriers 
@@ -562,6 +590,7 @@ class Edition(EpiDocElement):
     def supplied(self) -> Sequence[BaseElement]:
         return [elem for elem in self.desc_elems 
             if elem.localname == 'supplied']
+
 
     @property
     def text_elems(self) -> list[EpiDocElement]:
