@@ -70,6 +70,7 @@ class AtomicNonTokenType(EnumerableEnum):
     Link = 'link'
 
 
+
 class AlwaysSubsumableType(EnumerableEnum):
     """For items that should be subsumed regardless of whether or not there is a space.
     Membership of this class means that the behaviour of SubsumableRels takes place 
@@ -155,6 +156,9 @@ class CompoundTokenType(EnumerableEnum):
     RS = 'rs'
     Add = 'add' # Correct place?    
     Cb = 'cb' # Column beginning
+
+
+Atomic = set(AtomicTokenType.values() + AtomicNonTokenType.values())
 
 
 # Elements that carry tokens, e.g. as internal or external text

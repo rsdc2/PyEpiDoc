@@ -243,7 +243,7 @@ class Token(EpiDocElement):
         
         prec_text = ''.join(map(string_rep, preceding_upto_text))
         following_text = ''.join(map(string_rep, following_upto_text))
-        # breakpoint()
+
         return prec_text + self.leiden_form + following_text        
 
     @property

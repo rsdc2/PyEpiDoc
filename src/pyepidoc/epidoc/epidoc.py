@@ -188,6 +188,16 @@ class EpiDoc(DocRoot):
         return True
 
     @property
+    def atomic_no_nested(self) -> list[Token]:
+        """
+        :return: a list of all the tokens in the document, 
+        excluding tokens within tokens
+        """
+        tokens = chain(*[edition.atomic 
+                         for edition in self.editions()])
+        return list(tokens)
+
+    @property
     def authority(self) -> Optional[str]:
         if self.publication_stmt is None:
             return None
@@ -1183,7 +1193,7 @@ class EpiDoc(DocRoot):
         
         if type == 'leiden':
 
-            leiden = ' '.join([token.leiden_plus_form for token in self.tokens_no_nested])
+            leiden = ' '.join([token.leiden_plus_form for token in self.atomic_no_nested])
             
             leiden_ = re.sub(r'\|\s+?\|', '|', leiden)
             leiden__ = re.sub(r'·\s+?·', '·', leiden_)

@@ -261,6 +261,17 @@ class Edition(EpiDocElement):
         return Ab(ab_elem)
 
     @property
+    def atomic_no_nested(self) -> list[Token]:
+        """
+        :return: the descendant tokens excluding
+        tokens within tokens, e.g. <num> within <w> 
+        e.g. in an abbreviated token IIviro for duoviro
+        """
+
+        return [Token(word) 
+                for word in self._get_desc_tokens(include_nested=False)]
+
+    @property
     def atomic_non_tokens(self) -> list[EpiDocElement]:
         """
         Atomic elements that are not analyzable as 'words' 
@@ -327,6 +338,27 @@ class Edition(EpiDocElement):
     def gaps(self) -> list[EpiDocElement]:
         return [EpiDocElement(gap) 
                 for gap in self.get_desc('gap')]
+
+    def _get_desc_atomic(
+            self, 
+            items_with_atomic_ancestors: bool = False) -> list[EpiDocElement]:
+
+        """
+        Get the atomic non-token descendants e.g. `<orig>`.  
+
+        :param include_within_tokens: If True, includes those items that have
+        token ancestors
+
+        :return: a list of EpiDocElement
+        """
+
+        desc = map(EpiDocElement, self.get_desc(AtomicNonTokenType.values() + AtomicTokenType.values()))
+
+        if items_with_atomic_ancestors:
+            return list(desc)
+        
+        else:
+            return [item for item in desc if not item.has_ancestors_by_names(AtomicNonTokenType.values() + AtomicTokenType.values())]
 
     def _get_desc_atomic_non_tokens(
             self, 
@@ -602,6 +634,12 @@ class Edition(EpiDocElement):
                 for word in self._get_desc_tokens(include_nested=False)]        
 
     @property
+    def token_g_dividers(self) -> list[EpiDocElement]:
+        return [EpiDocElement(boundary) for boundary 
+            in self.get_desc('g')
+        ]
+
+    @property
     def tokens_no_nested(self) -> list[Token]:
         """
         :return: the descendant tokens excluding
@@ -612,12 +650,7 @@ class Edition(EpiDocElement):
         return [Token(word) 
                 for word in self._get_desc_tokens(include_nested=False)]
 
-    @property
-    def token_g_dividers(self) -> list[EpiDocElement]:
-        return [EpiDocElement(boundary) for boundary 
-            in self.get_desc('g')
-        ]
-    
+
     @property
     def tokens_leiden_str(self) -> str:
         return ' '.join([token.leiden_plus_form 
