@@ -39,7 +39,7 @@ class Expan(EpiDocElement):
 
         if localname(self._e) != 'expan':
             raise TypeError(f'Element should be of type <expan>, '
-                            f'but is of type <{localname(e)}>.')
+                            f'but is of type <{localname(self._e)}>.')
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
@@ -120,6 +120,7 @@ class Expan(EpiDocElement):
         from .hi import Hi
         from .lb import Lb
         from .supplied import Supplied
+        from .choice import Choice
 
         element_classes: dict[str, type] = {
             'abbr': Abbr,
@@ -127,7 +128,8 @@ class Expan(EpiDocElement):
             'ex': Ex,
             'hi': Hi, 
             'lb': Lb,
-            'supplied': Supplied
+            'supplied': Supplied,
+            'choice': Choice
         }
 
         return element_classes

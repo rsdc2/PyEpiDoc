@@ -35,7 +35,7 @@ class Choice(EpiDocElement):
             'sic': Sic,
             'corr': Corr
         }
-        
+    
         return leiden_str_from_children(self.e, element_classes, 'node')
     
     @property
@@ -49,5 +49,5 @@ class Choice(EpiDocElement):
             'sic': Sic,
             'corr': Corr
         }        
-        # breakpoint()
+
         return normalized_str_from_children(self.e, element_classes, 'node')

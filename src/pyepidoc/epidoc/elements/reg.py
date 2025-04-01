@@ -27,6 +27,11 @@ class Reg(EpiDocElement):
             'expan': Expan
         }
         
+        if 'choice' in \
+            map(lambda elem: elem.localname, self.ancestors_excl_self):
+            
+            return ''
+
         return leiden_str_from_children(self.e, element_classes, 'node')
     
     @property

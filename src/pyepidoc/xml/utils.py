@@ -1,8 +1,10 @@
 from __future__ import annotations
-from pyepidoc.shared.constants import TEINS
+
 from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
 from copy import deepcopy
+
+from pyepidoc.shared.constants import TEINS
 
 
 def abify(xml_str: str): 
@@ -40,10 +42,12 @@ def localname(node: _Element | _ElementUnicodeResult) -> str:
     Return the local name of a node.
     Returns '#text' if node is |_ElementUnicodeResult|
     """
-    if type(node) is _ElementUnicodeResult:
+    node_ = node
+
+    if isinstance(node_, _ElementUnicodeResult):
         return '#text'
     
-    return str(node.xpath('local-name(.)'))
+    return str(node_.xpath('local-name(.)'))
 
 
 def remove_children(elem: _Element) -> _Element:
