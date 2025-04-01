@@ -1193,7 +1193,10 @@ class EpiDoc(DocRoot):
         
         if type == 'leiden':
 
-            leiden = ' '.join([token.leiden_plus_form for token in self.atomic_no_nested])
+            leiden_editions = list(chain(*[edition.get_text('leiden') 
+                            for edition in self.editions()]))
+            
+            leiden = '\n'.join(leiden_editions)
             
             leiden_ = re.sub(r'\|\s+?\|', '|', leiden)
             leiden__ = re.sub(r'·\s+?·', '·', leiden_)
