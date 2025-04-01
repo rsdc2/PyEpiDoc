@@ -50,7 +50,8 @@ from ..enums import (
     SubatomicTagType, 
     CompoundTokenType, 
     ContainerType,
-    N_ID_Elements
+    N_ID_Elements,
+    TextItems
 )
 
 
@@ -261,7 +262,7 @@ class Edition(EpiDocElement):
         return Ab(ab_elem)
 
     @property
-    def atomic_no_nested(self) -> list[Token]:
+    def text_items(self) -> list[Token]:
         """
         :return: the descendant tokens excluding
         tokens within tokens, e.g. <num> within <w> 
@@ -269,7 +270,7 @@ class Edition(EpiDocElement):
         """
 
         return [Token(word) 
-                for word in self._get_desc_tokens(include_nested=False)]
+                for word in self._get_desc_text_items(items_with_atomic_ancestors=False)]
 
     @property
     def atomic_non_tokens(self) -> list[EpiDocElement]:
@@ -339,7 +340,7 @@ class Edition(EpiDocElement):
         return [EpiDocElement(gap) 
                 for gap in self.get_desc('gap')]
 
-    def _get_desc_atomic(
+    def _get_desc_text_items(
             self, 
             items_with_atomic_ancestors: bool = False) -> list[EpiDocElement]:
 
@@ -352,13 +353,13 @@ class Edition(EpiDocElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EpiDocElement, self.get_desc(AtomicNonTokenType.values() + AtomicTokenType.values()))
+        desc = map(EpiDocElement, self.get_desc(TextItems))
 
         if items_with_atomic_ancestors:
             return list(desc)
         
         else:
-            return [item for item in desc if not item.has_ancestors_by_names(AtomicNonTokenType.values() + AtomicTokenType.values())]
+            return [item for item in desc if not item.has_ancestors_by_names(TextItems)]
 
     def _get_desc_atomic_non_tokens(
             self, 
@@ -417,18 +418,22 @@ class Edition(EpiDocElement):
         XML nodes
         :return: the edition text of the document
         """
-        
         if type == 'leiden':
 
-            leiden = ' '.join([token.leiden_plus_form for token in self.atomic])
+            leiden = ' '.join([token.leiden_plus_form 
+                               for token in self.text_items])
             
-            leiden_ = re.sub(r'\|\s+?\|', '|', leiden)
-            leiden__ = re.sub(r'·\s+?·', '·', leiden_)
-        
-            return leiden__.replace('|', '\n')
+
+            leiden = re.sub(r'\|\s+?\|', '|', leiden)
+            leiden = re.sub(r'·\s+?·', '·', leiden)
+            leiden = re.sub(r'\s{2,}', ' ', leiden)
+
+            return leiden.replace('|', '\n')
         
         elif type == 'normalized':
-            return ' '.join(self.tokens_normalized_list_str)
+            normalized = ' '.join([token.normalized_form 
+                               for token in self.text_items])
+            return re.sub(r'\s{2,}', ' ', normalized)
         
         elif type == 'xml':
             return self.text_desc_compressed_whitespace

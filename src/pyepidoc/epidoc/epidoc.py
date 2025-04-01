@@ -1190,27 +1190,10 @@ class EpiDoc(DocRoot):
         XML nodes
         :return: the edition text of the document
         """
+        leiden_editions = [edition.get_text(type) 
+                        for edition in self.editions()]
         
-        if type == 'leiden':
-
-            leiden_editions = list(chain(*[edition.get_text('leiden') 
-                            for edition in self.editions()]))
-            
-            leiden = '\n'.join(leiden_editions)
-            
-            leiden_ = re.sub(r'\|\s+?\|', '|', leiden)
-            leiden__ = re.sub(r'·\s+?·', '·', leiden_)
-        
-            return leiden__.replace('|', '\n')
-        
-        elif type == 'normalized':
-            tokens = list(chain(*[edition.tokens_normalized_list_str 
-                            for edition in self.editions()]))
-            return ' '.join(tokens)
-        
-        elif type == 'xml':
-            return '\n'.join(edition.text_desc_compressed_whitespace 
-                           for edition in self.editions())
+        return '\n'.join(leiden_editions)    
 
     @property
     def text_elems(self) -> list[EpiDocElement]:

@@ -50,6 +50,9 @@ class AtomicTokenType(EnumerableEnum):
     Measure = 'measure'
 
 
+TextItems = AtomicTokenType.values() + ['orig']
+
+
 class AtomicNonTokenType(EnumerableEnum):
     """
     These tokens do not contain text that can be incorporated into linguistic analysis.
@@ -68,7 +71,6 @@ class AtomicNonTokenType(EnumerableEnum):
     Certainty = 'certainty'
     HandShift = 'handShift'
     Link = 'link'
-
 
 
 class AlwaysSubsumableType(EnumerableEnum):
