@@ -417,12 +417,12 @@ class Edition(EpiDocElement):
             leiden = re.sub(r'·\s+?·', '·', leiden)
             leiden = re.sub(r'\s{2,}', ' ', leiden)
 
-            return leiden.replace('|', '\n')
+            return leiden.replace('|', '\n').strip()
         
         elif type == 'normalized':
             normalized = ' '.join([repr.normalized_form 
                                for repr in self.representable_no_nested])
-            return re.sub(r'\s{2,}', ' ', normalized)
+            return re.sub(r'\s{2,}', ' ', normalized).strip()
         
         elif type == 'xml':
             return self.text_desc_compressed_whitespace

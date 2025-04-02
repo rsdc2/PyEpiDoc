@@ -19,4 +19,4 @@ class Gap(EpiDocElement):
 
     @property
     def leiden_form(self) -> str:
-        return '[-?-]'
+        return ' [-?-] '
