@@ -150,5 +150,5 @@ def test_gaps():
 def test_nested():
     doc = EpiDoc(relative_filepaths['persName_nested'])
     assert [token.normalized_form 
-            for token in doc.tokens_normalized] == ['Maximus', 'Decimus', 'Meridius']
+            for token in doc.tokens_normalized_no_nested] == ['Maximus', 'Decimus', 'Meridius']
     assert [str(token) for token in doc.w_tokens] == ['Meridius']

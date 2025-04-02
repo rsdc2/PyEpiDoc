@@ -1432,7 +1432,7 @@ class EpiDoc(DocRoot):
         return list(tokens)
         
     @property
-    def tokens_normalized(self) -> list[Token]:
+    def tokens_normalized_no_nested(self) -> list[Token]:
 
         """
         Returns list of tokens of the <div type="edition">.
@@ -1440,7 +1440,7 @@ class EpiDoc(DocRoot):
         does not include the token.
         """
 
-        return list(chain(*[edition.tokens_normalized 
+        return list(chain(*[edition.tokens_normalized_no_nested
                             for edition in self.editions()]))
 
     @property

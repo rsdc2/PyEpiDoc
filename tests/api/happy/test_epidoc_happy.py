@@ -34,7 +34,7 @@ def test_collect_tokens():
     doc = EpiDoc(filepath)
 
     assert [token.normalized_form 
-            for token in doc.tokens_normalized] == [
+            for token in doc.tokens_normalized_no_nested] == [
         'Dis', 
         'manibus', 
         'Zethi', 
@@ -53,7 +53,7 @@ def test_collect_normalized():
     filepath = relative_filepaths['ISic000552']
     doc = EpiDoc(filepath)
 
-    assert [token.normalized_form for token in doc.tokens_normalized][0:2] == [
+    assert [token.normalized_form for token in doc.tokens_normalized_no_nested][0:2] == [
         'Flamma', 
         'secutor'
     ]
@@ -191,7 +191,7 @@ def test_lines():
 @pytest.mark.parametrize("filepath", relative_filepaths.values())
 def test_load_relative_filepath_from_str(filepath: str):
     doc = EpiDoc(filepath)
-    assert doc.tokens_normalized != []
+    assert doc.tokens_normalized_no_nested != []
 
 
 def test_materialclasses():

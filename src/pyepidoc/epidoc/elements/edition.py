@@ -410,12 +410,13 @@ class Edition(EpiDocElement):
         """
         if type == 'leiden':
 
-            leiden = ' '.join([repr.leiden_plus_form 
+            leiden = ' '.join([repr.leiden_form 
                                for repr in self.representable_no_nested])
             
             leiden = re.sub(r'\|\s+?\|', '|', leiden)
             leiden = re.sub(r'·\s+?·', '·', leiden)
             leiden = re.sub(r'\s{2,}', ' ', leiden)
+            leiden = re.sub(r'\s?\|\s?', '|', leiden)
 
             return leiden.replace('|', '\n').strip()
         
@@ -674,7 +675,7 @@ class Edition(EpiDocElement):
                          for token in self.tokens_no_nested])
 
     @property
-    def tokens_normalized(self) -> list[Token]:
+    def tokens_normalized_no_nested(self) -> list[Token]:
 
         """
         Returns list of tokens of the <div type="edition">.
@@ -682,16 +683,15 @@ class Edition(EpiDocElement):
         does not include the token.
         """
 
-        return list(chain(*[ab.tokens_normalized 
-                            for ab in self.abs]))
+        return [token for token in self.tokens_no_nested]
 
     @property
-    def tokens_normalized_list_str(self) -> list[str]:
+    def tokens_normalized_no_nested_list_str(self) -> list[str]:
         return [token.normalized_form for token in self.tokens_no_nested]
     
     @property
-    def tokens_normalized_str(self) -> str:
-        return ' '.join(self.tokens_normalized_list_str)
+    def tokens_normalized_no_nested_str(self) -> str:
+        return ' '.join(self.tokens_normalized_no_nested_list_str)
 
     def tokenize(self) -> Optional[Edition]:
         for ab in self.abs:

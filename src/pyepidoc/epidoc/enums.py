@@ -49,7 +49,7 @@ class AtomicTokenType(EnumerableEnum):
     Measure = 'measure'
 
 
-RepresentableElements = AtomicTokenType.values() + ['orig']
+RepresentableElements = AtomicTokenType.values() + ['orig', 'gap', 'lb']
 
 
 class AtomicNonTokenType(EnumerableEnum):

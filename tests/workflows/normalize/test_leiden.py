@@ -51,6 +51,8 @@ def test_token_leiden_plus_form(inpt: tuple[str, str]):
 
 @pytest.mark.parametrize(['xml_str', 'expected'], [
     ('<orig>CHEDONI</orig>', 'CHEDONI'),
+    ('<w>hello</w><lb n="1"/><w>hello</w>', 'hello\nhello'),
+    ('<gap reason="lost" unit="character" extent="1"/>', '[-1-]'),
     ('<name><w>Nearchia<supplied reason="lost">e</supplied></w></name>',
      'Nearchia[e]'),
     ('<name><w>Nearchia<supplied reason="lost">e</supplied></w></name> <gap reason="lost" extent="unknown" unit="character"/>',
