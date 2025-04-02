@@ -50,14 +50,18 @@ def test_token_leiden_plus_form(inpt: tuple[str, str]):
 
 
 @pytest.mark.parametrize(['xml_str', 'expected'], [
-    ('<orig>CHEDONI</orig>', 'CHEDONI')
+    ('<orig>CHEDONI</orig>', 'CHEDONI'),
+    ('<name><w>Nearchia<supplied reason="lost">e</supplied></w></name>',
+     'Nearchia[e]'),
+    ('<name><w>Nearchia<supplied reason="lost">e</supplied></w></name> <gap reason="lost" extent="unknown" unit="character"/>',
+     'Nearchia[e] [-?-]')
 ])
 def test_edition_leiden(xml_str: str, expected: str):
     # Arrange
     edition = Edition.from_xml_str(xml_str=xml_str)
 
     # Act
-    leiden_text = edition.
+    leiden_text = edition.get_text('leiden')
 
     # Assert
-    assert len(tokens) == expected
+    assert leiden_text == expected

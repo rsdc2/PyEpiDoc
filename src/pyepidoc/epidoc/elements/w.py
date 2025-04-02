@@ -28,12 +28,14 @@ class W(EpiDocElement):
         from .num import Num
         from .surplus import Surplus
         from .hi import Hi
+        from .supplied import Supplied
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'num': Num,
             'surplus': Surplus,
-            'hi': Hi
+            'hi': Hi,
+            'supplied': Supplied
         }
         
         return leiden_str_from_children(

@@ -188,16 +188,6 @@ class EpiDoc(DocRoot):
         return True
 
     @property
-    def atomic_no_nested(self) -> list[Token]:
-        """
-        :return: a list of all the tokens in the document, 
-        excluding tokens within tokens
-        """
-        tokens = chain(*[edition.atomic 
-                         for edition in self.editions()])
-        return list(tokens)
-
-    @property
     def authority(self) -> Optional[str]:
         if self.publication_stmt is None:
             return None
