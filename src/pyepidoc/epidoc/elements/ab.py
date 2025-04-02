@@ -16,7 +16,7 @@ from ..enums import (
     AtomicTokenType, 
     CompoundTokenType,
     NoSpaceBefore,
-    OrigTextType
+    NonNormalized
 )
 from pyepidoc.shared.classes import SetRelation
 from ...xml import BaseElement
@@ -408,7 +408,7 @@ class Ab(EpiDocElement):
                 AtomicTokenType.values() 
             )
             if Token(token_elem).form_normalized != '' and \
-                parent_name_set(token_elem).intersection(OrigTextType.value_set()) == set()
+                parent_name_set(token_elem).intersection(NonNormalized.value_set()) == set()
         ]
     
     @property

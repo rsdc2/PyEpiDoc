@@ -41,7 +41,7 @@ from .enums import (
     CompoundTokenType, 
     AtomicTokenType,
     PUNCTUATION,
-    OrigTextType,
+    NonNormalized,
     RegTextType
 )
 

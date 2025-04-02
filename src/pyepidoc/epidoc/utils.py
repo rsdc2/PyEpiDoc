@@ -8,7 +8,7 @@ from lxml import etree
 from pyepidoc.xml.utils import localname
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.epidoc.enums import (
-    OrigTextType, 
+    NonNormalized, 
     RegTextType, 
     AtomicTokenType
 )
@@ -125,7 +125,7 @@ def normalized_str_from_children(
     nodes (where nodes include text content)
     """
     
-    non_ancestors = OrigTextType.values()
+    non_ancestors = NonNormalized.values()
     child_str = 'child::node()' if child_type == 'node' else 'child::*'
     ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                 for ancestor in non_ancestors])

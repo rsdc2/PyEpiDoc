@@ -48,7 +48,7 @@ from .enums import (
     CompoundTokenType, 
     AtomicTokenType,
     PUNCTUATION,
-    OrigTextType,
+    NonNormalized,
     RegTextType
 )
 
@@ -66,6 +66,7 @@ elem_classes: dict[str, type] = {
     'hi': Hi,
     'lb': Lb,
     'num': Num,
+    'orig': Orig,
     'supplied': Supplied,
     'surplus': Surplus,
     'unclear': Unclear,

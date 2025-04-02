@@ -23,14 +23,14 @@ class SubatomicTagType(EnumerableEnum):
     C = 'c' # Character element
 
 
-class OrigTextType(EnumerableEnum):  
+class NonNormalized(EnumerableEnum):  
     """
     Elements that contain text that would not be 
     included in a normalized form of the text
     """
     # Del = 'del'
     # Surplus = 'surplus'
-    Orig = 'orig'
+    # Orig = 'orig'
     Sic = 'sic'
     G = 'g'
     Am = 'am'
@@ -179,7 +179,7 @@ NormalizedTextCarrier = set(
     + AtomicTokenType.values() 
     + CompoundTokenType.values() 
     + AlwaysSubsumableType.values()
-) - set(OrigTextType.values())
+) - set(NonNormalized.values())
 
 
 # Elements that can carry @xml:id

@@ -410,8 +410,8 @@ class Edition(EpiDocElement):
         """
         if type == 'leiden':
 
-            leiden = ' '.join([token.leiden_plus_form 
-                               for token in self.representable_no_nested])
+            leiden = ' '.join([repr.leiden_plus_form 
+                               for repr in self.representable_no_nested])
             
             leiden = re.sub(r'\|\s+?\|', '|', leiden)
             leiden = re.sub(r'·\s+?·', '·', leiden)
@@ -420,8 +420,8 @@ class Edition(EpiDocElement):
             return leiden.replace('|', '\n')
         
         elif type == 'normalized':
-            normalized = ' '.join([token.normalized_form 
-                               for token in self.representable_no_nested])
+            normalized = ' '.join([repr.normalized_form 
+                               for repr in self.representable_no_nested])
             return re.sub(r'\s{2,}', ' ', normalized)
         
         elif type == 'xml':
