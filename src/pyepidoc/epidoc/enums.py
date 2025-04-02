@@ -43,14 +43,13 @@ class RegTextType(EnumerableEnum):
 
 class AtomicTokenType(EnumerableEnum):
     Name = 'name'
-    # RoleName = 'roleName'
     AddName = 'addName'
     W = 'w'
     Num = 'num'
     Measure = 'measure'
 
 
-TextItems = AtomicTokenType.values() + ['orig']
+RepresentableElements = AtomicTokenType.values()
 
 
 class AtomicNonTokenType(EnumerableEnum):
@@ -63,14 +62,14 @@ class AtomicNonTokenType(EnumerableEnum):
     G = 'g'
     Lb = 'lb'
     Space = 'space'
-    Gap = 'gap'
-    Orig = 'orig'   
+    Gap = 'gap' 
     Seg = 'seg'     
     Note = 'note'   
     Milestone = 'milestone'
     Certainty = 'certainty'
     HandShift = 'handShift'
     Link = 'link'
+    Orig = 'orig'
 
 
 class AlwaysSubsumableType(EnumerableEnum):
@@ -110,7 +109,7 @@ class SpaceSeparated(EnumerableEnum):
     Supplied = 'supplied'
 
 
-class N_ID_Elements(EnumerableEnum):
+class IDableElements(EnumerableEnum):
     """
     These are elements that can receive @n id attributes
     """
