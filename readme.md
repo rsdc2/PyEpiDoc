@@ -278,6 +278,6 @@ This project has received funding from the European Research Council (ERC) under
 
 <div>
   <img align="left" valign="center" src="assets/ISicily.jpg?raw=true" alt="isicily logo" height="80" >
-  <img align="left" valign="center" src="oxford.png?raw=true" alt="oxford logo" height="80"  style="padding-top: 80px" >
-  <img align="left" valign="center" src="EU_ERC.jpg?raw=true" alt="erc logo" height="80" >
+  <img align="left" valign="center" src="assets/oxford.png?raw=true" alt="oxford logo" height="80"  style="padding-top: 80px" >
+  <img align="left" valign="center" src="assets/EU_ERC.jpg?raw=true" alt="erc logo" height="80" >
 </div>
