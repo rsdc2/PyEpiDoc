@@ -296,6 +296,7 @@ class EpiDoc(DocRoot):
 
     @property
     def distributor(self) -> Optional[str]:
+        
         """
         IRT (Tripolitania) does not use <authority>
         """
