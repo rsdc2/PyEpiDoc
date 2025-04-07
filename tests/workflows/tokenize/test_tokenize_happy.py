@@ -294,7 +294,20 @@ xml_to_tokenize = [
      ( # Check that does not tokenize more than once
          '<roleName type="civic" subtype="duumvir"><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></roleName>',
          '<roleName type="civic" subtype="duumvir"><w><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></w></roleName>'
+     ),
+     (
+        '<roleName type="supracivic" subtype="consularis">consul<supplied reason="lost">aris</supplied></roleName>',
+        '<roleName type="supracivic" subtype="consularis"><w>consul<supplied reason="lost">aris</supplied></w></roleName>'
+     ),
+     (
+        '<persName>consul<supplied reason="lost">aris</supplied></persName>',
+        '<persName><w>consul<supplied reason="lost">aris</supplied></w></persName>'
+     ),
+     (
+        'consul<supplied reason="lost">aris</supplied>',
+        '<w>consul<supplied reason="lost">aris</supplied></w>'
      )
+
 ]
 
 
@@ -316,7 +329,7 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
                       for t in tokenized_benchmark.tokens]
     
     tokenized_strs = [etree.tostring(t.e) 
-                      for t in tokenized.tokens]
+                      for t in tokenized.token_elements]
     
     benchmark_bstr: bytes = etree.tostring(tokenized_benchmark.e)
     benchmark_str = benchmark_bstr.decode()
@@ -331,4 +344,4 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
         pass
 
     assert tokenized_str == benchmark_str
-    assert tokenized.tokens != []
+    assert tokenized.token_elements != []

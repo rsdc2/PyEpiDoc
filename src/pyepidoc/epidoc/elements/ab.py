@@ -332,44 +332,6 @@ class Ab(EpiDocElement):
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
 
-    def tokenize(self, inplace=True) -> Optional[Ab]:
-        """
-        Tokenizes the current node. 
-        """
-
-        tokenized_elements = []
-
-        if self._e is None:
-            return None
-
-        # Get the tokenized elements
-        if not inplace:
-            _e = deepcopy(self._e)
-
-            for element in self.token_elements:
-                tokenized_elements += [deepcopy(element)]
-
-        else:
-            _e = self._e
-            tokenized_elements = self.token_elements
-
-        # Remove existing children of <ab>
-        for child in _e.getchildren():
-            _e.remove(child)
-
-        # Remove any text content of the <ab> node
-        _e.text = ""    # type: ignore
-
-        # Append the new tokenized children
-        for element in tokenized_elements:
-            if element._e is not None:
-                _e.append(element._e)
-
-        for token in self.tokens:
-            token.remove_element_internal_whitespace()
-
-        return self.__class__(_e)
-
     @property
     def tokens(self) -> list[Token]:
         """

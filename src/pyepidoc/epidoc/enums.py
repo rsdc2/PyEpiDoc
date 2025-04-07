@@ -73,10 +73,13 @@ class AtomicNonTokenType(EnumerableEnum):
 
 
 class AlwaysSubsumableType(EnumerableEnum):
-    """For items that should be subsumed regardless of whether or not there is a space.
+    """
+    For items that should be subsumed regardless of whether or not there is a space.
     Membership of this class means that the behaviour of SubsumableRels takes place 
     regardless of the presence of a space between the tokens.
-    Note that the token must also be listed in SubsumableRels"""
+    Note that the token must also be listed in SubsumableRels
+    """
+    
     # Hi = 'hi'
     Lb = 'lb'
     G = 'g'

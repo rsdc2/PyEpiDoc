@@ -558,7 +558,7 @@ class EpiDocElement(BaseElement, Showable):
             if parent is None:
                 return acc
 
-            return _recfunc([parent.index(element.e)] + acc, element.parent)
+            return _recfunc([parent.index(element.e, start=None, stop=None)] + acc, element.parent)
 
         return _recfunc([], self)
 
@@ -992,6 +992,32 @@ class EpiDocElement(BaseElement, Showable):
     def _prototokens(self) -> list[str]:
         return self._internal_prototokens + self._tail_prototokens
 
+    def remove_element_internal_whitespace(self) -> _Element:
+        
+        """
+        Remove all internal whitespace from word element, in place, 
+        except for comments.
+        """
+
+        def _remove_whitespace_from_child(elem: _Element) -> _Element:
+
+            for child in elem.getchildren():
+                if not isinstance(child, _Comment):
+                    if child.text is not None:
+                        child.text = child.text.strip()
+                    if child.tail is not None:
+                        child.tail = child.tail.strip()
+
+                if len(child.getchildren()) > 0:
+                    child = _remove_whitespace_from_child(child) 
+
+            return elem
+        
+        if self._e is None:
+            raise TypeError("Underlying element is None")
+
+        return _remove_whitespace_from_child(self._e)
+
     @property
     def right_bound(self) -> bool:
         """
@@ -1238,12 +1264,14 @@ class EpiDocElement(BaseElement, Showable):
 
     @staticmethod
     def w_factory(
-        prototoken:Optional[str]=None, 
-        subelements:list[_Element]=[],
-        parent:Optional[_Element]=None
+        prototoken: Optional[str]=None, 
+        subelements: list[_Element]=[],
+        parent: Optional[_Element]=None
     ) -> EpiDocElement:
 
-        """TODO merge w_factory and make_word functions."""
+        """
+        TODO merge w_factory and make_word functions.
+        """
 
         def append_tail_or_text(_tail: Optional[str], _parent:_Element) -> _Element:
 
@@ -1257,8 +1285,8 @@ class EpiDocElement(BaseElement, Showable):
 
             return _parent           
 
-        new_w:_Element
-        new_g:_Element
+        new_w: _Element
+        new_g: _Element
 
         # Handle interpuncts
         if prototoken is not None and prototoken.strip() in ['·', '·', '❦', '∙']:
@@ -1278,9 +1306,9 @@ class EpiDocElement(BaseElement, Showable):
             return g_elem
 
         elif prototoken is None and parent is not None:
-            children:list[_Element] = [deepcopy(e) 
+            children: list[_Element] = [deepcopy(e) 
                                        for e in parent.getchildren()] 
-            new_parent:_Element = deepcopy(parent)
+            new_parent: _Element = deepcopy(parent)
             
             # Remove text and children from new_parent
             for child in new_parent.getchildren():
@@ -1338,7 +1366,7 @@ class EpiDocElement(BaseElement, Showable):
                         new_parent = append_tail_or_text(e.tail, new_parent)              
                     
 
-                elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>
+                elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>, <roleName>
                     new_w_elem = EpiDocElement.w_factory(parent=e_without_tail)
                     if new_w_elem.e is not None:
                         new_parent.append(new_w_elem.e)
@@ -1386,3 +1414,41 @@ class EpiDocElement(BaseElement, Showable):
             token_elems[-1]._final_space = False
 
         return token_elems
+
+    def tokenize(self, inplace=True) -> Optional[EpiDocElement]:
+        """
+        Tokenizes the current node. 
+        """
+
+        tokenized_elements = []
+
+        if self._e is None:
+            return None
+
+        # Get the tokenized elements
+        if not inplace:
+            _e = deepcopy(self._e)
+
+            for element in self.token_elements:
+                tokenized_elements += [deepcopy(element)]
+
+        else:
+            _e = self._e
+            tokenized_elements = self.token_elements
+
+        # Remove existing children of <ab>
+        for child in _e.getchildren():
+            _e.remove(child)
+
+        # Remove any text content of the <ab> node
+        _e.text = ""    # type: ignore
+
+        # Append the new tokenized children
+        for element in tokenized_elements:
+            if element._e is not None:
+                _e.append(element._e)
+
+        for token in self.token_elements:
+            token.remove_element_internal_whitespace()
+
+        return self.__class__(_e)
