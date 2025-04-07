@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from typing import Optional
 
-from ...shared import head
+from pyepidoc.shared import head
 
-from ..element import EpiDocElement
-from ..utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from .am import Am
 
-class Abbr(EpiDocElement):    
+
+class Abbr(Representable):    
     def __str__(self) -> str:
 
         return self.leiden_form

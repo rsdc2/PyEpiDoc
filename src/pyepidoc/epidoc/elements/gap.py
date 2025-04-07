@@ -1,8 +1,8 @@
 from lxml.etree import _Element
-from ..element import EpiDocElement
+from pyepidoc.epidoc.representable import Representable
 
 
-class Gap(EpiDocElement):
+class Gap(Representable):
     """
     Provides services for abbreviation expansions 
     given in <gap> elements.
