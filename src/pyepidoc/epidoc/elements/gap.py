@@ -18,5 +18,19 @@ class Gap(EpiDocElement):
             raise TypeError('Element should be <gap>.')
 
     @property
+    def extent(self) -> str | None:
+        return self.get_attrib('extent')
+
+    @property
     def leiden_form(self) -> str:
-        return '[-?-]'
+        if self.unit is None or self.extent is None:
+            return ' [-?-] '
+        
+        if self.unit == 'character' and self.extent == 'unknown':
+            return ' [-?-] '
+        
+        return f' [-{self.extent}-] '
+    
+    @property
+    def unit(self) -> str | None:
+        return self.get_attrib('unit')

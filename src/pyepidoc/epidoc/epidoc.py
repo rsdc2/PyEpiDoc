@@ -592,7 +592,7 @@ class EpiDoc(DocRoot):
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
-        return list(chain(*[edition.id_carriers 
+        return list(chain(*[edition.idable_elements 
                             for edition in self.editions()]))
 
     def insert_w_inside_name_and_num(self) -> EpiDoc:
@@ -816,7 +816,7 @@ class EpiDoc(DocRoot):
         if self.edition_main is None:
             raise ValueError('No main edition. Cannot extract n_id elements.')
 
-        return self.edition_main.n_id_elements
+        return self.edition_main.idable_elements
 
     @property
     def nums(self) -> list[Num]:
@@ -1169,9 +1169,7 @@ class EpiDoc(DocRoot):
         
         return TeiHeader(tei_header_elem)
 
-    def text(
-            self, 
-            type: Literal['leiden', 'normalized', 'xml']) -> str:
+    def text(self, type: Literal['leiden', 'normalized', 'xml']) -> str:
         
         """
         :param type: the type of text wanted, whether
@@ -1180,24 +1178,10 @@ class EpiDoc(DocRoot):
         XML nodes
         :return: the edition text of the document
         """
+        leiden_editions = [edition.get_text(type) 
+                        for edition in self.editions()]
         
-        if type == 'leiden':
-
-            leiden = ' '.join([token.leiden_plus_form for token in self.tokens_no_nested])
-            
-            leiden_ = re.sub(r'\|\s+?\|', '|', leiden)
-            leiden__ = re.sub(r'·\s+?·', '·', leiden_)
-        
-            return leiden__.replace('|', '\n')
-        
-        elif type == 'normalized':
-            tokens = list(chain(*[edition.tokens_normalized_list_str 
-                            for edition in self.editions()]))
-            return ' '.join(tokens)
-        
-        elif type == 'xml':
-            return '\n'.join(edition.text_desc_compressed_whitespace 
-                           for edition in self.editions())
+        return '\n'.join(leiden_editions)    
 
     @property
     def text_elems(self) -> list[EpiDocElement]:
@@ -1448,7 +1432,7 @@ class EpiDoc(DocRoot):
         return list(tokens)
         
     @property
-    def tokens_normalized(self) -> list[Token]:
+    def tokens_normalized_no_nested(self) -> list[Token]:
 
         """
         Returns list of tokens of the <div type="edition">.
@@ -1456,7 +1440,7 @@ class EpiDoc(DocRoot):
         does not include the token.
         """
 
-        return list(chain(*[edition.tokens_normalized 
+        return list(chain(*[edition.tokens_normalized_no_nested
                             for edition in self.editions()]))
 
     @property

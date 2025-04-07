@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Literal
 import re
 
 from lxml import etree
@@ -37,7 +37,8 @@ from .expan import Expan
 from .l import L
 from .lb import Lb
 from .lg import Lg
-from ..token import Token
+from pyepidoc.epidoc.token import Token
+from pyepidoc.epidoc.representable import Representable
 from .textpart import TextPart
 
 from ..enums import (
@@ -50,7 +51,8 @@ from ..enums import (
     SubatomicTagType, 
     CompoundTokenType, 
     ContainerType,
-    N_ID_Elements
+    IDableElements,
+    RepresentableElements
 )
 
 
@@ -328,6 +330,27 @@ class Edition(EpiDocElement):
         return [EpiDocElement(gap) 
                 for gap in self.get_desc('gap')]
 
+    def _get_desc_representable_elements(
+            self, 
+            items_with_atomic_ancestors: bool = False) -> list[EpiDocElement]:
+
+        """
+        Get the elements that should be represented in a text edition
+
+        :param items_with_atomic_ancestors: If True, includes those items that have
+        atomic ancestors
+
+        :return: a list of EpiDocElement
+        """
+
+        desc = map(EpiDocElement, self.get_desc(RepresentableElements))
+
+        if items_with_atomic_ancestors:
+            return list(desc)
+        
+        return [item for item in desc 
+                if not item.has_ancestors_by_names(RepresentableElements)]
+
     def _get_desc_atomic_non_tokens(
             self, 
             items_with_token_ancestors: bool = False) -> list[EpiDocElement]:
@@ -374,10 +397,47 @@ class Edition(EpiDocElement):
             
             return list(filter(has_not_token_ancestor, desc))        
 
+    def get_text(
+            self, 
+            type: Literal['leiden', 'normalized', 'xml']) -> str:
+        
+        """
+        :param type: the type of text wanted, whether
+        the Leiden version or a normalized version (i.e. with all the 
+        abbreviations expanded), or the raw text content of the descendant
+        XML nodes
+        :return: the edition text of the document
+        """
+        if type == 'leiden':
+
+            leiden = ' '.join([repr.leiden_form 
+                               for repr in self.representable_no_nested])
+            
+            leiden = re.sub(r'\|\s+?\|', '|', leiden)
+            leiden = re.sub(r'·\s+?·', '·', leiden)
+            leiden = re.sub(r'\s{2,}', ' ', leiden)
+            leiden = re.sub(r'\s?\|\s?', '|', leiden)
+
+            return leiden.replace('|', '\n').strip()
+        
+        elif type == 'normalized':
+            normalized = ' '.join([repr.normalized_form 
+                               for repr in self.representable_no_nested])
+            return re.sub(r'\s{2,}', ' ', normalized).strip()
+        
+        elif type == 'xml':
+            return self.text_desc_compressed_whitespace
+
     @property
-    def id_carriers(self) -> list[EpiDocElement]:
-        return list(chain(*[ab.id_carriers 
-                            for ab in self.abs]))
+    def idable_elements(self) -> list[EpiDocElement]:
+        
+        """
+        Get all the tokens in the edition that should 
+        receive an `@n` id.
+        """
+
+        elems = self.get_desc_tei_elems(IDableElements.values())
+        return list(map(EpiDocElement, elems))
 
     @staticmethod
     def _insert_w_inside_tag(element: EpiDocElement) -> EpiDocElement:
@@ -476,17 +536,6 @@ class Edition(EpiDocElement):
         return [L(element._e) 
             for element in self.get_desc_tei_elems(['l'])]
 
-    @property
-    def n_id_elements(self) -> list[EpiDocElement]:
-        
-        """
-        Get all the tokens in the edition that should 
-        receive an `@n` id.
-        """
-
-        elems = self.get_desc_tei_elems(N_ID_Elements.values())
-        return list(map(EpiDocElement, elems))
-
     def prettify(
             self, 
             spaceunit: str, 
@@ -504,6 +553,16 @@ class Edition(EpiDocElement):
         return self
     
     @property
+    def representable_no_nested(self) -> list[Representable]:
+        """
+        :return: the descendant elements carrying text that should be represented
+        in a text edition (either Leiden or normalized)
+        """
+
+        return [Representable(word) 
+                for word in self._get_desc_representable_elements(items_with_atomic_ancestors=False)]
+
+    @property
     def resp(self) -> str | None:
         """
         Return the @resp attribute value for the edition
@@ -518,7 +577,7 @@ class Edition(EpiDocElement):
         already exist on an element.
         """
 
-        for i, elem in enumerate(self.text_elems, 1):
+        for i, elem in enumerate(self.idable_elements, 1):
             # Find out how long the element part of the ID should be
             elem_id_length = ids.elem_id_length_from_base(base)
             
@@ -545,7 +604,7 @@ class Edition(EpiDocElement):
         with 5, it will be 5, 10, 15, 20 etc.
         """
 
-        for i, elem in enumerate(self.n_id_elements, 1):
+        for i, elem in enumerate(self.idable_elements, 1):
             if elem.get_attrib('n') != None:
                 raise AttributeError(f'@n attribute already set '
                                  'on element {elem}.')
@@ -562,15 +621,6 @@ class Edition(EpiDocElement):
     def supplied(self) -> Sequence[BaseElement]:
         return [elem for elem in self.desc_elems 
             if elem.localname == 'supplied']
-
-    @property
-    def text_elems(self) -> list[EpiDocElement]:
-        """
-        All elements in the document responsible for carrying
-        text information as part of the edition
-        """
-        elems = chain(*[ab.desc_elems for ab in self.abs])
-        return list(map(EpiDocElement, elems))
 
     @property
     def textparts(self) -> list[TextPart]:
@@ -602,6 +652,12 @@ class Edition(EpiDocElement):
                 for word in self._get_desc_tokens(include_nested=False)]        
 
     @property
+    def token_g_dividers(self) -> list[EpiDocElement]:
+        return [EpiDocElement(boundary) for boundary 
+            in self.get_desc('g')
+        ]
+
+    @property
     def tokens_no_nested(self) -> list[Token]:
         """
         :return: the descendant tokens excluding
@@ -612,19 +668,14 @@ class Edition(EpiDocElement):
         return [Token(word) 
                 for word in self._get_desc_tokens(include_nested=False)]
 
-    @property
-    def token_g_dividers(self) -> list[EpiDocElement]:
-        return [EpiDocElement(boundary) for boundary 
-            in self.get_desc('g')
-        ]
-    
+
     @property
     def tokens_leiden_str(self) -> str:
         return ' '.join([token.leiden_plus_form 
                          for token in self.tokens_no_nested])
 
     @property
-    def tokens_normalized(self) -> list[Token]:
+    def tokens_normalized_no_nested(self) -> list[Token]:
 
         """
         Returns list of tokens of the <div type="edition">.
@@ -632,16 +683,15 @@ class Edition(EpiDocElement):
         does not include the token.
         """
 
-        return list(chain(*[ab.tokens_normalized 
-                            for ab in self.abs]))
+        return [token for token in self.tokens_no_nested]
 
     @property
-    def tokens_normalized_list_str(self) -> list[str]:
+    def tokens_normalized_no_nested_list_str(self) -> list[str]:
         return [token.normalized_form for token in self.tokens_no_nested]
     
     @property
-    def tokens_normalized_str(self) -> str:
-        return ' '.join(self.tokens_normalized_list_str)
+    def tokens_normalized_no_nested_str(self) -> str:
+        return ' '.join(self.tokens_normalized_no_nested_list_str)
 
     def tokenize(self) -> Optional[Edition]:
         for ab in self.abs:

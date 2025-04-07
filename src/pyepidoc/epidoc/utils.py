@@ -8,7 +8,7 @@ from lxml import etree
 from pyepidoc.xml.utils import localname
 from pyepidoc.xml.baseelement import BaseElement
 from pyepidoc.epidoc.enums import (
-    OrigTextType, 
+    NonNormalized, 
     RegTextType, 
     AtomicTokenType
 )
@@ -107,8 +107,12 @@ def leiden_str_from_children(
     
     children: list[_Element | _ElementUnicodeResult] = \
         [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
-    objs = [classes.get(localname(child), descendant_text)(child) 
-            for child in children]
+
+    if len(children) == 0:
+        objs = [classes.get(localname(parent), lambda _: '')(parent)]
+    else:
+        objs = [classes.get(localname(child), descendant_text)(child) 
+                for child in children]
 
     return ''.join([obj.leiden_form if hasattr(obj, 'leiden_form') else str(obj) for obj in objs])
 
@@ -125,7 +129,7 @@ def normalized_str_from_children(
     nodes (where nodes include text content)
     """
     
-    non_ancestors = OrigTextType.values()
+    non_ancestors = NonNormalized.values()
     child_str = 'child::node()' if child_type == 'node' else 'child::*'
     ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                 for ancestor in non_ancestors])

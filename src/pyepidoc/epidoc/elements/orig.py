@@ -20,7 +20,7 @@ class Orig(EpiDocElement):
 
     @property
     def leiden_form(self) -> str:
-        
+
         from .expan import Expan
 
         element_classes: dict[str, type] = {

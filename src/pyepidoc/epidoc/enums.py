@@ -23,14 +23,14 @@ class SubatomicTagType(EnumerableEnum):
     C = 'c' # Character element
 
 
-class OrigTextType(EnumerableEnum):  
+class NonNormalized(EnumerableEnum):  
     """
     Elements that contain text that would not be 
     included in a normalized form of the text
     """
     # Del = 'del'
     # Surplus = 'surplus'
-    Orig = 'orig'
+    # Orig = 'orig'
     Sic = 'sic'
     G = 'g'
     Am = 'am'
@@ -43,11 +43,13 @@ class RegTextType(EnumerableEnum):
 
 class AtomicTokenType(EnumerableEnum):
     Name = 'name'
-    # RoleName = 'roleName'
     AddName = 'addName'
     W = 'w'
     Num = 'num'
     Measure = 'measure'
+
+
+RepresentableElements = AtomicTokenType.values() + ['orig', 'gap', 'lb']
 
 
 class AtomicNonTokenType(EnumerableEnum):
@@ -60,14 +62,14 @@ class AtomicNonTokenType(EnumerableEnum):
     G = 'g'
     Lb = 'lb'
     Space = 'space'
-    Gap = 'gap'
-    Orig = 'orig'   
+    Gap = 'gap' 
     Seg = 'seg'     
     Note = 'note'   
     Milestone = 'milestone'
     Certainty = 'certainty'
     HandShift = 'handShift'
     Link = 'link'
+    Orig = 'orig'
 
 
 class AlwaysSubsumableType(EnumerableEnum):
@@ -107,7 +109,7 @@ class SpaceSeparated(EnumerableEnum):
     Supplied = 'supplied'
 
 
-class N_ID_Elements(EnumerableEnum):
+class IDableElements(EnumerableEnum):
     """
     These are elements that can receive @n id attributes
     """
@@ -157,6 +159,9 @@ class CompoundTokenType(EnumerableEnum):
     Cb = 'cb' # Column beginning
 
 
+Atomic = set(AtomicTokenType.values() + AtomicNonTokenType.values())
+
+
 # Elements that carry tokens, e.g. as internal or external text
 TokenCarrier = set(
       SubatomicTagType.values() 
@@ -174,7 +179,7 @@ NormalizedTextCarrier = set(
     + AtomicTokenType.values() 
     + CompoundTokenType.values() 
     + AlwaysSubsumableType.values()
-) - set(OrigTextType.values())
+) - set(NonNormalized.values())
 
 
 # Elements that can carry @xml:id
