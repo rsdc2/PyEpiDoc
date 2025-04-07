@@ -35,7 +35,6 @@ tests = [
     'persName_spacing_ISic000263',
     'hi', # tests that does nothing when a <hi> contains a token
     'interpunct_1', # tests that recognises interpuncts correctly and puts in <g> tag
-    'interpunct_2', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_3', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_4', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_5', # tests that recognises interpuncts correctly and puts in <g> tag
@@ -306,6 +305,15 @@ xml_to_tokenize = [
      (
         'consul<supplied reason="lost">aris</supplied>',
         '<w>consul<supplied reason="lost">aris</supplied></w>'
+     ),
+     (
+         """<lb n="3"/>
+                <expan>
+                    <abbr>Cla</abbr>
+                    <ex>udia</ex>
+                </expan>
+                ·""",
+         '<lb n="3"/><w><expan><abbr>Cla</abbr><ex>udia</ex></expan></w><g ref="#interpunct">·</g>'
      )
 
 ]

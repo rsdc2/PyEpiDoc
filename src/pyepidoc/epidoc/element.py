@@ -7,8 +7,10 @@ from typing import (
     overload
 )
 import sys
+from itertools import chain
 
-from pyepidoc.shared.classes import Showable, ExtendableSeq
+from pyepidoc.shared.classes import Showable, ExtendableSeq, SetRelation
+from pyepidoc.shared import update_set_inplace
 from pyepidoc.xml.baseelement import BaseElement
 
 from copy import deepcopy
@@ -26,12 +28,14 @@ from lxml.etree import (
 
 from pyepidoc.xml.namespace import Namespace as ns
 
-from pyepidoc.shared.constants import (A_TO_Z_SET, 
-                         TEINS, 
-                         XMLNS, 
-                         SubsumableRels,
-                         ROMAN_NUMERAL_CHARS,
-                         VALID_BASES)
+from pyepidoc.shared.constants import (
+    A_TO_Z_SET, 
+    TEINS, 
+    XMLNS, 
+    SubsumableRels,
+    ROMAN_NUMERAL_CHARS,
+    VALID_BASES
+)
 from pyepidoc.shared.types import Base
 
 from .enums import (
@@ -42,7 +46,8 @@ from .enums import (
     SubatomicTagType,
     AlwaysSubsumable,
     SpaceSeparated,
-    NoSpaceBefore
+    NoSpaceBefore,
+    TokenCarrier
 )
 from . import ids
 from pyepidoc.shared import maxoneT, head, last, to_lower
@@ -669,8 +674,9 @@ class EpiDocElement(BaseElement, Showable):
 
             """TODO merge with w_factory"""
 
-            def handle_compound_token(p: _Element) -> EpiDocElement:
-                return EpiDocElement.w_factory(parent=p)
+            def handle_compound_token(parent: _Element) -> EpiDocElement:
+                tokenized = EpiDocElement(parent).tokenize()
+                return tokenized
 
             _e = deepcopy(e)
             _e.tail = self.tail_completer   # type: ignore
@@ -710,7 +716,7 @@ class EpiDocElement(BaseElement, Showable):
                     return [tokenize_subatomic_tags(subelement=_e)]
 
             elif _element.tag.name in CompoundTokenType.values():
-                return [handle_compound_token(p=_element.e)]
+                return [handle_compound_token(parent=_element.e)]
             
             elif _element.tag.name in SubatomicTagType.values():
                 return [tokenize_subatomic_tags(subelement=_e)]
@@ -999,7 +1005,7 @@ class EpiDocElement(BaseElement, Showable):
         except for comments.
         """
 
-        def _remove_whitespace_from_child(elem: _Element) -> _Element:
+        def _remove_whitespace(elem: _Element) -> _Element:
 
             for child in elem.getchildren():
                 if not isinstance(child, _Comment):
@@ -1009,14 +1015,17 @@ class EpiDocElement(BaseElement, Showable):
                         child.tail = child.tail.strip()
 
                 if len(child.getchildren()) > 0:
-                    child = _remove_whitespace_from_child(child) 
+                    child = _remove_whitespace(child) 
+
+            if isinstance(elem.text, str): 
+                elem.text = elem.text.strip() # type: ignore
 
             return elem
         
         if self._e is None:
             raise TypeError("Underlying element is None")
 
-        return _remove_whitespace_from_child(self._e)
+        return _remove_whitespace(self._e)
 
     @property
     def right_bound(self) -> bool:
@@ -1262,6 +1271,191 @@ class EpiDocElement(BaseElement, Showable):
 
         self._e.text = value    # type: ignore
 
+    @property
+    def tokenized_children(self) -> list[EpiDocElement]:
+        """
+        Returns children that are already tokenized, including Comment nodes
+        """
+
+        return [child for child in self.child_elems
+            if child.localname in AtomicTokenType.values() or \
+                child.tag.name == "Comment"]
+
+    @property
+    def token_carriers(self) -> list[EpiDocElement]:
+
+        """
+        WordCarriers are XML elements that carry text fragments
+        either as element-internal text, or in their tails.
+        """
+        return [EpiDocElement(element) 
+                for element in self.desc_elems
+                if element.tag.name in TokenCarrier]
+
+    @property
+    def _token_carrier_sequences(self) -> list[list[EpiDocElement]]:
+
+        """
+        Returns maximal sequences of word_carriers between whitespace.
+        These sequences are what are tokenized in <w/> elements etc.
+        """
+        
+        def get_word_carrier_sequences(
+            acc: list[list[EpiDocElement]], 
+            acc_desc: set[EpiDocElement], 
+            tokenables: list[EpiDocElement]
+        ) -> list[list[EpiDocElement]]:
+
+            if tokenables == []:
+                return acc
+
+            element = tokenables[0]
+
+            if element in acc_desc:
+                return get_word_carrier_sequences(acc, acc_desc, tokenables[1:])
+
+            new_acc = acc + [element.next_no_spaces]
+
+            next_no_spaces_desc = [element_.desc_elems 
+                                   for element_ in element.next_no_spaces] + [element.next_no_spaces]
+            next_no_spaces_desc_flat = [EpiDocElement(item) 
+                                        for item in chain(*next_no_spaces_desc)]
+            
+            # NB this doesn't work if use 'update_set_copy'
+            # TODO: work out why
+            new_acc_desc = update_set_inplace(
+                acc_desc, 
+                set(next_no_spaces_desc_flat)
+            )
+        
+            return get_word_carrier_sequences(
+                new_acc, 
+                new_acc_desc, 
+                tokenables[1:]
+            )
+
+        def remove_subsets(
+            acc: list[list[EpiDocElement]], 
+            sequence: list[EpiDocElement]
+        ) -> list[list[EpiDocElement]]:
+            
+            if any([SetRelation.propersubset(set(sequence), set(acc_item))
+                for acc_item in tokencarrier_sequences]):
+                
+                return acc
+            
+            return acc + [sequence]
+
+        tokencarrier_sequences = get_word_carrier_sequences(
+            acc=[], 
+            acc_desc=set(), 
+            tokenables=self.token_carriers
+        )
+        
+        return reduce(remove_subsets, tokencarrier_sequences, [])
+
+
+    @property
+    def token_elements(self) -> list[EpiDocElement]:
+        """
+        Returns all potential child tokens.
+        For use in tokenization.
+        """
+
+        if self.localname in ['ab', 'roleName']:
+            # Get initial text before any child elements of the <ab>
+            ab_prototokens = (self.text or '').split()  # split the string into tokens
+
+            # Create token elements from the split string elements
+            ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) 
+                        for word in ab_prototokens]        
+
+            # Insert the tokens into the tree
+            for token in reversed(ab_tokens):
+                if self.e is not None and token.e is not None:
+                    self.e.insert(0, token.e)
+
+            token_carriers = chain(*self._token_carrier_sequences)
+            token_carriers_sorted = sorted(token_carriers)
+            
+            def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
+                
+                if element._join_to_next:
+                    if acc == []:
+                        return element.token_elements
+
+                    if element.token_elements == []:
+                        return acc
+                
+                    def sumfunc(
+                        acc:list[EpiDocElement], 
+                        elem:EpiDocElement) -> list[EpiDocElement]:
+
+                        if acc == []:
+                            return [elem]
+                    
+                        new_first = elem + acc[0]
+
+                        return new_first + acc[1:]
+
+                    # Don't sum the whole sequence every time
+                    # On multiple passes, information on bounding left 
+                    # and right appears to get lost
+                    return reduce(
+                        sumfunc, 
+                        reversed(element.token_elements + acc[:1]), 
+                        cast(list[EpiDocElement], [])) + acc[1:]
+
+                return element.token_elements + acc
+
+            return reduce(_redfunc, reversed(token_carriers_sorted), [])
+
+
+        token_elems = self.internal_token_elements + self.tail_token_elements
+        if token_elems != []:
+            if self.e is not None:
+                if self.e.tail != '' and self.e.tail is not None:
+                    if self.e.tail[-1] in ['\n', ' ']:
+                        token_elems[-1]._final_space = True
+                        return token_elems
+                    
+            token_elems[-1]._final_space = False
+
+        return token_elems
+
+    def tokenize(self, inplace=True) -> EpiDocElement:
+        """
+        Tokenizes the current node. 
+        """
+
+        tokenized_elements = []
+
+        # Get the tokenized elements
+        if not inplace:
+            _e = deepcopy(self._e)
+
+            for element in self.token_elements:
+                tokenized_elements += [deepcopy(element)]
+
+        else:
+            _e = self._e
+            tokenized_elements = self.token_elements
+
+        # Remove existing children of <ab>
+        for child in _e.getchildren():
+            _e.remove(child)
+
+        # Remove any text content of the <ab> node
+        _e.text = ""    # type: ignore
+
+        # Append the new tokenized children
+        for element in tokenized_elements:
+            if element._e is not None:
+                element._e = element.remove_element_internal_whitespace()
+                _e.append(element._e)
+
+        return self.__class__(_e)
+
     @staticmethod
     def w_factory(
         prototoken: Optional[str]=None, 
@@ -1386,69 +1580,3 @@ class EpiDocElement(BaseElement, Showable):
 
         return EpiDocElement(new_w, final_space=True)
 
-    @property
-    def tokenized_children(self) -> list[EpiDocElement]:
-        """
-        Returns children that are already tokenized, including Comment nodes
-        """
-
-        return [child for child in self.child_elems
-            if child.localname in AtomicTokenType.values() or \
-                child.tag.name == "Comment"]
-
-    @property
-    def token_elements(self) -> list[EpiDocElement]:
-        """
-        Returns all potential child tokens.
-        For use in tokenization.
-        """
-        # breakpoint()
-        token_elems = self.internal_token_elements + self.tail_token_elements
-        if token_elems != []:
-            if self.e is not None:
-                if self.e.tail != '' and self.e.tail is not None:
-                    if self.e.tail[-1] in ['\n', ' ']:
-                        token_elems[-1]._final_space = True
-                        return token_elems
-                    
-            token_elems[-1]._final_space = False
-
-        return token_elems
-
-    def tokenize(self, inplace=True) -> Optional[EpiDocElement]:
-        """
-        Tokenizes the current node. 
-        """
-
-        tokenized_elements = []
-
-        if self._e is None:
-            return None
-
-        # Get the tokenized elements
-        if not inplace:
-            _e = deepcopy(self._e)
-
-            for element in self.token_elements:
-                tokenized_elements += [deepcopy(element)]
-
-        else:
-            _e = self._e
-            tokenized_elements = self.token_elements
-
-        # Remove existing children of <ab>
-        for child in _e.getchildren():
-            _e.remove(child)
-
-        # Remove any text content of the <ab> node
-        _e.text = ""    # type: ignore
-
-        # Append the new tokenized children
-        for element in tokenized_elements:
-            if element._e is not None:
-                _e.append(element._e)
-
-        for token in self.token_elements:
-            token.remove_element_internal_whitespace()
-
-        return self.__class__(_e)
