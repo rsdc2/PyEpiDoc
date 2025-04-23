@@ -294,7 +294,12 @@ xml_to_tokenize = [
      ( # Check that does not tokenize more than once
          '<roleName type="civic" subtype="duumvir"><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></roleName>',
          '<roleName type="civic" subtype="duumvir"><w><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></w></roleName>'
-     )
+     ),
+
+     ('<roleName type="military" subtype="primipilus"><w>primo</w><g ref="#interpunct">·</g><w>p<hi rend="tall">i</hi>lo</w></roleName>',
+      '<roleName type="military" subtype="primipilus"><w>primo</w><g ref="#interpunct">·</g><w>p<hi rend="tall">i</hi>lo</w></roleName>')
+
+
 ]
 
 
