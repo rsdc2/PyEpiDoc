@@ -19,15 +19,15 @@ from ..enums import (
     NonNormalized
 )
 from pyepidoc.shared.classes import SetRelation
-from ...xml import BaseElement
-from ...shared import update_set_inplace, head
-from ...shared.constants import XMLNS
-from ...shared.types import Base
-
+from pyepidoc.xml import BaseElement
+from pyepidoc.shared import update_set_inplace, head
+from pyepidoc.shared.constants import XMLNS
+from pyepidoc.shared.types import Base
+from pyepidoc.epidoc.representable import Representable
 from pyepidoc.epidoc.utils import descendant_atomic_tokens
 
 
-class Ab(EpiDocElement):
+class Ab(Representable):
 
     """
     The Ab class provides services for interaction with 
