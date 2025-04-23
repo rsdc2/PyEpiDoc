@@ -73,7 +73,7 @@ class GenericCollection(Generic[T]):
         Return the number of items in the underlying
         list of <T> elements
         """
-        return len(self._values)
+        return len(self._values)    
     
     def map(self, func: Callable[[T], U]) -> GenericCollection[U]:
         """
@@ -132,6 +132,12 @@ class GenericCollection(Generic[T]):
         Return the underlying _values `list` object
         """
         return self._values
+
+    def to_set(self) -> set[T]:
+        """
+        Return the underlying _values as a `set` object
+        """
+        return set(self._values)
 
     def top(self, n: int) -> GenericCollection[T]:
         """

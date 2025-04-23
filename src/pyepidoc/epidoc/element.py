@@ -558,7 +558,7 @@ class EpiDocElement(BaseElement, Showable):
             if parent is None:
                 return acc
 
-            return _recfunc([parent.index(element.e)] + acc, element.parent)
+            return _recfunc([parent.index(element.e, None, None)] + acc, element.parent)
 
         return _recfunc([], self)
 
