@@ -20,7 +20,7 @@ from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.utils import maxone, top, remove_none
 from pyepidoc.shared.numbers import percentage
 from pyepidoc.shared.string import format_year
-from pyepidoc.epidoc.generic_collection import GenericCollection
+from pyepidoc.shared.generic_collection import GenericCollection
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
