@@ -674,10 +674,6 @@ class EpiDocElement(BaseElement, Showable):
 
             """TODO merge with w_factory"""
 
-            def handle_compound_token(parent: _Element) -> EpiDocElement:
-                tokenized = EpiDocElement(parent).tokenize()
-                return tokenized
-
             _e = deepcopy(e)
             _e.tail = self.tail_completer   # type: ignore
             _element = EpiDocElement(_e)
@@ -706,7 +702,7 @@ class EpiDocElement(BaseElement, Showable):
             elif _element.tag.name in CompoundTokenType.values():
                 epidoc_elem = EpiDocElement(_element)
                 internal_tokenized = epidoc_elem.get_container_token_elements()
-                
+                epidoc_elem.remove_children()
                 for element in internal_tokenized:
                     epidoc_elem.append_element_or_text(element)
 
