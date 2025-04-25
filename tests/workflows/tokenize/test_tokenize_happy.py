@@ -314,7 +314,22 @@ xml_to_tokenize = [
                 </expan>
                 ·""",
          '<lb n="3"/><w><expan><abbr>Cla</abbr><ex>udia</ex></expan></w><g ref="#interpunct">·</g>'
-     )
+     ),
+     
+    ('<roleName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</roleName>',
+     '<roleName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num> <g ref="#interpunct">·</g> <w>v<hi rend="tall">i</hi>r</w></roleName>'),
+
+    ('<persName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</persName>',
+     '<persName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num> <g ref="#interpunct">·</g> <w>v<hi rend="tall">i</hi>r</w></persName>'),
+
+    ('<roleName type="civic" subtype="duumvir"><hi rend="supraline">II</hi> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</roleName>',
+     '<roleName type="civic" subtype="duumvir"><w><hi rend="supraline">II</hi></w> <g ref="#interpunct">·</g> <w>v<hi rend="tall">i</hi>r</w></roleName>'),
+
+    ('<persName type="civic" subtype="duumvir"><hi rend="supraline">II</hi> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</persName>',
+     '<persName type="civic" subtype="duumvir"><w><hi rend="supraline">II</hi></w><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></persName>'),
+
+    ('<g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r',
+     '<g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w>')
 
 ]
 

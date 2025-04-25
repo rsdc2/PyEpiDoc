@@ -154,7 +154,7 @@ class CompoundTokenType(EnumerableEnum):
     RoleName = 'roleName'
     OrgName = 'orgName'
     Foreign = 'foreign'
-    Hi = 'hi' # can also contain atomic token types
+    # Hi = 'hi' # can also contain atomic token types
     Note = 'note'
     Date = 'date'
     RS = 'rs'

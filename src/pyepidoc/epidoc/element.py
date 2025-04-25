@@ -99,7 +99,7 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
         # Surround in Atomic token tag
         w = EpiDocElement.w_factory(subelements=[subelement])
 
-    if subelement.tail is not None and subelement.tail[-1] in ' ':
+    if subelement.tail is not None and subelement.tail != '' and subelement.tail[-1] in ' ':
         w._final_space = True
     
     return w
@@ -702,21 +702,15 @@ class EpiDocElement(BaseElement, Showable):
 
             elif _element.tag.name in AtomicTokenType.values():            
                 return [_element] # i.e. do nothing because already a token
-            
-            elif _element.tag.name in SubatomicTagType.values() and _element.tag.name in CompoundTokenType.values():
-                # This handles cases like <hi> which may contain tokens, but may also only contain parts of tokens
-
-                potential_subtokens = _element.text_desc.split()
-
-                if len(potential_subtokens) > 1: # If there is more than one potential subtoken, then treat as compound token
-                    return [handle_compound_token(_element.e)]
-                elif len(potential_subtokens) == len(_element.tokenized_children):
-                    return [_element] # i.e. do nothing because there is nothing to tokenize
-                else:
-                    return [tokenize_subatomic_tags(subelement=_e)]
 
             elif _element.tag.name in CompoundTokenType.values():
-                return [handle_compound_token(parent=_element.e)]
+                epidoc_elem = EpiDocElement(_element)
+                internal_tokenized = epidoc_elem.get_container_token_elements()
+                
+                for element in internal_tokenized:
+                    epidoc_elem.append_element_or_text(element)
+
+                return [epidoc_elem]
             
             elif _element.tag.name in SubatomicTagType.values():
                 return [tokenize_subatomic_tags(subelement=_e)]
@@ -1354,6 +1348,54 @@ class EpiDocElement(BaseElement, Showable):
         
         return reduce(remove_subsets, tokencarrier_sequences, [])
 
+    def get_container_token_elements(self) -> list[EpiDocElement]:
+
+        # Get initial text before any child elements of the <ab>
+        ab_prototokens = (self.text or '').split()  # split the string into tokens
+
+        # Create token elements from the split string elements
+        ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) 
+                    for word in ab_prototokens]        
+
+        # Insert the tokens into the tree
+        for token in reversed(ab_tokens):
+            if self.e is not None and token.e is not None:
+                self.e.insert(0, token.e)
+
+        token_carriers = chain(*self._token_carrier_sequences)
+        token_carriers_sorted = sorted(token_carriers)
+        
+        def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
+            
+            if element._join_to_next:
+                if acc == []:
+                    return element.token_elements
+
+                if element.token_elements == []:
+                    return acc
+            
+                def sumfunc(
+                    acc:list[EpiDocElement], 
+                    elem:EpiDocElement) -> list[EpiDocElement]:
+
+                    if acc == []:
+                        return [elem]
+                
+                    new_first = elem + acc[0]
+
+                    return new_first + acc[1:]
+
+                # Don't sum the whole sequence every time
+                # On multiple passes, information on bounding left 
+                # and right appears to get lost
+                return reduce(
+                    sumfunc, 
+                    reversed(element.token_elements + acc[:1]), 
+                    cast(list[EpiDocElement], [])) + acc[1:]
+
+            return element.token_elements + acc
+
+        return reduce(_redfunc, reversed(token_carriers_sorted), [])
 
     @property
     def token_elements(self) -> list[EpiDocElement]:
@@ -1363,55 +1405,10 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         if self.localname in ['ab', 'roleName']:
-            # Get initial text before any child elements of the <ab>
-            ab_prototokens = (self.text or '').split()  # split the string into tokens
-
-            # Create token elements from the split string elements
-            ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) 
-                        for word in ab_prototokens]        
-
-            # Insert the tokens into the tree
-            for token in reversed(ab_tokens):
-                if self.e is not None and token.e is not None:
-                    self.e.insert(0, token.e)
-
-            token_carriers = chain(*self._token_carrier_sequences)
-            token_carriers_sorted = sorted(token_carriers)
-            
-            def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
-                
-                if element._join_to_next:
-                    if acc == []:
-                        return element.token_elements
-
-                    if element.token_elements == []:
-                        return acc
-                
-                    def sumfunc(
-                        acc:list[EpiDocElement], 
-                        elem:EpiDocElement) -> list[EpiDocElement]:
-
-                        if acc == []:
-                            return [elem]
-                    
-                        new_first = elem + acc[0]
-
-                        return new_first + acc[1:]
-
-                    # Don't sum the whole sequence every time
-                    # On multiple passes, information on bounding left 
-                    # and right appears to get lost
-                    return reduce(
-                        sumfunc, 
-                        reversed(element.token_elements + acc[:1]), 
-                        cast(list[EpiDocElement], [])) + acc[1:]
-
-                return element.token_elements + acc
-
-            return reduce(_redfunc, reversed(token_carriers_sorted), [])
-
+            return self.get_container_token_elements()
 
         token_elems = self.internal_token_elements + self.tail_token_elements
+        
         if token_elems != []:
             if self.e is not None:
                 if self.e.tail != '' and self.e.tail is not None:
