@@ -121,7 +121,7 @@ class Representable(EpiDocElement):
                     if str(last).strip() not in ['', '·']:
                         return acc 
                 
-                if localname(last) in ['lb', 'w', 'name', 'persName', 'num']:
+                if localname(last) in ['lb', 'w', 'name', 'persName', 'roleName', 'num']:
                     return acc
             
             return acc + [node]
