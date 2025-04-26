@@ -451,10 +451,12 @@ class EpiDocElement(BaseElement, Showable):
 
     @property
     def first_internal_word_element(self) -> Optional[EpiDocElement]:
-        if self.internal_token_elements == []:
+
+        internal_token_elements = self.get_internal_token_elements()
+        if internal_token_elements == []:
             return None
         
-        return self.internal_token_elements[0]
+        return internal_token_elements[0]
 
     @property
     def following_nodes_in_ab(self) -> list[_Element | _ElementUnicodeResult]:
@@ -629,8 +631,7 @@ class EpiDocElement(BaseElement, Showable):
 
         return self.text_desc.split()
 
-    @property
-    def internal_token_elements(self) -> list[EpiDocElement]:
+    def get_internal_token_elements(self) -> list[EpiDocElement]:
 
         def remove_internal_extraneous_whitespace(e: _Element) -> _Element:
             """
@@ -690,7 +691,7 @@ class EpiDocElement(BaseElement, Showable):
                     elems = EpiDocElement(_e) + EpiDocElement.w_factory(internalprotowords[0])
 
                     # Make sure there is a bound to the right if there are multiple tokens in the tail
-                    if len(self.tail_token_elements) > 0:
+                    if len(self.get_tail_token_elements()) > 0:
                         elems[-1]._final_space = True
                     return elems
                 
@@ -1221,8 +1222,7 @@ class EpiDocElement(BaseElement, Showable):
         else:
             return []
     
-    @property
-    def tail_token_elements(self) -> list[EpiDocElement]:
+    def get_tail_token_elements(self) -> list[EpiDocElement]:
 
         def make_words(protoword:Optional[str]) -> EpiDocElement:
             w = EpiDocElement.w_factory(protoword)
@@ -1402,7 +1402,7 @@ class EpiDocElement(BaseElement, Showable):
         if self.localname in ['ab']:
             return self.get_child_tokens_for_container()
 
-        token_elems = self.internal_token_elements + self.tail_token_elements
+        token_elems = self.get_internal_token_elements() + self.get_tail_token_elements()
         
         if token_elems != []:
             if self.e is not None:
