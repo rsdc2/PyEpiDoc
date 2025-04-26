@@ -329,7 +329,20 @@ xml_to_tokenize = [
      '<persName type="civic" subtype="duumvir"><w><hi rend="supraline">II</hi></w><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></persName>'),
 
     ('<g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r',
-     '<g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w>')
+     '<g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w>'),
+
+     ("""
+       <persName>
+            <name>
+                <expan>
+                    <abbr>Q</abbr>
+                    <ex>uinto</ex>
+                </expan>
+            </name>
+            · <name>Atilio</name>
+        </persName>
+      """,
+      '<persName><name><expan><abbr>Q</abbr><ex>uinto</ex></expan></name><g ref="#interpunct">·</g><name>Atilio</name></persName>')
 
 ]
 

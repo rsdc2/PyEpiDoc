@@ -1400,7 +1400,7 @@ class EpiDocElement(BaseElement, Showable):
         For use in tokenization.
         """
 
-        if self.localname in ['ab', 'roleName']:
+        if self.localname in ['ab']:
             return self.get_container_token_elements()
 
         token_elems = self.internal_token_elements + self.tail_token_elements
