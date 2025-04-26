@@ -226,7 +226,7 @@ class Ab(EpiDocElement):
 
         def parent_name_set(elem: _Element) -> set[str]:
             parent_names = [parent.localname 
-                            for parent in Token(elem).ancestors_incl_self]
+                            for parent in Token(elem).get_ancestors_incl_self()]
             return set(parent_names)
         
         return [Token(token_elem) for token_elem 

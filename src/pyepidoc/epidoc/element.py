@@ -194,7 +194,7 @@ class EpiDocElement(BaseElement, Showable):
                 self_e.append(other_e)
                 return [EpiDocElement(self_e, other._final_space)]
 
-            if self._subsumable_by(other):
+            if self._is_subsumable_by(other):
                 self_e.tail = other.text    # type: ignore
                 other_e.text = ''   # type: ignore
                 other_e.insert(0, self_e)
@@ -384,7 +384,7 @@ class EpiDocElement(BaseElement, Showable):
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
-        return len([parent for parent in self.ancestors_incl_self 
+        return len([parent for parent in self.get_ancestors_incl_self()
             if type(parent.parent) is EpiDocElement])
 
     @property
@@ -544,7 +544,7 @@ class EpiDocElement(BaseElement, Showable):
         <supplied> tag.
         """
 
-        return len(self.supplied) > 0
+        return len(self.get_supplied()) > 0
 
     @property
     def id_internal(self) -> list[int]:
@@ -1053,7 +1053,7 @@ class EpiDocElement(BaseElement, Showable):
 
     @property
     def root(self) -> BaseElement:
-        return self.ancestors_incl_self[-1]
+        return self.get_ancestors_incl_self()[-1]
 
     @property
     def roottree(self) -> Optional[_ElementTree]:
@@ -1139,7 +1139,7 @@ class EpiDocElement(BaseElement, Showable):
         return [elem for elem in elems 
                 if elem.next_sibling not in self.no_space_before]
 
-    def _subsumable_by(self, other:EpiDocElement) -> bool:
+    def _is_subsumable_by(self, other:EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 
             return False
 
@@ -1190,8 +1190,7 @@ class EpiDocElement(BaseElement, Showable):
 
         return self.tail
 
-    @property
-    def supplied(self):
+    def get_supplied(self) -> list[EpiDocElement]:
         return [EpiDocElement(supplied) for supplied in self.get_desc('supplied')]
 
     @property

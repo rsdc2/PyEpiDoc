@@ -693,7 +693,7 @@ class Edition(EpiDocElement):
     def tokens_normalized_no_nested_str(self) -> str:
         return ' '.join(self.tokens_normalized_no_nested_list_str)
 
-    def tokenize(self) -> Optional[Edition]:
+    def tokenize(self) -> Edition:
         for ab in self.abs:
             ab.tokenize()   
 
