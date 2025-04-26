@@ -701,7 +701,7 @@ class EpiDocElement(BaseElement, Showable):
 
             elif _element.tag.name in CompoundTokenType.values():
                 epidoc_elem = EpiDocElement(_element)
-                internal_tokenized = epidoc_elem.get_container_token_elements()
+                internal_tokenized = epidoc_elem.get_child_tokens_for_container()
                 epidoc_elem.remove_children()
                 for element in internal_tokenized:
                     epidoc_elem.append_element_or_text(element)
@@ -1344,7 +1344,7 @@ class EpiDocElement(BaseElement, Showable):
         
         return reduce(remove_subsets, tokencarrier_sequences, [])
 
-    def get_container_token_elements(self) -> list[EpiDocElement]:
+    def get_child_tokens_for_container(self) -> list[EpiDocElement]:
 
         # Get initial text before any child elements of the <ab>
         ab_prototokens = (self.text or '').split()  # split the string into tokens
@@ -1365,9 +1365,9 @@ class EpiDocElement(BaseElement, Showable):
             
             if element._join_to_next:
                 if acc == []:
-                    return element.token_elements
+                    return element.get_child_tokens()
 
-                if element.token_elements == []:
+                if element.get_child_tokens() == []:
                     return acc
             
                 def sumfunc(
@@ -1386,22 +1386,21 @@ class EpiDocElement(BaseElement, Showable):
                 # and right appears to get lost
                 return reduce(
                     sumfunc, 
-                    reversed(element.token_elements + acc[:1]), 
+                    reversed(element.get_child_tokens() + acc[:1]), 
                     cast(list[EpiDocElement], [])) + acc[1:]
 
-            return element.token_elements + acc
+            return element.get_child_tokens() + acc
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
 
-    @property
-    def token_elements(self) -> list[EpiDocElement]:
+    def get_child_tokens(self) -> list[EpiDocElement]:
         """
         Returns all potential child tokens.
         For use in tokenization.
         """
 
         if self.localname in ['ab']:
-            return self.get_container_token_elements()
+            return self.get_child_tokens_for_container()
 
         token_elems = self.internal_token_elements + self.tail_token_elements
         
@@ -1427,12 +1426,12 @@ class EpiDocElement(BaseElement, Showable):
         if not inplace:
             _e = deepcopy(self._e)
 
-            for element in self.token_elements:
+            for element in self.get_child_tokens():
                 tokenized_elements += [deepcopy(element)]
 
         else:
             _e = self._e
-            tokenized_elements = self.token_elements
+            tokenized_elements = self.get_child_tokens()
 
         # Remove existing children of <ab>
         for child in _e.getchildren():

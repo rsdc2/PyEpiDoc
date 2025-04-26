@@ -365,7 +365,7 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
                       for t in tokenized_benchmark.tokens]
     
     tokenized_strs = [etree.tostring(t.e) 
-                      for t in tokenized.token_elements]
+                      for t in tokenized.get_child_tokens()]
     
     benchmark_bstr: bytes = etree.tostring(tokenized_benchmark.e)
     benchmark_str = benchmark_bstr.decode()
@@ -380,4 +380,4 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
         pass
 
     assert tokenized_str == benchmark_str
-    assert tokenized.token_elements != []
+    assert tokenized.get_child_tokens() != []
