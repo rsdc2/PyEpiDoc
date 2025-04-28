@@ -37,5 +37,4 @@ class Orig(EpiDocElement):
             
             return ''
     
-        else:
-            return self.text_desc.upper()
+        return self.text_desc.upper()

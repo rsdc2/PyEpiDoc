@@ -141,6 +141,7 @@ def normalized_str_from_children(
     objs = cast(list[EpiDocElement], [classes.get(localname(child), descendant_text)(child) 
             for child in children])
     
+    # breakpoint()
     s = ''.join([obj.normalized_form 
                  if hasattr(obj, 'normalized_form') 
                  else str(obj) for obj in objs])

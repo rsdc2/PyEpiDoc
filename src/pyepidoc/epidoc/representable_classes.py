@@ -8,8 +8,10 @@ from .elements.g import G
 from .elements.gap import Gap
 from .elements.hi import Hi
 from .elements.lb import Lb
+from .elements.name import Name
 from .elements.num import Num
 from .elements.orig import Orig
+from .elements.pers_name import PersName
 from .elements.supplied import Supplied
 from .elements.surplus import Surplus
 from .elements.unclear import Unclear
@@ -26,8 +28,10 @@ elem_classes: dict[str, type] = {
     'gap': Gap,
     'hi': Hi,
     'lb': Lb,
+    'name': Name,
     'num': Num,
     'orig': Orig,
+    'persName': PersName,
     'supplied': Supplied,
     'surplus': Surplus,
     'unclear': Unclear,

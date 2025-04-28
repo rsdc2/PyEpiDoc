@@ -35,7 +35,8 @@ class W(EpiDocElement):
             'num': Num,
             'surplus': Surplus,
             'hi': Hi,
-            'supplied': Supplied
+            'supplied': Supplied,
+            'w': W
         }
         
         return leiden_str_from_children(
@@ -82,7 +83,8 @@ class W(EpiDocElement):
             'surplus': Surplus,
             'hi': Hi,
             'choice': Choice,
-            'gap': Gap
+            'gap': Gap,
+            'w': W
         }
         
         return normalized_str_from_children(

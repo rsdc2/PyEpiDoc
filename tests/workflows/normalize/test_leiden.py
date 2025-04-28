@@ -15,7 +15,8 @@ token_elements = [
      'decebris'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
      'evok(ato)'),
-    ('<orig>CHEDONI</orig>', 'CHEDONI')
+    ('<orig>CHEDONI</orig>', 'CHEDONI'),
+    ('<orig>hello</orig>', 'HELLO')
 ]
 
 @pytest.mark.parametrize('inpt', token_elements)
