@@ -32,5 +32,15 @@ class Gap(Representable):
         return f' [-{self.extent}-] '
     
     @property
+    def normalized_form(self) -> str:
+        if self.unit is None or self.extent is None:
+            return '[-?-]'
+        
+        if self.unit == 'character' and self.extent == 'unknown':
+            return '[-?-]'
+        
+        return f' [-{self.extent}-] '
+    
+    @property
     def unit(self) -> str | None:
         return self.get_attrib('unit')

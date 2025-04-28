@@ -74,13 +74,15 @@ class W(EpiDocElement):
         from .surplus import Surplus
         from .hi import Hi
         from .choice import Choice
+        from .gap import Gap
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'num': Num,
             'surplus': Surplus,
             'hi': Hi,
-            'choice': Choice
+            'choice': Choice,
+            'gap': Gap
         }
         
         return normalized_str_from_children(
