@@ -693,14 +693,19 @@ class Edition(EpiDocElement):
     def tokens_normalized_no_nested_str(self) -> str:
         return ' '.join(self.tokens_normalized_no_nested_list_str)
 
-    def tokenize(self) -> Edition:
-        for ab in self.abs:
+    def tokenize(self, inplace: bool = True) -> Edition:
+        if not inplace:
+            edition = Edition(self.deepcopy())
+        else:
+            edition = self 
+            
+        for ab in edition.abs:
             ab.tokenize()   
 
-        for l in self.ls:
+        for l in edition.ls:
             l.tokenize()
 
-        return self
+        return edition
 
     @property
     def w_tokens(self) -> list[Token]:

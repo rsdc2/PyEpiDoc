@@ -344,7 +344,7 @@ xml_to_tokenize = [
       """,
       '<persName><name><expan><abbr>Q</abbr><ex>uinto</ex></expan></name><g ref="#interpunct">·</g><name>Atilio</name></persName>'),
 
-     ('<roleName type="military" subtype="primipilus"><w>primo</w><g ref="#interpunct">·</g><w>p<hi rend="tall">i</hi>lo</w></roleName>',
+     ('<roleName type="military" subtype="primipilus"><w>primo</w> <g ref="#interpunct">·</g> <w>p<hi rend="tall">i</hi>lo</w></roleName>',
       '<roleName type="military" subtype="primipilus"><w>primo</w><g ref="#interpunct">·</g><w>p<hi rend="tall">i</hi>lo</w></roleName>')
 
 ]
