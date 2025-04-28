@@ -16,7 +16,7 @@ from functools import cached_property
 from .elements.expan import Expan
 from pyepidoc.shared.utils import top, contains, listfilter
 from pyepidoc.epidoc.enums import AbbrType
-from pyepidoc.epidoc.generic_collection import GenericCollection
+from pyepidoc.shared.generic_collection import GenericCollection
 
 T = TypeVar('T')
 

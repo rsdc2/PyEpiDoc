@@ -6,8 +6,6 @@ from typing import (
     Union
 )
 from functools import cached_property, reduce
-from copy import deepcopy
-import re
 
 from lxml.etree import (
     _Element, 
@@ -27,53 +25,18 @@ from .utils import (
     normalized_str_from_children,
     descendant_atomic_tokens
 )
-from .elements.abbr import Abbr
-from .elements.am import Am
-from .elements.choice import Choice
-from .elements.del_elem import Del
-from .elements.ex import Ex
-from .elements.expan import Expan
-from .elements.g import G
-from .elements.gap import Gap
-from .elements.hi import Hi
-from .elements.lb import Lb
-from .elements.num import Num
-from .elements.orig import Orig
-from .elements.supplied import Supplied
-from .elements.surplus import Surplus
-from .elements.unclear import Unclear
-from .elements.w import W
 
-from .enums import (
-    CompoundTokenType, 
-    AtomicTokenType,
-    PUNCTUATION,
-    NonNormalized,
-    RegTextType
-)
+from .enums import RegTextType
 
 Node = Union[_Element, _ElementUnicodeResult]
 
-elem_classes: dict[str, type] = {
-    'abbr': Abbr,
-    'am': Am,
-    'choice': Choice,
-    'ex': Ex, 
-    'del': Del,
-    'expan': Expan,
-    'g': G,
-    'gap': Gap,
-    'hi': Hi,
-    'lb': Lb,
-    'num': Num,
-    'orig': Orig,
-    'supplied': Supplied,
-    'surplus': Surplus,
-    'unclear': Unclear,
-    'w': W
-}
 
 class Representable(EpiDocElement):
+
+    @property
+    def elem_classes(self) -> dict[str, type]:
+        from .representable_classes import elem_classes
+        return elem_classes
 
     @property
     def form_normalized(self) -> str:
@@ -91,7 +54,7 @@ class Representable(EpiDocElement):
         abbreviations expanded with brackets
         """
 
-        return leiden_str_from_children(self.e, elem_classes, 'node')
+        return leiden_str_from_children(self.e, self.elem_classes, 'node')
 
     @property
     def leiden_plus_form(self) -> str:
@@ -105,7 +68,7 @@ class Representable(EpiDocElement):
             ln = localname(n)
 
             if ln in ['g', 'lb', 'gap']:
-                return elem_classes[ln](n).leiden_form
+                return self.elem_classes[ln](n).leiden_form
             
             return ''
 
@@ -150,10 +113,10 @@ class Representable(EpiDocElement):
         Compare @form and @orig_form
         """
         
-        if self.localname == 'num':
-            return Num(self.e).normalized_form
+        # if self.localname == 'num':
+        #     return Num(self.e).normalized_form
         
-        return normalized_str_from_children(self.e, elem_classes, 'node')
+        return normalized_str_from_children(self.e, self.elem_classes, 'node')
     
     @cached_property
     def orig_form(self) -> str:

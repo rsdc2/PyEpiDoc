@@ -20,7 +20,7 @@ from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.utils import maxone, top, remove_none
 from pyepidoc.shared.numbers import percentage
 from pyepidoc.shared.string import format_year
-from pyepidoc.epidoc.generic_collection import GenericCollection
+from pyepidoc.shared.generic_collection import GenericCollection
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
@@ -717,7 +717,7 @@ class EpiDocCorpus:
 
         return  (
             f'Document count:{indent}{self.doc_count}\n'
-            f'  - of which lemmatizable (tokens > 0): {self.lemmatizable_files().count}\n'
+            f'  - of which lemmatizable (tokens > 0): {self.lemmatizable_docs().count}\n'
             f'Date range:{indent}{format_year(self.daterange[0])}--{format_year(self.daterange[1])}\n'
             f'Token count:{indent}{tokens.count}\n'
             f'  - of which names (% tokens):\t\t{names_count} ({percentage(names_count, tokens.count)}%)\n'
@@ -734,7 +734,7 @@ class EpiDocCorpus:
         return set([lang for doc in self.docs 
                     for lang in doc.div_langs])
 
-    def lemmatizable_files(self) -> GenericCollection[EpiDoc]:
+    def lemmatizable_docs(self) -> GenericCollection[EpiDoc]:
         """
         Return a GenericCollection of EpiDoc objects where the 
         lemmatizability is greater than 0%.
