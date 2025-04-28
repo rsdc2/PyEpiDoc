@@ -108,11 +108,14 @@ def leiden_str_from_children(
     children: list[_Element | _ElementUnicodeResult] = \
         [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
 
+
     if len(children) == 0:
         objs = [classes.get(localname(parent), lambda _: '')(parent)]
     else:
         objs = [classes.get(localname(child), descendant_text)(child) 
                 for child in children]
+        
+    # breakpoint()
 
     return ''.join([obj.leiden_form if hasattr(obj, 'leiden_form') else str(obj) for obj in objs])
 

@@ -1,6 +1,6 @@
 from lxml.etree import _Element
 from ..element import EpiDocElement
-
+from pyepidoc.epidoc.enums import AtomicTokenType
 
 class G(EpiDocElement):
     """
@@ -26,6 +26,9 @@ class G(EpiDocElement):
 
     @property
     def leiden_form(self) -> str:
+        if self.has_ancestors_by_names(AtomicTokenType.values()):
+            return self.text_desc_compressed_whitespace
+        
         return ' ' + self.text_desc_compressed_whitespace + ' '
 
     @property

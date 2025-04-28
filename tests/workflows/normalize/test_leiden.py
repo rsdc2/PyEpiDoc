@@ -10,7 +10,7 @@ token_elements = [
      'evidence="previouseditor">hi</supplied> '
      '<supplied reason="lost" evidence="previouseditor"><g ref="#interpunct">·</g></supplied>'
      '<lb n="5" break="no"/><g ref="#interpunct">·</g> n</w></name></persName>', 
-     'Melanthi··n'),
+     'Melant[hi][·]|·n'),
     ('<w><choice><orig>decebris</orig><reg>decembres</reg></choice></w>',
      'decebris'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
@@ -22,10 +22,16 @@ token_elements = [
 @pytest.mark.parametrize('inpt', token_elements)
 def test_token_leiden_form(inpt: tuple[str, str]):
 
-    xml_str, leiden_form = inpt
+    # Arrange
+    xml_str, expected_leiden_form = inpt
     elem = EpiDocElement.from_xml_str(xml_str)
     token = Token(elem.e)
-    assert token.leiden_form == leiden_form
+    
+    # Act
+    leiden_form = token.leiden_form
+
+    # Assert
+    assert leiden_form == expected_leiden_form
 
 
 token_elements = [
@@ -33,7 +39,7 @@ token_elements = [
      'evidence="previouseditor">hi</supplied> '
      '<supplied reason="lost" evidence="previouseditor"><g ref="#interpunct">·</g></supplied>'
      '<lb n="5" break="no"/><g ref="#interpunct">·</g> n</w></name></persName>', 
-     'Melanthi··n'),
+     'Melant[hi][·]|·n'),
     ('<w><choice><orig>decebris</orig><reg>decembres</reg></choice></w>',
      'decebris'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
@@ -68,3 +74,7 @@ def test_edition_leiden(xml_str: str, expected: str):
 
     # Assert
     assert leiden_text == expected
+
+
+if __name__ == '__main__':
+    test_token_leiden_form(token_elements[1])

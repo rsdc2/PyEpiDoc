@@ -29,6 +29,9 @@ class W(EpiDocElement):
         from .surplus import Surplus
         from .hi import Hi
         from .supplied import Supplied
+        from .choice import Choice
+        from .g import G
+        from .lb import Lb
 
         element_classes: dict[str, type] = {
             'expan': Expan,
@@ -36,9 +39,12 @@ class W(EpiDocElement):
             'surplus': Surplus,
             'hi': Hi,
             'supplied': Supplied,
-            'w': W
+            'w': W,
+            'choice': Choice,
+            'g': G,
+            'lb': Lb
         }
-        
+        # breakpoint()
         return leiden_str_from_children(
             self.e, 
             element_classes, 
@@ -76,6 +82,7 @@ class W(EpiDocElement):
         from .hi import Hi
         from .choice import Choice
         from .gap import Gap
+        from .g import G
 
         element_classes: dict[str, type] = {
             'expan': Expan,
@@ -84,7 +91,8 @@ class W(EpiDocElement):
             'hi': Hi,
             'choice': Choice,
             'gap': Gap,
-            'w': W
+            'w': W,
+            'g': G
         }
         
         return normalized_str_from_children(

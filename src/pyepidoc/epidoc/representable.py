@@ -55,6 +55,7 @@ class Representable(EpiDocElement):
         """
         cls = self.elem_classes[self.localname]
         inst = cls(self._e)
+        # breakpoint()
         return inst.leiden_form
 
     @property
