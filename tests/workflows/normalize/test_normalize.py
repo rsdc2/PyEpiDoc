@@ -44,7 +44,9 @@ token_elements = [
      'decembres'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
      'evocato'),
-    ('<orig>CHEDONI</orig>', 'CHEDONI')
+    ('<orig>CHEDONI</orig>', 'CHEDONI'),
+    ('<name>Prim<gap reason="lost" extent="unknown" unit="character"/>ius</name>', 'Prim[-?-]ius'),
+    ('<w>Prim<gap reason="lost" extent="unknown" unit="character"/>ius</w>', 'Prim[-?-]ius')
 ]
 
 @pytest.mark.parametrize('inpt', token_elements)
