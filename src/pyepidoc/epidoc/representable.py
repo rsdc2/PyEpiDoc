@@ -84,7 +84,7 @@ class Representable(EpiDocElement):
                     if str(last).strip() not in ['', '·']:
                         return acc 
                 
-                if localname(last) in ['lb', 'w', 'name', 'persName', 'num']:
+                if localname(last) in ['lb', 'w', 'name', 'persName', 'roleName', 'num']:
                     return acc
             
             return acc + [node]
@@ -133,32 +133,6 @@ class Representable(EpiDocElement):
 
         normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
         return self._clean_text(''.join([str(t) for t in normalized_text]))
-    
-    def remove_element_internal_whitespace(self) -> _Element:
-        
-        """
-        Remove all internal whitespace from word element, in place, 
-        except for comments.
-        """
-
-        def _remove_whitespace_from_child(elem: _Element) -> _Element:
-
-            for child in elem.getchildren():
-                if not isinstance(child, _Comment):
-                    if child.text is not None:
-                        child.text = child.text.strip()
-                    if child.tail is not None:
-                        child.tail = child.tail.strip()
-
-                if len(child.getchildren()) > 0:
-                    child = _remove_whitespace_from_child(child) 
-
-            return elem
-        
-        if self._e is None:
-            raise TypeError("Underlying element is None")
-
-        return _remove_whitespace_from_child(self._e)
     
 
     @property

@@ -117,8 +117,7 @@ class BaseElement(Showable):
 
         return len(self.ancestors_excl_self)
 
-    @property
-    def ancestors_incl_self(self) -> ExtendableSeq[BaseElement]:
+    def get_ancestors_incl_self(self) -> ExtendableSeq[BaseElement]:
 
         """
         Returns an |ExtendableSeq| of parent |BaseElement|
@@ -139,7 +138,7 @@ class BaseElement(Showable):
 
     @property
     def ancestors_excl_self(self) -> ExtendableSeq[BaseElement]:
-        ancestors = self.ancestors_incl_self
+        ancestors = self.get_ancestors_incl_self()
         if len(ancestors) > 0:
             return cast(ExtendableSeq[BaseElement], ancestors[1:])
         return cast(ExtendableSeq[BaseElement], [])
@@ -228,7 +227,7 @@ class BaseElement(Showable):
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
-        return len([parent for parent in self.ancestors_incl_self 
+        return len([parent for parent in self.get_ancestors_incl_self()
             if type(parent.parent) is BaseElement])
 
     @property
@@ -485,7 +484,7 @@ class BaseElement(Showable):
             self,  
             ancestor_names:list[str]) -> Sequence[BaseElement]:
         
-        return [ancestor for ancestor in self.ancestors_incl_self 
+        return [ancestor for ancestor in self.get_ancestors_incl_self()
             if ancestor.tag.name in ancestor_names]
 
     def has_ancestor_by_name(self, localname: str) -> bool:
@@ -735,7 +734,7 @@ class BaseElement(Showable):
 
     @property
     def root(self) -> BaseElement:
-        return self.ancestors_incl_self[-1]
+        return self.get_ancestors_incl_self()[-1]
 
     @property
     def roottree(self) -> Optional[_ElementTree]:

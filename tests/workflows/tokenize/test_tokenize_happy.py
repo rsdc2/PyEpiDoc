@@ -35,7 +35,6 @@ tests = [
     'persName_spacing_ISic000263',
     'hi', # tests that does nothing when a <hi> contains a token
     'interpunct_1', # tests that recognises interpuncts correctly and puts in <g> tag
-    'interpunct_2', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_3', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_4', # tests that recognises interpuncts correctly and puts in <g> tag
     'interpunct_5', # tests that recognises interpuncts correctly and puts in <g> tag
@@ -295,10 +294,58 @@ xml_to_tokenize = [
          '<roleName type="civic" subtype="duumvir"><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></roleName>',
          '<roleName type="civic" subtype="duumvir"><w><expan><abbr><num value="2"><supplied reason="lost">I</supplied><unclear>I</unclear></num>vir</abbr><ex>o</ex></expan></w></roleName>'
      ),
+     (
+        '<roleName type="supracivic" subtype="consularis">consul<supplied reason="lost">aris</supplied></roleName>',
+        '<roleName type="supracivic" subtype="consularis"><w>consul<supplied reason="lost">aris</supplied></w></roleName>'
+     ),
+     (
+        '<persName>consul<supplied reason="lost">aris</supplied></persName>',
+        '<persName><w>consul<supplied reason="lost">aris</supplied></w></persName>'
+     ),
+     (
+        'consul<supplied reason="lost">aris</supplied>',
+        '<w>consul<supplied reason="lost">aris</supplied></w>'
+     ),
+     (
+         """<lb n="3"/>
+                <expan>
+                    <abbr>Cla</abbr>
+                    <ex>udia</ex>
+                </expan>
+                ·""",
+         '<lb n="3"/><w><expan><abbr>Cla</abbr><ex>udia</ex></expan></w><g ref="#interpunct">·</g>'
+     ),
+     
+    ('<roleName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</roleName>',
+     '<roleName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></roleName>'),
+
+    ('<persName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</persName>',
+     '<persName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></persName>'),
+
+    ('<roleName type="civic" subtype="duumvir"><hi rend="supraline">II</hi> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</roleName>',
+     '<roleName type="civic" subtype="duumvir"><w><hi rend="supraline">II</hi></w><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></roleName>'),
+
+    ('<persName type="civic" subtype="duumvir"><hi rend="supraline">II</hi> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</persName>',
+     '<persName type="civic" subtype="duumvir"><w><hi rend="supraline">II</hi></w><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></persName>'),
+
+    ('<g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r',
+     '<g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w>'),
+
+     ("""
+       <persName>
+            <name>
+                <expan>
+                    <abbr>Q</abbr>
+                    <ex>uinto</ex>
+                </expan>
+            </name>
+            · <name>Atilio</name>
+        </persName>
+      """,
+      '<persName><name><expan><abbr>Q</abbr><ex>uinto</ex></expan></name><g ref="#interpunct">·</g><name>Atilio</name></persName>'),
 
      ('<roleName type="military" subtype="primipilus"><w>primo</w><g ref="#interpunct">·</g><w>p<hi rend="tall">i</hi>lo</w></roleName>',
       '<roleName type="military" subtype="primipilus"><w>primo</w><g ref="#interpunct">·</g><w>p<hi rend="tall">i</hi>lo</w></roleName>')
-
 
 ]
 
@@ -321,7 +368,7 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
                       for t in tokenized_benchmark.tokens]
     
     tokenized_strs = [etree.tostring(t.e) 
-                      for t in tokenized.tokens]
+                      for t in tokenized.get_child_tokens()]
     
     benchmark_bstr: bytes = etree.tostring(tokenized_benchmark.e)
     benchmark_str = benchmark_bstr.decode()
@@ -336,4 +383,4 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
         pass
 
     assert tokenized_str == benchmark_str
-    assert tokenized.tokens != []
+    assert tokenized.get_child_tokens() != []

@@ -22,7 +22,7 @@ def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
     Returns a |Sequence| of |Ab|s containing an |Element|,
     starting with the ancestor closest to the |Element|
     """
-    return [Ab(elem) for elem in elem.ancestors_incl_self 
+    return [Ab(elem) for elem in elem.get_ancestors_incl_self()
         if elem.localname == 'ab']
 
 
@@ -44,7 +44,7 @@ def ancestor_edition(elem: EpiDocElement) -> Optional[Edition]:
     Returns the |Edition| containing an element (if any).
     """
 
-    editions = [Edition(elem) for elem in elem.ancestors_incl_self 
+    editions = [Edition(elem) for elem in elem.get_ancestors_incl_self()
         if EpiDocElement(elem).is_edition]
 
     edition = maxone(

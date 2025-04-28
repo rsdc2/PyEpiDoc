@@ -163,7 +163,7 @@ def test_lines():
     assert l1 is not None
     assert l1.n == '1'
 
-    supplied = head(token.supplied)
+    supplied = head(token.get_supplied())
     assert supplied is not None
     
     l2 = line(supplied)
