@@ -27,7 +27,7 @@ class Orig(EpiDocElement):
             'expan': Expan
         }
         
-        return leiden_str_from_children(self.e, element_classes, 'node')
+        return leiden_str_from_children(self.e, element_classes, 'node').upper()
     
     @property
     def normalized_form(self) -> str:
@@ -38,4 +38,4 @@ class Orig(EpiDocElement):
             return ''
     
         else:
-            return self.text_desc
+            return self.text_desc.upper()
