@@ -604,7 +604,7 @@ class EpiDoc(DocRoot):
         """
 
         for edition in self.editions(True):
-            edition.insert_w_inside_name_and_num()
+            edition.insert_ws_inside_named_entities()
 
         return self
 
@@ -1383,7 +1383,7 @@ class EpiDoc(DocRoot):
             self.convert_ws_to_names()
 
         if insert_ws_inside_names_and_nums:
-            self.main_edition.insert_w_inside_name_and_num()
+            self.main_edition.insert_ws_inside_named_entities()
 
         if set_ids:
             self.set_ids(base=100)

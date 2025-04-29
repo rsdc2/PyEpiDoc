@@ -11,7 +11,7 @@ from pyepidoc.epidoc.scripts import tokenize, tokenize_to_file_object
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.elements.edition import Edition
 from pyepidoc.epidoc.elements.ab import Ab
-from pyepidoc.xml.utils import abify, editionify
+from pyepidoc.xml.utils import abify, editionify, xml_to_str
 
 
 input_path = Path('tests/workflows/tokenize/files/untokenized')
@@ -152,7 +152,7 @@ named_entities_xml = [
 
 ]
 @pytest.mark.parametrize("xml_pair", named_entities_xml)
-def test_tokenize_insert_ws_inside_named_entities(xml_pair: tuple[str, str]):
+def test_tokenize_and_insert_ws_inside_named_entities(xml_pair: tuple[str, str]):
     
     """
     Tests that tokenizes and inserts <w> elements inside named entities
@@ -160,14 +160,17 @@ def test_tokenize_insert_ws_inside_named_entities(xml_pair: tuple[str, str]):
 
     # Arrange
     inpt, expected = xml_pair
-    edition = Edition.from_xml_str(editionify(inpt, wrap_in_ab=True))
-    edition.insert_w_inside_name_and_num()
+    edition = Edition.from_xml_str(inpt, wrap_in_ab=True)
+
+    expected_edition = Edition.from_xml_str(expected, wrap_in_ab=True)
 
     # Act
     edition.tokenize()
+    edition.insert_ws_inside_named_entities()
+    edition.space_tokens()
 
     # Assert
-    assert edition.xml_str == expected
+    assert edition.xml_str == expected_edition.xml_str
 
 
 @pytest.mark.parametrize("tokenize_type", tests)

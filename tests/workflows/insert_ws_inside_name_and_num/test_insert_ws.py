@@ -30,7 +30,7 @@ def test_insert_ws(filename: str):
     if doc.main_edition is None:
         raise ValueError('No main edition.')
     
-    doc.main_edition.insert_w_inside_name_and_num()
+    doc.main_edition.insert_ws_inside_named_entities()
 
     assert save_reload_and_compare_with_benchmark(
         doc, 

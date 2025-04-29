@@ -32,7 +32,7 @@ def test_remove_attr():
 
     elem = BaseElement(elem_from_str('<w n="2">hello</w>'))
     elem.remove_attr('n', None)
-    assert elem.xml_str == '<w>hello</w>\n'
+    assert elem.xml_str == '<w>hello</w>'
 
 
 def test_remove_attr_with_xml_ns():
@@ -44,6 +44,6 @@ def test_remove_attr_with_xml_ns():
     lxml_elem = elem_from_str(string)
     elem = BaseElement(lxml_elem)
     elem.set_attrib('id', '2', XMLNS)
-    assert elem.xml_str == '<w xml:id="2">hello</w>\n'
+    assert elem.xml_str == '<w xml:id="2">hello</w>'
     elem.remove_attr('id', XMLNS)
-    assert elem.xml_str == '<w>hello</w>\n'
+    assert elem.xml_str == '<w>hello</w>'
