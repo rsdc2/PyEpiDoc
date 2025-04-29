@@ -21,14 +21,7 @@ from pyepidoc.shared.utils import maxone
 
 from pyepidoc.xml.namespace import Namespace as ns
 
-from pyepidoc.shared.constants import (
-    A_TO_Z_SET, 
-    TEINS, 
-    XMLNS, 
-    SubsumableRels,
-    ROMAN_NUMERAL_CHARS,
-    VALID_BASES
-)
+from pyepidoc.shared.constants import TEINS, XMLNS
 
 from .. import ids
 from ..element import EpiDocElement

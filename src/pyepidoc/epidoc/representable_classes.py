@@ -16,6 +16,7 @@ from .elements.supplied import Supplied
 from .elements.surplus import Surplus
 from .elements.unclear import Unclear
 from .elements.w import W
+from .elements.measure import Measure
 
 elem_classes: dict[str, type] = {
     'abbr': Abbr,
@@ -35,5 +36,6 @@ elem_classes: dict[str, type] = {
     'supplied': Supplied,
     'surplus': Surplus,
     'unclear': Unclear,
-    'w': W
+    'w': W,
+    'measure': Measure
 }

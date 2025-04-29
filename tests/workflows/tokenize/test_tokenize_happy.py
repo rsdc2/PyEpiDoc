@@ -2,14 +2,16 @@ import pytest
 from pathlib import Path
 from lxml import etree
 
-from ...config import FILE_WRITE_MODE
+from tests.config import FILE_WRITE_MODE
 
 from pyepidoc.shared.file import remove_file
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
+from pyepidoc.epidoc.enums import NamedEntities
 from pyepidoc.epidoc.scripts import tokenize, tokenize_to_file_object
 from pyepidoc.epidoc.epidoc import EpiDoc
+from pyepidoc.epidoc.elements.edition import Edition
 from pyepidoc.epidoc.elements.ab import Ab
-from pyepidoc.xml.utils import abify
+from pyepidoc.xml.utils import abify, editionify
 
 
 input_path = Path('tests/workflows/tokenize/files/untokenized')
@@ -141,22 +143,31 @@ def test_model_headers():
     tokenized_epidoc, tokenized_benchmark = tokenize_func(tokenize_type='xml_model_headers_1')
     assert tokenized_epidoc.processing_instructions_str == tokenized_benchmark.processing_instructions_str
 
+named_entities_xml = [
+    ('<lb n="1"/>Dis Manibus sacrum <name>Corneliae</name>',
+     '<lb n="1"/><w>Dis</w> <w>Manibus</w> <w>sacrum</w> <name><w>Corneliae</w></name>'),
 
-def test_tokenize_insert_ws():
+    ('<measure type="currency" unit="litra" cert="low"><expan><abbr><hi rend="inverted">Δ</hi></abbr><ex>εκάλιτρον</ex></expan></measure>',
+     '<measure type="currency" unit="litra" cert="low"><w><expan><abbr><hi rend="inverted">Δ</hi></abbr><ex>εκάλιτρον</ex></expan></w></measure>')
+
+]
+@pytest.mark.parametrize("xml_pair", named_entities_xml)
+def test_tokenize_insert_ws_inside_named_entities(xml_pair: tuple[str, str]):
     
     """
-    Tests that tokenizes and inserts <w> elements inside <name> and <num>
+    Tests that tokenizes and inserts <w> elements inside named entities
     """
 
-    filename = Path('insert_w_in_name.xml')
-    doc = EpiDoc(input_path / filename)
-    doc.tokenize(insert_ws_inside_names_and_nums=True)
-    assert save_reload_and_compare_with_benchmark(
-        doc, 
-        output_path / filename, 
-        benchmark_path / filename,
-        FILE_WRITE_MODE
-    ) == True
+    # Arrange
+    inpt, expected = xml_pair
+    edition = Edition.from_xml_str(editionify(inpt, wrap_in_ab=True))
+    edition.insert_w_inside_name_and_num()
+
+    # Act
+    edition.tokenize()
+
+    # Assert
+    assert edition.xml_str == expected
 
 
 @pytest.mark.parametrize("tokenize_type", tests)
@@ -345,7 +356,11 @@ xml_to_tokenize = [
       '<persName><name><expan><abbr>Q</abbr><ex>uinto</ex></expan></name><g ref="#interpunct">·</g><name>Atilio</name></persName>'),
 
      ('<roleName type="military" subtype="primipilus"><w>primo</w> <g ref="#interpunct">·</g> <w>p<hi rend="tall">i</hi>lo</w></roleName>',
-      '<roleName type="military" subtype="primipilus"><w>primo</w><g ref="#interpunct">·</g><w>p<hi rend="tall">i</hi>lo</w></roleName>')
+      '<roleName type="military" subtype="primipilus"><w>primo</w><g ref="#interpunct">·</g><w>p<hi rend="tall">i</hi>lo</w></roleName>'),
+
+    ('Tr<unclear>u</unclear>t<supplied reason="undefined" evidence="previouseditor">tedi</supplied><supplied reason="lost">us</supplied>',
+     '<w>Tr<unclear>u</unclear>t<supplied reason="undefined" evidence="previouseditor">tedi</supplied><supplied reason="lost">us</supplied></w>'),
+
 
 ]
 
@@ -353,11 +368,14 @@ xml_to_tokenize = [
 @pytest.mark.parametrize("xml_pair", xml_to_tokenize)
 def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
 
+    # Arrange
     xml_pair_abs = tuple(map(abify, xml_pair))
 
     xml, tokenized_xml = xml_pair_abs
     untokenized = Ab(etree.fromstring(xml, None))
     tokenized_benchmark = Ab(etree.fromstring(tokenized_xml, None))
+
+    # Act
 
     tokenized = untokenized.tokenize()
 
@@ -382,5 +400,6 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
         # breakpoint()
         pass
 
+    # Assert
     assert tokenized_str == benchmark_str
     assert tokenized.get_child_tokens() != []
