@@ -63,11 +63,12 @@ def test_token_normalization(inpt: tuple[str, str]):
     assert token.normalized_form == normalized_form
 
 
-token_elements = [
-    ('<orig>CHEDONI</orig>', 'CHEDONI')
+representable_elements = [
+    ('<orig>CHEDONI</orig>', 'CHEDONI'),
+    ('<orig>hello</orig>', 'HELLO')
 ]
 
-@pytest.mark.parametrize('inpt', token_elements)
+@pytest.mark.parametrize('inpt', representable_elements)
 def test_representable_normalization(inpt: tuple[str, str]):
 
     # Arrange
@@ -75,17 +76,18 @@ def test_representable_normalization(inpt: tuple[str, str]):
     elem = EpiDocElement.from_xml_str(xml_str)
     
     # Act
-    token = Representable(elem.e)
-    
+    representable = Representable(elem.e)
+    # breakpoint()
     # Assert
-    assert token.normalized_form == normalized_form
+    assert representable.normalized_form == normalized_form
 
 
-token_elements = [
-    ('<orig>CHEDONI</orig>', 'CHEDONI')
+edition_elements = [
+    ('<orig>CHEDONI</orig>', 'CHEDONI'),
+    ('<orig>hello</orig>', 'HELLO')
 ]
 
-@pytest.mark.parametrize('inpt', token_elements)
+@pytest.mark.parametrize('inpt', edition_elements)
 def test_edition_normalization(inpt: tuple[str, str]):
 
     # Arrange
@@ -100,4 +102,5 @@ def test_edition_normalization(inpt: tuple[str, str]):
 
 
 if __name__ == '__main__':
-    test_w_normalization(w_elements[0])
+    # test_w_normalization(w_elements[0])
+    test_representable_normalization(representable_elements[1])

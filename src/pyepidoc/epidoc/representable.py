@@ -34,7 +34,7 @@ Node = Union[_Element, _ElementUnicodeResult]
 class Representable(EpiDocElement):
 
     @property
-    def elem_classes(self) -> dict[str, type]:
+    def elem_classes(self) -> dict[str, type[Representable]]:
         from .representable_classes import elem_classes
         return elem_classes
 
@@ -53,8 +53,10 @@ class Representable(EpiDocElement):
         Returns the form per Leiden conventions, i.e. with
         abbreviations expanded with brackets
         """
-
-        return leiden_str_from_children(self.e, self.elem_classes, 'node')
+        cls = self.elem_classes[self.localname]
+        inst = cls(self._e)
+        # breakpoint()
+        return inst.leiden_form
 
     @property
     def leiden_plus_form(self) -> str:
@@ -113,10 +115,9 @@ class Representable(EpiDocElement):
         Compare @form and @orig_form
         """
         
-        # if self.localname == 'num':
-        #     return Num(self.e).normalized_form
-        
-        return normalized_str_from_children(self.e, self.elem_classes, 'node')
+        cls = self.elem_classes[self.localname]
+        inst = cls(self._e)
+        return inst.normalized_form
     
     @cached_property
     def orig_form(self) -> str:

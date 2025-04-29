@@ -26,16 +26,17 @@ class Orig(EpiDocElement):
         element_classes: dict[str, type] = {
             'expan': Expan
         }
+        leiden_str = leiden_str_from_children(self.e, element_classes, 'node')
         
-        return leiden_str_from_children(self.e, element_classes, 'node').upper()
+        if self.has_ancestor_by_name('choice'):
+            return leiden_str
+        
+        return leiden_str.upper()
     
     @property
     def normalized_form(self) -> str:
-
-        if 'choice' in \
-            map(lambda elem: elem.localname, self.ancestors_excl_self):
-            
+        # breakpoint()
+        if self.has_ancestor_by_name('choice'):
             return ''
     
-        else:
-            return self.text_desc.upper()
+        return self.text_desc.upper()
