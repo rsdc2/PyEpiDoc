@@ -19,16 +19,16 @@
             <div type="edition" subtype="simple-lemmatized">
                 <div type="textpart" subtype="fragment-physical" n="A" corresp="#frA">
                     <ab>
-                        <gap reason="lost" extent="unknown" unit="character"/>
+                        <gap reason="lost" extent="unknown" unit="character">[-?-]</gap>
                         <orig>ΕΡΩ</orig>
-                        <gap reason="lost" extent="unknown" unit="character"/>
+                        <gap reason="lost" extent="unknown" unit="character">[-?-]</gap>
                     </ab>
                 </div>
                 <div type="textpart" subtype="fragment-physical" n="B" corresp="#frB">
                     <ab>
-                        <gap reason="lost" extent="unknown" unit="character"/>
+                        <gap reason="lost" extent="unknown" unit="character">[-?-]</gap>
                         <orig>ΚΤΩΝΧ</orig>
-                        <gap reason="lost" extent="unknown" unit="character"/>
+                        <gap reason="lost" extent="unknown" unit="character">[-?-]</gap>
                     </ab>
                 </div>
             </div>

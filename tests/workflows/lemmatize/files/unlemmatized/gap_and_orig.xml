@@ -6,7 +6,7 @@
         <body>
         <div type="edition" xml:space="preserve" xml:lang="grc">
                 <ab>
-                    <w>σώμ<hi>ατος</hi></w> <gap/> <orig>dasg</orig> <w>manibus</w>
+                    <w>σώμ<hi>ατος</hi></w> <gap reason="lost" extent="unknown" unit="character"/> <orig>dasg</orig> <w>manibus</w>
                 </ab>
             </div>
         </body>

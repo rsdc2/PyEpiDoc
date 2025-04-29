@@ -10,7 +10,7 @@ from pyepidoc.shared.testing import (
 )
 
 from pyepidoc.shared.constants import SEPARATE_LEMMATIZED_ITEMS
-from ...config import FILE_WRITE_MODE
+from tests.config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
 lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
