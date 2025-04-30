@@ -23,13 +23,11 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from ..shared.classes import Tag
-
-from .namespace import Namespace as ns
-
-from pyepidoc.shared.constants import TEINS, XMLNS, SubsumableRels
+from pyepidoc.shared.classes import Tag
+from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared import maxone, head
 from pyepidoc.xml.utils import localname
+from .namespace import Namespace as ns
 
 
 class BaseElement(Showable):    

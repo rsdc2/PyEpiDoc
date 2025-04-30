@@ -231,6 +231,24 @@ xml_to_tokenize = [
     ('<num value="15"><hi rend="supraline">ιε</hi></num> καλα<supplied reason="lost">ν</supplied>',
      '<num value="15"><hi rend="supraline">ιε</hi></num><w>καλα<supplied reason="lost">ν</supplied></w>'),
 
+    ('<num value="15">ιε</num> καλα',
+     '<num value="15">ιε</num><w>καλα</w>'),
+
+    ('<num value="15">ιε</num> καλα<supplied reason="lost">ν</supplied>',
+     '<num value="15">ιε</num><w>καλα<supplied reason="lost">ν</supplied></w>'),
+
+    ('<num value="15">II</num>ka la<supplied reason="lost">n</supplied>',
+     '<w><num value="15">II</num>ka</w><w>la<supplied reason="lost">n</supplied></w>'),
+
+    ('<num value="15">II</num>ka lan',
+     '<w><num value="15">II</num>ka</w><w>lan</w>'),
+
+    ('<num value="15">II</num> kalan',
+     '<num value="15">II</num><w>kalan</w>'),
+
+    ('<num>ιε</num> καλα<supplied reason="lost">ν</supplied>',
+     '<num>ιε</num><w>καλα<supplied reason="lost">ν</supplied></w>'),
+
     ('<placeName ref="https://pleiades.stoa.org/places/678374">Μά'
      '<lb n="3" break="no"/>κρης κώ'
      '<lb n="4" break="no"/>μης</placeName>',
@@ -338,6 +356,9 @@ xml_to_tokenize = [
 
     ('<roleName type="civic" subtype="duumvir"><hi rend="supraline">II</hi> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</roleName>',
      '<roleName type="civic" subtype="duumvir"><w><hi rend="supraline">II</hi></w><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></roleName>'),
+
+    ('<roleName type="civic" subtype="duumvir"><num value="2"><hi rend="supraline">II</hi></num><g ref="#interpunct">·</g>v<hi rend="tall">i</hi>r</roleName>',
+     '<roleName type="civic" subtype="duumvir"><w><num value="2"><hi rend="supraline">II</hi></num><g ref="#interpunct">·</g>v<hi rend="tall">i</hi>r</w></roleName>'),
 
     ('<persName type="civic" subtype="duumvir"><hi rend="supraline">II</hi> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</persName>',
      '<persName type="civic" subtype="duumvir"><w><hi rend="supraline">II</hi></w><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></persName>'),

@@ -32,9 +32,7 @@ from pyepidoc.shared.constants import (
     A_TO_Z_SET, 
     TEINS, 
     XMLNS, 
-    SubsumableRels,
-    ROMAN_NUMERAL_CHARS,
-    VALID_BASES
+    ROMAN_NUMERAL_CHARS
 )
 from pyepidoc.shared.types import Base
 
@@ -45,6 +43,7 @@ from .enums import (
     AtomicNonTokenType,
     SubatomicTagType,
     AlwaysSubsumable,
+    SubsumableRels,
     SpaceSeparated,
     NoSpaceBefore,
     TokenCarrier
@@ -1025,6 +1024,9 @@ class EpiDocElement(BaseElement, Showable):
         Last child only counted if the last child has no tail.
         Used for element addition in __add__ method.
         """
+        if self._e.tail is not None and self._e.tail != '':
+            if self._e.tail[0] == ' ':
+                return True
 
         if self.localname == 'lb' and self.get_attrib('break') == 'no':
             return False
@@ -1037,10 +1039,7 @@ class EpiDocElement(BaseElement, Showable):
             if  last_child.localname == 'lb' and last_child.get_attrib('break') == 'no':
                 return False
 
-        if self.e is None:
-            return False
-        
-        return self._final_space == True or self.e.tail == ' '
+        return self._final_space
 
     @property
     def roman_numeral_chars_only(self) -> bool:
@@ -1223,7 +1222,7 @@ class EpiDocElement(BaseElement, Showable):
     
     def get_tail_token_elements(self) -> list[EpiDocElement]:
 
-        def make_words(protoword:Optional[str]) -> EpiDocElement:
+        def make_words(protoword: Optional[str]) -> EpiDocElement:
             w = EpiDocElement.w_factory(protoword)
             
             if protoword is not None and protoword[-1] in whitespace:

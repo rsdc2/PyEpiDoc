@@ -1,12 +1,31 @@
 from __future__ import annotations
 from typing import TypeVar
 from enum import Enum
-from ..shared.classes import EnumerableEnum
+from pyepidoc.shared.classes import EnumerableEnum
+from pyepidoc.shared.constants import TEINS
 
 T = TypeVar('T')
 
 whitespace = {'\n', '\t', ' '}
 PUNCTUATION = {'·'}
+
+
+SubsumableRels = [
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'c', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'Comment', 'ns': '', 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'lb', 'ns': TEINS, 'attrs': {'break': 'no'}}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'g', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'space', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'unclear', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'supplied', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'surplus', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'subst', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'link', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'del', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'hi', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'choice', 'ns': TEINS, 'attrs': dict()}},
+    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'num', 'ns': TEINS, 'attrs': dict()}}
+]
 
 
 class SubatomicTagType(EnumerableEnum):
@@ -87,7 +106,6 @@ class AlwaysSubsumableType(EnumerableEnum):
     Note that the token must also be listed in SubsumableRels
     """
     
-    # Hi = 'hi'
     Lb = 'lb'
     G = 'g'
     Comment = 'Comment'

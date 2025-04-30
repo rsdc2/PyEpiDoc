@@ -18,22 +18,6 @@ WHITESPACE_RE = r'(\s+)'
 
 ROMAN_NUMERAL_CHARS = {'I', 'V', 'X', 'C', 'D'}
 
-SubsumableRels = [
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'c', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'Comment', 'ns': '', 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'lb', 'ns': TEINS, 'attrs': {'break': 'no'}}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'g', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'space', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'unclear', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'supplied', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'surplus', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'subst', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'link', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'del', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'hi', 'ns': TEINS, 'attrs': dict()}},
-    {'head': {'name': 'w', 'ns': TEINS, 'attrs': dict()}, 'dep': {'name': 'choice', 'ns': TEINS, 'attrs': dict()}},
-]
-
 VALID_BASES = [52, 100]
 SEPARATE_LEMMATIZED_CONTAINER_ITEMS = ['div', 'ab']
 SEPARATE_LEMMATIZED_TEXT_ITEMS = ['w', 'orig', 'gap']

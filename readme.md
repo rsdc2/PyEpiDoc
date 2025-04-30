@@ -206,8 +206,8 @@ APIs to EpiDoc files and corpora respectively.
 
 The treatment of a given token by the tokenizer may be affected by one or more of the following:
 
-- Status in ```pyepidoc/epidoc/epidoctypes.py```
-- Presence in ```pyepidoc/constants.py``` in ```SubsumableRels```
+- Status in ```pyepidoc/epidoc/enums.py```
+- Presence in ```pyepidoc/epidoc/enums.py``` in ```SubsumableRels```
 
 The token will be subsumed into a neighbouring ```<w>``` token if it is not separated by whitespace if:
 - it is listed in as a ```dep``` of e.g. ```<w>``` in ```SubsumableRels```
