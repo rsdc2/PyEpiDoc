@@ -279,13 +279,19 @@ class EpiDocCorpus:
         return set(chain(*[doc._edition_subtypes 
                            for doc in self.docs]))
 
-
-
     def empty_corpus(self) -> EpiDocCorpus:
         """
         Return a new empty EpiDocCorpus object
         """
         return EpiDocCorpus([])
+
+    def exclude_by_id(self, doc_ids: list[str]) -> EpiDocCorpus:
+        """
+        Return a new corpus excluding docs with given ids
+        """
+
+        return EpiDocCorpus([doc for doc in self.docs
+                             if doc.id not in doc_ids])
 
     @property
     def expans(self) -> list[Expan]:
