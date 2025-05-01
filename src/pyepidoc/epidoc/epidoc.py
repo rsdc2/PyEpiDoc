@@ -1344,10 +1344,11 @@ class EpiDoc(DocRoot):
             self, 
             add_space_between_words: bool = True,
             prettify_edition: bool = True,
-            set_ids: bool = False,
+            set_universal_ids: bool = False,
+            set_n_ids: bool = False,
             convert_ws_to_names: bool = False,
             verbose: bool = True,
-            insert_ws_inside_names_and_nums: bool = False,
+            insert_ws_inside_named_entities: bool = False,
             throw_if_no_main_edition: bool = True
         ) -> EpiDoc:
         
@@ -1382,11 +1383,14 @@ class EpiDoc(DocRoot):
         if convert_ws_to_names:
             self.convert_ws_to_names()
 
-        if insert_ws_inside_names_and_nums:
+        if insert_ws_inside_named_entities:
             self.main_edition.insert_ws_inside_named_entities()
 
-        if set_ids:
+        if set_universal_ids:
             self.set_ids(base=100)
+
+        if set_n_ids:
+            self.set_n_ids()
             
         if prettify_edition:
             self.prettify_main_edition(

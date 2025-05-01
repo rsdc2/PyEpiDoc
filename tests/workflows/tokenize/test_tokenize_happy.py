@@ -110,7 +110,8 @@ def tokenize_epidoc(tokenize_type: str) -> tuple[EpiDoc, EpiDoc]:
         dst_folderpath=tokenized_folderpath,
         isic_ids=[tokenize_type],
         space_words=True,
-        set_ids=False
+        set_universal_ids=False,
+        set_n_ids=False
     )
     
     tokenized_epidoc = EpiDoc(tokenized_filepath)
@@ -126,7 +127,8 @@ def tokenize_epidoc_using_file_object(tokenize_type: str) -> tuple[EpiDoc, EpiDo
         src_folderpath=untokenized_folderpath, 
         filename=tokenize_type,
         space_words=True,
-        set_ids=False
+        set_universal_ids=False,
+        set_n_ids=False
     )
     tokenized_epidoc = EpiDoc(tokenized_file)
     tokenized_benchmark = EpiDoc(benchmark_filepath)

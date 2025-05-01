@@ -1,6 +1,7 @@
-from pyepidoc.epidoc.ids import *
+from pyepidoc.epidoc.ids import compress, decompress, pad_and_insert_fixed_strs
 import random
 import pytest
+from typing import Literal
 
 compressions_52 = [
     ("ISic000001-0001", "AADkR", "First token id"),

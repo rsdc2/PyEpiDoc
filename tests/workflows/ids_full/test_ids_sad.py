@@ -1,7 +1,7 @@
-from pyepidoc.epidoc.ids import *
-from pyepidoc.epidoc.ids import validate
+from pyepidoc.epidoc.ids import decompress, validate, CompressedIDLengthError, UncompressedIDLengthError, IDSizeError
 import pytest
 from functools import partial
+from typing import Literal
 
 
 compressed_wrong_length_funcs = [
