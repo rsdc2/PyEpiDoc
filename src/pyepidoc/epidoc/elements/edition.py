@@ -601,7 +601,7 @@ class Edition(EpiDocElement):
         for i, elem in enumerate(self.idable_elements, 1):
             if elem.get_attrib('n') != None:
                 raise AttributeError(f'@n attribute already set '
-                                 'on element {elem}.')
+                                 f'on element {elem}.')
             val = i * interval
             elem.set_attrib('n', str(val))
 
