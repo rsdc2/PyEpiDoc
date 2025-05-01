@@ -153,7 +153,7 @@ class EpiDoc(DocRoot):
         self.e.insert(0, tei_header_elem.e)
         return self
 
-    def _append_resp_stmt(self, resp_stmt: RespStmt) -> EpiDoc:
+    def _append_resp_stmt(self, resp_stmt: RespStmt | None) -> EpiDoc:
         """
         Add a <respStmt> element to the `<titleStmt>`. Creates the necessary element  
         hierarchy if not present.
@@ -743,10 +743,10 @@ class EpiDoc(DocRoot):
         for w in edition.w_tokens:
             w.lemma = lemmatize(w.normalized_form or '')
         
-        self.prettify(prettifier='pyepidoc', verbose=verbose)
-        
         if resp_stmt:
             self._append_resp_stmt(resp_stmt)
+
+        self.prettify(prettifier='pyepidoc', verbose=verbose)
         
         return self
 
