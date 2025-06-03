@@ -2,6 +2,8 @@ from pyepidoc import EpiDoc
 from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.enums import TextClass
 from pyepidoc.shared.file import str_to_file
+from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark, save_and_reload
+from ..config import FILE_WRITE_MODE
 
 
 corpus_folderpath = "tests/api/files/corpus"
@@ -19,17 +21,23 @@ def test_tokens_example():
 
 
 def test_tokenize_example():
+
+    # Arrange
     # Load the EpiDoc file
     doc = EpiDoc("tests/readme_examples/files/input/ISic000032_untokenized.xml")
+    tokenized_benchmark = EpiDoc("tests/readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")
 
+    # Act
     # Tokenize the edition with default settings
     doc.tokenize()
 
     # Save the results to a new XML file
-    doc.to_xml_file("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml", overwrite_existing=True)
+    tokenized_doc = save_and_reload(
+        doc, 
+        "tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml", 
+        FILE_WRITE_MODE)
 
-    tokenized_doc = EpiDoc("tests/readme_examples/files/tokenized_output/ISic000032_tokenized.xml")
-    tokenized_benchmark = EpiDoc("tests/readme_examples/files/tokenized_benchmark/ISic000032_tokenized.xml")
+    # Assert
     try:
         # breakpoint()
         assert [str(word) for word in tokenized_doc.tokens_no_nested] == [str(word) for word in tokenized_benchmark.tokens_no_nested]
