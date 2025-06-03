@@ -3,7 +3,7 @@ from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.enums import TextClass
 from pyepidoc.shared.file import str_to_file
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark, save_and_reload
-from ..config import FILE_WRITE_MODE
+from tests.config import FILE_WRITE_MODE
 
 
 corpus_folderpath = "tests/api/files/corpus"
