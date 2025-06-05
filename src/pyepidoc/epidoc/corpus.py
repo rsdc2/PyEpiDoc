@@ -279,13 +279,19 @@ class EpiDocCorpus:
         return set(chain(*[doc._edition_subtypes 
                            for doc in self.docs]))
 
-
-
     def empty_corpus(self) -> EpiDocCorpus:
         """
         Return a new empty EpiDocCorpus object
         """
         return EpiDocCorpus([])
+
+    def exclude_by_id(self, doc_ids: list[str]) -> EpiDocCorpus:
+        """
+        Return a new corpus excluding docs with given ids
+        """
+
+        return EpiDocCorpus([doc for doc in self.docs
+                             if doc.id not in doc_ids])
 
     @property
     def expans(self) -> list[Expan]:
@@ -977,12 +983,13 @@ class EpiDocCorpus:
     def tokenize_to_folder(
         self, 
         dstfolder: str | Path, 
-        add_space_between_w_elements: bool=True,
-        prettify_edition: bool=True,
-        set_ids: bool=False,
-        convert_ws_to_names: bool=True,
-        insert_ws_inside_name_and_num: bool=True,
-        verbose: bool=False,
+        add_space_between_w_elements: bool = True,
+        prettify_edition: bool = True,
+        set_universal_ids: bool = False,
+        set_n_ids: bool = False, 
+        convert_ws_to_names: bool = True,
+        insert_ws_inside_name_and_num: bool = True,
+        verbose: bool = False,
         overwrite_existing: bool = False
     ) -> None:
 
@@ -1003,10 +1010,11 @@ class EpiDocCorpus:
                     doc.tokenize(
                         prettify_edition=prettify_edition, 
                         add_space_between_words=add_space_between_w_elements, 
-                        set_ids=set_ids, 
+                        set_universal_ids=set_universal_ids, 
+                        set_n_ids=set_n_ids,
                         convert_ws_to_names=convert_ws_to_names, 
                         verbose=verbose,
-                        insert_ws_inside_names_and_nums=insert_ws_inside_name_and_num
+                        insert_ws_inside_named_entities=insert_ws_inside_name_and_num
                     )
                 else: 
                     print(f'Could not tokenize {doc.id}: no main edition found.')

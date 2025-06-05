@@ -56,3 +56,10 @@ def remove_children(elem: _Element) -> _Element:
         elem_.remove(child)
 
     return elem_
+
+
+def xml_to_str(node: _Element | _ElementUnicodeResult) -> str:
+    if isinstance(node, _ElementUnicodeResult):
+        return str(node)
+
+    return etree.tostring(node, encoding='unicode')

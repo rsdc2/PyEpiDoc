@@ -5,7 +5,7 @@ Tests for converting ids in EpiDoc files
 import pytest
 from pathlib import Path
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.ids.errors import *
+from pyepidoc.epidoc.ids.errors import ConversionError
 
 make_path = lambda s: Path(s + '.xml') 
 

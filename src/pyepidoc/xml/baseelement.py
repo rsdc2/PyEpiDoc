@@ -341,7 +341,8 @@ class BaseElement(Showable):
         parser = etree.XMLParser(
             load_dtd=False,
             resolve_entities=False,
-            remove_blank_text=False
+            remove_blank_text=False,
+            
         )
         lxml_elem: _Element = etree.fromstring(
             text=xml_str, 
@@ -865,7 +866,7 @@ class BaseElement(Showable):
             self._e, 
             method='xml', # type: ignore
             encoding='unicode', # type: ignore
-            pretty_print=True # type: ignore
+            pretty_print=False # type: ignore
         )
     
     def xpath(

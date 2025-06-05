@@ -3,7 +3,7 @@ from __future__ import annotations
 from lxml import etree
 from pathlib import Path
 
-from pyepidoc.epidoc.enums import *
+from pyepidoc.epidoc.enums import DoNotPrettifyChildren
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.epidoc.elements.edition import Edition

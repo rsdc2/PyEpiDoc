@@ -153,7 +153,7 @@ class EpiDoc(DocRoot):
         self.e.insert(0, tei_header_elem.e)
         return self
 
-    def _append_resp_stmt(self, resp_stmt: RespStmt) -> EpiDoc:
+    def _append_resp_stmt(self, resp_stmt: RespStmt | None) -> EpiDoc:
         """
         Add a <respStmt> element to the `<titleStmt>`. Creates the necessary element  
         hierarchy if not present.
@@ -604,7 +604,7 @@ class EpiDoc(DocRoot):
         """
 
         for edition in self.editions(True):
-            edition.insert_w_inside_name_and_num()
+            edition.insert_ws_inside_named_entities()
 
         return self
 
@@ -743,10 +743,10 @@ class EpiDoc(DocRoot):
         for w in edition.w_tokens:
             w.lemma = lemmatize(w.normalized_form or '')
         
-        self.prettify(prettifier='pyepidoc', verbose=verbose)
-        
         if resp_stmt:
             self._append_resp_stmt(resp_stmt)
+
+        self.prettify(prettifier='pyepidoc', verbose=verbose)
         
         return self
 
@@ -1344,10 +1344,11 @@ class EpiDoc(DocRoot):
             self, 
             add_space_between_words: bool = True,
             prettify_edition: bool = True,
-            set_ids: bool = False,
+            set_universal_ids: bool = False,
+            set_n_ids: bool = False,
             convert_ws_to_names: bool = False,
             verbose: bool = True,
-            insert_ws_inside_names_and_nums: bool = False,
+            insert_ws_inside_named_entities: bool = False,
             throw_if_no_main_edition: bool = True
         ) -> EpiDoc:
         
@@ -1382,11 +1383,14 @@ class EpiDoc(DocRoot):
         if convert_ws_to_names:
             self.convert_ws_to_names()
 
-        if insert_ws_inside_names_and_nums:
-            self.main_edition.insert_w_inside_name_and_num()
+        if insert_ws_inside_named_entities:
+            self.main_edition.insert_ws_inside_named_entities()
 
-        if set_ids:
+        if set_universal_ids:
             self.set_ids(base=100)
+
+        if set_n_ids:
+            self.set_n_ids()
             
         if prettify_edition:
             self.prettify_main_edition(

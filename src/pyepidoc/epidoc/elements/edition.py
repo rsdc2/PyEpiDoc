@@ -12,6 +12,7 @@ from lxml.etree import _Element, _ElementUnicodeResult, _Comment
 
 from pyepidoc.xml import BaseElement
 from pyepidoc.xml.utils import editionify
+from pyepidoc.epidoc.enums import NamedEntities
 from pyepidoc.analysis.utils.division import Division
 from pyepidoc.shared.constants import XMLNS
 from pyepidoc.shared import default_str
@@ -21,14 +22,7 @@ from pyepidoc.shared.utils import maxone
 
 from pyepidoc.xml.namespace import Namespace as ns
 
-from pyepidoc.shared.constants import (
-    A_TO_Z_SET, 
-    TEINS, 
-    XMLNS, 
-    SubsumableRels,
-    ROMAN_NUMERAL_CHARS,
-    VALID_BASES
-)
+from pyepidoc.shared.constants import TEINS, XMLNS
 
 from .. import ids
 from ..element import EpiDocElement
@@ -460,7 +454,7 @@ class Edition(EpiDocElement):
         element.append_element_or_text(w)
         return element
 
-    def insert_w_inside_name_and_num(
+    def insert_ws_inside_named_entities(
             self,
             ignore_if_contains_ws: bool = True) -> Edition:
 
@@ -469,7 +463,7 @@ class Edition(EpiDocElement):
         in place. By default does nothing if already contains a <w> 
         element.
         """
-        for elemname in ['name', 'num']:
+        for elemname in NamedEntities.values():
 
             for name in self.desc_elems_by_local_name(elemname):
                 if name.contains('w') and ignore_if_contains_ws:
@@ -607,7 +601,7 @@ class Edition(EpiDocElement):
         for i, elem in enumerate(self.idable_elements, 1):
             if elem.get_attrib('n') != None:
                 raise AttributeError(f'@n attribute already set '
-                                 'on element {elem}.')
+                                 f'on element {elem}.')
             val = i * interval
             elem.set_attrib('n', str(val))
 

@@ -33,6 +33,12 @@ class RespStmt(EpiDocElement):
         ref: str, 
         resp_text: str) -> RespStmt:
 
+        """
+        Create a new RespStmt from the details to be provided.
+
+        :ref: e.g. ORCID 
+        """
+
         resp_stmt_elem = RespStmt.create_resp_stmt()
         name_elem = RespStmt.create_name(name, initials, ref)
         resp_elem = RespStmt.create_resp(resp_text)
