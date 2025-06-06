@@ -89,13 +89,37 @@ def test_lemmatize_on_separate_edition(
     # Check that only those elements have been copied across
     assert lemmatized_ed.desc_elem_name_set - \
         set(SEPARATE_LEMMATIZED_ITEMS) == set()
-    
+
+
+@pytest.mark.parametrize(
+        "filename_with_tag_counts", 
+        filenames_with_tag_counts)
+def test_lemmatize_on_separate_edition_compare_file(
+    filename_with_tag_counts: tuple[str, dict[str, int]]
+):
+
+    """
+    Test that calling the `lemmatize` method 
+    on an EpiDoc document produces a separate
+    <div type="edition"/> element, and that the
+    correct elements are copied across (i.e. only
+    <w>, <orig> and <gap>).
+    """
+    # Arrange
+    filename, _ = filename_with_tag_counts
+    doc = EpiDoc(unlemmatized_path + filename)
+
+    # Act
+    doc.lemmatize(dummy_lemmatizer, 'separate')
+
+    # Assert    
     assert save_reload_and_compare_with_benchmark(
         doc, 
         lemmatized_path + filename, 
         benchmark_path + filename,
         FILE_WRITE_MODE
     )
+
 
 
 @pytest.mark.parametrize(

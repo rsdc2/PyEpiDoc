@@ -12,7 +12,7 @@
             <div type="edition" subtype="simple-lemmatized">
                 <ab>
                     <w lemma="lemma">σώματος</w>
-                    <gap reason="lost" extent="unknown" unit="character">[-?-]</gap>
+                    <gap reason="lost" extent="unknown" unit="character"><desc>[-?-]</desc></gap>
                     <orig>DASG</orig>
                     <w lemma="lemma">manibus</w>
                 </ab>

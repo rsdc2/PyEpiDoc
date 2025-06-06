@@ -145,6 +145,7 @@ class DoNotPrettifyChildren(EnumerableEnum):
     Provenance = 'provenance'
     P = 'p'
     Change = 'change'
+    Gap = 'gap'
 
 
 class ContainerType(EnumerableEnum):

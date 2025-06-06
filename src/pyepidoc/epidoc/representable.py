@@ -107,6 +107,25 @@ class Representable(EpiDocElement):
         return prec_text + self.leiden_form + following_text        
 
     @cached_property
+    def simple_lemmatized_edition_element(self) -> EpiDocElement:
+        """
+        Element for use in simple-lemmatized edition
+        """
+        t = type(self)
+        elem = t(self.deepcopy().e)
+        elem.remove_children()
+        elem.remove_attr('id', XMLNS)
+        elem.text = self.simple_lemmatized_edition_form
+        return elem
+    
+    @cached_property
+    def simple_lemmatized_edition_form(self) -> str:
+        """
+        Form for use as text in the simple_lemmatized_edition_element
+        """
+        return self.normalized_form
+
+    @cached_property
     def normalized_form(self) -> str:
         """
         Returns the normalized form of the token, i.e.
@@ -122,7 +141,7 @@ class Representable(EpiDocElement):
     @cached_property
     def orig_form(self) -> str:
         """
-        Returns the normalized form of the token, i.e.
+        Returns the original form of the token, i.e.
         taking the text from <reg> not <orig>, <corr> not <sic>;
         also excludes text from <g>.
         Compare @form and @normalized_form
@@ -135,6 +154,11 @@ class Representable(EpiDocElement):
         normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
         return self._clean_text(''.join([str(t) for t in normalized_text]))
     
+    @property
+    def representable(self) -> Representable:
+        clstype = self.elem_classes[self.localname]
+        inst = clstype(self._e)
+        return inst
 
     @property
     def type(self) -> str:
