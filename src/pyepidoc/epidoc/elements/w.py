@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from lxml.etree import _Element
-from ..element import EpiDocElement
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.representable import Representable
 
-
-class W(EpiDocElement):
+class W(Representable):
     """
     Provides services for string representation of <w> elements.
     """
@@ -21,6 +20,9 @@ class W(EpiDocElement):
         
     def __str__(self) -> str:
         return self.leiden_form
+    
+    def __repr__(self) -> str:
+        return f'W("{self.leiden_form}")'
 
     @property
     def leiden_form(self) -> str:
