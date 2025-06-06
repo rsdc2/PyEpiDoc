@@ -8,7 +8,8 @@ from pyepidoc.epidoc.metadata.title_stmt import TitleStmt
 from pyepidoc.shared import head
 from pyepidoc.epidoc.dom import lang, line
 
-from ...config import FILE_WRITE_MODE
+from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark, save_and_reload
+from tests.config import FILE_WRITE_MODE
 
 import pytest
 
@@ -26,7 +27,7 @@ relative_filepaths = {
     'abbr': 'tests/api/files/abbr.xml'
 }
 
-line_2_output = 'tests/api/files/line_2_output.xml'
+line_2_output_path = 'tests/api/files/line_2_output.xml'
 
 
 def test_collect_tokens():
@@ -215,10 +216,14 @@ def test_check_ns_on_load():
 
 
 def test_reproduces_processing_instructions():
-    # TODO replace with new code
+
+    # Arrange
     doc = EpiDoc(relative_filepaths['line_2'])
-    doc.to_xml_file(line_2_output, overwrite_existing=True)
-    doc_ = EpiDoc(line_2_output)
+
+    # Act
+    doc_ = save_and_reload(doc, line_2_output_path, FILE_WRITE_MODE)
+
+    # Assert
     assert len(doc.processing_instructions) == len(doc_.processing_instructions)
     assert all([str(instr) in list(map(str, doc.processing_instructions)) 
                 for instr in doc_.processing_instructions])
