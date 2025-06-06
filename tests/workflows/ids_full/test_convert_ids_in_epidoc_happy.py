@@ -23,6 +23,7 @@ def test_convert_ids_in_epidoc(filename: Path):
     # Convert the IDs
     doc = EpiDoc(input_path / filename)
     doc.convert_ids(52, 100)
+    # TODO replace with new code
     doc.to_xml_file(output_path / filename, overwrite_existing=True)
 
     # Output to a new XML file

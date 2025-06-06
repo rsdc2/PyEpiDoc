@@ -215,6 +215,7 @@ def test_check_ns_on_load():
 
 
 def test_reproduces_processing_instructions():
+    # TODO replace with new code
     doc = EpiDoc(relative_filepaths['line_2'])
     doc.to_xml_file(line_2_output, overwrite_existing=True)
     doc_ = EpiDoc(line_2_output)
