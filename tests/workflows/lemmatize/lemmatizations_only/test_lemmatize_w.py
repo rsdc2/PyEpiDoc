@@ -3,8 +3,8 @@ from pyepidoc import EpiDoc
 from pyepidoc.shared.file import remove_file
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark, save_and_reload
 from tests.config import FILE_WRITE_MODE
-unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
-lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
+unlemmatized_path = 'tests/workflows/lemmatize/lemmatizations_only/files/unlemmatized/'
+lemmatized_path = 'tests/workflows/lemmatize/lemmatizations_only/files/lemmatized/'
 
 
 def test_set_lemma():
