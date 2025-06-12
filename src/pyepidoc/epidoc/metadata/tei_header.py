@@ -20,21 +20,41 @@ class TeiHeader(EpiDocElement):
     def append_new_file_desc(self) -> TeiHeader:
 
         """
-        Add a new <respStmt> element to the <titleStmt/> element
+        Add a new <fileDesc> element to the <teiHeader> element
         """
-        file_desc_elem = EpiDocElement.create(localname='fileDesc')
+        if self.file_desc is not None:
+            raise Exception('<fileDesc> already exists on <teiHeader>')
+        file_desc_elem = EpiDocElement.create_new(localname='fileDesc')
         self.e.append(file_desc_elem.e)
 
         return self
     
+    def append_new_revision_desc(self) -> TeiHeader:
+
+        """
+        Add a new <revisionDesc> element to the <teiHeader> element
+        """
+        if self.revision_desc is not None:
+            raise Exception('<revisionDesc> already exists on <teiHeader>')
+        revision_desc = RevisionDesc.create()
+        self.append_element_or_text(revision_desc)
+        return self
+    
     @staticmethod
-    def create_tei_header() -> TeiHeader:
+    def create() -> TeiHeader:
         """
         Create a new <teiHeader> element, but do not
         append it to its host document
         """
-        tei_header_elem = EpiDocElement.create('teiHeader')
+        tei_header_elem = EpiDocElement.create_new('teiHeader')
         return TeiHeader(tei_header_elem)
+    
+    def ensure_revision_desc(self) -> RevisionDesc:
+        if self.revision_desc is None:
+            self.append_new_revision_desc()
+
+        assert self.revision_desc is not None
+        return self.revision_desc
 
     @property
     def file_desc(self) -> FileDesc | None:
@@ -55,13 +75,10 @@ class TeiHeader(EpiDocElement):
         return FileDesc(file_desc_elem)
 
     @property
-    def revision_desc(self) -> RevisionDesc:
+    def revision_desc(self) -> RevisionDesc | None:
         revision_desc = self.get_desc_tei_elem(
             'revisionDesc', 
             throw_if_more_than_one=True
         )
-        
-        if revision_desc is None:
-            raise Exception('No <revisionDesc> element present in <teiHeader>')
-        
+                
         return RevisionDesc(revision_desc)

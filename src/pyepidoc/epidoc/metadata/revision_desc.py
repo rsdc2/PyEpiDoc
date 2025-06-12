@@ -20,8 +20,8 @@ class RevisionDesc(EpiDocElement):
         """
         Create a new <revisionDesc> element with an empty <listChange> 
         """
-        revision_desc = RevisionDesc(EpiDocElement.create('revisionDesc'))
-        list_change = ListChange.create()
+        revision_desc = RevisionDesc(EpiDocElement.create_new('revisionDesc'))
+        list_change = ListChange.create_new()
         revision_desc.append_element_or_text(list_change)
         return revision_desc
     
@@ -45,5 +45,5 @@ class RevisionDesc(EpiDocElement):
         if list_change is None:
             raise Exception('No <listChange> element present in <revisionDesc>')
         
-        return ListChange.from_epidoc_element(list_change)
+        return ListChange.from_epidoc_element(EpiDocElement(list_change))
 

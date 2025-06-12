@@ -364,7 +364,7 @@ class EpiDocElement(BaseElement, Showable):
         self.id_xml = ids.convert(current_id, oldbase, newbase)
 
     @classmethod
-    def create(cls, localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
+    def create_new(cls, localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
         """
         Create a new EpiDocElement in the TEI namespace with local name `localname` and `attributes`
         """
@@ -1244,7 +1244,10 @@ class EpiDocElement(BaseElement, Showable):
         return tail_token_elems
             
     @property
-    def text(self) -> str | None:
+    def text(self) -> str:
+        """
+        Return the text contents of the element. Returns an empty string if there is no text
+        """
         if self._e is None:
             return ''
 

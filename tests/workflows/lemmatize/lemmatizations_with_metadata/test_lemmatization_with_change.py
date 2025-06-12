@@ -3,7 +3,7 @@ from typing import Callable
 import pytest
 
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
+from pyepidoc.epidoc.metadata.change import Change
 from pyepidoc.shared.testing import (
     save_and_reload, 
     save_reload_and_compare_with_benchmark
@@ -13,7 +13,7 @@ from pyepidoc.shared.constants import SEPARATE_LEMMATIZED_ITEMS
 from tests.config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/lemmatizations_with_metadata/files/unlemmatized/'
-lemmatized_with_resp_path = 'tests/workflows/lemmatize/lemmatizations_with_metadata/files/lemmatized_with_resp/'
+lemmatized_with_change_path = 'tests/workflows/lemmatize/lemmatizations_with_metadata/files/lemmatized_with_change/'
 benchmark_path = 'tests/workflows/lemmatize/lemmatizations_with_metadata/files/benchmark/'
 
 dummy_lemmatizer: Callable[[str], str] = lambda form: 'lemma'
@@ -37,20 +37,18 @@ def test_lemmatize_on_separate_edition_creates_change_stmt(filename: str):
     """
     # Arrange
     doc = EpiDoc(unlemmatized_path + filename)
-    change_stmt = ""
+    change = Change.from_details("2025-06-12", "#JB", "Joe Bloggs lemmatized the text")
 
     # Act
-    doc.lemmatize(dummy_lemmatizer, 'separate', resp_stmt=resp_stmt)
+    doc.lemmatize(dummy_lemmatizer, 'separate', change=change)
     doc.prettify()
     doc_ = save_and_reload(
         doc, 
-        lemmatized_with_resp_path + filename, 
+        lemmatized_with_change_path + filename, 
         mode=FILE_WRITE_MODE
     )
 
     # Assert
-    if doc_.title_stmt is None: 
-        assert False
-    last_resp_stmt = doc_.title_stmt.resp_stmts[-1]
-    assert last_resp_stmt == resp_stmt
+    last_change = doc_.ensure_tei_header().ensure_revision_desc().list_change.changes[-1]
+    assert last_change == change
 

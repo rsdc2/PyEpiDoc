@@ -20,7 +20,7 @@ class Change(EpiDocElement):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Change):
             raise TypeError(f'Cannot compare Change with {type(other)}')
-        
+        self.text
         return self.who == other.who and \
             self.when == other.when and \
             self.text == other.text
@@ -35,7 +35,7 @@ class Change(EpiDocElement):
         Create a new Change from the details to be provided.
         """
 
-        elem = EpiDocElement.create('change', {
+        elem = EpiDocElement.create_new('change', {
             'when': when,
             'who': who
         })
@@ -49,7 +49,4 @@ class Change(EpiDocElement):
     @property
     def who(self) -> str | None:
         return self.get_attrib('who')
-    
-    @property
-    def text(self) -> str | None:
-        return self.text
+
