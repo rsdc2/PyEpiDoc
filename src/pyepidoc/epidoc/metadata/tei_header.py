@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pyepidoc.epidoc.element import EpiDocElement
-from .title_stmt import TitleStmt
 from .file_desc import FileDesc
+from .revision_desc import RevisionDesc
 
 
 class TeiHeader(EpiDocElement):
@@ -54,3 +54,14 @@ class TeiHeader(EpiDocElement):
         
         return FileDesc(file_desc_elem)
 
+    @property
+    def revision_desc(self) -> RevisionDesc:
+        revision_desc = self.get_desc_tei_elem(
+            'revisionDesc', 
+            throw_if_more_than_one=True
+        )
+        
+        if revision_desc is None:
+            raise Exception('No <revisionDesc> element present in <teiHeader>')
+        
+        return RevisionDesc(revision_desc)

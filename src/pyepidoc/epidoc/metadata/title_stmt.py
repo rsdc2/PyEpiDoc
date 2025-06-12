@@ -43,6 +43,6 @@ class TitleStmt(EpiDocElement):
         """
         
         resp_stmt_elems = self.desc_elems_by_local_name("respStmt")
-        return list(map(RespStmt.from_elem, resp_stmt_elems))
+        return list(map(RespStmt.from_element, resp_stmt_elems))
 
     

@@ -38,6 +38,7 @@ from .metadata.title_stmt import TitleStmt
 from .metadata.resp_stmt import RespStmt
 from .metadata.file_desc import FileDesc
 from .metadata.tei_header import TeiHeader
+from .metadata.change import Change
 
 from .elements.ab import Ab
 from .elements.body import Body
@@ -120,7 +121,7 @@ class EpiDoc(DocRoot):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
     
-    def _append_change_stmt(self, change: ChangeStmt | None = None) -> EpiDoc:
+    def _append_change(self, change: Change | None = None) -> EpiDoc:
         pass
 
     def _append_new_lemmatized_edition(self, resp: RespStmt | None = None) -> Edition:

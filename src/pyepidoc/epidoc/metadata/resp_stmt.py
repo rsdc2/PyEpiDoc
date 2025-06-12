@@ -48,7 +48,7 @@ class RespStmt(EpiDocElement):
         return resp_stmt
 
     @staticmethod
-    def from_elem(elem: BaseElement) -> RespStmt:
+    def from_element(elem: BaseElement) -> RespStmt:
         if elem.localname != 'respStmt':
             raise ValueError(
                 'Expected element with local name "respStmt", '
