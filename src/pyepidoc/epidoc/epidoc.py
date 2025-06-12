@@ -120,6 +120,9 @@ class EpiDoc(DocRoot):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
     
+    def _append_change_stmt(self, change: ChangeStmt | None = None) -> EpiDoc:
+        pass
+
     def _append_new_lemmatized_edition(self, resp: RespStmt | None = None) -> Edition:
 
         """
@@ -700,6 +703,7 @@ class EpiDoc(DocRoot):
             lemmatize: Callable[[str], str],
             where: Literal['main', 'separate'],
             resp_stmt: RespStmt | None = None,
+            change_stmt: ChangeStmt | None = None,
             verbose = False
         ) -> EpiDoc:
 
