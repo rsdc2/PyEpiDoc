@@ -80,5 +80,8 @@ class TeiHeader(EpiDocElement):
             'revisionDesc', 
             throw_if_more_than_one=True
         )
+        
+        if revision_desc is None:
+            return None
                 
         return RevisionDesc(revision_desc)

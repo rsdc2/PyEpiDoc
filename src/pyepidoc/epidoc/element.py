@@ -144,7 +144,7 @@ class EpiDocElement(BaseElement, Showable):
         final_space: bool = False
     ):
         
-        if not isinstance(e, (_Element, EpiDocElement, BaseElement)) and e is not None:
+        if not isinstance(e, (_Element, EpiDocElement, BaseElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
