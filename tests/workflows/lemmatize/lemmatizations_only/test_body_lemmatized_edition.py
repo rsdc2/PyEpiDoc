@@ -3,10 +3,10 @@ from pyepidoc.shared.file import remove_file
 from pyepidoc.shared.testing import save_and_reload
 
 import pytest
-from ...config import FILE_WRITE_MODE
+from tests.config import FILE_WRITE_MODE
 
-unlemmatized_path = 'tests/workflows/lemmatize/files/unlemmatized/'
-lemmatized_path = 'tests/workflows/lemmatize/files/lemmatized/'
+unlemmatized_path = 'tests/workflows/lemmatize/lemmatizations_only/files/unlemmatized/'
+lemmatized_path = 'tests/workflows/lemmatize/lemmatizations_only/files/lemmatized/'
 
 
 def test_create_lemmatized_edition():

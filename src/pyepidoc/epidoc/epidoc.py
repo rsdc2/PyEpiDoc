@@ -38,6 +38,7 @@ from .metadata.title_stmt import TitleStmt
 from .metadata.resp_stmt import RespStmt
 from .metadata.file_desc import FileDesc
 from .metadata.tei_header import TeiHeader
+from .metadata.change import Change
 
 from .elements.ab import Ab
 from .elements.body import Body
@@ -120,7 +121,15 @@ class EpiDoc(DocRoot):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
     
-    def _append_new_lemmatized_edition(self, resp: RespStmt | None = None) -> Edition:
+    def _append_change(self, change: Change) -> EpiDoc:
+        self.ensure_tei_header().ensure_revision_desc().append_change(change)
+        return self
+
+    def _append_new_lemmatized_edition(
+            self, 
+            resp: RespStmt | None = None,
+            change: Change | None = None
+            ) -> Edition:
 
         """
         Add a new edition to the document, ready to contain
@@ -137,6 +146,8 @@ class EpiDoc(DocRoot):
 
         # Create edition if it does not already exist
         self.body.create_edition('simple-lemmatized', resp=resp)
+        if change is not None: 
+            self._append_change(change)
         edition = self.body.edition_by_subtype('simple-lemmatized')
 
         # Raise an error if could not be created
@@ -149,7 +160,7 @@ class EpiDoc(DocRoot):
         """
         Insert a <teiHeader> element as the first child
         """
-        tei_header_elem = TeiHeader.create_tei_header()
+        tei_header_elem = TeiHeader.create()
         self.e.insert(0, tei_header_elem.e)
         return self
 
@@ -382,6 +393,12 @@ class EpiDoc(DocRoot):
         """
 
         return self.body.editions(include_transliterations)
+
+    def ensure_tei_header(self) -> TeiHeader:
+        if self.tei_header is None:
+            self._append_new_tei_header()
+        assert self.tei_header is not None
+        return self.tei_header
 
     @property
     def expans(self) -> list[Expan]:
@@ -700,6 +717,7 @@ class EpiDoc(DocRoot):
             lemmatize: Callable[[str], str],
             where: Literal['main', 'separate'],
             resp_stmt: RespStmt | None = None,
+            change: Change | None = None,
             verbose = False
         ) -> EpiDoc:
 
@@ -745,6 +763,9 @@ class EpiDoc(DocRoot):
         
         if resp_stmt:
             self._append_resp_stmt(resp_stmt)
+
+        if change:
+            self._append_change(change)
 
         self.prettify(prettifier='pyepidoc', verbose=verbose)
         

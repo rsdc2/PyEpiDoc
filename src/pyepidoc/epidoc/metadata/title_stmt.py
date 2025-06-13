@@ -32,7 +32,7 @@ class TitleStmt(EpiDocElement):
     
     @staticmethod
     def from_details(title: str) -> TitleStmt:
-        title_elem = EpiDocElement.create('titleStmt')
+        title_elem = EpiDocElement.create_new('titleStmt')
         title_elem.text = title
         return TitleStmt(title_elem)
 
@@ -43,6 +43,6 @@ class TitleStmt(EpiDocElement):
         """
         
         resp_stmt_elems = self.desc_elems_by_local_name("respStmt")
-        return list(map(RespStmt.from_elem, resp_stmt_elems))
+        return list(map(RespStmt.from_element, resp_stmt_elems))
 
     

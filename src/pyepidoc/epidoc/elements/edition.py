@@ -442,7 +442,7 @@ class Edition(EpiDocElement):
         """
 
         child_nodes = element.child_nodes
-        w = EpiDocElement.create('w')
+        w = EpiDocElement.create_new('w')
 
         for node in child_nodes:
             if isinstance(node, _Element):
