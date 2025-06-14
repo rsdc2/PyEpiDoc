@@ -1376,10 +1376,18 @@ class EpiDocElement(BaseElement, Showable):
         it first tokenizes the initial text of the container in place.
         """
         # TODO try to find a better way to do this
-        self.tokenize_initial_text_in_container()
+        # self.tokenize_initial_text_in_container()
 
-        token_carriers = chain(*self._find_token_carrier_sequences())
-        token_carriers_sorted = sorted(token_carriers)
+        # Create dummy token
+        if self.parent is None or self.parent.localname not in CompoundTokenType.values():
+            dummy = EpiDocElement.create_new('w')
+            dummy.tail = ' ' + self.text
+
+            token_carriers = chain(*self._find_token_carrier_sequences())
+            token_carriers_sorted = [dummy] + list(sorted(token_carriers))
+        else:
+            token_carriers = chain(*self._find_token_carrier_sequences())
+            token_carriers_sorted = list(sorted(token_carriers))
         
         def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
             
@@ -1404,14 +1412,16 @@ class EpiDocElement(BaseElement, Showable):
                 # Don't sum the whole sequence every time
                 # On multiple passes, information on bounding left 
                 # and right appears to get lost
+                child_tokens = element.get_child_tokens()
                 return reduce(
                     sumfunc, 
-                    reversed(element.get_child_tokens() + acc[:1]), 
+                    reversed(child_tokens + acc[:1]), 
                     cast(list[EpiDocElement], [])) + acc[1:]
 
             return element.get_child_tokens() + acc
 
-        return reduce(_redfunc, reversed(token_carriers_sorted), [])
+        result = reduce(_redfunc, reversed(token_carriers_sorted), [])
+        return result[1:]
 
     def get_child_tokens(self) -> list[EpiDocElement]:
         """
