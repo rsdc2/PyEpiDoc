@@ -366,7 +366,9 @@ xml_to_tokenize = [
     ('Tr<unclear>u</unclear>t<supplied reason="undefined" evidence="previouseditor">tedi</supplied><supplied reason="lost">us</supplied>',
      '<w>Tr<unclear>u</unclear>t<supplied reason="undefined" evidence="previouseditor">tedi</supplied><supplied reason="lost">us</supplied></w>'),
 
-
+    # Test that space is not tokenized
+    ('<space unit="character" quantity="1"/>',
+     '<space unit="character" quantity="1"/>')
 ]
 
 

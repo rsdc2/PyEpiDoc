@@ -156,6 +156,8 @@ class EpiDocElement(BaseElement, Showable):
             self._e = e.e
 
         self._final_space = final_space
+        # if final_space:
+        #     self._e.tail = ' '
 
     def __add__(self, other: Optional[EpiDocElement]) -> list[EpiDocElement]:
         """
@@ -332,7 +334,7 @@ class EpiDocElement(BaseElement, Showable):
         self._e.tail = self._e.tail + ' '   # type: ignore
         return self
 
-    def _can_subsume(self, other:EpiDocElement) -> bool:
+    def _can_subsume(self, other: EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 
             return False
         
@@ -1280,9 +1282,12 @@ class EpiDocElement(BaseElement, Showable):
         WordCarriers are XML elements that carry text fragments
         either as element-internal text, or in their tails.
         """
-        return [EpiDocElement(element) 
-                for element in self.desc_elems
-                if element.tag.name in TokenCarrier]
+        acc = []
+        for element in self.desc_elems:
+            if element.tag.name in TokenCarrier:
+                epidoc_element = EpiDocElement(element)
+                acc.append(epidoc_element)
+        return acc
 
     @property
     def _token_carrier_sequences(self) -> list[list[EpiDocElement]]:
@@ -1352,7 +1357,7 @@ class EpiDocElement(BaseElement, Showable):
         ab_prototokens = (self.text or '').split()  # split the string into tokens
 
         # Create token elements from the split string elements
-        ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) 
+        ab_tokens = [EpiDocElement.w_factory(word)
                     for word in ab_prototokens]        
 
         # Insert the tokens into the tree
@@ -1373,8 +1378,8 @@ class EpiDocElement(BaseElement, Showable):
                     return acc
             
                 def sumfunc(
-                    acc:list[EpiDocElement], 
-                    elem:EpiDocElement) -> list[EpiDocElement]:
+                    acc: list[EpiDocElement], 
+                    elem: EpiDocElement) -> list[EpiDocElement]:
 
                     if acc == []:
                         return [elem]
@@ -1553,7 +1558,6 @@ class EpiDocElement(BaseElement, Showable):
                         new_parent.append(new_w)
                         new_parent = append_tail_or_text(e.tail, new_parent)              
                     
-
                 elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>, <roleName>
                     new_w_elem = EpiDocElement.w_factory(parent=e_without_tail)
                     if new_w_elem.e is not None:

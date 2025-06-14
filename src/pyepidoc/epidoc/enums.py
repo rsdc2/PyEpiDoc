@@ -115,6 +115,7 @@ class SpaceSeparated(EnumerableEnum):
     
     G = 'g'
     Gap = 'gap'
+    Space = 'space'
     Unclear = 'unclear'
     Supplied = 'supplied'
 
