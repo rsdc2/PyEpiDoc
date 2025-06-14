@@ -119,8 +119,9 @@ class Abbr(Representable):
         # Return the empty string if only children
         # are <num>
         if self.child_node_names == ['num']:
-            if self.next_sibling is not None and \
-                self.next_sibling.localname == 'ex':
+            next_sibling = self.find_next_sibling()
+            if next_sibling is not None and \
+                next_sibling.localname == 'ex':
 
                 return ''
 

@@ -133,7 +133,7 @@ def last_in_ab(elem: EpiDocElement) -> bool:
 
 
 def line(elem: EpiDocElement) -> Optional[Lb]:
-    lb = elem.lb_in_preceding_or_ancestor
+    lb = elem.has_lb_in_preceding_or_ancestor
     
     if lb is None:
         return None
