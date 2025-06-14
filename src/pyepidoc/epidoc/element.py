@@ -1376,9 +1376,10 @@ class EpiDocElement(BaseElement, Showable):
         it first tokenizes the initial text of the container in place.
         """
         # TODO try to find a better way to do this
-        self.tokenize_initial_text_in_container()
+        copy = self.deepcopy()
+        copy.tokenize_initial_text_in_container()
 
-        token_carriers = chain(*self._find_token_carrier_sequences())
+        token_carriers = chain(*copy._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
         
         def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
