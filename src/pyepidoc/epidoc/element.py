@@ -1347,7 +1347,7 @@ class EpiDocElement(BaseElement, Showable):
         
         return reduce(remove_subsets, tokencarrier_sequences, [])
 
-    def tokenize_initial_text(self):
+    def get_initial_text_tokens(self) -> list[EpiDocElement]:
         """
         Tokenize any initial text in a container, since 
         this will otherwise be ignored
@@ -1362,21 +1362,23 @@ class EpiDocElement(BaseElement, Showable):
         if self.text and self.text[-1] == ' ' and len(ab_tokens) > 0:
             ab_tokens[-1].tail = ' '
 
-        # Insert the tokens from the initial <ab> text into the tree as tokens
-        for token in reversed(ab_tokens):
-            if self.e is not None and token.e is not None:
-                self.e.insert(0, token.e)
+        # # Insert the tokens from the initial <ab> text into the tree as tokens
+        # for token in reversed(ab_tokens):
+        #     if self.e is not None and token.e is not None:
+        #         self.e.insert(0, token.e)
 
-        # Remove the initial text element that has now been tokenized
-        self.text = ''
+        # # Remove the initial text element that has now been tokenized
+        # self.text = ''
+        return ab_tokens
 
     def get_child_tokens_for_container(self) -> list[EpiDocElement]:
-
-        self.tokenize_initial_text()
-
+        initial_text_tokens = self.get_initial_text_tokens()
         token_carriers = chain(*self._find_token_carrier_sequences())
-        token_carriers_sorted = sorted(token_carriers)
-        
+        token_carriers_sorted = list(sorted(token_carriers))
+
+        if len(initial_text_tokens) > 0 and len(token_carriers_sorted) > 0:
+            token_carriers_sorted = initial_text_tokens[:-1] + (initial_text_tokens[-1] + token_carriers_sorted[0]) + token_carriers_sorted[1:]
+
         def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
             
             if element._join_to_next:
