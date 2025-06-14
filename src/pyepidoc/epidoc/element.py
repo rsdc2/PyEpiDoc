@@ -1347,9 +1347,9 @@ class EpiDocElement(BaseElement, Showable):
         
         return reduce(remove_subsets, tokencarrier_sequences, [])
 
-    def tokenize_initial_text(self):
+    def tokenize_initial_text_in_container(self):
         """
-        Tokenize any initial text in a container, since 
+        Tokenize any initial text in a container in place, since 
         this will otherwise be ignored
         """
         # Get initial text before any child elements of the <ab>
@@ -1371,8 +1371,12 @@ class EpiDocElement(BaseElement, Showable):
         self.text = ''
 
     def get_child_tokens_for_container(self) -> list[EpiDocElement]:
-
-        self.tokenize_initial_text()
+        """
+        Return the child tokens for the container. To do this
+        it first tokenizes the initial text of the container in place.
+        """
+        # TODO try to find a better way to do this
+        self.tokenize_initial_text_in_container()
 
         token_carriers = chain(*self._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
