@@ -170,7 +170,7 @@ class Ab(Representable):
         can be tokenized within the <ab/> element.
         """
 
-        token_carriers = chain(*self._token_carrier_sequences)
+        token_carriers = chain(*self._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
 
         def _redfunc(acc:list[str], element:EpiDocElement) -> list[str]:

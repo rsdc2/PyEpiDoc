@@ -156,6 +156,8 @@ class EpiDocElement(BaseElement, Showable):
             self._e = e.e
 
         self._final_space = final_space
+        # if final_space:
+        #     self._e.tail = ' '
 
     def __add__(self, other: Optional[EpiDocElement]) -> list[EpiDocElement]:
         """
@@ -332,7 +334,7 @@ class EpiDocElement(BaseElement, Showable):
         self._e.tail = self._e.tail + ' '   # type: ignore
         return self
 
-    def _can_subsume(self, other:EpiDocElement) -> bool:
+    def _can_subsume(self, other: EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 
             return False
         
@@ -423,7 +425,7 @@ class EpiDocElement(BaseElement, Showable):
                 for expan in self.get_desc_tei_elems('expan')]
 
     @property
-    def final_tailtoken_boundary(self) -> bool:
+    def has_whitepace_tail(self) -> bool:
         """
         Returns True if the final element of the tail is a whitespace,
         implying a word break at the end of the element.
@@ -691,7 +693,7 @@ class EpiDocElement(BaseElement, Showable):
                     elems = EpiDocElement(_e) + EpiDocElement.w_factory(internalprotowords[0])
 
                     # Make sure there is a bound to the right if there are multiple tokens in the tail
-                    if len(self.get_tail_token_elements()) > 0:
+                    if len(self.create_tail_token_elements()) > 0:
                         elems[-1]._final_space = True
                     return elems
                 
@@ -736,7 +738,7 @@ class EpiDocElement(BaseElement, Showable):
 
     @property
     def _join_to_next(self) -> bool:
-        return len(self.next_no_spaces) > 1
+        return len(self._find_next_no_spaces()) > 1
 
     @property
     def _join_to_prev(self) -> bool:
@@ -748,7 +750,7 @@ class EpiDocElement(BaseElement, Showable):
         return EpiDocElement(prev_sibling)._join_to_next
 
     @property
-    def lb_in_preceding_or_ancestor(self) -> Optional[_Element]:
+    def has_lb_in_preceding_or_ancestor(self) -> Optional[_Element]:
 
         """
         Returns any preceding or |_Element| containing an
@@ -811,15 +813,14 @@ class EpiDocElement(BaseElement, Showable):
                     'g'
                 ])]
 
-    @property
-    def next_no_spaces(self) -> list[EpiDocElement]:
+    def _find_next_no_spaces(self) -> list[EpiDocElement]:
 
         """Returns a list of the next |Element|s not 
         separated by whitespace."""
 
-        def no_break_next(element:EpiDocElement) -> bool:
+        def no_break_next(element: EpiDocElement) -> bool:
             """Keep going if element is a linebreak with no word break"""
-            next_elem = element.next_sibling
+            next_elem = element.find_next_sibling()
 
             if isinstance(next_elem, EpiDocElement):
                 if next_elem.e is None:
@@ -838,17 +839,16 @@ class EpiDocElement(BaseElement, Showable):
                 return acc
 
             if no_break_next(element):
-                return next_no_spaces(acc + [element], element.next_sibling)
+                return next_no_spaces(acc + [element], element.find_next_sibling())
 
-            if element.final_tailtoken_boundary:
+            if element.has_whitepace_tail:
                 return acc + [element]
-            # breakpoint()
-            return next_no_spaces(acc + [element], element.next_sibling)
+            
+            return next_no_spaces(acc + [element], element.find_next_sibling())
 
         return next_no_spaces([], self)
 
-    @property
-    def next_sibling(self) -> Optional[EpiDocElement]:
+    def find_next_sibling(self) -> Optional[EpiDocElement]:
 
         """
         Finds the next non-comment sibling |EpiDocElement|.
@@ -857,7 +857,7 @@ class EpiDocElement(BaseElement, Showable):
         # TODO: put into base element layer; 
         # previously tried to do this but caused recursion error
 
-        def _get_next(e:Optional[_Element]) -> Optional[_Element]:
+        def _get_next(e: Optional[_Element]) -> Optional[_Element]:
             if e is None:
                 return None
 
@@ -892,7 +892,7 @@ class EpiDocElement(BaseElement, Showable):
 
     @property
     def nospace_till_next_element(self) -> bool:
-        return self._tail_prototokens == [] and not self.final_tailtoken_boundary
+        return self._tail_prototokens == [] and not self.has_whitepace_tail
 
     @property
     def nonword_element(self) -> Optional[EpiDocElement]:
@@ -1137,7 +1137,7 @@ class EpiDocElement(BaseElement, Showable):
                  if not item.has_ancestors_by_names(AtomicTokenType.values())]
         
         return [elem for elem in elems 
-                if elem.next_sibling not in self.no_space_before]
+                if elem.find_next_sibling() not in self.no_space_before]
 
     def _is_subsumable_by(self, other:EpiDocElement) -> bool:
         if type(other) is not EpiDocElement: 
@@ -1221,9 +1221,9 @@ class EpiDocElement(BaseElement, Showable):
         else:
             return []
     
-    def get_tail_token_elements(self) -> list[EpiDocElement]:
+    def create_tail_token_elements(self) -> list[EpiDocElement]:
 
-        def make_words(protoword:Optional[str]) -> EpiDocElement:
+        def make_words(protoword: Optional[str]) -> EpiDocElement:
             w = EpiDocElement.w_factory(protoword)
             
             if protoword is not None and protoword[-1] in whitespace:
@@ -1273,19 +1273,20 @@ class EpiDocElement(BaseElement, Showable):
             if child.localname in AtomicTokenType.values() or \
                 child.tag.name == "Comment"]
 
-    @property
-    def token_carriers(self) -> list[EpiDocElement]:
+    def find_token_carriers(self) -> list[EpiDocElement]:
 
         """
         WordCarriers are XML elements that carry text fragments
         either as element-internal text, or in their tails.
         """
-        return [EpiDocElement(element) 
-                for element in self.desc_elems
-                if element.tag.name in TokenCarrier]
+        acc = []
+        for element in self.desc_elems:
+            if element.tag.name in TokenCarrier:
+                epidoc_element = EpiDocElement(element)
+                acc.append(epidoc_element)
+        return acc
 
-    @property
-    def _token_carrier_sequences(self) -> list[list[EpiDocElement]]:
+    def _find_token_carrier_sequences(self) -> list[list[EpiDocElement]]:
 
         """
         Returns maximal sequences of word_carriers between whitespace.
@@ -1306,10 +1307,10 @@ class EpiDocElement(BaseElement, Showable):
             if element in acc_desc:
                 return get_word_carrier_sequences(acc, acc_desc, tokenables[1:])
 
-            new_acc = acc + [element.next_no_spaces]
+            new_acc = acc + [element._find_next_no_spaces()]
 
             next_no_spaces_desc = [element_.desc_elems 
-                                   for element_ in element.next_no_spaces] + [element.next_no_spaces]
+                                   for element_ in element._find_next_no_spaces()] + [element._find_next_no_spaces()]
             next_no_spaces_desc_flat = [EpiDocElement(item) 
                                         for item in chain(*next_no_spaces_desc)]
             
@@ -1341,26 +1342,44 @@ class EpiDocElement(BaseElement, Showable):
         tokencarrier_sequences = get_word_carrier_sequences(
             acc=[], 
             acc_desc=set(), 
-            tokenables=self.token_carriers
+            tokenables=self.find_token_carriers()
         )
         
         return reduce(remove_subsets, tokencarrier_sequences, [])
 
-    def get_child_tokens_for_container(self) -> list[EpiDocElement]:
-
+    def tokenize_initial_text_in_container(self):
+        """
+        Tokenize any initial text in a container in place, since 
+        this will otherwise be ignored
+        """
         # Get initial text before any child elements of the <ab>
         ab_prototokens = (self.text or '').split()  # split the string into tokens
 
         # Create token elements from the split string elements
-        ab_tokens = [EpiDocElement(EpiDocElement.w_factory(word)) 
-                    for word in ab_prototokens]        
+        ab_tokens = [EpiDocElement.w_factory(word) for word in ab_prototokens]     
 
-        # Insert the tokens into the tree
+        # Ensure that any final space is preserved
+        if self.text and self.text[-1] == ' ' and len(ab_tokens) > 0:
+            ab_tokens[-1].tail = ' '
+
+        # Insert the tokens from the initial <ab> text into the tree as tokens
         for token in reversed(ab_tokens):
             if self.e is not None and token.e is not None:
                 self.e.insert(0, token.e)
 
-        token_carriers = chain(*self._token_carrier_sequences)
+        # Remove the initial text element that has now been tokenized
+        self.text = ''
+
+    def get_child_tokens_for_container(self) -> list[EpiDocElement]:
+        """
+        Return the child tokens for the container. To do this
+        it first tokenizes the initial text of the container in place.
+        """
+        # TODO try to find a better way to do this
+        copy = self.deepcopy()
+        copy.tokenize_initial_text_in_container()
+
+        token_carriers = chain(*copy._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
         
         def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
@@ -1373,8 +1392,8 @@ class EpiDocElement(BaseElement, Showable):
                     return acc
             
                 def sumfunc(
-                    acc:list[EpiDocElement], 
-                    elem:EpiDocElement) -> list[EpiDocElement]:
+                    acc: list[EpiDocElement], 
+                    elem: EpiDocElement) -> list[EpiDocElement]:
 
                     if acc == []:
                         return [elem]
@@ -1404,7 +1423,7 @@ class EpiDocElement(BaseElement, Showable):
         if self.localname in ['ab']:
             return self.get_child_tokens_for_container()
 
-        token_elems = self.get_internal_token_elements() + self.get_tail_token_elements()
+        token_elems = self.get_internal_token_elements() + self.create_tail_token_elements()
         
         if token_elems != []:
             if self.e is not None:
@@ -1553,7 +1572,6 @@ class EpiDocElement(BaseElement, Showable):
                         new_parent.append(new_w)
                         new_parent = append_tail_or_text(e.tail, new_parent)              
                     
-
                 elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>, <roleName>
                     new_w_elem = EpiDocElement.w_factory(parent=e_without_tail)
                     if new_w_elem.e is not None:

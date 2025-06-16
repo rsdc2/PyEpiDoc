@@ -45,6 +45,30 @@ xml_to_tokenize = [
      (
          '<w>annis</w> <unclear><g>xyz</g></unclear>',
          '<w>annis</w> <unclear><g>xyz</g></unclear>'
+     ),
+     (
+         '<space unit="character" quantity="1"/>',
+         '<space unit="character" quantity="1"/>'
+     ),
+     (
+         '<space unit="character" quantity="1"/> xyz',
+         '<space unit="character" quantity="1"/> <w>xyz</w>'
+     ),
+     (
+         'xyz <space unit="character" quantity="1"/>',
+         '<w>xyz</w> <space unit="character" quantity="1"/>'
+     ),
+     (
+         'xyz abc <space unit="character" quantity="1"/>',
+         '<w>xyz</w> <w>abc</w> <space unit="character" quantity="1"/>'
+     ),
+     (
+         '<w>xyz</w> <space unit="character" quantity="1"/>',
+         '<w>xyz</w> <space unit="character" quantity="1"/>'
+     ),
+     (
+         '<g>.</g> <space unit="character" quantity="1"/> xyz',
+         '<g>.</g> <space unit="character" quantity="1"/> <w>xyz</w>'
      )
     #  (
     #      '<w>annis</w><unclear><g>xyz</g></unclear>',
