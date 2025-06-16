@@ -1376,7 +1376,8 @@ class EpiDocElement(BaseElement, Showable):
         it first tokenizes the initial text of the container in place.
         """
         # TODO try to find a better way to do this
-        copy = self.deepcopy()
+        # copy = self.deepcopy()
+        copy = self
         copy.tokenize_initial_text_in_container()
 
         token_carriers = chain(*copy._find_token_carrier_sequences())
