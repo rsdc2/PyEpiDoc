@@ -1453,8 +1453,7 @@ class EpiDocElement(BaseElement, Showable):
 
         else:
             _e = self._e
-            # Tokenize the initial text
-            self.tokenize_initial_text_in_container()
+            
             # Find the tokens
             tokenized_elements = self.get_child_tokens()
 
