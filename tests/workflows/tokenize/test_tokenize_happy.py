@@ -368,7 +368,13 @@ xml_to_tokenize = [
 
     # Test that space is not tokenized
     ('<space unit="character" quantity="1"/>',
-     '<space unit="character" quantity="1"/>')
+     '<space unit="character" quantity="1"/>'),
+
+    # ('<lb/>duumvir vir',
+    #  '<lb/><w>duumvir</w><w>vir</w>'),
+    
+    # ('d<w>uumvir</w> <w>vir</w>',
+    #  '<w>duumvir</w><w>vir</w>')
 ]
 
 
