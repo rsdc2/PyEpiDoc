@@ -1365,11 +1365,16 @@ class EpiDocElement(BaseElement, Showable):
             ab_tokens[-1].tail = ' '
             return ab_tokens
         
-        if len(ab_tokens) == 1:
-            elem = EpiDocElement.create_new('w')
-            elem.tail = ' ' + self.text
-            elem._final_space = False
-            return [elem]
+        else:
+            ab_tokens[-1]._final_space = False
+            ab_tokens[-1].tail = ''
+            return ab_tokens
+        
+        # if len(ab_tokens) == 1:
+        #     elem = EpiDocElement.create_new('w')
+        #     elem.tail = ' ' + self.text
+        #     elem._final_space = False
+        #     return [elem]
         
         return ab_tokens
 
@@ -1445,7 +1450,8 @@ class EpiDocElement(BaseElement, Showable):
 
         token_carriers = chain(*copy._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
-        
+        token_carriers_sorted = initial_tokens + token_carriers_sorted
+
         def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
             
             if element._join_to_next:

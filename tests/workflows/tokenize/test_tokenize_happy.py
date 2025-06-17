@@ -371,7 +371,10 @@ xml_to_tokenize = [
      '<space unit="character" quantity="1"/>'),
 
     ('<lb/>d<w>uumvir</w>',
-     '<lb/><w>duumvir</w>')
+     '<lb/><w>duumvir</w>'),
+
+    ('<w>d</w><hi rend="apex">u</hi>mviralium',
+     '<w>d<hi rend="apex">u</hi>mviralium</w>')
 ]
 
 
