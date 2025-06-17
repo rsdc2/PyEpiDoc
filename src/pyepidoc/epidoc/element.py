@@ -704,7 +704,7 @@ class EpiDocElement(BaseElement, Showable):
 
             elif _element.tag.name in CompoundTokenType.values():
                 epidoc_elem = EpiDocElement(_element)
-                internal_tokenized = epidoc_elem.get_child_tokens_for_container()
+                internal_tokenized = epidoc_elem.make_child_tokens_for_container()
                 epidoc_elem.remove_children()
                 for element in internal_tokenized:
                     epidoc_elem.append_element_or_text(element)
@@ -1363,6 +1363,8 @@ class EpiDocElement(BaseElement, Showable):
             ab_tokens[-1].tail = ' '
 
         # Insert the tokens from the initial <ab> text into the tree as tokens
+        # This is necessary, since otherwise the tokenization algorithm
+        # won't be able to find its siblings
         for token in reversed(ab_tokens):
             if self.e is not None and token.e is not None:
                 self.e.insert(0, token.e)
@@ -1370,17 +1372,14 @@ class EpiDocElement(BaseElement, Showable):
         # Remove the initial text element that has now been tokenized
         self.text = ''
 
-    def get_child_tokens_for_container(self) -> list[EpiDocElement]:
+    def make_child_tokens_for_container(self) -> list[EpiDocElement]:
         """
         Return the child tokens for the container. To do this
         it first tokenizes the initial text of the container in place.
         """
-        # TODO try to find a better way to do this
-        # copy = self.deepcopy()
-        copy = self
-        copy.tokenize_initial_text_in_container()
+        self.tokenize_initial_text_in_container()
 
-        token_carriers = chain(*copy._find_token_carrier_sequences())
+        token_carriers = chain(*self._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
         
         def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
@@ -1422,7 +1421,7 @@ class EpiDocElement(BaseElement, Showable):
         """
 
         if self.localname in ['ab']:
-            return self.get_child_tokens_for_container()
+            return self.make_child_tokens_for_container()
 
         token_elems = self.get_internal_token_elements() + self.create_tail_token_elements()
         
@@ -1445,6 +1444,7 @@ class EpiDocElement(BaseElement, Showable):
         tokenized_elements = []
 
         # Get the tokenized elements
+        # TODO write tests for this
         if not inplace:
             _e = deepcopy(self._e)
 
@@ -1453,6 +1453,9 @@ class EpiDocElement(BaseElement, Showable):
 
         else:
             _e = self._e
+            # Tokenize the initial text
+            self.tokenize_initial_text_in_container()
+            # Find the tokens
             tokenized_elements = self.get_child_tokens()
 
         # Remove existing children of <ab>
