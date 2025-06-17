@@ -375,6 +375,9 @@ xml_to_tokenize = [
     
     # ('d<w>uumvir</w> <w>vir</w>',
     #  '<w>duumvir</w><w>vir</w>')
+
+    ('<w>d</w><hi rend="apex">u</hi>mviralium',
+     '<w>d<hi rend="apex">u</hi>mviralium</w>')
 ]
 
 
