@@ -1477,8 +1477,8 @@ class EpiDocElement(BaseElement, Showable):
             return element.get_child_tokens() + acc
 
         tokens: list[EpiDocElement] = reduce(_redfunc, reversed(token_carriers_sorted), [])
-        joined = self.join_tokens(initial_tokens, tokens)
-        return joined
+        # joined = self.join_tokens(initial_tokens, tokens)
+        return tokens
 
     def get_child_tokens(self) -> list[EpiDocElement]:
         """
