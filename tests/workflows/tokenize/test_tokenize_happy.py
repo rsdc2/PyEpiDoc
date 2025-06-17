@@ -344,8 +344,6 @@ xml_to_tokenize = [
     ('<persName type="civic" subtype="duumvir"><hi rend="supraline">II</hi> <g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r</persName>',
      '<persName type="civic" subtype="duumvir"><w><hi rend="supraline">II</hi></w><g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w></persName>'),
 
-    ('<g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r',
-     '<g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w>'),
 
      ("""
        <persName>
@@ -377,7 +375,20 @@ xml_to_tokenize = [
     #  '<w>duumvir</w><w>vir</w>')
 
     ('<w>d</w><hi rend="apex">u</hi>mviralium',
-     '<w>d<hi rend="apex">u</hi>mviralium</w>')
+     '<w>d<hi rend="apex">u</hi>mviralium</w>'),
+
+    ('<roleName type="civic" subtype="duumvir">d<hi>u</hi>umvir</roleName>',
+     '<roleName type="civic" subtype="duumvir"><w>d<hi>u</hi>umvir</w></roleName>'),
+
+    ('<roleName type="civic" subtype="duumvir">duum vir</roleName>',
+     '<roleName type="civic" subtype="duumvir"><w>duum</w><w>vir</w></roleName>'),
+
+    ('<roleName type="civic" subtype="duumvir">duum <w>vir</w></roleName>',
+     '<roleName type="civic" subtype="duumvir"><w>duum</w><w>vir</w></roleName>'),
+
+    ('<g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r',
+     '<g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w>'),
+
 ]
 
 
