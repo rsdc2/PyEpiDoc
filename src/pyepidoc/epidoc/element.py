@@ -1347,28 +1347,91 @@ class EpiDocElement(BaseElement, Showable):
         
         return reduce(remove_subsets, tokencarrier_sequences, [])
 
-    def tokenize_initial_text_in_container(self):
+    def tokenize_initial_text_in_container(self) -> list[EpiDocElement]:
         """
         Tokenize any initial text in a container in place, since 
         this will otherwise be ignored
         """
-        # Get initial text before any child elements of the <ab>
+        # # Get initial text before any child elements of the <ab>
         ab_prototokens = (self.text or '').split()  # split the string into tokens
 
-        # Create token elements from the split string elements
-        ab_tokens = [EpiDocElement.w_factory(word) for word in ab_prototokens]     
+        if len(ab_prototokens) == 0:
+            return []
+        
+        ab_tokens = [EpiDocElement.w_factory(word) for word in ab_prototokens] 
 
-        # Ensure that any final space is preserved
-        if self.text and self.text[-1] == ' ' and len(ab_tokens) > 0:
+        if self.text and self.text != '' and self.text[-1] == ' ':
+            ab_tokens[-1]._final_space = True
             ab_tokens[-1].tail = ' '
+            return ab_tokens
+        
+        if len(ab_tokens) == 1:
+            elem = EpiDocElement.create_new('w')
+            elem.tail = ' ' + self.text
+            elem._final_space = False
+            return [elem]
+        
+        return ab_tokens
 
-        # Insert the tokens from the initial <ab> text into the tree as tokens
-        for token in reversed(ab_tokens):
-            if self.e is not None and token.e is not None:
-                self.e.insert(0, token.e)
+        # if len(ab_tokens) > 1:
+        #     last_elem = 
 
-        # Remove the initial text element that has now been tokenized
-        self.text = ''
+        # if len(ab_prototokens) > 1:
+        #     last_token = ab_tokens
+        #     if self.text and self.text != '' and self.text[-1] == ' ':
+        #          = EpiDocElement.w_factory(ab_prototokens[-1])
+        #         elem.tail = ' '
+        #         elem._final_space = True
+
+        #     else:
+        #         elem = EpiDocElement.create_new('w')
+        #         elem.tail = self.text
+        #         elem._final_space = False
+
+        # # if self.text and self.text[-1] == ' ':
+        # #     ab_prototokens = ab_prototokens[:-1]
+
+        # # Create token elements from the split string elements
+        # ab_tokens = [EpiDocElement.w_factory(word) for word in ab_prototokens]     
+
+        # # Ensure that any final space is preserved
+        # if self.text and self.text[-1] == ' ' and len(ab_tokens) > 0:
+        #     # ab_tokens[-1]._final_space = True
+        #     ab_tokens[-1].tail = ' '
+
+
+        # return EpiDocElement.create_new('w') + self.text
+
+        # # Insert the tokens from the initial <ab> text into the tree as tokens
+        # for token in reversed(ab_tokens):
+        #     if self.e is not None and token.e is not None:
+        #         self.e.insert(0, token.e)
+
+        # # Remove the initial text element that has now been tokenized
+        # self.text = ''
+
+    def join_tokens(
+            self, 
+            tokens1: list[EpiDocElement], 
+            tokens2: list[EpiDocElement]) -> list[EpiDocElement]:
+
+            if len(tokens1) == 0:
+                return tokens2
+            
+            if len(tokens2) == 0:
+                return tokens1
+            
+            head = tokens1[:-1]
+            tail = tokens2[1:]
+
+            if tokens1[-1].tail and tokens1[-1].tail != '':
+                tokens1[-1]._final_space = tokens1[-1].tail[-1] == ' '
+            
+            join = tokens1[-1] + tokens2[0]
+            joined = head + join + tail
+            if joined[0].text_desc == '':
+                return joined[1:]
+            return joined
 
     def get_child_tokens_for_container(self) -> list[EpiDocElement]:
         """
@@ -1378,7 +1441,7 @@ class EpiDocElement(BaseElement, Showable):
         # TODO try to find a better way to do this
         # copy = self.deepcopy()
         copy = self
-        copy.tokenize_initial_text_in_container()
+        initial_tokens = copy.tokenize_initial_text_in_container()
 
         token_carriers = chain(*copy._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
@@ -1413,7 +1476,9 @@ class EpiDocElement(BaseElement, Showable):
 
             return element.get_child_tokens() + acc
 
-        return reduce(_redfunc, reversed(token_carriers_sorted), [])
+        tokens: list[EpiDocElement] = reduce(_redfunc, reversed(token_carriers_sorted), [])
+        joined = self.join_tokens(initial_tokens, tokens)
+        return joined
 
     def get_child_tokens(self) -> list[EpiDocElement]:
         """
