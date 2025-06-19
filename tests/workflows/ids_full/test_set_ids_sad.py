@@ -21,7 +21,7 @@ benchmark_path = Path('tests/workflows/ids_full/files/benchmark')
 
 
 @pytest.mark.parametrize('filename', tests)
-def test_set_ids_in_epidoc(filename: Path):
+def test_set_ids_in_epidoc_with_existing_ids_raises_error(filename: Path):
     # Arrange
     # Set the IDs
     doc = EpiDoc(input_path / filename)
