@@ -35,7 +35,7 @@ from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.representable import Representable
 from .textpart import TextPart
 
-from ..enums import (
+from pyepidoc.epidoc.enums import (
     SpaceUnit, 
     SpaceSeparated,
     NoSpaceBefore,
@@ -45,7 +45,8 @@ from ..enums import (
     SubatomicTagType, 
     CompoundTokenType, 
     ContainerType,
-    IDableElements,
+    N_IDableElements,
+    XML_IDableElements,
     RepresentableElements
 )
 
@@ -423,14 +424,25 @@ class Edition(EpiDocElement):
             return self.text_desc_compressed_whitespace
 
     @property
-    def idable_elements(self) -> list[EpiDocElement]:
+    def n_idable_elements(self) -> list[EpiDocElement]:
         
         """
         Get all the tokens in the edition that should 
         receive an `@n` id.
         """
 
-        elems = self.get_desc_tei_elems(IDableElements.values())
+        elems = self.get_desc_tei_elems(N_IDableElements.values())
+        return list(map(EpiDocElement, elems))
+    
+    @property
+    def xml_idable_elements(self) -> list[EpiDocElement]:
+        
+        """
+        Get all the tokens in the edition that should 
+        receive an `@xml:id` id.
+        """
+
+        elems = self.get_desc_tei_elems(XML_IDableElements.values())
         return list(map(EpiDocElement, elems))
 
     @staticmethod
@@ -571,7 +583,7 @@ class Edition(EpiDocElement):
         already exist on an element.
         """
 
-        for i, elem in enumerate(self.idable_elements, 1):
+        for i, elem in enumerate(self.xml_idable_elements, 1):
             # Find out how long the element part of the ID should be
             elem_id_length = ids.elem_id_length_from_base(base)
             
@@ -598,7 +610,7 @@ class Edition(EpiDocElement):
         with 5, it will be 5, 10, 15, 20 etc.
         """
 
-        for i, elem in enumerate(self.idable_elements, 1):
+        for i, elem in enumerate(self.n_idable_elements, 1):
             if elem.get_attrib('n') != None:
                 raise AttributeError(f'@n attribute already set '
                                  f'on element {elem}.')
