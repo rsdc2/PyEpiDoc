@@ -927,7 +927,7 @@ class EpiDocCorpus:
         are unique
         """
 
-        ids = list(map(lambda token: token.id_xml or '', self.id_carriers))
+        ids = list(map(lambda token: token.xml_id or '', self.id_carriers))
         id_set = list(set(ids))
 
         if verbose:

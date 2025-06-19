@@ -642,7 +642,7 @@ class Edition(EpiDocElement):
         """
 
         result = [token for token in self.tokens_incl_nested
-                  if token.id_xml == id]
+                  if token.xml_id == id]
         
         return maxone(result, None, True)
 

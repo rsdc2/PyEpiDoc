@@ -358,12 +358,12 @@ class EpiDocElement(BaseElement, Showable):
         """
         Convert the element's @xml:id attribute to a different base
         """
-        current_id = self.id_xml
+        current_id = self.xml_id
 
         if current_id is None:
             return 
         
-        self.id_xml = ids.convert(current_id, oldbase, newbase)
+        self.xml_id = ids.convert(current_id, oldbase, newbase)
 
     @classmethod
     def create_new(cls, localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
@@ -595,14 +595,14 @@ class EpiDocElement(BaseElement, Showable):
         return ""
 
     @property
-    def id_xml(self) -> Optional[str]:
+    def xml_id(self) -> Optional[str]:
         """
         Returns value of the xml:id attribute in the XML file.
         """
         return self.get_attrib('id', namespace=XMLNS)
 
-    @id_xml.setter
-    def id_xml(self, id_value:str) -> None:
+    @xml_id.setter
+    def xml_id(self, id_value:str) -> None:
         """
         Sets the value of the xml:id attribute in the XML file.
         """
@@ -1105,13 +1105,13 @@ class EpiDocElement(BaseElement, Showable):
             id_xml = self.id_isic + '-' + elem_id
 
             # Compress the ID, if required
-            self.id_xml = ids.compress(id_xml, base) if compress else id_xml
+            self.xml_id = ids.compress(id_xml, base) if compress else id_xml
 
         else:
             if compress:
-                self.id_xml = ids.compress(id, base)
+                self.xml_id = ids.compress(id, base)
             else:
-                self.id_xml = id
+                self.xml_id = id
 
     
     def space_tokens(self) -> None:

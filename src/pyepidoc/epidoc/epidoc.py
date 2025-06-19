@@ -596,17 +596,17 @@ class EpiDoc(DocRoot):
         return idno_elem.text or ''
 
     @property
-    def ids(self) -> list[str]:
+    def xml_id(self) -> list[str]:
         """
-        The element IDs in the editions of the document
+        The element @xml:id IDs in the editions of the document
         """
 
         abs = chain(*[edition.abs 
                       for edition in self.editions()])
         elems = chain(*[ab.id_carriers for ab in abs])
 
-        return [elem.id_xml for elem in elems 
-                if elem.id_xml is not None]
+        return [elem.xml_id for elem in elems 
+                if elem.xml_id is not None]
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
