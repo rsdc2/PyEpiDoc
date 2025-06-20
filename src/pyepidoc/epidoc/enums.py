@@ -120,13 +120,24 @@ class SpaceSeparated(EnumerableEnum):
     Supplied = 'supplied'
 
 
-class IDableElements(EnumerableEnum):
+class N_IDableElements(EnumerableEnum):
     """
     These are elements that can receive @n id attributes
     """
     W = 'w'
     Orig = 'orig'
     G = 'g'
+
+
+class XML_IDableElements(EnumerableEnum):
+    """
+    These are elements that can receive @xml:id id attributes
+    """
+    W = 'w'
+    Orig = 'orig'
+    G = 'g'
+    Lb = 'lb'
+    Supplied = 'supplied'
 
 
 class NoSpaceBefore(EnumerableEnum):

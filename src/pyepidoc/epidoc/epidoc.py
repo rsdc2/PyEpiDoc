@@ -596,21 +596,21 @@ class EpiDoc(DocRoot):
         return idno_elem.text or ''
 
     @property
-    def ids(self) -> list[str]:
+    def xml_id(self) -> list[str]:
         """
-        The element IDs in the editions of the document
+        The element @xml:id IDs in the editions of the document
         """
 
         abs = chain(*[edition.abs 
                       for edition in self.editions()])
         elems = chain(*[ab.id_carriers for ab in abs])
 
-        return [elem.id_xml for elem in elems 
-                if elem.id_xml is not None]
+        return [elem.xml_id for elem in elems 
+                if elem.xml_id is not None]
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
-        return list(chain(*[edition.idable_elements 
+        return list(chain(*[edition.n_idable_elements 
                             for edition in self.editions()]))
 
     def insert_w_inside_name_and_num(self) -> EpiDoc:
@@ -838,7 +838,7 @@ class EpiDoc(DocRoot):
         if self.edition_main is None:
             raise ValueError('No main edition. Cannot extract n_id elements.')
 
-        return self.edition_main.idable_elements
+        return self.edition_main.n_idable_elements
 
     @property
     def nums(self) -> list[Num]:

@@ -539,14 +539,14 @@ class BaseElement(Showable):
         return _recfunc([], self)
 
     @property
-    def id_xml(self) -> Optional[str]:
+    def xml_id(self) -> Optional[str]:
         """
         Returns value of the xml:id attribute in the XML file.
         """
         return self.get_attrib('id', namespace=XMLNS)
 
-    @id_xml.setter
-    def id_xml(self, id_value:str) -> None:
+    @xml_id.setter
+    def xml_id(self, id_value:str) -> None:
         """
         Sets the value of the xml:id attribute in the XML file.
         """

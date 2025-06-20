@@ -6,15 +6,15 @@ from __future__ import annotations
 from typing import Optional, Sequence
 from lxml.etree import _Element, _ElementUnicodeResult
 
-from ..xml.utils import localname
+from pyepidoc.shared.constants import *
+from pyepidoc.shared import maxone, head
+from pyepidoc.xml.utils import localname
+
 from .epidoc import EpiDoc
 from .element import EpiDocElement
 from .elements.ab import Ab
 from .elements.edition import Edition
 from .elements.lb import Lb
-
-from ..shared.constants import *
-from ..shared import maxone, head
 
 
 def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
