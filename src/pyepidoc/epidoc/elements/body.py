@@ -95,7 +95,7 @@ class Body(EpiDocElement):
         append_items(source, EpiDocElement(target))
         return target
 
-    def create_edition(
+    def append_new_edition(
             self, 
             subtype: str | None = None, 
             lang: str | None = None,
