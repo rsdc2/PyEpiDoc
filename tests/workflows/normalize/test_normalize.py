@@ -1,9 +1,9 @@
 import pytest
-from pyepidoc.epidoc.elements.w import W
+from pyepidoc.epidoc.edition_elements.w import W
 from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.representable import Representable
 from pyepidoc.epidoc.epidoc_element import EpiDocElement
-from pyepidoc.epidoc.elements.edition import Edition
+from pyepidoc.epidoc.edition_elements.edition import Edition
 
 w_elements = [
     ('<persName><name type="cognomen"><w>Melant<supplied reason="undefined" '

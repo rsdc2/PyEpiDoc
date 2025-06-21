@@ -5,7 +5,7 @@ an EpiDoc corpus
 from typing import Iterable, Callable
 from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.epidoc_element import EpiDocElement
-from pyepidoc.epidoc.elements.expan import Expan
+from pyepidoc.epidoc.edition_elements.expan import Expan
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.epidoc.dom import lang
 

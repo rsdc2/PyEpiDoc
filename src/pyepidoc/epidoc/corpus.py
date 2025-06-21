@@ -26,13 +26,13 @@ from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
 from .epidoc_element import EpiDocElement
 from .token import Token
-from .elements.expan import Expan
-from .elements.name import Name
-from .elements.g import G
-from .elements.num import Num
+from .edition_elements.expan import Expan
+from .edition_elements.name import Name
+from .edition_elements.g import G
+from .edition_elements.num import Num
 from .enums import TextClass
-from .elements.role_name import RoleName
-from .elements.pers_name import PersName
+from .edition_elements.role_name import RoleName
+from .edition_elements.pers_name import PersName
 
 T = TypeVar('T')
 

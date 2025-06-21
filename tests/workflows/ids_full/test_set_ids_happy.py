@@ -36,6 +36,6 @@ def test_set_ids_in_epidoc(filename: Path):
 
     # Assert
     # Check the ids
-    assert output.xml_id == benchmark.xml_id
-    assert output.xml_id != []
+    assert output.xml_ids == benchmark.xml_ids
+    assert output.xml_ids != []
     

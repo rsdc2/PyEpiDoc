@@ -9,9 +9,9 @@ from lxml.etree import _Element
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.epidoc_element import EpiDocElement
-from pyepidoc.epidoc.elements.edition import Edition
-from pyepidoc.epidoc.elements.w import W
-from pyepidoc.epidoc.elements.orig import Orig
+from pyepidoc.epidoc.edition_elements.edition import Edition
+from pyepidoc.epidoc.edition_elements.w import W
+from pyepidoc.epidoc.edition_elements.orig import Orig
 from pyepidoc.epidoc.token import Token
 
 from pyepidoc.xml.namespace import Namespace as ns

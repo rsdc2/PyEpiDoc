@@ -6,8 +6,8 @@ from pathlib import Path
 from pyepidoc.epidoc.enums import DoNotPrettifyChildren
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.epidoc_element import EpiDocElement
-from pyepidoc.epidoc.elements.edition import Edition
-from pyepidoc.epidoc.elements.edition import Ab
+from pyepidoc.epidoc.edition_elements.edition import Edition
+from pyepidoc.epidoc.edition_elements.edition import Ab
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared import head
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark

@@ -7,7 +7,7 @@ from typing import Iterable, Optional, TypedDict, Literal
 from functools import reduce
 
 from pyepidoc import EpiDocCorpus
-from pyepidoc.epidoc.elements.expan import Expan
+from pyepidoc.epidoc.edition_elements.expan import Expan
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.epidoc.dom import lang, doc_id

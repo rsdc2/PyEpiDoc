@@ -1,5 +1,5 @@
 from pyepidoc.xml.utils import elem_from_str, abify
-from pyepidoc.epidoc.elements.ab import Ab
+from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.constants import XMLNS
 from pyepidoc.xml.namespace import Namespace as ns

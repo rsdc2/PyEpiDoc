@@ -5,7 +5,7 @@ Tests for converting ids in EpiDoc files
 import pytest
 from tests.config import FILE_WRITE_MODE
 from pyepidoc.xml.utils import abify, editionify
-from pyepidoc.epidoc.elements.edition import Edition
+from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from pyepidoc import EpiDoc
 

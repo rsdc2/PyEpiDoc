@@ -1,5 +1,5 @@
-from pyepidoc.epidoc.elements.edition import Edition
-from pyepidoc.epidoc.elements.ab import Ab
+from pyepidoc.epidoc.edition_elements.edition import Edition
+from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.xml.utils import abify, editionify
 

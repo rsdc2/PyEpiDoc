@@ -40,16 +40,16 @@ from .metadata.file_desc import FileDesc
 from .metadata.tei_header import TeiHeader
 from .metadata.change import Change
 
-from .elements.ab import Ab
-from .elements.body import Body
-from .elements.edition import Edition
-from .elements.name import Name
-from .elements.pers_name import PersName
-from .elements.g import G
-from .elements.num import Num
-from .elements.role_name import RoleName
-from .elements.expan import Expan
-from .elements.w import W
+from .edition_elements.ab import Ab
+from .edition_elements.body import Body
+from .edition_elements.edition import Edition
+from .edition_elements.name import Name
+from .edition_elements.pers_name import PersName
+from .edition_elements.g import G
+from .edition_elements.num import Num
+from .edition_elements.role_name import RoleName
+from .edition_elements.expan import Expan
+from .edition_elements.w import W
 from .enums import (
     SpaceUnit,
     AbbrType,
@@ -594,19 +594,6 @@ class EpiDoc(DocRoot):
             return 'None'
 
         return idno_elem.text or ''
-
-    @property
-    def xml_id(self) -> list[str]:
-        """
-        The element @xml:id IDs in the editions of the document
-        """
-
-        abs = chain(*[edition.abs 
-                      for edition in self.editions()])
-        elems = chain(*[ab.id_carriers for ab in abs])
-
-        return [elem.xml_id for elem in elems 
-                if elem.xml_id is not None]
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
@@ -1496,3 +1483,16 @@ class EpiDoc(DocRoot):
         return list(chain(*[edition.w_tokens 
                             for edition in self.editions()]))
     
+    @property
+    def xml_ids(self) -> list[str]:
+        """
+        Convenience property for the element @xml:id IDs in the editions of the document
+        """
+
+        abs = chain(*[edition.abs 
+                      for edition in self.editions()])
+        elems = chain(*[ab.id_carriers for ab in abs])
+
+        return [elem.xml_id for elem in elems 
+                if elem.xml_id is not None]
+

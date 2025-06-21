@@ -20,22 +20,22 @@ from ..shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
 from ..xml.xml_element import XmlElement
 
 from .utils import descendant_atomic_tokens
-from .elements.abbr import Abbr
-from .elements.am import Am
-from .elements.choice import Choice
-from .elements.del_elem import Del
-from .elements.ex import Ex
-from .elements.expan import Expan
-from .elements.g import G
-from .elements.gap import Gap
-from .elements.hi import Hi
-from .elements.lb import Lb
-from .elements.num import Num
-from .elements.orig import Orig
-from .elements.supplied import Supplied
-from .elements.surplus import Surplus
-from .elements.unclear import Unclear
-from .elements.w import W
+from .edition_elements.abbr import Abbr
+from .edition_elements.am import Am
+from .edition_elements.choice import Choice
+from .edition_elements.del_elem import Del
+from .edition_elements.ex import Ex
+from .edition_elements.expan import Expan
+from .edition_elements.g import G
+from .edition_elements.gap import Gap
+from .edition_elements.hi import Hi
+from .edition_elements.lb import Lb
+from .edition_elements.num import Num
+from .edition_elements.orig import Orig
+from .edition_elements.supplied import Supplied
+from .edition_elements.surplus import Surplus
+from .edition_elements.unclear import Unclear
+from .edition_elements.w import W
 
 from .enums import (
     CompoundTokenType, 
