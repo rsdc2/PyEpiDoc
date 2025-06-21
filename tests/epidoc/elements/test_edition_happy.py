@@ -1,4 +1,8 @@
 from pyepidoc.epidoc.elements.edition import Edition
+from pyepidoc.epidoc.elements.ab import Ab
+from pyepidoc.epidoc.epidoc import EpiDoc
+from pyepidoc.xml.utils import abify, editionify
+
 import pytest
 
 @pytest.mark.parametrize(['xml_str', 'expected'], [
@@ -31,3 +35,16 @@ def test_tokens_no_nested_count(xml_str: str, expected: float):
 
     # Assert
     assert len(tokens) == expected
+
+
+def test_append_ab_to_edition():
+
+    # Arrange
+    doc = EpiDoc('templates/empty_template.xml')
+    ab = Ab.from_xml_str(abify('<w>hello</w>'))
+
+    # Act
+    doc.main_edition.append_ab(ab)
+
+    # Assert
+    assert doc.token_count == 1
