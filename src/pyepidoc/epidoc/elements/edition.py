@@ -238,17 +238,19 @@ class Edition(EpiDocElement):
         return [Ab(element._e) 
             for element in self.get_desc_tei_elems(['ab'])]
 
-    def append_ab(self, ab: Ab) -> Edition:
+    def append_ab(self, ab: Ab) -> Ab:
         """
         Append the <ab> after all others. This is the same
-        as simply appending any element, but with a check 
-        that what is being appended is an <ab> element
+        as simply appending any element, but: checks 
+        that what is being appended is an <ab> element, 
+        and returns the new Ab.
+
         """
         if ab.localname != 'ab':
             raise TypeError(f'The element is not <ab>, but is <{ab.localname}>')
 
         self.append_element_or_text(ab)
-        return self
+        return self.abs[-1]
 
     def append_empty_ab(self) -> Ab:
         
@@ -307,6 +309,17 @@ class Edition(EpiDocElement):
     @property
     def edition_text(self) -> str:
         return self.text_desc
+    
+    def ensure_ab(self) -> Ab:
+        """
+        Retrieves the last <ab> element (if it exists)
+        or adds an empty one if it does not
+        """
+
+        if len(self.abs) == 0:
+            return self.append_empty_ab()
+        
+        return self.abs[-1]
 
     @property
     def expans(self) -> list[Expan]:
