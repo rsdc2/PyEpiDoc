@@ -19,7 +19,7 @@ def test_create_lemmatized_edition():
     
     # Create the edition
     doc = EpiDoc(unlemmatized_path + 'single_token.xml')
-    doc.body.create_edition('simple-lemmatized')
+    doc.body.append_new_edition('simple-lemmatized')
     doc.prettify('pyepidoc')
 
     # Save and check that the edition is there
@@ -50,7 +50,7 @@ def test_copy_edition_content():
     if source is None:
         raise ValueError('No source edition could be found.')
 
-    target = doc.body.create_edition('simple-lemmatized')
+    target = doc.body.append_new_edition('simple-lemmatized')
 
     # Copy the edition content
     doc.body.copy_edition_items_to_appear_in_lemmatized_edition(source, target)
@@ -84,7 +84,7 @@ def test_copy_edition_content_parametrized_no_lemmas():
     if source is None:
         raise ValueError('No source edition could be found.')
 
-    target = doc.body.create_edition('simple-lemmatized')
+    target = doc.body.append_new_edition('simple-lemmatized')
 
     # Copy the edition content
     doc.body.copy_edition_items_to_appear_in_lemmatized_edition(source, target)

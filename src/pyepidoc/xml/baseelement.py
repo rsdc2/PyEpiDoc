@@ -333,8 +333,8 @@ class BaseElement(Showable):
         
         return self.child_elements[0]
 
-    @staticmethod
-    def from_xml_str(xml_str: str) -> BaseElement:
+    @classmethod
+    def from_xml_str(cls, xml_str: str) -> BaseElement:
         """
         Return an element from an XML string
         """
@@ -349,7 +349,7 @@ class BaseElement(Showable):
             parser=parser
         )
 
-        return BaseElement(lxml_elem)
+        return cls(BaseElement(lxml_elem))
 
     def has_parent(self, localname: str) -> bool:
         return self.parent is not None and self.parent.localname == localname

@@ -145,7 +145,7 @@ class EpiDoc(DocRoot):
             raise ValueError('Lemmatized edition already present.')
 
         # Create edition if it does not already exist
-        self.body.create_edition('simple-lemmatized', resp=resp)
+        self.body.append_new_edition('simple-lemmatized', resp=resp)
         if change is not None: 
             self._append_change(change)
         edition = self.body.edition_by_subtype('simple-lemmatized')
@@ -1129,6 +1129,7 @@ class EpiDoc(DocRoot):
         Base 52 or Base 100. Should keep any id that 
         already exist on an element.
         """
+        # TODO remove this method
 
         for edition in self.editions():
             edition.set_ids(base)
