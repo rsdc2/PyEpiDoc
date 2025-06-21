@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from .change import Change
 
 class ListChange(EpiDocElement):
@@ -8,7 +8,7 @@ class ListChange(EpiDocElement):
         """
         Append a <change> element to the <listChange>
         """
-        self.append_element_or_text(change)
+        self.append_node(change)
         return self
 
     @property

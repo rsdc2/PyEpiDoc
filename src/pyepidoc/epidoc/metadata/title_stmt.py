@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from .resp_stmt import RespStmt
 
 class TitleStmt(EpiDocElement):
@@ -42,7 +42,7 @@ class TitleStmt(EpiDocElement):
         Return all the <resp/> statements
         """
         
-        resp_stmt_elems = self.desc_elems_by_local_name("respStmt")
+        resp_stmt_elems = self.descendant_elements_by_local_name("respStmt")
         return list(map(RespStmt.from_element, resp_stmt_elems))
 
     

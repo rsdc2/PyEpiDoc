@@ -1,8 +1,8 @@
 import pytest
-from pyepidoc.epidoc.elements.edition import Edition
-from pyepidoc.epidoc.elements.w import W
+from pyepidoc.epidoc.edition_elements.edition import Edition
+from pyepidoc.epidoc.edition_elements.w import W
 from pyepidoc.epidoc.token import Token
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 
 
 token_elements = [

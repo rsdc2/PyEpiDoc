@@ -7,7 +7,7 @@ from lxml.etree import _Element
 
 from ...shared import head
 
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 
 from .ex import Ex
 from .abbr import Abbr
@@ -102,7 +102,7 @@ class Expan(EpiDocElement):
         Return True if contains a `<g>` element (optionally with the
         @ref attribute set)
         """    
-        gs = map(G, map(lambda elem: elem.e, self.desc_elems_by_local_name('g')))
+        gs = map(G, map(lambda elem: elem.e, self.descendant_elements_by_local_name('g')))
         if with_ref is None:
             return len(list(gs)) > 0
         

@@ -1,15 +1,9 @@
 from lxml.etree import _Element
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 from ..utils import leiden_str_from_children, normalized_str_from_children
 
-from .expan import Expan
 
-element_classes: dict[str, type] = {
-    'expan': Expan
-}
-
-
-class Del(EpiDocElement):
+class Sic(EpiDocElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.
@@ -21,18 +15,20 @@ class Del(EpiDocElement):
 
         self._e = e
 
-        if self.localname != 'del':
-            raise TypeError('Element should be <supplied>.')
+        if self.localname != 'sic':
+            raise TypeError('Element should be <sic>.')
 
     @property
     def leiden_form(self) -> str:
         
-        return ''.join([
-            '⟦',
-            leiden_str_from_children(self.e, element_classes, 'node'),
-            '⟧'
-        ])
+        from .expan import Expan
+
+        element_classes: dict[str, type] = {
+            'expan': Expan
+        }
+        
+        return leiden_str_from_children(self.e, element_classes, 'node')
     
     @property
     def normalized_form(self) -> str:
-        return normalized_str_from_children(self.e, element_classes, 'node')
+        return ''

@@ -11,7 +11,7 @@ from itertools import chain
 
 from pyepidoc.shared.classes import Showable, ExtendableSeq, SetRelation
 from pyepidoc.shared import update_set_inplace
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
 
 from copy import deepcopy
 from functools import reduce, cached_property
@@ -64,8 +64,8 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     atomic_non_token_set = AtomicNonTokenType.value_set()
     epidoc_elem = EpiDocElement(subelement)
     # atomic_descs = epidoc_elem.get_desc_elems_by_name(list(atomic_token_set))
-    all_descs = epidoc_elem.desc_elems
-    all_name_set = epidoc_elem.desc_elem_name_set
+    all_descs = epidoc_elem.descendant_elements
+    all_name_set = epidoc_elem.descendant_element_name_set
 
     if all_name_set.issubset(atomic_token_set) and all_name_set != set(): 
         # i.e. the only subelement is a name
@@ -106,7 +106,7 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
 
 
 
-class EpiDocElement(BaseElement, Showable):    
+class EpiDocElement(XmlElement, Showable):    
 
     _final_space: bool = False
 
@@ -125,7 +125,7 @@ class EpiDocElement(BaseElement, Showable):
     @overload
     def __init__(
         self, 
-        e: BaseElement,
+        e: XmlElement,
         final_space: bool = False
     ):
         ...
@@ -140,11 +140,11 @@ class EpiDocElement(BaseElement, Showable):
 
     def __init__(
         self, 
-        e: _Element | EpiDocElement | BaseElement,
+        e: _Element | EpiDocElement | XmlElement,
         final_space: bool = False
     ):
         
-        if not isinstance(e, (_Element, EpiDocElement, BaseElement)):
+        if not isinstance(e, (_Element, EpiDocElement, XmlElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
@@ -152,7 +152,7 @@ class EpiDocElement(BaseElement, Showable):
             self._e = e
         elif isinstance(e, EpiDocElement):
             self._e = e.e
-        elif isinstance(e, BaseElement):
+        elif isinstance(e, XmlElement):
             self._e = e.e
 
         self._final_space = final_space
@@ -280,9 +280,9 @@ class EpiDocElement(BaseElement, Showable):
         return [EpiDocElement(abbr) 
                 for abbr in self.get_desc_tei_elems('am')]
 
-    def append_element_or_text(
+    def append_node(
             self, 
-            item: _Element | _ElementUnicodeResult | str | BaseElement) -> EpiDocElement:
+            item: _Element | _ElementUnicodeResult | str | XmlElement) -> EpiDocElement:
 
         """
         Append either element or text to an element
@@ -301,7 +301,7 @@ class EpiDocElement(BaseElement, Showable):
                 else:
                     self.last_child.tail += item
 
-        elif isinstance(item, BaseElement):
+        elif isinstance(item, XmlElement):
             self.e.append(item.e)
 
         elif isinstance(item, _Element):
@@ -707,7 +707,7 @@ class EpiDocElement(BaseElement, Showable):
                 internal_tokenized = epidoc_elem.make_child_tokens_for_container()
                 epidoc_elem.remove_children()
                 for element in internal_tokenized:
-                    epidoc_elem.append_element_or_text(element)
+                    epidoc_elem.append_node(element)
 
                 return [epidoc_elem]
             
@@ -1052,7 +1052,7 @@ class EpiDocElement(BaseElement, Showable):
         return chars.issubset(set(map(to_lower, ROMAN_NUMERAL_CHARS)))
 
     @property
-    def root(self) -> BaseElement:
+    def root(self) -> XmlElement:
         return self.get_ancestors_incl_self()[-1]
 
     @property
@@ -1090,6 +1090,8 @@ class EpiDocElement(BaseElement, Showable):
 
         :param compress: whether or not to compress the ID
         """
+        if self.xml_id is not None:
+            raise ValueError('@xml:id attribute already set')
 
         if id is None:
             elem_id_length = ids.elem_id_length_from_base(base)
@@ -1280,7 +1282,7 @@ class EpiDocElement(BaseElement, Showable):
         either as element-internal text, or in their tails.
         """
         acc = []
-        for element in self.desc_elems:
+        for element in self.descendant_elements:
             if element.tag.name in TokenCarrier:
                 epidoc_element = EpiDocElement(element)
                 acc.append(epidoc_element)
@@ -1309,7 +1311,7 @@ class EpiDocElement(BaseElement, Showable):
 
             new_acc = acc + [element._find_next_no_spaces()]
 
-            next_no_spaces_desc = [element_.desc_elems 
+            next_no_spaces_desc = [element_.descendant_elements 
                                    for element_ in element._find_next_no_spaces()] + [element._find_next_no_spaces()]
             next_no_spaces_desc_flat = [EpiDocElement(item) 
                                         for item in chain(*next_no_spaces_desc)]

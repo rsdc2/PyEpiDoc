@@ -1,5 +1,5 @@
 from lxml.etree import _Element
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 from ..utils import leiden_str_from_children, normalized_str_from_children
 
 from .abbr import Abbr
@@ -13,10 +13,10 @@ element_classes: dict[str, type] = {
 }
 
 
-class Surplus(EpiDocElement):
+class Unclear(EpiDocElement):
     """
     Provides services for abbreviation expansions 
-    given in <ex> elements.
+    given in <unclear> elements.
     """
 
     def __init__(self, e: _Element):
@@ -25,18 +25,19 @@ class Surplus(EpiDocElement):
 
         self._e = e
 
-        if self.localname != 'surplus':
-            raise TypeError('Element should be <surplus>.')
+        if self.localname != 'unclear':
+            raise TypeError('Element should be <unclear>.')
 
     @property
     def leiden_form(self) -> str:
         
         return ''.join([
-            '{',
-            leiden_str_from_children(self.e, element_classes, 'node'),
-            '}'
+            ''.join(map(
+                lambda char: char + '\u0323', 
+                leiden_str_from_children(self.e, element_classes, 'node'))
+            )
         ])
 
     @property
     def normalized_form(self) -> str:
-        return ''
+        return normalized_str_from_children(self.e, element_classes, 'node')

@@ -32,7 +32,7 @@ from pyepidoc.shared.types import Base
 
 from .token import Token
 from .errors import TEINSError, EpiDocValidationError
-from .element import EpiDocElement, BaseElement
+from .epidoc_element import EpiDocElement, XmlElement
 
 from .metadata.title_stmt import TitleStmt
 from .metadata.resp_stmt import RespStmt
@@ -40,16 +40,16 @@ from .metadata.file_desc import FileDesc
 from .metadata.tei_header import TeiHeader
 from .metadata.change import Change
 
-from .elements.ab import Ab
-from .elements.body import Body
-from .elements.edition import Edition
-from .elements.name import Name
-from .elements.pers_name import PersName
-from .elements.g import G
-from .elements.num import Num
-from .elements.role_name import RoleName
-from .elements.expan import Expan
-from .elements.w import W
+from .edition_elements.ab import Ab
+from .edition_elements.body import Body
+from .edition_elements.edition import Edition
+from .edition_elements.name import Name
+from .edition_elements.pers_name import PersName
+from .edition_elements.g import G
+from .edition_elements.num import Num
+from .edition_elements.role_name import RoleName
+from .edition_elements.expan import Expan
+from .edition_elements.w import W
 from .enums import (
     SpaceUnit,
     AbbrType,
@@ -70,7 +70,7 @@ class EpiDoc(DocRoot):
     
     def __init__(
             self, 
-            inpt: Path | BytesIO | str | _ElementTree | BaseElement,
+            inpt: Path | BytesIO | str | _ElementTree | XmlElement,
             validate_on_load: bool=False,
             verbose: bool=True):
         
@@ -175,7 +175,7 @@ class EpiDoc(DocRoot):
                     if self.tei_header is None:
                         self._append_new_tei_header()
                     self.tei_header.append_new_file_desc() #type: ignore
-                self.file_desc.append_new_title_stmt('') #type: ignore
+                self.file_desc.append_title_stmt(EpiDocElement.create_new('titleStmt')) #type: ignore
             self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
 
         return self
@@ -565,7 +565,7 @@ class EpiDoc(DocRoot):
         The document ID, e.g. ISic000001
         """
 
-        def get_idno_elems(s: str) -> list[BaseElement]:
+        def get_idno_elems(s: str) -> list[XmlElement]:
             if self.publication_stmt is None:
                 return []
 
@@ -594,19 +594,6 @@ class EpiDoc(DocRoot):
             return 'None'
 
         return idno_elem.text or ''
-
-    @property
-    def xml_id(self) -> list[str]:
-        """
-        The element @xml:id IDs in the editions of the document
-        """
-
-        abs = chain(*[edition.abs 
-                      for edition in self.editions()])
-        elems = chain(*[ab.id_carriers for ab in abs])
-
-        return [elem.xml_id for elem in elems 
-                if elem.xml_id is not None]
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
@@ -1022,7 +1009,7 @@ class EpiDoc(DocRoot):
 
         epidoc = self
         epidoc.desc_elems
-        elem = BaseElement(epidoc.e)
+        elem = XmlElement(epidoc.e)
         elem.prettify_element_with_pyepidoc(
             space_unit, 
             multiplier, 
@@ -1174,7 +1161,7 @@ class EpiDoc(DocRoot):
             edition.space_tokens()
 
     @property
-    def supplied(self) -> list[BaseElement]:
+    def supplied(self) -> list[XmlElement]:
         return list(chain(*[edition.supplied for edition in self.editions()]))
 
     @property
@@ -1212,7 +1199,7 @@ class EpiDoc(DocRoot):
         All elements in the document responsible for carrying
         text information as part of the edition
         """
-        elems = chain(*[ab.desc_elems for ab in self.abs])
+        elems = chain(*[ab.descendant_elements for ab in self.abs])
         return list(map(EpiDocElement, elems))
 
     @cached_property
@@ -1496,3 +1483,16 @@ class EpiDoc(DocRoot):
         return list(chain(*[edition.w_tokens 
                             for edition in self.editions()]))
     
+    @property
+    def xml_ids(self) -> list[str]:
+        """
+        Convenience property for the element @xml:id IDs in the editions of the document
+        """
+
+        abs = chain(*[edition.abs 
+                      for edition in self.editions()])
+        elems = chain(*[ab.id_carriers for ab in abs])
+
+        return [elem.xml_id for elem in elems 
+                if elem.xml_id is not None]
+

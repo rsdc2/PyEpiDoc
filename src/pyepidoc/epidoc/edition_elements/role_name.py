@@ -1,12 +1,12 @@
 from lxml.etree import _Element
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 from ..utils import (
     leiden_str_from_children, 
     normalized_str_from_children
 )
 
 
-class PersName(EpiDocElement):
+class RoleName(EpiDocElement):
     """
     Provides services for abbreviation expansions 
     given in <roleName> elements.
@@ -18,11 +18,11 @@ class PersName(EpiDocElement):
 
         self._e = e
 
-        if self.localname != 'persName':
-            raise TypeError('Element should be <persName>.')
+        if self.localname != 'roleName':
+            raise TypeError('Element should be <roleName>.')
 
     def __repr__(self) -> str:
-        return f'PersName({self.leiden_form}, type: "{self.pers_name_type}")'
+        return f'RoleName({self.leiden_form}, type: "{self.role_name_type}", subtype: "{self.role_name_subtype})'
 
     @property
     def leiden_form(self) -> str:
@@ -75,5 +75,9 @@ class PersName(EpiDocElement):
         )
     
     @property
-    def pers_name_type(self) -> str:
+    def role_name_type(self) -> str:
         return self.get_attrib("type") or ""
+    
+    @property
+    def role_name_subtype(self) -> str:
+        return self.get_attrib("subtype") or ""

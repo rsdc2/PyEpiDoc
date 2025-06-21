@@ -6,12 +6,12 @@ from typing import Literal
 from lxml import etree
 from lxml.etree import _Element
 
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
-from pyepidoc.epidoc.element import EpiDocElement
-from pyepidoc.epidoc.elements.edition import Edition
-from pyepidoc.epidoc.elements.w import W
-from pyepidoc.epidoc.elements.orig import Orig
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_elements.edition import Edition
+from pyepidoc.epidoc.edition_elements.w import W
+from pyepidoc.epidoc.edition_elements.orig import Orig
 from pyepidoc.epidoc.token import Token
 
 from pyepidoc.xml.namespace import Namespace as ns
@@ -35,7 +35,7 @@ class Body(EpiDocElement):
 
     def __init__(
         self, 
-        e: _Element | EpiDocElement | BaseElement
+        e: _Element | EpiDocElement | XmlElement
     ) -> None:
         
         super().__init__(e, False)
@@ -86,7 +86,7 @@ class Body(EpiDocElement):
                     ab_copy.remove_attr('id', XMLNS)
                     target_elem._e.append(child_copy._e)
                     
-                    for desc in ab.desc_elems:
+                    for desc in ab.descendant_elements:
                         if desc.localname in SEPARATE_LEMMATIZED_ITEMS:
                             representable = Token(desc).representable
                             desc_copy_token = representable.simple_lemmatized_edition_element    

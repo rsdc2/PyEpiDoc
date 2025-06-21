@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from pyepidoc.epidoc.element import EpiDocElement
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.xml.xml_element import XmlElement
 from typing import Optional, Union
 from lxml.etree import _Element 
 
@@ -12,18 +12,18 @@ class Lb(EpiDocElement):
     Provides services for <lb> ('line break') elements.
     """
 
-    def __init__(self, e: _Element | EpiDocElement | BaseElement):
+    def __init__(self, e: _Element | EpiDocElement | XmlElement):
         type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
         node_name_err_msg = f'Element must be <lb>. Element is {EpiDocElement(e).localname}.'
 
-        if type(e) not in [_Element, EpiDocElement, BaseElement]:
+        if type(e) not in [_Element, EpiDocElement, XmlElement]:
             raise TypeError(type_err_msg)
 
         if type(e) is _Element:
             self._e = e
         elif type(e) is EpiDocElement:
             self._e = e.e
-        elif type(e) is BaseElement:
+        elif type(e) is XmlElement:
             self._e = e.e
 
         if self.localname != 'lb':

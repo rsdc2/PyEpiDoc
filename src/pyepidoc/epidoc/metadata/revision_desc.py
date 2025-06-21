@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from .change import Change
 from .list_change import ListChange
 
@@ -22,7 +22,7 @@ class RevisionDesc(EpiDocElement):
         """
         revision_desc = RevisionDesc(EpiDocElement.create_new('revisionDesc'))
         list_change = ListChange.create_new()
-        revision_desc.append_element_or_text(list_change)
+        revision_desc.append_node(list_change)
         return revision_desc
     
     def from_epidoc_element(element: EpiDocElement) -> RevisionDesc:
@@ -37,7 +37,7 @@ class RevisionDesc(EpiDocElement):
         Element containing the changes to the document
         """
 
-        list_change = self.get_desc_tei_elem(
+        list_change = self.get_descendant_tei_element(
             'listChange', 
             throw_if_more_than_one=True
         )

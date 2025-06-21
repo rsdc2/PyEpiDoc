@@ -1,5 +1,5 @@
 from pyepidoc.epidoc.utils import descendant_text
-from pyepidoc.xml import BaseElement
+from pyepidoc.xml import XmlElement
 from lxml import etree
 
 
