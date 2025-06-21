@@ -1,6 +1,6 @@
 from pyepidoc.xml.utils import elem_from_str, abify
 from pyepidoc.epidoc.elements.ab import Ab
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.constants import XMLNS
 from pyepidoc.xml.namespace import Namespace as ns
 import pytest
@@ -30,7 +30,7 @@ def test_remove_attr():
     Test that can remove atribute
     """
 
-    elem = BaseElement(elem_from_str('<w n="2">hello</w>'))
+    elem = XmlElement(elem_from_str('<w n="2">hello</w>'))
     elem.remove_attr('n', None)
     assert elem.xml_str == '<w>hello</w>'
 
@@ -42,7 +42,7 @@ def test_remove_attr_with_xml_ns():
     """
     string = f'<w>hello</w>'
     lxml_elem = elem_from_str(string)
-    elem = BaseElement(lxml_elem)
+    elem = XmlElement(lxml_elem)
     elem.set_attrib('id', '2', XMLNS)
     assert elem.xml_str == '<w xml:id="2">hello</w>'
     elem.remove_attr('id', XMLNS)

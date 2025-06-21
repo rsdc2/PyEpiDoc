@@ -23,8 +23,8 @@ from lxml.etree import (
 )
 
 from pyepidoc.shared.constants import TEINS, XMLNS
-from pyepidoc.xml.baseelement import BaseElement
-from .baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
+from .xml_element import XmlElement
 from .errors import handle_xmlsyntaxerror
 
 
@@ -35,7 +35,7 @@ class DocRoot:
     _valid: Optional[bool] = None
 
     @overload
-    def __init__(self, inpt: BaseElement):
+    def __init__(self, inpt: XmlElement):
         """
         :param inpt: an lxml _Element tree object representing an
             lxml document
@@ -71,7 +71,7 @@ class DocRoot:
         """
         ...
 
-    def __init__(self, inpt: Path | BytesIO | str | _ElementTree | _Element | BaseElement):
+    def __init__(self, inpt: Path | BytesIO | str | _ElementTree | _Element | XmlElement):
 
         if isinstance(inpt, Path):
             self._p = inpt
@@ -92,7 +92,7 @@ class DocRoot:
             self._e = inpt
             return
 
-        elif isinstance(inpt, BaseElement):
+        elif isinstance(inpt, XmlElement):
             self._e = inpt._e
             return
         
@@ -135,8 +135,8 @@ class DocRoot:
         return 0
 
     @property
-    def desc_comments(self) -> Sequence[BaseElement]:
-        return [BaseElement(item) 
+    def desc_comments(self) -> Sequence[XmlElement]:
+        return [XmlElement(item) 
                 for item in self._desc_comments]
 
     @property
@@ -148,11 +148,11 @@ class DocRoot:
                  if isinstance(item, _Comment)]
 
     @property
-    def desc_elems(self) -> Sequence[BaseElement]:
+    def desc_elems(self) -> Sequence[XmlElement]:
         if self.e is None:
             return []
         
-        return [BaseElement(item) 
+        return [XmlElement(item) 
                 for item in self.e.iterdescendants(tag=None)
                  if isinstance(item, _Element)]
 
@@ -320,8 +320,8 @@ class DocRoot:
         return '\n'.join([str(x) for x in self.processing_instructions])
 
     @property
-    def root_elem(self) -> BaseElement:
-        return BaseElement(self.e)
+    def root_elem(self) -> XmlElement:
+        return XmlElement(self.e)
 
     @property
     def root_tree(self) -> _ElementTree:

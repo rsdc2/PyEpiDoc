@@ -8,7 +8,7 @@ from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared.utils import head
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.epidoc.element import EpiDocElement
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
 
 
 class Change(EpiDocElement):

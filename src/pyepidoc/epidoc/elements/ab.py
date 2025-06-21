@@ -20,7 +20,7 @@ from ..enums import (
 )
 
 from pyepidoc.shared.classes import SetRelation
-from pyepidoc.xml import BaseElement
+from pyepidoc.xml import XmlElement
 from pyepidoc.shared import update_set_inplace, head
 from pyepidoc.shared.constants import XMLNS
 from pyepidoc.shared.types import Base
@@ -52,16 +52,16 @@ class Ab(Representable):
 
     """
 
-    def __init__(self, e: Optional[_Element | EpiDocElement | BaseElement]=None):
+    def __init__(self, e: Optional[_Element | EpiDocElement | XmlElement]=None):
 
-        if type(e) not in [_Element, EpiDocElement, BaseElement] and e is not None:
+        if type(e) not in [_Element, EpiDocElement, XmlElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')
 
         if type(e) is _Element:
             self._e = e
         elif type(e) is EpiDocElement:
             self._e = e.e
-        elif type(e) is BaseElement:
+        elif type(e) is XmlElement:
             self._e = e.e
 
         if self.tag.name != 'ab':

@@ -32,7 +32,7 @@ from pyepidoc.shared.types import Base
 
 from .token import Token
 from .errors import TEINSError, EpiDocValidationError
-from .element import EpiDocElement, BaseElement
+from .element import EpiDocElement, XmlElement
 
 from .metadata.title_stmt import TitleStmt
 from .metadata.resp_stmt import RespStmt
@@ -70,7 +70,7 @@ class EpiDoc(DocRoot):
     
     def __init__(
             self, 
-            inpt: Path | BytesIO | str | _ElementTree | BaseElement,
+            inpt: Path | BytesIO | str | _ElementTree | XmlElement,
             validate_on_load: bool=False,
             verbose: bool=True):
         
@@ -565,7 +565,7 @@ class EpiDoc(DocRoot):
         The document ID, e.g. ISic000001
         """
 
-        def get_idno_elems(s: str) -> list[BaseElement]:
+        def get_idno_elems(s: str) -> list[XmlElement]:
             if self.publication_stmt is None:
                 return []
 
@@ -1022,7 +1022,7 @@ class EpiDoc(DocRoot):
 
         epidoc = self
         epidoc.desc_elems
-        elem = BaseElement(epidoc.e)
+        elem = XmlElement(epidoc.e)
         elem.prettify_element_with_pyepidoc(
             space_unit, 
             multiplier, 
@@ -1174,7 +1174,7 @@ class EpiDoc(DocRoot):
             edition.space_tokens()
 
     @property
-    def supplied(self) -> list[BaseElement]:
+    def supplied(self) -> list[XmlElement]:
         return list(chain(*[edition.supplied for edition in self.editions()]))
 
     @property

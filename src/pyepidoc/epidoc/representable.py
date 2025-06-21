@@ -17,7 +17,7 @@ from ..xml import Namespace as ns
 from ..xml.utils import localname
 from ..shared import maxone, remove_none, head, to_lower
 from ..shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
-from ..xml.baseelement import BaseElement
+from ..xml.xml_element import XmlElement
 
 from .element import EpiDocElement
 from .utils import (

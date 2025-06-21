@@ -6,7 +6,7 @@ import re
 from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
 from pyepidoc.xml.utils import localname
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.enums import (
     NonNormalized, 
     RegTextType, 
@@ -67,7 +67,7 @@ def descendant_text(elem: _Element | _ElementUnicodeResult) -> str:
     return re.sub(r'[\n\t]|\s+', '', s)
 
 
-def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[BaseElement]):
+def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[XmlElement]):
     """
     Returns the string representation of the element specified in 
     "epidoc_elem_type"

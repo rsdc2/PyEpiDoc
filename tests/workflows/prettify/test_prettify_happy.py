@@ -8,7 +8,7 @@ from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.epidoc.elements.edition import Edition
 from pyepidoc.epidoc.elements.edition import Ab
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared import head
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 from pyepidoc.epidoc.dom import lang, line
@@ -128,8 +128,8 @@ def test_prettify_fragment(ugly: str, benchmark: str, _: str):
     """
 
     # Arrange
-    ugly_xml = BaseElement(etree.fromstring(ugly.strip()))
-    benchmark_xml = BaseElement(etree.fromstring(benchmark.strip()))
+    ugly_xml = XmlElement(etree.fromstring(ugly.strip()))
+    benchmark_xml = XmlElement(etree.fromstring(benchmark.strip()))
 
     # Act
     prettified = ugly_xml.prettify_element_with_pyepidoc(' ', 4, DoNotPrettifyChildren.values())

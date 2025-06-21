@@ -10,7 +10,7 @@ import re
 from lxml import etree
 from lxml.etree import _Element, _ElementUnicodeResult, _Comment
 
-from pyepidoc.xml import BaseElement
+from pyepidoc.xml import XmlElement
 from pyepidoc.xml.utils import editionify
 from pyepidoc.epidoc.enums import NamedEntities
 from pyepidoc.analysis.utils.division import Division
@@ -74,7 +74,7 @@ def prettify(
 
     newlinetags = ['div', 'ab', 'lg', 'l', 'lb']
 
-    def _get_multiplier(element: BaseElement) -> int:
+    def _get_multiplier(element: XmlElement) -> int:
         if element.tag.name in chain(
             AtomicTokenType.values(),
             CompoundTokenType.values(),
@@ -86,14 +86,14 @@ def prettify(
         raise ValueError("Cannot find multiplier for this element.")
 
     def _get_previous_siblings(
-            elements: Sequence[BaseElement]) -> Sequence[BaseElement]:
+            elements: Sequence[XmlElement]) -> Sequence[XmlElement]:
         
         """
         Returns a list containing each element that precedes another 
         element in the input sequence. 
         """
 
-        prevs: list[BaseElement] = []
+        prevs: list[XmlElement] = []
 
         for element in elements:
             if element.previous_sibling is not None:
@@ -102,14 +102,14 @@ def prettify(
         return prevs
 
     def get_parents_for_first_children(
-            elements: Sequence[BaseElement]
-            ) -> Sequence[BaseElement]:
+            elements: Sequence[XmlElement]
+            ) -> Sequence[XmlElement]:
 
         """
         Returns parent elements for all first children
         """
 
-        parents: list[BaseElement] = [] 
+        parents: list[XmlElement] = [] 
 
         for element in elements:
             if element.previous_sibling is None: # Explain why only gives parents if previous sibling is None
@@ -118,7 +118,7 @@ def prettify(
         
         return parents
 
-    def prettify_first_child(element: BaseElement) -> None:
+    def prettify_first_child(element: XmlElement) -> None:
         element.text = ''.join([
             default_str(element.text).strip(),
             "\n",
@@ -126,7 +126,7 @@ def prettify(
         ]
     )
 
-    def prettify_lb(lb: BaseElement) -> None:
+    def prettify_lb(lb: XmlElement) -> None:
         first_parent = lb.get_first_parent_by_name(['lg', 'ab', 'div'])
 
         if first_parent is None:
@@ -138,14 +138,14 @@ def prettify(
             (spaceunit * number) * (first_parent.depth + 1)
         ])
 
-    def prettify_prev(element: BaseElement) -> None:
+    def prettify_prev(element: XmlElement) -> None:
         element.tail = ''.join([
             default_str(element.tail).strip(),
             "\n",
             (spaceunit * number) * element.depth
         ])
 
-    def prettify_parent_of_lb(element: BaseElement) -> None:
+    def prettify_parent_of_lb(element: XmlElement) -> None:
         first_parent = element.get_first_parent_by_name(['lg', 'ab', 'div'])
         if first_parent is None:
             return
@@ -156,7 +156,7 @@ def prettify(
             (spaceunit * number) * (first_parent.depth + 1)
         ])
 
-    def prettify_closing_tags(elements: Sequence[BaseElement]) -> None:
+    def prettify_closing_tags(elements: Sequence[XmlElement]) -> None:
         for element in elements:
             if element.child_elements == []:
                 continue
@@ -208,8 +208,8 @@ class Edition(EpiDocElement):
     Provides services for <div type="edition> elements.
     """
 
-    def __init__(self, e:Optional[_Element | EpiDocElement | BaseElement]=None):
-        if not isinstance(e, (_Element, EpiDocElement, BaseElement)) and \
+    def __init__(self, e:Optional[_Element | EpiDocElement | XmlElement]=None):
+        if not isinstance(e, (_Element, EpiDocElement, XmlElement)) and \
             e is not None:
             
             raise TypeError(f'Input element is of type {type(e)}. It should be _Element or Element type, or None.')
@@ -218,7 +218,7 @@ class Edition(EpiDocElement):
             self._e = e
         elif type(e) is EpiDocElement:
             self._e = e.e
-        elif type(e) is BaseElement:
+        elif type(e) is XmlElement:
             self._e = e.e
 
         if self.tag.name != 'div':
@@ -303,7 +303,7 @@ class Edition(EpiDocElement):
         return self
 
     @property
-    def divs(self) -> list[BaseElement]:
+    def divs(self) -> list[XmlElement]:
         return self.get_desc_tei_elems(['div'])
 
     @property
@@ -343,7 +343,7 @@ class Edition(EpiDocElement):
         :param wrap_with_ab: Wraps the content in an `<ab>` element
         """
         
-        return Edition(BaseElement.from_xml_str(editionify(xml_str, wrap_in_ab=wrap_in_ab)))
+        return Edition(XmlElement.from_xml_str(editionify(xml_str, wrap_in_ab=wrap_in_ab)))
 
     @property
     def gaps(self) -> list[EpiDocElement]:
@@ -649,7 +649,7 @@ class Edition(EpiDocElement):
         return self.get_attrib('subtype')
 
     @property
-    def supplied(self) -> Sequence[BaseElement]:
+    def supplied(self) -> Sequence[XmlElement]:
         return [elem for elem in self.desc_elems 
             if elem.localname == 'supplied']
 

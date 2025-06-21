@@ -11,7 +11,7 @@ from itertools import chain
 
 from pyepidoc.shared.classes import Showable, ExtendableSeq, SetRelation
 from pyepidoc.shared import update_set_inplace
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
 
 from copy import deepcopy
 from functools import reduce, cached_property
@@ -106,7 +106,7 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
 
 
 
-class EpiDocElement(BaseElement, Showable):    
+class EpiDocElement(XmlElement, Showable):    
 
     _final_space: bool = False
 
@@ -125,7 +125,7 @@ class EpiDocElement(BaseElement, Showable):
     @overload
     def __init__(
         self, 
-        e: BaseElement,
+        e: XmlElement,
         final_space: bool = False
     ):
         ...
@@ -140,11 +140,11 @@ class EpiDocElement(BaseElement, Showable):
 
     def __init__(
         self, 
-        e: _Element | EpiDocElement | BaseElement,
+        e: _Element | EpiDocElement | XmlElement,
         final_space: bool = False
     ):
         
-        if not isinstance(e, (_Element, EpiDocElement, BaseElement)):
+        if not isinstance(e, (_Element, EpiDocElement, XmlElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
@@ -152,7 +152,7 @@ class EpiDocElement(BaseElement, Showable):
             self._e = e
         elif isinstance(e, EpiDocElement):
             self._e = e.e
-        elif isinstance(e, BaseElement):
+        elif isinstance(e, XmlElement):
             self._e = e.e
 
         self._final_space = final_space
@@ -282,7 +282,7 @@ class EpiDocElement(BaseElement, Showable):
 
     def append_element_or_text(
             self, 
-            item: _Element | _ElementUnicodeResult | str | BaseElement) -> EpiDocElement:
+            item: _Element | _ElementUnicodeResult | str | XmlElement) -> EpiDocElement:
 
         """
         Append either element or text to an element
@@ -301,7 +301,7 @@ class EpiDocElement(BaseElement, Showable):
                 else:
                     self.last_child.tail += item
 
-        elif isinstance(item, BaseElement):
+        elif isinstance(item, XmlElement):
             self.e.append(item.e)
 
         elif isinstance(item, _Element):
@@ -1052,7 +1052,7 @@ class EpiDocElement(BaseElement, Showable):
         return chars.issubset(set(map(to_lower, ROMAN_NUMERAL_CHARS)))
 
     @property
-    def root(self) -> BaseElement:
+    def root(self) -> XmlElement:
         return self.get_ancestors_incl_self()[-1]
 
     @property

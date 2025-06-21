@@ -3,7 +3,7 @@ import pytest
 from typing import cast, List, Union
 from lxml import etree
 from lxml.etree import _Element, _ElementUnicodeResult
-from pyepidoc.xml import BaseElement
+from pyepidoc.xml import XmlElement
 
 xpath_true = [
     ('<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>',
@@ -43,7 +43,7 @@ xpathlist = [
 def test_xpath_count(triple: tuple[str, str, float]):
     xml, xpath, result = triple
     elem = etree.fromstring(xml, None)
-    baseelem = BaseElement(elem)
+    baseelem = XmlElement(elem)
     assert baseelem.xpath_float(xpath) == result
 
 
@@ -51,7 +51,7 @@ def test_xpath_count(triple: tuple[str, str, float]):
 def test_xpath(triple: tuple[str, str, list[_Element | _ElementUnicodeResult]]):
     xml, xpath, result = triple
     elem = etree.fromstring(xml, None)
-    baseelem = BaseElement(elem)
+    baseelem = XmlElement(elem)
     assert baseelem.xpath(xpath) == result
 
 
@@ -60,7 +60,7 @@ def test_xpath_bool_true(pair: tuple[str, str]):
 
     xml, xpath = pair
     elem = etree.fromstring(xml, None)
-    baseelem = BaseElement(elem)
+    baseelem = XmlElement(elem)
 
     assert baseelem.xpath_bool(xpath)
 
@@ -70,6 +70,6 @@ def test_xpath_bool_false(pair: tuple[str, str]):
 
     xml, xpath = pair
     elem = etree.fromstring(xml, None)
-    baseelem = BaseElement(elem)
+    baseelem = XmlElement(elem)
 
     assert not baseelem.xpath_bool(xpath)

@@ -17,7 +17,7 @@ from lxml.etree import (
 from ..xml import Namespace as ns
 from ..shared import maxone, remove_none, head
 from ..shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
-from ..xml.baseelement import BaseElement
+from ..xml.xml_element import XmlElement
 
 from .utils import descendant_atomic_tokens
 from .elements.abbr import Abbr
@@ -84,7 +84,7 @@ class Token(Representable):
         return self.normalized_form
 
     @cached_property
-    def ab_or_div_parents(self) -> Sequence[BaseElement]:
+    def ab_or_div_parents(self) -> Sequence[XmlElement]:
 
         """
         Returns a list of <ab> and <div> parent |Element|.
@@ -109,7 +109,7 @@ class Token(Representable):
         return maxone(filtered_langs, throw_if_more_than_one=False)
 
     @property
-    def abbr(self) -> Optional[BaseElement]:
+    def abbr(self) -> Optional[XmlElement]:
         """
         Returns the first <abbr> |Element|, if present,
         else None.

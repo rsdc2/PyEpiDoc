@@ -6,7 +6,7 @@ from typing import Literal
 from lxml import etree
 from lxml.etree import _Element
 
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.element import EpiDocElement
 from pyepidoc.epidoc.elements.edition import Edition
@@ -35,7 +35,7 @@ class Body(EpiDocElement):
 
     def __init__(
         self, 
-        e: _Element | EpiDocElement | BaseElement
+        e: _Element | EpiDocElement | XmlElement
     ) -> None:
         
         super().__init__(e, False)
