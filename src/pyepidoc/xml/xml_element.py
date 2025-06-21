@@ -167,11 +167,16 @@ class XmlElement(Showable):
 
     @property
     def child_elements(self) -> Sequence[XmlElement]:
-        if self._e is None:
-            return []
-            
         _children: list[_Element] = self._e.getchildren()
         return [XmlElement(child) for child in _children]
+
+    def child_elements_by_local_name(self, localname: str) -> list[XmlElement]:
+        """
+        Return a list of all the descendant elements
+        with the localname matching `localname`
+        """
+        return [elem for elem in self.child_elements
+                if elem.tag.name == localname]
 
     @property
     def child_node_names(self) -> list[str]:

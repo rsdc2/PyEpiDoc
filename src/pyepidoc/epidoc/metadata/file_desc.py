@@ -1,30 +1,74 @@
 from __future__ import annotations
 from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from .title_stmt import TitleStmt
-
+from .publication_stmt import PublicationStmt
 
 class FileDesc(EpiDocElement):
     """
-    The <fileStmt> element
+    The <fileDesc> element
     """
 
     def append_title_stmt(
         self,
         title_stmt: TitleStmt
-    ) -> FileDesc:
+    ) -> TitleStmt:
         
-        self.e.append(title_stmt.e)
-        return self
+        if self.title_stmt is not None:
+            raise ValueError('Cannot append <titleStmt> since there is already one '
+                             'present in the document')
+        if title_stmt.localname != 'titleStmt':
+            raise TypeError('The element to append is not a <titleStmt> element'
+                            f'but a <{title_stmt.localname}> element')
+        
+        self.append_element_or_text(title_stmt)
 
-    def append_new_title_stmt(self, title: str) -> FileDesc:
+        if self.title_stmt is None:
+            raise Exception('Failed to append <titleStmt>')
+        
+        return self.title_stmt
 
+    def append_new_publication_stmt(self) -> PublicationStmt:
         """
         Add a new <respStmt> element to the <titleStmt/> element
         """
-        title_stmt = TitleStmt.from_details(title)
-        self.append_title_stmt(title_stmt)
+        if self.publication_stmt is not None:
+            raise ValueError('Cannot append <publicationStmt> since there is already '
+                             'one present in the document')
+        
+        publication_stmt = EpiDocElement.create_new('publicationStmt')
+        self.append_element_or_text(publication_stmt)
+        
+        if self.publication_stmt is None:
+            raise TypeError('Failed to add <publicationStmt> element')
+        
+        return self.publication_stmt
+    
+    def ensure_publication_stmt(self) -> PublicationStmt:
+        """
+        Returns the <publicationStmt> if it exists, otherwise
+        appends a new <publicationStmt>
+        """
+        if self.publication_stmt is None:
+            return self.append_new_publication_stmt()
+        return self.publication_stmt
 
-        return self
+    @property
+    def publication_stmt(self) -> PublicationStmt | None:
+        """
+        The <publicationStmt> element of the document,
+        providing details including a series of 
+        <idno>
+        """
+
+        publication_stmt_elem = self.get_desc_tei_elem(
+            'publicationStmt', 
+            throw_if_more_than_one=True
+        )
+        
+        if publication_stmt_elem is None:
+            return None
+        
+        return PublicationStmt(publication_stmt_elem)
 
     @property
     def title_stmt(self) -> TitleStmt | None:
