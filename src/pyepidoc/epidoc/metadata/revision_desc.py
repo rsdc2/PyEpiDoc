@@ -37,7 +37,7 @@ class RevisionDesc(EpiDocElement):
         Element containing the changes to the document
         """
 
-        list_change = self.get_desc_tei_elem(
+        list_change = self.get_descendant_tei_element(
             'listChange', 
             throw_if_more_than_one=True
         )

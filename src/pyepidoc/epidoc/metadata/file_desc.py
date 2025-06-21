@@ -60,7 +60,7 @@ class FileDesc(EpiDocElement):
         <idno>
         """
 
-        publication_stmt_elem = self.get_desc_tei_elem(
+        publication_stmt_elem = self.get_descendant_tei_element(
             'publicationStmt', 
             throw_if_more_than_one=True
         )
@@ -78,7 +78,7 @@ class FileDesc(EpiDocElement):
         <respStmt>
         """
 
-        title_stmt_elem = self.get_desc_tei_elem(
+        title_stmt_elem = self.get_descendant_tei_element(
             'titleStmt', 
             throw_if_more_than_one=True
         )

@@ -64,7 +64,7 @@ class TeiHeader(EpiDocElement):
         <respStmt>
         """
 
-        file_desc_elem = self.get_desc_tei_elem(
+        file_desc_elem = self.get_descendant_tei_element(
             'fileDesc', 
             throw_if_more_than_one=True
         )
@@ -76,7 +76,7 @@ class TeiHeader(EpiDocElement):
 
     @property
     def revision_desc(self) -> RevisionDesc | None:
-        revision_desc = self.get_desc_tei_elem(
+        revision_desc = self.get_descendant_tei_element(
             'revisionDesc', 
             throw_if_more_than_one=True
         )

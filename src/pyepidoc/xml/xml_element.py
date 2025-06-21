@@ -414,7 +414,7 @@ class XmlElement(Showable):
 
         raise TypeError('XPath result is of the wrong type.')
 
-    def get_desc_tei_elem(self, 
+    def get_descendant_tei_element(self, 
         elem_name: str, 
         attribs: dict[str, str] | None = None,
         throw_if_more_than_one: bool = False
