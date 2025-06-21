@@ -1199,7 +1199,7 @@ class EpiDoc(DocRoot):
         All elements in the document responsible for carrying
         text information as part of the edition
         """
-        elems = chain(*[ab.desc_elems for ab in self.abs])
+        elems = chain(*[ab.descendant_elements for ab in self.abs])
         return list(map(EpiDocElement, elems))
 
     @cached_property

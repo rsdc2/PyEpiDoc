@@ -27,7 +27,7 @@ def test_w_normalization(inpt: tuple[str, str]):
 
     # Act 
     try:
-        w = W(elem.desc_elems_by_local_name('w')[0].e)
+        w = W(elem.descendant_elements_by_local_name('w')[0].e)
     except IndexError:
         w = W(elem.e)
 

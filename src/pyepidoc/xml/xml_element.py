@@ -116,25 +116,6 @@ class XmlElement(Showable):
 
         return len(self.ancestors_excl_self)
 
-    def get_ancestors_incl_self(self) -> ExtendableSeq[XmlElement]:
-
-        """
-        Returns an |ExtendableSeq| of parent |BaseElement|
-        ordered by closest parent to furthest parent.
-        """
-
-        def _climb(acc:ExtendableSeq[XmlElement], element:Optional[XmlElement]) -> ExtendableSeq[XmlElement]:
-            if element is None:
-                return acc
-            elif isinstance(element, XmlElement) or issubclass(type(element), XmlElement):
-                acc += [element]
-                return _climb(acc, element.parent)
-            
-            raise TypeError('element is of the wrong type.')
-
-        init_list = cast(ExtendableSeq[XmlElement], []) 
-        return _climb(acc=init_list, element=self)
-
     @property
     def ancestors_excl_self(self) -> ExtendableSeq[XmlElement]:
         ancestors = self.get_ancestors_incl_self()
@@ -221,7 +202,7 @@ class XmlElement(Showable):
         given in `localname`
         """
 
-        return len(self.desc_elems_by_local_name(localname=localname)) > 0
+        return len(self.descendant_elements_by_local_name(localname=localname)) > 0
     
     def deepcopy(self) -> XmlElement:
 
@@ -235,7 +216,7 @@ class XmlElement(Showable):
             if type(parent.parent) is XmlElement])
 
     @property
-    def desc_comments(self) -> Sequence[_Comment]:
+    def descendant_comments(self) -> Sequence[_Comment]:
         if self.e is None:
             return []
         
@@ -243,7 +224,7 @@ class XmlElement(Showable):
                  if isinstance(item, _Comment)]
 
     @property
-    def desc_elems(self) -> list[XmlElement]:
+    def descendant_elements(self) -> list[XmlElement]:
         """
         :return: a list of all descendant |Element|s.
         Does not return any text or comment nodes.
@@ -256,30 +237,30 @@ class XmlElement(Showable):
                 for item in self.e.iterdescendants(tag=None)
                  if isinstance(item, _Element)]
 
-    def desc_elems_by_local_name(self, localname: str) -> list[XmlElement]:
+    def descendant_elements_by_local_name(self, localname: str) -> list[XmlElement]:
         """
         Return a list of all the descendant elements
         with the localname matching `localname`
         """
-        return [elem for elem in self.desc_elems
+        return [elem for elem in self.descendant_elements
                 if elem.tag.name == localname]
 
     @property
-    def desc_elem_names(self) -> list[str]:
+    def descendant_element_names(self) -> list[str]:
         """
         :return: list of names of all descendant nodes
         """
-        return [elem.localname for elem in self.desc_elems]
+        return [elem.localname for elem in self.descendant_elements]
 
     @property
-    def desc_elem_name_set(self) -> set[str]:
+    def descendant_element_name_set(self) -> set[str]:
         """
         :return: set of names of all descendant nodes
         """
-        return set(self.desc_elem_names)
+        return set(self.descendant_element_names)
 
     @property
-    def desc_nodes(self) -> list[_Element | _ElementUnicodeResult | _Comment]:
+    def descendant_nodes(self) -> list[_Element | _ElementUnicodeResult | _Comment]:
 
         """
         Return all descendant nodes of any kind including comments
@@ -288,12 +269,12 @@ class XmlElement(Showable):
         return self._e.xpath('.//node()')
     
     @property
-    def desc_non_comments(self) -> list[_Element | _ElementUnicodeResult]:
+    def descendant_non_comments(self) -> list[_Element | _ElementUnicodeResult]:
 
         """
         Return all descendant nodes excluding comments
         """
-        return [node for node in self.desc_nodes
+        return [node for node in self.descendant_nodes
                 if not isinstance(node, _Comment)]
 
     @property
@@ -329,7 +310,26 @@ class XmlElement(Showable):
             return (id1, newid2)
 
         raise ValueError()
+    
+    def get_ancestors_incl_self(self) -> ExtendableSeq[XmlElement]:
 
+        """
+        Returns an |ExtendableSeq| of parent |BaseElement|
+        ordered by closest parent to furthest parent.
+        """
+
+        def _climb(acc: ExtendableSeq[XmlElement], element: Optional[XmlElement]) -> ExtendableSeq[XmlElement]:
+            if element is None:
+                return acc
+            elif isinstance(element, XmlElement) or issubclass(type(element), XmlElement):
+                acc += [element]
+                return _climb(acc, element.parent)
+            
+            raise TypeError('element is of the wrong type.')
+
+        init_list = cast(ExtendableSeq[XmlElement], []) 
+        return _climb(acc=init_list, element=self)
+    
     @property
     def first_child(self) -> Optional[XmlElement]:
         if self.child_elements == []:
@@ -564,7 +564,7 @@ class XmlElement(Showable):
         and whitespace
         """
 
-        non_comment_nodes = self.desc_non_comments
+        non_comment_nodes = self.descendant_non_comments
         element_nodes = [node for node in non_comment_nodes
                             if isinstance(node, _Element)]
         text_nodes = [node for node in non_comment_nodes
@@ -649,7 +649,7 @@ class XmlElement(Showable):
 
         
         # Iterate through descendant elements (incl. comments)
-        for desc in [element] + list(element.desc_elems): 
+        for desc in [element] + list(element.descendant_elements): 
 
             # Don't do anything to descdendant nodes containing @xml:space = "preserve"
             if desc.xmlspace_preserve_in_ancestors:

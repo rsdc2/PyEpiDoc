@@ -64,8 +64,8 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     atomic_non_token_set = AtomicNonTokenType.value_set()
     epidoc_elem = EpiDocElement(subelement)
     # atomic_descs = epidoc_elem.get_desc_elems_by_name(list(atomic_token_set))
-    all_descs = epidoc_elem.desc_elems
-    all_name_set = epidoc_elem.desc_elem_name_set
+    all_descs = epidoc_elem.descendant_elements
+    all_name_set = epidoc_elem.descendant_element_name_set
 
     if all_name_set.issubset(atomic_token_set) and all_name_set != set(): 
         # i.e. the only subelement is a name
@@ -1280,7 +1280,7 @@ class EpiDocElement(XmlElement, Showable):
         either as element-internal text, or in their tails.
         """
         acc = []
-        for element in self.desc_elems:
+        for element in self.descendant_elements:
             if element.tag.name in TokenCarrier:
                 epidoc_element = EpiDocElement(element)
                 acc.append(epidoc_element)
@@ -1309,7 +1309,7 @@ class EpiDocElement(XmlElement, Showable):
 
             new_acc = acc + [element._find_next_no_spaces()]
 
-            next_no_spaces_desc = [element_.desc_elems 
+            next_no_spaces_desc = [element_.descendant_elements 
                                    for element_ in element._find_next_no_spaces()] + [element._find_next_no_spaces()]
             next_no_spaces_desc_flat = [EpiDocElement(item) 
                                         for item in chain(*next_no_spaces_desc)]

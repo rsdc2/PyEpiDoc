@@ -149,7 +149,7 @@ def line_ends_inside(elem: EpiDocElement) -> int:
 
     lbs = filter(
         lambda elem: localname(elem.e) == 'lb', 
-        elem.desc_elems
+        elem.descendant_elements
     )
 
     return len(list(lbs))

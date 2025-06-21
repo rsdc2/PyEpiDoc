@@ -102,7 +102,7 @@ class Expan(EpiDocElement):
         Return True if contains a `<g>` element (optionally with the
         @ref attribute set)
         """    
-        gs = map(G, map(lambda elem: elem.e, self.desc_elems_by_local_name('g')))
+        gs = map(G, map(lambda elem: elem.e, self.descendant_elements_by_local_name('g')))
         if with_ref is None:
             return len(list(gs)) > 0
         

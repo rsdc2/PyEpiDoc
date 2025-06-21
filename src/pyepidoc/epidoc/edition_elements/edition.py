@@ -502,7 +502,7 @@ class Edition(EpiDocElement):
         """
         for elemname in NamedEntities.values():
 
-            for name in self.desc_elems_by_local_name(elemname):
+            for name in self.descendant_elements_by_local_name(elemname):
                 if name.contains('w') and ignore_if_contains_ws:
                     return self
                 else:
@@ -650,7 +650,7 @@ class Edition(EpiDocElement):
 
     @property
     def supplied(self) -> Sequence[XmlElement]:
-        return [elem for elem in self.desc_elems 
+        return [elem for elem in self.descendant_elements 
             if elem.localname == 'supplied']
 
     @property

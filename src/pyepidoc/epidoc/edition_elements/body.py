@@ -86,7 +86,7 @@ class Body(EpiDocElement):
                     ab_copy.remove_attr('id', XMLNS)
                     target_elem._e.append(child_copy._e)
                     
-                    for desc in ab.desc_elems:
+                    for desc in ab.descendant_elements:
                         if desc.localname in SEPARATE_LEMMATIZED_ITEMS:
                             representable = Token(desc).representable
                             desc_copy_token = representable.simple_lemmatized_edition_element    

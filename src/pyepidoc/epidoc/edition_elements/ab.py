@@ -116,7 +116,7 @@ class Ab(Representable):
         @xml:id attribute
         """
         return [EpiDocElement(element) 
-                for element in self.desc_elems
+                for element in self.descendant_elements
                 if element.tag.name in IdCarrier]
 
     @property

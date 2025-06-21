@@ -69,7 +69,7 @@ def test_copy_edition_content():
     assert new_target_edition is not None
     assert new_source_edition is not None
 
-    assert len(new_target_edition.desc_elems) == 2
+    assert len(new_target_edition.descendant_elements) == 2
     
 
 def test_copy_edition_content_parametrized_no_lemmas():
@@ -103,4 +103,4 @@ def test_copy_edition_content_parametrized_no_lemmas():
     assert new_target_edition is not None
     assert new_source_edition is not None
 
-    assert len(new_target_edition.desc_elems) == 2
+    assert len(new_target_edition.descendant_elements) == 2
