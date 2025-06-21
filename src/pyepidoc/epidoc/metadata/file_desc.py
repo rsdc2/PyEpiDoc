@@ -16,6 +16,7 @@ class FileDesc(EpiDocElement):
         if self.title_stmt is not None:
             raise ValueError('Cannot append <titleStmt> since there is already one '
                              'present in the document')
+        
         if title_stmt.localname != 'titleStmt':
             raise TypeError('The element to append is not a <titleStmt> element'
                             f'but a <{title_stmt.localname}> element')
@@ -51,6 +52,17 @@ class FileDesc(EpiDocElement):
         if self.publication_stmt is None:
             return self.append_new_publication_stmt()
         return self.publication_stmt
+
+    def ensure_title_stmt(self) -> TitleStmt:
+        """
+        Returns the <publicationStmt> if it exists, otherwise
+        appends a new <publicationStmt>
+        """
+        if self.title_stmt is None:
+            title_stmt = TitleStmt(EpiDocElement.create_new('titleStmt'))
+            return self.append_title_stmt(title_stmt)
+
+        return self.title_stmt
 
     @property
     def publication_stmt(self) -> PublicationStmt | None:

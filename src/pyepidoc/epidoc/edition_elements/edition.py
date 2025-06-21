@@ -240,9 +240,9 @@ class Edition(EpiDocElement):
 
     def append_ab(self, ab: Ab) -> Ab:
         """
-        Append the <ab> after all others. This is the same
+        Append the `<ab>` after all others. This is the same
         as simply appending any element, but: checks 
-        that what is being appended is an <ab> element, 
+        that what is being appended is an `<ab>` element, 
         and returns the new Ab.
 
         """

@@ -1090,6 +1090,8 @@ class EpiDocElement(XmlElement, Showable):
 
         :param compress: whether or not to compress the ID
         """
+        if self.xml_id is not None:
+            raise ValueError('@xml:id attribute already set')
 
         if id is None:
             elem_id_length = ids.elem_id_length_from_base(base)

@@ -22,9 +22,9 @@ class Idno(EpiDocElement):
         The value of the @type attribute
         """
         return self.get_attrib('type')
-    
+
     @property
-    def value(self) -> str | None:
+    def value(self) -> str:
         """
         The text contents of the <idno> element
         """

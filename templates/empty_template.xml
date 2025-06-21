@@ -12,7 +12,7 @@
             </titleStmt>
             <publicationStmt>
                 <authority/>
-                <idno/>
+                <idno type="filename"/>
                 <idno type="URI"/>
                 <idno type="DOI"/>
             </publicationStmt>

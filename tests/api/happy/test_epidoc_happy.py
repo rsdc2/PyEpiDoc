@@ -239,3 +239,14 @@ def test_can_get_title_stmt():
 
     # Assert
     assert isinstance(title_stmt, TitleStmt)
+
+
+def test_set_document_id():
+    # Arrange
+    doc = EpiDoc('templates/empty_template.xml')
+
+    # Act
+    doc.tei_header.file_desc.publication_stmt.set_idno_by_type('filename', 'ISic000001')
+
+    # Assert
+    assert doc.id == 'ISic000001'

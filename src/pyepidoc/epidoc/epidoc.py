@@ -175,7 +175,7 @@ class EpiDoc(DocRoot):
                     if self.tei_header is None:
                         self._append_new_tei_header()
                     self.tei_header.append_new_file_desc() #type: ignore
-                self.file_desc.append_new_title_stmt('') #type: ignore
+                self.file_desc.append_title_stmt(EpiDocElement.create_new('titleStmt')) #type: ignore
             self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
 
         return self
