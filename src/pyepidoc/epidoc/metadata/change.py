@@ -39,7 +39,7 @@ class Change(EpiDocElement):
             'when': when,
             'who': who
         })
-        elem.append_element_or_text(text)
+        elem.append_node(text)
         return Change(elem)
 
     @property

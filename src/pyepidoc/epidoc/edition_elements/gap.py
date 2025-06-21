@@ -56,7 +56,7 @@ class Gap(Representable):
         elem.remove_attr('id', XMLNS)
         desc_elem = EpiDocElement.create_new('desc')
         desc_elem.text = self.simple_lemmatized_edition_form
-        elem.append_element_or_text(desc_elem.e)
+        elem.append_node(desc_elem.e)
         return elem
 
     @cached_property

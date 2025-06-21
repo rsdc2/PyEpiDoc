@@ -280,7 +280,7 @@ class EpiDocElement(XmlElement, Showable):
         return [EpiDocElement(abbr) 
                 for abbr in self.get_desc_tei_elems('am')]
 
-    def append_element_or_text(
+    def append_node(
             self, 
             item: _Element | _ElementUnicodeResult | str | XmlElement) -> EpiDocElement:
 
@@ -707,7 +707,7 @@ class EpiDocElement(XmlElement, Showable):
                 internal_tokenized = epidoc_elem.make_child_tokens_for_container()
                 epidoc_elem.remove_children()
                 for element in internal_tokenized:
-                    epidoc_elem.append_element_or_text(element)
+                    epidoc_elem.append_node(element)
 
                 return [epidoc_elem]
             

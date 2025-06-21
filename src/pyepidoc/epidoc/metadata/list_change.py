@@ -8,7 +8,7 @@ class ListChange(EpiDocElement):
         """
         Append a <change> element to the <listChange>
         """
-        self.append_element_or_text(change)
+        self.append_node(change)
         return self
 
     @property

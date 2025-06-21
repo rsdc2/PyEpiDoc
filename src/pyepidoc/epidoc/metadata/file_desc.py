@@ -20,7 +20,7 @@ class FileDesc(EpiDocElement):
             raise TypeError('The element to append is not a <titleStmt> element'
                             f'but a <{title_stmt.localname}> element')
         
-        self.append_element_or_text(title_stmt)
+        self.append_node(title_stmt)
 
         if self.title_stmt is None:
             raise Exception('Failed to append <titleStmt>')
@@ -36,7 +36,7 @@ class FileDesc(EpiDocElement):
                              'one present in the document')
         
         publication_stmt = EpiDocElement.create_new('publicationStmt')
-        self.append_element_or_text(publication_stmt)
+        self.append_node(publication_stmt)
         
         if self.publication_stmt is None:
             raise TypeError('Failed to add <publicationStmt> element')

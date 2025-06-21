@@ -249,7 +249,7 @@ class Edition(EpiDocElement):
         if ab.localname != 'ab':
             raise TypeError(f'The element is not <ab>, but is <{ab.localname}>')
 
-        self.append_element_or_text(ab)
+        self.append_node(ab)
         return self.abs[-1]
 
     def append_empty_ab(self) -> Ab:
@@ -484,11 +484,11 @@ class Edition(EpiDocElement):
         for node in child_nodes:
             if isinstance(node, _Element):
                 EpiDocElement(node).tail = ''
-            w.append_element_or_text(node)
+            w.append_node(node)
 
         element.remove_children()
 
-        element.append_element_or_text(w)
+        element.append_node(w)
         return element
 
     def insert_ws_inside_named_entities(
