@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from pyepidoc.xml.xml_element import XmlElement
 from typing import Optional, Union
 from lxml.etree import _Element 

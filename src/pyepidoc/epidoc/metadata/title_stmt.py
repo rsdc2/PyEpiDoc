@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from .resp_stmt import RespStmt
 
 class TitleStmt(EpiDocElement):

@@ -6,7 +6,7 @@ from functools import reduce
 from itertools import chain
 from lxml.etree import _Element 
 
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 from .textpart import TextPart
 from ..token import Token
 from .expan import Expan

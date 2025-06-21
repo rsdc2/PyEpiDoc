@@ -3,7 +3,7 @@ from typing import Optional
 
 from lxml.etree import _Element 
 
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 
 from ...xml import XmlElement
 from ...shared.constants import XMLNS

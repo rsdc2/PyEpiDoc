@@ -19,7 +19,7 @@ from ..shared import maxone, remove_none, head, to_lower
 from ..shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
 from ..xml.xml_element import XmlElement
 
-from .element import EpiDocElement
+from .epidoc_element import EpiDocElement
 from .utils import (
     leiden_str_from_children, 
     normalized_str_from_children,

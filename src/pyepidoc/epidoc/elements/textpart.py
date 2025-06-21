@@ -1,5 +1,5 @@
 from ...shared.constants import XMLNS
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 
 
 class TextPart(EpiDocElement):

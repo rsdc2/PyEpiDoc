@@ -7,7 +7,7 @@ from lxml.etree import _Element
 
 from ...shared import head
 
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 
 from .ex import Ex
 from .abbr import Abbr

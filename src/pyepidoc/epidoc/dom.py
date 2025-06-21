@@ -11,7 +11,7 @@ from pyepidoc.shared import maxone, head
 from pyepidoc.xml.utils import localname
 
 from .epidoc import EpiDoc
-from .element import EpiDocElement
+from .epidoc_element import EpiDocElement
 from .elements.ab import Ab
 from .elements.edition import Edition
 from .elements.lb import Lb

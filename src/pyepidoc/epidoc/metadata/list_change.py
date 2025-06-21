@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from .change import Change
 
 class ListChange(EpiDocElement):

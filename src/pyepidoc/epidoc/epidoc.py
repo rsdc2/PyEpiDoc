@@ -32,7 +32,7 @@ from pyepidoc.shared.types import Base
 
 from .token import Token
 from .errors import TEINSError, EpiDocValidationError
-from .element import EpiDocElement, XmlElement
+from .epidoc_element import EpiDocElement, XmlElement
 
 from .metadata.title_stmt import TitleStmt
 from .metadata.resp_stmt import RespStmt

@@ -7,7 +7,7 @@ from lxml.etree import _Element
 from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared.utils import head
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from pyepidoc.xml.xml_element import XmlElement
 
 

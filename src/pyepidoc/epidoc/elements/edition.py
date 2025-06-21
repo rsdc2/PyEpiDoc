@@ -25,7 +25,7 @@ from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.shared.constants import TEINS, XMLNS
 
 from .. import ids
-from ..element import EpiDocElement
+from ..epidoc_element import EpiDocElement
 from .ab import Ab
 from .expan import Expan
 from .l import L

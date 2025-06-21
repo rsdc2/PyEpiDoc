@@ -24,7 +24,7 @@ from pyepidoc.shared.generic_collection import GenericCollection
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
-from .element import EpiDocElement
+from .epidoc_element import EpiDocElement
 from .token import Token
 from .elements.expan import Expan
 from .elements.name import Name

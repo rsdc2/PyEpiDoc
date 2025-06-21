@@ -13,7 +13,7 @@ from pyepidoc.epidoc.enums import (
     AtomicTokenType
 )
 from pyepidoc.shared.constants import TEINS
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 
 
 def callable_from_localname(

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from .file_desc import FileDesc
 from .revision_desc import RevisionDesc
 

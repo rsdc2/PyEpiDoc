@@ -8,7 +8,7 @@ from lxml.etree import _Element
 
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from pyepidoc.epidoc.elements.edition import Edition
 from pyepidoc.epidoc.elements.w import W
 from pyepidoc.epidoc.elements.orig import Orig

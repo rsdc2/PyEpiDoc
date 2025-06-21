@@ -1,6 +1,6 @@
 from functools import cached_property
 from lxml.etree import _Element
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from pyepidoc.epidoc.representable import Representable
 from pyepidoc.shared.constants import XMLNS
 
