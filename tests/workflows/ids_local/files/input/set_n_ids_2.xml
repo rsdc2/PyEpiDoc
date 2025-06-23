@@ -7,7 +7,7 @@
             <div type="edition" xml:space="preserve" xml:lang="la">
                 <ab>
                     <lb n="1"/><w>Dis</w> <w>Man 
-                    <lb n="2" break="no"/>ibus</w> <gap/> <orig>dgsx</orig> <w>Sacrum</w>
+                    <lb n="2" break="no"/>ibus</w> <gap/> <orig>dgsx</orig> <w>Sacrum</w> <space/> <hi>Quintus</hi>
                 </ab>
             </div>
         </body>

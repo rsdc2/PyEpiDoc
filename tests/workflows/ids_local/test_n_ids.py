@@ -15,7 +15,7 @@ benchmark_path = Path('tests/workflows/ids_local/files/benchmark')
 
 paths = [
     ('set_n_ids_1.xml', ['5', '10']),
-    ('set_n_ids_2.xml', ['5', '10', '15', '20']) 
+    ('set_n_ids_2.xml', ['5', '10', '15', '20', '25', '30']) 
             # Check that ignore <gap/> element
 ]
 
