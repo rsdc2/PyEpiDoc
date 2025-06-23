@@ -2,9 +2,9 @@ from lxml import etree
 
 from pyepidoc.epidoc.utils import epidoc_elem_to_str
 from pyepidoc.epidoc.epidoc import EpiDoc, Expan
-from pyepidoc.epidoc.elements.abbr import Abbr
-from pyepidoc.xml.baseelement import BaseElement
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.epidoc.edition_elements.abbr import Abbr
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared import head
 from pyepidoc.shared.constants import TEINS
 
@@ -84,7 +84,7 @@ def test_am_4():
 
     elem = etree.fromstring(xmlstr, None)
 
-    epidoc_elem = BaseElement(elem)
+    epidoc_elem = XmlElement(elem)
     text_nodes = epidoc_elem.xpath("descendant::text()")
     text_node_strs = list(map(str, text_nodes))
     assert text_node_strs == ['A', 'A', 'u']

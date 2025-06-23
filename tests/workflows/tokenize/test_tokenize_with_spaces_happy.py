@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from lxml import etree
 
-from pyepidoc.epidoc.elements.ab import Ab
+from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import abify
 
 

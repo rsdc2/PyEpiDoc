@@ -127,6 +127,8 @@ class N_IDableElements(EnumerableEnum):
     W = 'w'
     Orig = 'orig'
     G = 'g'
+    Space = 'space'
+    Gap = 'gap'
 
 
 class XML_IDableElements(EnumerableEnum):

@@ -7,8 +7,8 @@ from lxml.etree import _Element
 from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared.utils import head
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.epidoc.element import EpiDocElement
-from pyepidoc.xml.baseelement import BaseElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.xml.xml_element import XmlElement
 
 
 class RespStmt(EpiDocElement):
@@ -48,7 +48,7 @@ class RespStmt(EpiDocElement):
         return resp_stmt
 
     @staticmethod
-    def from_element(elem: BaseElement) -> RespStmt:
+    def from_element(elem: XmlElement) -> RespStmt:
         if elem.localname != 'respStmt':
             raise ValueError(
                 'Expected element with local name "respStmt", '
@@ -104,7 +104,7 @@ class RespStmt(EpiDocElement):
         return self.name_elem.text
     
     @property
-    def name_elem(self) -> BaseElement | None:
+    def name_elem(self) -> XmlElement | None:
         desc_elems = self.get_desc_tei_elems(['name'])
         return head(desc_elems)
     
@@ -121,6 +121,6 @@ class RespStmt(EpiDocElement):
         return self.resp_elem.text
 
     @property
-    def resp_elem(self) -> BaseElement | None:
+    def resp_elem(self) -> XmlElement | None:
         desc_elems = self.get_desc_tei_elems(['resp'])
         return head(desc_elems)

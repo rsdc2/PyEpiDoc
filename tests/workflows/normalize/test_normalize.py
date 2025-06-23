@@ -1,9 +1,9 @@
 import pytest
-from pyepidoc.epidoc.elements.w import W
+from pyepidoc.epidoc.edition_elements.w import W
 from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.representable import Representable
-from pyepidoc.epidoc.element import EpiDocElement
-from pyepidoc.epidoc.elements.edition import Edition
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_elements.edition import Edition
 
 w_elements = [
     ('<persName><name type="cognomen"><w>Melant<supplied reason="undefined" '
@@ -27,7 +27,7 @@ def test_w_normalization(inpt: tuple[str, str]):
 
     # Act 
     try:
-        w = W(elem.desc_elems_by_local_name('w')[0].e)
+        w = W(elem.descendant_elements_by_local_name('w')[0].e)
     except IndexError:
         w = W(elem.e)
 

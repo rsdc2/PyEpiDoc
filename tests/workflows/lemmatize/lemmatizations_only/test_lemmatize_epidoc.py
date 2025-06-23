@@ -79,15 +79,15 @@ def test_lemmatize_on_separate_edition(
     if len(lemmatized_ed.w_tokens) != 0:
         assert lemmatized_ed.w_tokens[0].lemma == 'lemma'
 
-    assert len(lemmatized_ed.desc_elems_by_local_name('w')) \
+    assert len(lemmatized_ed.descendant_elements_by_local_name('w')) \
         == tag_counts['w']
-    assert len(lemmatized_ed.desc_elems_by_local_name('orig')) \
+    assert len(lemmatized_ed.descendant_elements_by_local_name('orig')) \
         ==  tag_counts['orig']
-    assert len(lemmatized_ed.desc_elems_by_local_name('gap')) \
+    assert len(lemmatized_ed.descendant_elements_by_local_name('gap')) \
         == tag_counts['gap']
     
     # Check that only those elements have been copied across
-    assert lemmatized_ed.desc_elem_name_set - \
+    assert lemmatized_ed.descendant_element_name_set - \
         set(SEPARATE_LEMMATIZED_ITEMS) == set()
 
 

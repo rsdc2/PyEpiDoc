@@ -1,6 +1,6 @@
 from pyepidoc.shared.constants import TEINS
 from lxml import etree
-from pyepidoc.epidoc.element import EpiDocElement
+from pyepidoc.epidoc.epidoc_element import EpiDocElement
 import pytest
 
 xmls =[

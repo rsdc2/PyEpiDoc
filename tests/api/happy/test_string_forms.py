@@ -3,7 +3,7 @@ Tests that the string representations of individual tokens,
 or sequences of tokens, are as expected.
 """
 
-from pyepidoc.epidoc.elements.ab import Ab
+from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import elem_from_str, abify
 
 import pytest
