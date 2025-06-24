@@ -572,7 +572,7 @@ class EpiDocElement(XmlElement, Showable):
         return _recfunc([], self)
 
     @cached_property
-    def id_isic(self) -> str:
+    def isic_document_id(self) -> str:
         """
         Extracts the I.Sicily document ID from the 
         owner document of the element.
@@ -883,6 +883,17 @@ class EpiDocElement(XmlElement, Showable):
         return None
 
     @property
+    def local_id(self) -> str | None:
+        """
+        Return `@n` id
+        """
+        return self.get_attrib('n')
+    
+    @local_id.setter
+    def local_id(self, value: str) -> None:
+        self.set_attrib('n', value)
+
+    @property
     def no_gaps(self) -> bool:
         """
         Returns True if the token contains 
@@ -1104,7 +1115,7 @@ class EpiDocElement(XmlElement, Showable):
             elem_id = preceding_elem_count.rjust(elem_id_length - 1, '0') + '0'
 
             # Stitch two IDs together
-            id_xml = self.id_isic + '-' + elem_id
+            id_xml = self.isic_document_id + '-' + elem_id
 
             # Compress the ID, if required
             self.xml_id = ids.compress(id_xml, base) if compress else id_xml

@@ -617,7 +617,7 @@ class Edition(EpiDocElement):
             elem_id = str(i).rjust(elem_id_length - 1, '0') + '0'
 
             # Stitch two IDs together
-            id_xml = self.id_isic + '-' + elem_id
+            id_xml = self.isic_document_id + '-' + elem_id
 
             # Set the ID, leave the compression to the element
             elem.set_id(
@@ -626,10 +626,48 @@ class Edition(EpiDocElement):
                 compress=compress
             )
 
+    def set_missing_n_ids(self, interval: int = 5) -> Edition:
+        """
+        Find any elements that don't have an `@n` id and insert 
+        the correct one.
+
+        Raises ValueError if there are not enough free ids between
+        elements.
+        """
+
+        def seek_next_element_with_n_id(
+                i: int, 
+                elements: list[EpiDocElement]) -> tuple[int, Optional[EpiDocElement]]:
+            
+            if i >= len(elements) - 1:
+                return None
+            
+            for j, element in enumerate(elements[i:], 0):
+                element_has_local_id = element.local_id is not None
+                if element_has_local_id:
+                    return j, element
+                
+            return None
+
+        for i, elem in enumerate(self.n_idable_elements, 1):
+            if elem.get_attrib('n') is None:
+                j, next_element_with_n_id = seek_next_element_with_n_id(i, self.n_idable_elements)
+                if next_element_with_n_id is None:
+                    next_n_id = i * interval
+                else:
+                    
+
+                
+                elem.set_attrib('n', str(next_n_id))
+
+        return self
+
     def set_n_ids(self, interval: int = 5) -> Edition:
 
         """
-        Put @n on certain elements in the edition
+        Put @n on certain elements in the edition.
+        Raises an AttributeError if any of the elements
+        already have an `@n` id.
 
         :param interval: the interval between ids, e.g. 
         with 5, it will be 5, 10, 15, 20 etc.
@@ -638,7 +676,7 @@ class Edition(EpiDocElement):
         for i, elem in enumerate(self.n_idable_elements, 1):
             if elem.get_attrib('n') != None:
                 raise AttributeError(f'@n attribute already set '
-                                 f'on element {elem}.')
+                                     f'on element {elem}.')
             val = i * interval
             elem.set_attrib('n', str(val))
 

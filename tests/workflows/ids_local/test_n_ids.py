@@ -7,7 +7,11 @@ from pathlib import Path
 
 import pytest
 
+from tests.config import EMPTY_TEMPLATE_PATH
 from pyepidoc import EpiDoc
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.epidoc.edition_elements.ab import Ab
+from pyepidoc.xml.utils import abify
 
 input_path = Path('tests/workflows/ids_local/files/input')
 output_path = Path('tests/workflows/ids_local/files/output')
@@ -33,3 +37,19 @@ def test_set_n_ids(filename_with_result: tuple[str, list[str]]):
 
     assert [token.get_attrib('n') 
             for token in with_n_ids.n_id_elements] == result
+    
+
+test_local_id_elements = [
+    ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', '10', '15'])
+]
+@pytest.mark.parametrize(('xml_str', 'expected_local_ids'), test_local_id_elements)
+def test_set_n_ids(xml_str: str, expected_local_ids: list[str]):
+    # Arrange
+    doc = EpiDoc(EMPTY_TEMPLATE_PATH)
+    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    doc.main_edition.append_ab(ab)
+
+    # Act
+    ab.setid
+
+    # Assert
