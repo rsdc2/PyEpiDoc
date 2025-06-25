@@ -40,7 +40,9 @@ def test_set_n_ids(filename_with_result: tuple[str, list[str]]):
     
 
 test_local_id_elements = [
-    ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', '10', '15'])
+    ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', '7', '10']),
+    ('<w n="5">a</w> <w>b</w> <w>c</w> <w n="20"/>', ['5', '10', '15', '20']),
+
 ]
 @pytest.mark.parametrize(('xml_str', 'expected_local_ids'), test_local_id_elements)
 def test_set_n_ids(xml_str: str, expected_local_ids: list[str]):
@@ -50,6 +52,7 @@ def test_set_n_ids(xml_str: str, expected_local_ids: list[str]):
     doc.main_edition.append_ab(ab)
 
     # Act
-    ab.setid
+    doc.main_edition.set_missing_local_ids()
 
     # Assert
+    assert doc.main_edition.local_ids == expected_local_ids

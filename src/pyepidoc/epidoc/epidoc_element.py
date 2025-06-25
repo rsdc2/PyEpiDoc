@@ -11,6 +11,7 @@ from itertools import chain
 
 from pyepidoc.shared.classes import Showable, ExtendableSeq, SetRelation
 from pyepidoc.shared import update_set_inplace
+from pyepidoc.shared.string import to_lower, to_upper
 from pyepidoc.xml.xml_element import XmlElement
 
 from copy import deepcopy
@@ -50,7 +51,7 @@ from .enums import (
     TokenCarrier
 )
 from . import ids
-from pyepidoc.shared import maxoneT, head, last, to_lower
+from pyepidoc.shared import maxoneT, head, last
 
 sys.setrecursionlimit(10000)
 
@@ -540,6 +541,10 @@ class EpiDocElement(XmlElement, Showable):
         return False
 
     @property
+    def has_local_id(self) -> bool:
+        return self.local_id != None
+
+    @property
     def has_supplied(self) -> bool:
         """
         Returns True if token contains a 
@@ -593,20 +598,6 @@ class EpiDocElement(XmlElement, Showable):
             return cast(str, xpathres[0].text)
 
         return ""
-
-    @property
-    def xml_id(self) -> Optional[str]:
-        """
-        Returns value of the xml:id attribute in the XML file.
-        """
-        return self.get_attrib('id', namespace=XMLNS)
-
-    @xml_id.setter
-    def xml_id(self, id_value:str) -> None:
-        """
-        Sets the value of the xml:id attribute in the XML file.
-        """
-        self.set_attrib('id', id_value, namespace=XMLNS)
 
     @property
     def _internal_prototokens(self) -> list[str]:
@@ -1607,4 +1598,19 @@ class EpiDocElement(XmlElement, Showable):
                 new_w.append(child)
 
         return EpiDocElement(new_w, final_space=True)
+    
+    @property
+    def xml_id(self) -> Optional[str]:
+        """
+        Returns value of the xml:id attribute in the XML file.
+        """
+        return self.get_attrib('id', namespace=XMLNS)
+
+    @xml_id.setter
+    def xml_id(self, id_value:str) -> None:
+        """
+        Sets the value of the xml:id attribute in the XML file.
+        """
+        self.set_attrib('id', id_value, namespace=XMLNS)
+
 

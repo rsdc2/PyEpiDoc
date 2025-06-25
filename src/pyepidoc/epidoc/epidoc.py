@@ -597,7 +597,7 @@ class EpiDoc(DocRoot):
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
-        return list(chain(*[edition.n_idable_elements 
+        return list(chain(*[edition.local_idable_elements 
                             for edition in self.editions()]))
 
     def insert_w_inside_name_and_num(self) -> EpiDoc:
@@ -825,7 +825,7 @@ class EpiDoc(DocRoot):
         if self.edition_main is None:
             raise ValueError('No main edition. Cannot extract n_id elements.')
 
-        return self.edition_main.n_idable_elements
+        return self.edition_main.local_idable_elements
 
     @property
     def nums(self) -> list[Num]:
@@ -1144,7 +1144,7 @@ class EpiDoc(DocRoot):
             raise ValueError('No main edition found to set'
                              '@n ids on.')
         
-        self.main_edition.set_n_ids(interval=interval)
+        self.main_edition.set_local_ids(interval=interval)
         return self
 
     @property

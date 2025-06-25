@@ -156,14 +156,6 @@ def last(
     return maxone(lst, defaultval, throw_if_more_than_one, len(lst) - 1)
 
 
-def to_lower(s: str) -> str:
-    return s.lower()
-
-
-def to_upper(s: str) -> str:
-    return s.upper()
-
-
 def maxoneT(
     lst:list[T], 
     defaultval: T, 
@@ -215,5 +207,19 @@ def update_set_copy(s1: set, s2: set) -> set:
 def update_set_inplace(set1: set, set2: set):
     set1.update(set2)
     return set1
+
+
+def seek(predicate: Callable[[T], bool], items: Iterable[T]) -> tuple[int, T] | None:
+    """
+    Find the first item meeting the predicate in the iterable
+    """
+
+    for i, item in enumerate(items, 0):
+        if predicate(item):
+            return i, item
+        
+    return None
+
+
 
     
