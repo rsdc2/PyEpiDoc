@@ -24,7 +24,7 @@ paths = [
 ]
 
 @pytest.mark.parametrize('filename_with_result', paths)
-def test_set_n_ids(filename_with_result: tuple[str, list[str]]):
+def test_set_local_ids(filename_with_result: tuple[str, list[str]]):
 
     """
     Check that sets `@n` ids correctly on elements that can receive these
@@ -33,10 +33,9 @@ def test_set_n_ids(filename_with_result: tuple[str, list[str]]):
     filename, result = filename_with_result
 
     doc = EpiDoc(input_path / Path(filename))
-    with_n_ids = doc.set_n_ids()
+    with_local_ids = doc.set_local_ids()
 
-    assert [token.get_attrib('n') 
-            for token in with_n_ids.n_id_elements] == result
+    assert [token.local_id for token in with_local_ids.local_idable_elements] == result
     
 
 test_local_id_elements = [
@@ -45,7 +44,7 @@ test_local_id_elements = [
 
 ]
 @pytest.mark.parametrize(('xml_str', 'expected_local_ids'), test_local_id_elements)
-def test_set_n_ids(xml_str: str, expected_local_ids: list[str]):
+def test_set_missing_local_ids(xml_str: str, expected_local_ids: list[str]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
     ab = Ab(XmlElement.from_xml_str(abify(xml_str)))

@@ -815,7 +815,7 @@ class EpiDoc(DocRoot):
         return list(names)
 
     @property
-    def n_id_elements(self) -> list[EpiDocElement]:
+    def local_idable_elements(self) -> list[EpiDocElement]:
 
         """
         Get all the tokens in the main edition that should 
@@ -1131,7 +1131,7 @@ class EpiDoc(DocRoot):
 
         self.set_ids(base)
 
-    def set_n_ids(self, interval: int = 5) -> EpiDoc:
+    def set_local_ids(self, interval: int = 5) -> EpiDoc:
         
         """
         Put @n on certain elements in the edition
@@ -1399,7 +1399,7 @@ class EpiDoc(DocRoot):
             self.set_ids(base=100)
 
         if set_n_ids:
-            self.set_n_ids()
+            self.set_local_ids()
             
         if prettify_edition:
             self.prettify_main_edition(
