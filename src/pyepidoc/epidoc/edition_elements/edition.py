@@ -650,13 +650,13 @@ class Edition(EpiDocElement):
                 match seek(lambda e: e.has_local_id, elements[i:]):
                     case None:
                         element.local_id = str(i * interval)
-                    case j, element_:
+                    case position_of_next_element_with_id, element_:
                         match element_.local_id:
                             case None:
                                 raise Exception
                             case _:
                                 next_id = int(element_.local_id)
-                                this_id = previous_id + (next_id - previous_id) / (j + 1)
+                                this_id = previous_id + (next_id - previous_id) / (position_of_next_element_with_id + 1)
                                 element.local_id = str(int(this_id))
 
         return self
