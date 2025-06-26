@@ -41,9 +41,7 @@ def test_set_local_ids(filename_with_result: tuple[str, list[str]]):
 test_local_id_elements = [
     ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', '7', '10']),
     ('<w n="5">a</w> <w>b</w> <w>c</w> <w n="20"/>', ['5', '10', '15', '20']),
-    ('<w n="5">a</w> <w>b</w> <w>c</w> <w/> <w/> <w n="10"/>', ['5', '6', '7', '8', '9', '10']),
-
-
+    ('<w n="5">a</w> <w>b</w> <w>c</w> <w/> <w/> <w n="10"/>', ['5', '6', '7', '8', '9', '10'])
 ]
 @pytest.mark.parametrize(('xml_str', 'expected_local_ids'), test_local_id_elements)
 def test_set_missing_local_ids(xml_str: str, expected_local_ids: list[str]):
