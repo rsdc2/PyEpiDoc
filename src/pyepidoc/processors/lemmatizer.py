@@ -6,6 +6,7 @@ from pyepidoc.epidoc.metadata.change import Change
 
 from .processor import Processor
 
+
 class Lemmatizer(Processor):
 
     def lemmatize(
