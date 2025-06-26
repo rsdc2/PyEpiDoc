@@ -656,7 +656,10 @@ class Edition(EpiDocElement):
                                 raise Exception
                             case _:
                                 next_id = int(element_.local_id)
-                                this_id = previous_id + (next_id - previous_id) / (position_of_next_element_with_id + 1)
+                                this_id_float = previous_id + (next_id - previous_id) / (position_of_next_element_with_id + 1)
+                                this_id = int(this_id_float)
+                                if this_id == next_id or this_id == previous_id:
+                                    raise ValueError("Could not generate unique ID")
                                 element.local_id = str(int(this_id))
 
         return self
