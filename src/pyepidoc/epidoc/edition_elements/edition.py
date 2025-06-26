@@ -45,8 +45,8 @@ from pyepidoc.epidoc.enums import (
     SubatomicTagType, 
     CompoundTokenType, 
     ContainerType,
-    N_IDableElements,
-    XML_IDableElements,
+    ElementsWithLocalIds,
+    ElementsWithXmlIds,
     RepresentableElements
 )
 
@@ -456,7 +456,7 @@ class Edition(EpiDocElement):
         receive an `@n` id.
         """
 
-        elems = self.get_desc_tei_elems(N_IDableElements.values())
+        elems = self.get_desc_tei_elems(ElementsWithLocalIds.values())
         return list(map(EpiDocElement, elems))
     
     @property
@@ -467,7 +467,7 @@ class Edition(EpiDocElement):
         receive an `@xml:id` id.
         """
 
-        elems = self.get_desc_tei_elems(XML_IDableElements.values())
+        elems = self.get_desc_tei_elems(ElementsWithXmlIds.values())
         return list(map(EpiDocElement, elems))
 
     @staticmethod

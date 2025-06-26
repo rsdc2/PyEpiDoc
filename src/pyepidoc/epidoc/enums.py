@@ -120,7 +120,25 @@ class SpaceSeparated(EnumerableEnum):
     Supplied = 'supplied'
 
 
-class N_IDableElements(EnumerableEnum):
+class ContainerStandoffEditionType(EnumerableEnum):
+    Div = 'div'
+    Ab = 'ab'
+
+
+class RepresentableStandoffEditionType(EnumerableEnum):
+    W = 'w'
+    Orig = 'orig'
+    Gap = 'gap'
+    Desc = 'desc'
+    Space = 'space'
+
+
+StandoffEditionElements = \
+    ContainerStandoffEditionType.values() + \
+    RepresentableStandoffEditionType.values()
+
+
+class ElementsWithLocalIds(EnumerableEnum):
     """
     These are elements that can receive @n id attributes
     """
@@ -131,7 +149,7 @@ class N_IDableElements(EnumerableEnum):
     Gap = 'gap'
 
 
-class XML_IDableElements(EnumerableEnum):
+class ElementsWithXmlIds(EnumerableEnum):
     """
     These are elements that can receive @xml:id id attributes
     """

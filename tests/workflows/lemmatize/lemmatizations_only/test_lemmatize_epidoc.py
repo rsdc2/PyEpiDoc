@@ -9,7 +9,7 @@ from pyepidoc.shared.testing import (
     save_reload_and_compare_with_benchmark
 )
 
-from pyepidoc.shared.constants import SEPARATE_LEMMATIZED_ITEMS
+from pyepidoc.epidoc.enums import StandoffEditionElements
 from tests.config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/lemmatizations_only/files/unlemmatized/'
@@ -88,7 +88,7 @@ def test_lemmatize_on_separate_edition(
     
     # Check that only those elements have been copied across
     assert lemmatized_ed.descendant_element_name_set - \
-        set(SEPARATE_LEMMATIZED_ITEMS) == set()
+        set(StandoffEditionElements) == set()
 
 
 @pytest.mark.parametrize(
