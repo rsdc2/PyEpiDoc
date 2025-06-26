@@ -19,7 +19,7 @@ def test_add_n_ids_and_lemmatize():
 
     doc = EpiDoc(INPUT / Path('ISic000001_happy.xml'))
 
-    doc.set_n_ids()
+    doc.set_local_ids()
     doc.lemmatize(lambda _: 'lemma', where = 'separate')
 
     # Need to add test here

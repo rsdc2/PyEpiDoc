@@ -9,3 +9,12 @@ def format_year(year: int) -> str:
         return f'{abs(year)} BCE'
     else:
         return f'{abs(year)} CE'
+    
+
+
+def to_lower(s: str) -> str:
+    return s.lower()
+
+
+def to_upper(s: str) -> str:
+    return s.upper()

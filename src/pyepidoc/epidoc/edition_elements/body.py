@@ -23,7 +23,7 @@ from pyepidoc.shared.constants import (
                          SEPARATE_LEMMATIZED_CONTAINER_ITEMS,
                          SEPARATE_LEMMATIZED_TEXT_ITEMS)
 
-from pyepidoc.shared.utils import maxone, listfilter
+from pyepidoc.shared.iterables import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
 
 

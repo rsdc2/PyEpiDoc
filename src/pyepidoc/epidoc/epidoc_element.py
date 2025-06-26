@@ -11,6 +11,7 @@ from itertools import chain
 
 from pyepidoc.shared.classes import Showable, ExtendableSeq, SetRelation
 from pyepidoc.shared import update_set_inplace
+from pyepidoc.shared.string import to_lower, to_upper
 from pyepidoc.xml.xml_element import XmlElement
 
 from copy import deepcopy
@@ -50,7 +51,7 @@ from .enums import (
     TokenCarrier
 )
 from . import ids
-from pyepidoc.shared import maxoneT, head, last, to_lower
+from pyepidoc.shared import maxoneT, head, last
 
 sys.setrecursionlimit(10000)
 
@@ -540,6 +541,10 @@ class EpiDocElement(XmlElement, Showable):
         return False
 
     @property
+    def has_local_id(self) -> bool:
+        return self.local_id != None
+
+    @property
     def has_supplied(self) -> bool:
         """
         Returns True if token contains a 
@@ -572,7 +577,7 @@ class EpiDocElement(XmlElement, Showable):
         return _recfunc([], self)
 
     @cached_property
-    def id_isic(self) -> str:
+    def isic_document_id(self) -> str:
         """
         Extracts the I.Sicily document ID from the 
         owner document of the element.
@@ -593,20 +598,6 @@ class EpiDocElement(XmlElement, Showable):
             return cast(str, xpathres[0].text)
 
         return ""
-
-    @property
-    def xml_id(self) -> Optional[str]:
-        """
-        Returns value of the xml:id attribute in the XML file.
-        """
-        return self.get_attrib('id', namespace=XMLNS)
-
-    @xml_id.setter
-    def xml_id(self, id_value:str) -> None:
-        """
-        Sets the value of the xml:id attribute in the XML file.
-        """
-        self.set_attrib('id', id_value, namespace=XMLNS)
 
     @property
     def _internal_prototokens(self) -> list[str]:
@@ -883,6 +874,17 @@ class EpiDocElement(XmlElement, Showable):
         return None
 
     @property
+    def local_id(self) -> str | None:
+        """
+        Return `@n` id
+        """
+        return self.get_attrib('n')
+    
+    @local_id.setter
+    def local_id(self, value: str) -> None:
+        self.set_attrib('n', value)
+
+    @property
     def no_gaps(self) -> bool:
         """
         Returns True if the token contains 
@@ -1104,7 +1106,7 @@ class EpiDocElement(XmlElement, Showable):
             elem_id = preceding_elem_count.rjust(elem_id_length - 1, '0') + '0'
 
             # Stitch two IDs together
-            id_xml = self.id_isic + '-' + elem_id
+            id_xml = self.isic_document_id + '-' + elem_id
 
             # Compress the ID, if required
             self.xml_id = ids.compress(id_xml, base) if compress else id_xml
@@ -1596,4 +1598,19 @@ class EpiDocElement(XmlElement, Showable):
                 new_w.append(child)
 
         return EpiDocElement(new_w, final_space=True)
+    
+    @property
+    def xml_id(self) -> Optional[str]:
+        """
+        Returns value of the xml:id attribute in the XML file.
+        """
+        return self.get_attrib('id', namespace=XMLNS)
+
+    @xml_id.setter
+    def xml_id(self, id_value:str) -> None:
+        """
+        Sets the value of the xml:id attribute in the XML file.
+        """
+        self.set_attrib('id', id_value, namespace=XMLNS)
+
 

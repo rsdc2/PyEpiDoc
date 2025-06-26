@@ -17,7 +17,7 @@ from pathlib import Path
 from lxml.etree import XMLSyntaxError  
 
 from pyepidoc.shared.classes import SetRelation
-from pyepidoc.shared.utils import maxone, top, remove_none
+from pyepidoc.shared.iterables import maxone, top, remove_none
 from pyepidoc.shared.numbers import percentage
 from pyepidoc.shared.string import format_year
 from pyepidoc.shared.generic_collection import GenericCollection

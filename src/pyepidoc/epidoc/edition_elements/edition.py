@@ -18,7 +18,7 @@ from pyepidoc.shared.constants import XMLNS
 from pyepidoc.shared import default_str
 from pyepidoc.shared.types import Base
 from pyepidoc.shared.classes import SetRelation
-from pyepidoc.shared.utils import maxone
+from pyepidoc.shared.iterables import maxone, seek, default_str
 
 from pyepidoc.xml.namespace import Namespace as ns
 
@@ -449,7 +449,7 @@ class Edition(EpiDocElement):
             return self.text_desc_compressed_whitespace
 
     @property
-    def n_idable_elements(self) -> list[EpiDocElement]:
+    def local_idable_elements(self) -> list[EpiDocElement]:
         
         """
         Get all the tokens in the edition that should 
@@ -557,6 +557,10 @@ class Edition(EpiDocElement):
             for element in self.get_desc_tei_elems(['lg'])]
 
     @property
+    def local_ids(self) -> list[str | None]:
+        return list(map(lambda e: default_str(e.local_id), self.local_idable_elements))
+
+    @property
     def ls(self) -> list[Ab]:
         
         """
@@ -617,7 +621,7 @@ class Edition(EpiDocElement):
             elem_id = str(i).rjust(elem_id_length - 1, '0') + '0'
 
             # Stitch two IDs together
-            id_xml = self.id_isic + '-' + elem_id
+            id_xml = self.isic_document_id + '-' + elem_id
 
             # Set the ID, leave the compression to the element
             elem.set_id(
@@ -626,21 +630,57 @@ class Edition(EpiDocElement):
                 compress=compress
             )
 
-    def set_n_ids(self, interval: int = 5) -> Edition:
+    def set_missing_local_ids(self, interval: int=5) -> Edition:
+        """
+        Find any elements that don't have an `@n` id and insert 
+        the correct one.
+
+        Raises ValueError if there are not enough free ids between
+        elements.
+        """
+        elements = self.local_idable_elements
+
+        for i, element in enumerate(elements):
+            if element.local_id is None:
+                previous_id_str = elements[i-1].local_id if i > 0 else "0"
+                if previous_id_str is None:
+                    raise Exception
+                previous_id = int(previous_id_str)
+
+                match seek(lambda e: e.has_local_id, elements[i:]):
+                    case None:
+                        element.local_id = str(i * interval)
+                    case position_of_next_element_with_id, element_:
+                        match element_.local_id:
+                            case None:
+                                raise Exception
+                            case _:
+                                next_id = int(element_.local_id)
+                                this_id_float = previous_id + (next_id - previous_id) / (position_of_next_element_with_id + 1)
+                                this_id = int(this_id_float)
+                                if this_id == next_id or this_id == previous_id:
+                                    raise ValueError("Could not generate unique ID")
+                                element.local_id = str(int(this_id))
+
+        return self
+
+    def set_local_ids(self, interval: int=5) -> Edition:
 
         """
-        Put @n on certain elements in the edition
+        Put @n on certain elements in the edition.
+        Raises an AttributeError if any of the elements
+        already have an `@n` id.
 
         :param interval: the interval between ids, e.g. 
         with 5, it will be 5, 10, 15, 20 etc.
         """
 
-        for i, elem in enumerate(self.n_idable_elements, 1):
-            if elem.get_attrib('n') != None:
+        for i, element in enumerate(self.local_idable_elements, 1):
+            if element.has_local_id:
                 raise AttributeError(f'@n attribute already set '
-                                 f'on element {elem}.')
+                                     f'on element {element}.')
             val = i * interval
-            elem.set_attrib('n', str(val))
+            element.local_id = str(val)
 
         return self
 

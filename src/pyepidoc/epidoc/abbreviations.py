@@ -14,7 +14,7 @@ from typing import (
 from functools import cached_property
 
 from .edition_elements.expan import Expan
-from pyepidoc.shared.utils import top, contains, listfilter
+from pyepidoc.shared.iterables import top, contains, listfilter
 from pyepidoc.epidoc.enums import AbbrType
 from pyepidoc.shared.generic_collection import GenericCollection
 
