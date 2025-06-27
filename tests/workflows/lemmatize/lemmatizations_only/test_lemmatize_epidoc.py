@@ -8,6 +8,7 @@ from pyepidoc.shared.testing import (
     save_and_reload, 
     save_reload_and_compare_with_benchmark
 )
+from pyepidoc.processing.processor import Processor
 
 from pyepidoc.epidoc.enums import StandoffEditionElements
 from tests.config import FILE_WRITE_MODE
@@ -31,11 +32,12 @@ def test_lemmatize_on_main_edition():
     filename = 'lemmatized_main_edition_with_dummy.xml'
 
     doc = EpiDoc(unlemmatized_path + 'single_token.xml')
-    doc.lemmatize(dummy_lemmatizer, 'main')
+    proc = Processor(doc)
+    lemmatized = proc.lemmatize(dummy_lemmatizer, 'main').epidoc
 
     # Check correct
     doc_ = save_and_reload(
-        doc, 
+        lemmatized, 
         path=lemmatized_path + filename, 
         mode=FILE_WRITE_MODE
     )
