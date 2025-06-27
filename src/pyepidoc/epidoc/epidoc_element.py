@@ -53,7 +53,7 @@ from .enums import (
 from . import ids
 from pyepidoc.shared import maxoneT, head, last
 
-sys.setrecursionlimit(10000)
+# sys.setrecursionlimit(10000)
 
 def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     """
