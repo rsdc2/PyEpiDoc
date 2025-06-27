@@ -47,6 +47,9 @@ class GenericCollection(Generic[T]):
         """
         return self.length
     
+    def filter(self, predicate: Callable[[T], bool]) -> GenericCollection[T]:
+        return self.where(predicate)
+    
     def foreach(self, action: Callable[[T], None]) -> None:
         """
         Call an action on each element
@@ -161,3 +164,7 @@ class GenericCollection(Generic[T]):
         """
 
         return GenericCollection(list(filter(predicate, self._values)))
+    
+
+def remove_none(collection: GenericCollection[T | None]) -> GenericCollection[T]:
+    return GenericCollection([item for item in collection._values if item is not None])
