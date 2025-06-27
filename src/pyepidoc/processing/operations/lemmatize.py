@@ -3,7 +3,7 @@ from typing import Callable, Literal
 from pyepidoc import EpiDoc
 from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.metadata.change import Change
-
+from pyepidoc.epidoc import enums
 
 def apply_lemmatization(
         epidoc: EpiDoc, 
@@ -63,3 +63,24 @@ def apply_lemmatization(
     epidoc.prettify(prettifier='pyepidoc', verbose=verbose)
     
     return epidoc
+
+
+def sync_lemmatized_edition(epidoc: EpiDoc):
+    """
+    Ensure the `simple-lemmatized` edition matches the main
+    edition
+    """
+    if epidoc.main_edition is None:
+        raise ValueError('No main edition present. Cannot sync lemmatized edition')
+
+    lemmatizable_elements = [
+        elem for elem in epidoc.main_edition.representable_no_subatomic
+        if elem.localname in enums.StandoffEditionElements
+    ]
+
+    lemmatized_elements = epidoc.simple_lemmatized_edition
+
+
+
+
+

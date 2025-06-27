@@ -4,7 +4,8 @@ from typing import (
     Sequence,
     Optional, 
     cast,
-    overload
+    overload,
+    Callable
 )
 import sys
 from itertools import chain

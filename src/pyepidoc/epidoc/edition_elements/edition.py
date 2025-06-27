@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Optional, Sequence, Literal
+from typing import Optional, Sequence, Literal, Callable
 import re
 
 from lxml import etree
@@ -324,6 +324,10 @@ class Edition(EpiDocElement):
     @property
     def expans(self) -> list[Expan]:
         return [Expan(e.e) for e in self.expan_elems]
+    
+    # def filter_elements(self, predicate: Callable[[EpiDocElement], bool]) -> list[EpiDocElement]:
+    #     self.des
+
 
     @property
     def formatted_text(self) -> str:
@@ -431,7 +435,7 @@ class Edition(EpiDocElement):
         if type == 'leiden':
 
             leiden = ' '.join([repr.leiden_form 
-                               for repr in self.representable_no_nested])
+                               for repr in self.representable_no_subatomic])
             
             leiden = re.sub(r'\|\s+?\|', '|', leiden)
             leiden = re.sub(r'·\s+?·', '·', leiden)
@@ -442,7 +446,7 @@ class Edition(EpiDocElement):
         
         elif type == 'normalized':
             normalized = ' '.join([repr.normalized_form 
-                               for repr in self.representable_no_nested])
+                               for repr in self.representable_no_subatomic])
             return re.sub(r'\s{2,}', ' ', normalized).strip()
         
         elif type == 'xml':
@@ -588,7 +592,7 @@ class Edition(EpiDocElement):
         return self
     
     @property
-    def representable_no_nested(self) -> list[Representable]:
+    def representable_no_subatomic(self) -> list[Representable]:
         """
         :return: the descendant elements carrying text that should be represented
         in a text edition (either Leiden or normalized)

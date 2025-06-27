@@ -32,6 +32,11 @@ class Processor:
             verbose = False
         ) -> Processor:
 
+        """
+        Lemmatize the EpiDoc file according to the `lemmatize`
+        callback
+        """
+
         lemmatized = apply_lemmatization(
             self.epidoc,
             lemmatize,
@@ -42,3 +47,11 @@ class Processor:
         )
 
         return Processor(lemmatized)
+    
+    # def sync_lemmatized_edition(self) -> Processor:
+        
+    #     """
+    #     Ensure the simple-lemmatized edition matches the main
+    #     edition
+    #     """
+
