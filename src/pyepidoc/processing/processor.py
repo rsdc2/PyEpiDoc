@@ -5,7 +5,7 @@ from pyepidoc import EpiDoc
 from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.metadata.change import Change
 
-from .operations import apply_lemmatization
+from .operations import apply_lemmatization, sync_lemmatized
 
 
 class Processor:
@@ -48,10 +48,12 @@ class Processor:
 
         return Processor(lemmatized)
     
-    # def sync_lemmatized_edition(self) -> Processor:
+    def sync_lemmatized_edition(self) -> Processor:
         
-    #     """
-    #     Ensure the simple-lemmatized edition matches the main
-    #     edition
-    #     """
+        """
+        Ensure the simple-lemmatized edition matches the main
+        edition
+        """
+
+        return Processor(sync_lemmatized(self._epidoc))
 

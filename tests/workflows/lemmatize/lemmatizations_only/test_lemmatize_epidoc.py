@@ -29,13 +29,15 @@ def test_lemmatize_on_main_edition():
     <div type="edition"/> element.
     """
 
+    # Arrange
     filename = 'lemmatized_main_edition_with_dummy.xml'
 
     doc = EpiDoc(unlemmatized_path + 'single_token.xml')
     proc = Processor(doc)
+
+    # Act
     lemmatized = proc.lemmatize(dummy_lemmatizer, 'main').epidoc
 
-    # Check correct
     doc_ = save_and_reload(
         lemmatized, 
         path=lemmatized_path + filename, 
@@ -43,6 +45,7 @@ def test_lemmatize_on_main_edition():
     )
     edition_ = doc_.body.edition_by_subtype(None)
 
+    # Assert
     assert edition_ is not None
     assert edition_.w_tokens[0].lemma == 'lemma'
 

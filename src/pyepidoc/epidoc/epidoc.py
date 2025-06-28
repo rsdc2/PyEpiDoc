@@ -124,37 +124,6 @@ class EpiDoc(DocRoot):
     def _append_change(self, change: Change) -> EpiDoc:
         self.ensure_tei_header().ensure_revision_desc().append_change(change)
         return self
-
-    def _append_new_lemmatized_edition(
-            self, 
-            resp: RespStmt | None = None,
-            change: Change | None = None
-            ) -> Edition:
-
-        """
-        Add a new edition to the document, ready to contain
-        lemmatized elements, but no words are copied
-        or lemmatized.
-        Raises an error if the edition already exists, or
-        if the edition could not be created.
-        """
-
-        # Check no lemmatized editions already
-        lemmatized_edition = self.body.edition_by_subtype('simple-lemmatized')
-        if lemmatized_edition is not None:
-            raise ValueError('Lemmatized edition already present.')
-
-        # Create edition if it does not already exist
-        self.body.append_new_edition('simple-lemmatized', resp=resp)
-        if change is not None: 
-            self._append_change(change)
-        edition = self.body.edition_by_subtype('simple-lemmatized')
-
-        # Raise an error if could not be created
-        if edition is None:
-            raise TypeError('Failed to create a simple lemmatized edition.')
-        
-        return edition
     
     def _append_new_tei_header(self) -> EpiDoc:
         """
@@ -393,6 +362,37 @@ class EpiDoc(DocRoot):
         """
 
         return self.body.editions(include_transliterations)
+
+    def ensure_lemmatized_edition(
+            self, 
+            resp: RespStmt | None = None,
+            change: Change | None = None
+            ) -> Edition:
+
+        """
+        Ensures a `simple-lemmatized` edition exists, ready to contain
+        lemmatized elements, but no words are copied
+        or lemmatized.
+        Returns either the existing `simple-lemmatized` edition, or
+        an empty one if one already exists.
+        """
+
+        # Check no lemmatized editions already
+        lemmatized_edition = self.body.edition_by_subtype('simple-lemmatized')
+        if lemmatized_edition is not None:
+            return lemmatized_edition
+
+        # Create edition if it does not already exist
+        self.body.append_new_edition('simple-lemmatized', resp=resp)
+        if change is not None: 
+            self._append_change(change)
+        edition = self.body.edition_by_subtype('simple-lemmatized')
+
+        # Raise an error if could not be created
+        if edition is None:
+            raise TypeError('Failed to create a simple lemmatized edition.')
+        
+        return edition
 
     def ensure_tei_header(self) -> TeiHeader:
         if self.tei_header is None:
@@ -731,7 +731,7 @@ class EpiDoc(DocRoot):
             lemmatized_edition = self.edition_by_subtype('simple-lemmatized') 
 
             if lemmatized_edition is None:
-                lemmatized_edition = self._append_new_lemmatized_edition(resp=resp_stmt)
+                lemmatized_edition = self.ensure_lemmatized_edition(resp=resp_stmt)
                 self.body.copy_edition_items_to_appear_in_lemmatized_edition(
                     source=main_edition, 
                     target=lemmatized_edition

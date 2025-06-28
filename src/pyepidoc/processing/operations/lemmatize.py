@@ -39,7 +39,7 @@ def apply_lemmatization(
         lemmatized_edition = epidoc.edition_by_subtype('simple-lemmatized') 
 
         if lemmatized_edition is None:
-            lemmatized_edition = epidoc._append_new_lemmatized_edition(resp=resp_stmt)
+            lemmatized_edition = epidoc.ensure_lemmatized_edition(resp=resp_stmt)
             epidoc.body.copy_edition_items_to_appear_in_lemmatized_edition(
                 source=main_edition, 
                 target=lemmatized_edition
@@ -67,7 +67,7 @@ def apply_lemmatization(
     return epidoc
 
 
-def sync_lemmatized_edition(epidoc: EpiDoc):
+def sync_lemmatized(epidoc: EpiDoc) -> EpiDoc:
     """
     Ensure the `simple-lemmatized` edition matches the main
     edition
@@ -92,13 +92,15 @@ def sync_lemmatized_edition(epidoc: EpiDoc):
                                        else e.previous_sibling.get_attrib('n'))
     previous_elems_in_lemmatized = previous_ids.map(lambda id: None if id is None else lemmatized.where(lambda e: e.local_id == id)[0])
 
-    for previous_in_lemmatized, to_add_in_lemmatizable in zip(previous_elems_in_lemmatized.to_list(), elements_to_add.to_list()):
+    zipped = zip(previous_elems_in_lemmatized.to_list(), elements_to_add.to_list())
+    for previous_in_lemmatized, to_add_in_lemmatizable in zipped:
         to_add_ = to_add_in_lemmatizable.deepcopy()
         if previous_in_lemmatized is None:
             lemmatized[0].e.addprevious(to_add_)
         else:
             previous_in_lemmatized.e.addnext(to_add_.e)
 
+    return epidoc
             
     
 
