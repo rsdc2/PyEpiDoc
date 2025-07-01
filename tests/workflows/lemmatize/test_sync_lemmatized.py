@@ -21,6 +21,12 @@ test_data = [
      '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
                
     ('<space n="0"/> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+
+    ('<space n="0"/> <persName/> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+
+    ('<space n="0"/> <persName><w n="2">b</w></persName> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
      '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>')
 ]
 

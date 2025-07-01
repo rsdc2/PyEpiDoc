@@ -512,9 +512,11 @@ class XmlElement(Showable):
             self,
             previous_sibling_names: list[str]) -> Optional[XmlElement]:
         
-        return [previous for previous in self.previous_siblings
-                if previous.localname in previous_sibling_names]
-
+        previous_siblings = self.get_previous_siblings_by_name(previous_sibling_names)
+        if len(previous_siblings) == 0:
+            return None
+        return previous_siblings[-1]
+    
     def get_previous_siblings_by_name(
             self,
             previous_sibling_names: list[str]) -> Sequence[XmlElement]:
