@@ -56,7 +56,7 @@ class NamedEntities(EnumerableEnum):
     Measure = 'measure'
 
 
-RepresentableElements = AtomicTokenType.values() + ['orig', 'gap', 'lb']
+RepresentableElements = AtomicTokenType.values() + ['orig', 'gap', 'lb', 'space']
 
 
 class AtomicNonTokenType(EnumerableEnum):

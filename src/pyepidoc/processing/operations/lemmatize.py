@@ -89,14 +89,14 @@ def sync_lemmatized(epidoc: EpiDoc) -> EpiDoc:
     elements_to_add = lemmatizable.where(lambda e: e.local_id in missing_ids)
     previous_ids = elements_to_add.map(lambda e: None 
                                        if e.previous_sibling is None 
-                                       else e.previous_sibling.get_attrib('n'))
+                                       else e.get_previous_sibling_by_name(enums.RepresentableStandoffEditionType.values()))
     previous_elems_in_lemmatized = previous_ids.map(lambda id: None if id is None else lemmatized.where(lambda e: e.local_id == id)[0])
 
     zipped = zip(previous_elems_in_lemmatized.to_list(), elements_to_add.to_list())
     for previous_in_lemmatized, to_add_in_lemmatizable in zipped:
         to_add_ = to_add_in_lemmatizable.deepcopy()
         if previous_in_lemmatized is None:
-            lemmatized[0].e.addprevious(to_add_)
+            lemmatized[0].e.addprevious(to_add_.e)
         else:
             previous_in_lemmatized.e.addnext(to_add_.e)
 

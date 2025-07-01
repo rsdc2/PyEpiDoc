@@ -10,8 +10,20 @@ from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.enums import StandoffEditionElements
 from tests.config import EMPTY_TEMPLATE_PATH
 
-test_data = [('<w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
-              '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>')]
+test_data = [
+    ('<w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+              
+    ('<w n="0">yes</w> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+
+    ('<w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w> <w n="20">yes</w>',
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+               
+    ('<space n="0"/> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>')
+]
+
 @pytest.mark.parametrize(('main_xml', 'lemmatized_xml'), test_data)
 def test_sync_lemmatized(main_xml: str, lemmatized_xml: str):
     # Arrange

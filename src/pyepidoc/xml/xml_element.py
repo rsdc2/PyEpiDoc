@@ -292,6 +292,22 @@ class XmlElement(Showable):
     def e_type(self) -> type:
         return type(self._e)
 
+    # def eq(self, other: object, by_ref: bool = False) -> bool:
+    #     """
+    #     Compare an element with another
+
+    #     :param by_value: compare by value rather than by reference
+    #     """
+    #     if not isinstance(other, XmlElement):
+    #         return False
+        
+    #     if by_ref:
+    #         return self == other
+        
+        
+        
+
+
     def _equalize_id_length(
         self, 
         id1:list[int], 
@@ -491,6 +507,20 @@ class XmlElement(Showable):
         
         return [ancestor for ancestor in self.get_ancestors_incl_self()
             if ancestor.tag.name in ancestor_names]
+    
+    def get_previous_sibling_by_name(
+            self,
+            previous_sibling_names: list[str]) -> Optional[XmlElement]:
+        
+        return [previous for previous in self.previous_siblings
+                if previous.localname in previous_sibling_names]
+
+    def get_previous_siblings_by_name(
+            self,
+            previous_sibling_names: list[str]) -> Sequence[XmlElement]:
+        
+        return [previous for previous in self.previous_siblings
+                if previous.localname in previous_sibling_names]
 
     def has_ancestor_by_name(self, localname: str) -> bool:
         """
@@ -541,20 +571,6 @@ class XmlElement(Showable):
             return _recfunc([parent.index(element.e)] + acc, element.parent)
 
         return _recfunc([], self)
-
-    @property
-    def xml_id(self) -> Optional[str]:
-        """
-        Returns value of the xml:id attribute in the XML file.
-        """
-        return self.get_attrib('id', namespace=XMLNS)
-
-    @xml_id.setter
-    def xml_id(self, id_value:str) -> None:
-        """
-        Sets the value of the xml:id attribute in the XML file.
-        """
-        self.set_attrib('id', id_value, namespace=XMLNS)
 
     @property
     def has_only_whitespace(self) -> bool:
@@ -609,12 +625,8 @@ class XmlElement(Showable):
         else:
             raise TypeError('Parent is of incorrect type.')
 
-
     @property
     def previous_sibling(self) -> Optional[XmlElement]:
-        if self._e is None:
-            return None
-
         _prev = self._e.getprevious()
         if isinstance(_prev, _Element):
             return XmlElement(_prev)
@@ -839,6 +851,20 @@ class XmlElement(Showable):
             pretty_print=True # type: ignore
         ) 
     
+    @property
+    def xml_id(self) -> Optional[str]:
+        """
+        Returns value of the xml:id attribute in the XML file.
+        """
+        return self.get_attrib('id', namespace=XMLNS)
+
+    @xml_id.setter
+    def xml_id(self, id_value:str) -> None:
+        """
+        Sets the value of the xml:id attribute in the XML file.
+        """
+        self.set_attrib('id', id_value, namespace=XMLNS)
+
     @property
     def xmlspace_preserve(self) -> bool:
         """
