@@ -12,26 +12,36 @@ from tests.config import EMPTY_TEMPLATE_PATH
 
 test_data = [
     ('<w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
-     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>',
+     [5, 10, 15]),
               
     ('<w n="0">yes</w> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
-     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>',
+     [0, 5, 10, 15]),
 
     ('<w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w> <w n="20">yes</w>',
-     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>',
+     [5, 10, 15, 20]),
                
     ('<space n="0"/> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
-     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>',
+     [0, 5, 10, 15]),
 
     ('<space n="0"/> <persName/> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
-     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>'),
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>',
+     [0, 5, 10, 15]),
 
     ('<space n="0"/> <persName><w n="2">b</w></persName> <w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
-     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>')
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>',
+     [0, 2, 5, 10, 15]),
+
+    ('<space n="0"/> <w n="5">hello</w> <persName><w n="7">b</w></persName>  <w n="10">world</w> <w n="15">goodbye</w>',
+     '<w n="5" lemma="lemma">hello</w> <w n="15" lemma="lemma">goodbye</w>',
+     [0, 5, 7, 10, 15])
 ]
 
-@pytest.mark.parametrize(('main_xml', 'lemmatized_xml'), test_data)
-def test_sync_lemmatized(main_xml: str, lemmatized_xml: str):
+@pytest.mark.parametrize(('main_xml', 'lemmatized_xml', 'expected_ids'), test_data)
+def test_sync_lemmatized(main_xml: str, lemmatized_xml: str, expected_ids: list[int]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
     main_ab = Ab(XmlElement.from_xml_str(abify(main_xml)))
@@ -47,7 +57,7 @@ def test_sync_lemmatized(main_xml: str, lemmatized_xml: str):
 
     # Assert    
     if synced.main_edition is None: raise TypeError()
-    assert synced.main_edition.local_ids == synced.ensure_lemmatized_edition().local_ids
+    assert synced.ensure_lemmatized_edition().local_ids == [str(id) for id in expected_ids]
 
 
 test_data = [('<w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',
