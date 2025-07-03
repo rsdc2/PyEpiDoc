@@ -310,7 +310,7 @@ class EpiDocElement(XmlElement, Showable):
             self.e.append(item)
 
         else:
-            raise TypeError('Expected _Element or _ElementUnicodeResult')
+            raise TypeError(f'Expected: _Element or _ElementUnicodeResult; got {type(item)}')
         
         return self
 

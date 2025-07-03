@@ -82,12 +82,12 @@ class Body(EpiDocElement):
                     ab = child
                     ab_copy = child_copy
                     ab_copy.remove_children()
-                    ab_copy.remove_attr('id', XMLNS)
                     target_elem._e.append(child_copy._e)
                     
                     for desc in ab.descendant_elements:
                         if desc.localname in StandoffEditionElements:
                             representable = Token(desc).representable
+                            representable.remove_attr('id', XMLNS)
                             desc_copy_token = representable.simple_lemmatized_edition_element    
                             ab_copy._e.append(desc_copy_token.e)   
 

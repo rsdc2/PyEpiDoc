@@ -70,7 +70,8 @@ def apply_lemmatization(
 
 def update_lemmatized_edition(
         epidoc: EpiDoc, 
-        lemmatize: Callable[[str], str]) -> EpiDoc:
+        lemmatize: Callable[[str], str], 
+        change: Change | None = None) -> EpiDoc:
     """
     Ensure the `simple-lemmatized` edition matches the main
     edition
@@ -105,6 +106,8 @@ def update_lemmatized_edition(
             w.lemma = lemmatize(w.normalized_form or '')
 
     epidoc.prettify()
+    if change and old_lemmatized_edition_ids != new_lemmatized_edition.local_ids:
+        epidoc._append_change(change)
     return epidoc
             
     

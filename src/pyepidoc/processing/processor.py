@@ -48,12 +48,12 @@ class Processor:
 
         return Processor(lemmatized)
     
-    def update_lemmatized_edition(self) -> Processor:
+    def update_lemmatized_edition(self, change: Change | None = None) -> Processor:
         
         """
         Ensure the simple-lemmatized edition matches the main
         edition
         """
 
-        return Processor(update_lemmatized_edition(self._epidoc, lambda s: s))
+        return Processor(update_lemmatized_edition(self._epidoc, lambda s: s, change))
 
