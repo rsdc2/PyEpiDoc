@@ -947,7 +947,7 @@ class EpiDocCorpus:
     
     def _get_textclasses(self, throw_if_more_than_one: bool, ) -> set[str]:
         return set([textclass for doc in self.docs 
-                    for textclass in doc._get_textclasses(
+                    for textclass in doc.get_textclasses(
                         throw_if_more_than_one=throw_if_more_than_one)])
 
     def save_to_folder(

@@ -1,1 +1,1 @@
-from .lemmatize import apply_lemmatization, sync_lemmatized
+from .lemmatize import apply_lemmatization, update_lemmatized_edition

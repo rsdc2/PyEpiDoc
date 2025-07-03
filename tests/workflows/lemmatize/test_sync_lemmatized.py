@@ -3,7 +3,7 @@ import pytest
 from pyepidoc import EpiDoc
 from pyepidoc.xml.utils import abify
 from pyepidoc.processing.processor import Processor
-from pyepidoc.processing.operations import sync_lemmatized
+from pyepidoc.processing.operations import update_lemmatized_edition
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.xml_element import XmlElement
 
@@ -41,19 +41,20 @@ test_data = [
 ]
 
 @pytest.mark.parametrize(('main_xml', 'lemmatized_xml', 'expected_ids'), test_data)
-def test_sync_lemmatized(main_xml: str, lemmatized_xml: str, expected_ids: list[int]):
+def test_update_lemmatized(main_xml: str, lemmatized_xml: str, expected_ids: list[int]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
     main_ab = Ab(XmlElement.from_xml_str(abify(main_xml)))
     lemmatized_ab = Ab(XmlElement.from_xml_str(abify(lemmatized_xml)))
 
-    if doc.main_edition is None: raise TypeError()
+    if doc.main_edition is None: 
+        raise TypeError()
     doc.main_edition.append_ab(main_ab)
     doc.ensure_lemmatized_edition().append_ab(lemmatized_ab)
     assert doc.main_edition.local_ids != doc.ensure_lemmatized_edition().local_ids
 
     # Act
-    synced = Processor(doc).sync_lemmatized_edition().epidoc
+    synced = Processor(doc).update_lemmatized_edition().epidoc
 
     # Assert    
     if synced.main_edition is None: raise TypeError()
@@ -78,7 +79,7 @@ def test_sync_lemmatized_texts(main_xml: str, lemmatized_xml: str, expected_toke
     assert token_texts != expected_tokens
 
     # Act
-    synced = Processor(doc).sync_lemmatized_edition().epidoc
+    synced = Processor(doc).update_lemmatized_edition().epidoc
 
     # Assert    
     if synced.main_edition is None: raise TypeError()

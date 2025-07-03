@@ -44,7 +44,7 @@ class Body(EpiDocElement):
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self.tag}> element.')
 
-    def copy_edition_items_to_appear_in_lemmatized_edition(
+    def copy_lemmatizable_to_lemmatized_edition(
             self,
             source: Edition,
             target: Edition) -> Edition:
@@ -198,4 +198,4 @@ class Body(EpiDocElement):
             raise ValueError(
                 f'No edition found with subtype {edition_subtype}.')
 
-        return edition.token_by_id(token_id)
+        return edition.token_by_xml_id(token_id)

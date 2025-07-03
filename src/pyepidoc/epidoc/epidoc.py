@@ -478,7 +478,7 @@ class EpiDoc(DocRoot):
         
         raise ValueError(f'Invalid lang_attr {lang_attr}')
 
-    def _get_textclasses(
+    def get_textclasses(
             self, 
             throw_if_more_than_one: bool) -> list[str]:
         """
@@ -648,7 +648,7 @@ class EpiDoc(DocRoot):
     def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 or len(self.langs) > 1
 
-    def _get_daterange_attrib(self, attrib_name:str) -> Optional[int]:
+    def _get_daterange_attrib(self, attrib_name: str) -> Optional[int]:
         if self.orig_date is None:
             return None
 
@@ -732,7 +732,7 @@ class EpiDoc(DocRoot):
 
             if lemmatized_edition is None:
                 lemmatized_edition = self.ensure_lemmatized_edition(resp=resp_stmt)
-                self.body.copy_edition_items_to_appear_in_lemmatized_edition(
+                self.body.copy_lemmatizable_to_lemmatized_edition(
                     source=main_edition, 
                     target=lemmatized_edition
                 )
@@ -1241,7 +1241,7 @@ class EpiDoc(DocRoot):
         the `throw_if_more_than_one` parameter set to False. 
         """
 
-        return self._get_textclasses(True)
+        return self.get_textclasses(True)
 
     @property
     def textlang(self) -> Optional[EpiDocElement]:

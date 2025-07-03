@@ -702,7 +702,7 @@ class Edition(EpiDocElement):
         return [TextPart(part) 
                 for part in self.get_div_descendants('textpart')]
 
-    def token_by_id(self, id: str) -> Token | None:
+    def token_by_local_id(self, local_id: str) -> Token | None:
 
         """
         Return the token with the specified ID. Returns None
@@ -711,7 +711,20 @@ class Edition(EpiDocElement):
         """
 
         result = [token for token in self.tokens_incl_nested
-                  if token.xml_id == id]
+                  if token.local_id == local_id]
+        
+        return maxone(result, None, True)
+
+    def token_by_xml_id(self, xml_id: str) -> Token | None:
+
+        """
+        Return the token with the specified ID. Returns None
+        if not found. Raises an error if more than one token 
+        is found with the same ID.
+        """
+
+        result = [token for token in self.tokens_incl_nested
+                  if token.xml_id == xml_id]
         
         return maxone(result, None, True)
 

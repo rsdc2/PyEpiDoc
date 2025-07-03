@@ -12,6 +12,7 @@ from .edition_elements.name import Name
 from .edition_elements.num import Num
 from .edition_elements.orig import Orig
 from .edition_elements.pers_name import PersName
+from .edition_elements.space import Space
 from .edition_elements.supplied import Supplied
 from .edition_elements.surplus import Surplus
 from .edition_elements.unclear import Unclear
@@ -33,6 +34,7 @@ elem_classes: dict[str, type] = {
     'num': Num,
     'orig': Orig,
     'persName': PersName,
+    'space': Space,
     'supplied': Supplied,
     'surplus': Surplus,
     'unclear': Unclear,

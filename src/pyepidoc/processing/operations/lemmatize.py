@@ -1,6 +1,7 @@
 from typing import Callable, Literal
 
 from pyepidoc import EpiDoc
+from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.metadata.change import Change
 from pyepidoc.epidoc import enums
@@ -40,7 +41,7 @@ def apply_lemmatization(
 
         if lemmatized_edition is None:
             lemmatized_edition = epidoc.ensure_lemmatized_edition(resp=resp_stmt)
-            epidoc.body.copy_edition_items_to_appear_in_lemmatized_edition(
+            epidoc.body.copy_lemmatizable_to_lemmatized_edition(
                 source=main_edition, 
                 target=lemmatized_edition
             )
@@ -67,39 +68,43 @@ def apply_lemmatization(
     return epidoc
 
 
-def sync_lemmatized(epidoc: EpiDoc) -> EpiDoc:
+def update_lemmatized_edition(
+        epidoc: EpiDoc, 
+        lemmatize: Callable[[str], str]) -> EpiDoc:
     """
     Ensure the `simple-lemmatized` edition matches the main
     edition
     """
+    # Validate
     if epidoc.main_edition is None:
-        raise ValueError('No main edition present. Cannot sync lemmatized edition')
+        raise ValueError('No main edition present. '
+                         'Cannot update lemmatized edition')
     if epidoc.simple_lemmatized_edition is None:
-        raise ValueError('No lemmatized edition present. Cannot sync lemmatized edition')
+        raise ValueError('No lemmatized edition present. '
+                         'Cannot update lemmatized edition')
 
-    lemmatizable = (Collection(epidoc.main_edition.representable_no_subatomic)
-                    .where(lambda e: e.localname in enums.StandoffEditionElements))
-    lemmatizable_ids = remove_none(lemmatizable.map(lambda e: e.local_id))
-    lemmatized = Collection(epidoc.simple_lemmatized_edition.representable_no_subatomic)
+    # Arrange
+    old_lemmatized_edition = Edition(epidoc.simple_lemmatized_edition.deepcopy())
+    old_lemmatized_edition_ids = old_lemmatized_edition.local_ids
+    epidoc.simple_lemmatized_edition.remove_children()
+    new_lemmatized_edition = epidoc.body.copy_lemmatizable_to_lemmatized_edition(
+        epidoc.main_edition, 
+        epidoc.simple_lemmatized_edition
+    )
+
+    # Act
+    for w in new_lemmatized_edition.w_tokens:
+        if w.local_id and w.local_id in old_lemmatized_edition_ids:
+            old_token = old_lemmatized_edition.token_by_local_id(w.local_id)
+            if old_token is None:
+                raise TypeError('No token with local id (@n attribute) '
+                                f'{w.local_id} in lemmatized edition')
+            w.lemma = old_token.lemma
                 
-    lemmatized_ids = remove_none(lemmatized.map(lambda e: e.local_id))
-
-    missing_ids = lemmatizable_ids.to_set() - lemmatized_ids.to_set()
-
-    elements_to_add = lemmatizable.where(lambda e: e.local_id in missing_ids)
-    previous_ids = elements_to_add.map(lambda e: None 
-                                       if e.get_previous_sibling_by_name(enums.RepresentableStandoffEditionType.values()) is None 
-                                       else e.get_previous_sibling_by_name(enums.RepresentableStandoffEditionType.values()).get_attrib('n'))
-    previous_elems_in_lemmatized = previous_ids.map(lambda id: None if id is None else lemmatized.where(lambda e: e.local_id == id)[0])
-
-    zipped = zip(previous_elems_in_lemmatized.to_list(), elements_to_add.to_list())
-    for previous_in_lemmatized, to_add_in_lemmatizable in zipped:
-        to_add_ = to_add_in_lemmatizable.deepcopy()
-        if previous_in_lemmatized is None:
-            lemmatized[0].e.addprevious(to_add_.e)
         else:
-            previous_in_lemmatized.e.addnext(to_add_.e)
+            w.lemma = lemmatize(w.normalized_form or '')
 
+    epidoc.prettify()
     return epidoc
             
     
