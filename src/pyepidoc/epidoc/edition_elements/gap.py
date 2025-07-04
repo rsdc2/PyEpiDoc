@@ -61,6 +61,8 @@ class Gap(Representable):
 
     @cached_property
     def simple_lemmatized_edition_form(self) -> str:
+        if self.get_attrib('unit') == 'character' and self.get_attrib('quantity') == '1':
+            return "[.]"
         return "[-?-]"
     
     @property

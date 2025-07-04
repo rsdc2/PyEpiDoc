@@ -645,14 +645,14 @@ class Edition(EpiDocElement):
         """
         elements = self.local_idable_elements
 
-        for i, element in enumerate(elements):
+        for i, element in enumerate(elements, 1):
             if element.local_id is None:
-                previous_id_str = elements[i-1].local_id if i > 0 else "0"
+                previous_id_str = elements[i-2].local_id if i > 1 else "0"
                 if previous_id_str is None:
                     raise Exception
                 previous_id = int(previous_id_str)
 
-                match seek(lambda e: e.has_local_id, elements[i:]):
+                match seek(lambda e: e.has_local_id, elements[i-1:]):
                     case None:
                         element.local_id = str(i * interval)
                     case position_of_next_element_with_id, element_:
@@ -665,8 +665,10 @@ class Edition(EpiDocElement):
                                 this_id = int(this_id_float)
                                 if this_id == next_id or this_id == previous_id:
                                     raise ValueError("Could not generate unique ID")
+                                
                                 element.local_id = str(int(this_id))
 
+        assert len(list(set(self.local_ids))) == len(self.local_ids)
         return self
 
     def set_local_ids(self, interval: int=5) -> Edition:
@@ -800,3 +802,7 @@ class Edition(EpiDocElement):
     def w_tokens(self) -> list[Token]:
         return [Token(word) for word in self.get_desc(['w'])]
     
+    @property
+    def xml_ids(self) -> list[str | None]:
+        return list(map(lambda e: default_str(e.xml_id), self.xml_idable_elements))
+

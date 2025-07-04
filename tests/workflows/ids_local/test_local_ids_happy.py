@@ -41,7 +41,9 @@ def test_set_local_ids(filename_with_result: tuple[str, list[str]]):
 test_local_id_elements_main = [
     ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', '7', '10']),
     ('<w n="5">a</w> <w>b</w> <w>c</w> <w n="20"/>', ['5', '10', '15', '20']),
-    ('<w n="5">a</w> <w>b</w> <w>c</w> <w/> <w/> <w n="10"/>', ['5', '6', '7', '8', '9', '10'])
+    ('<w n="5">a</w> <w>b</w> <w>c</w> <w/> <w/> <w n="10"/>', ['5', '6', '7', '8', '9', '10']),
+    ('<w n="5">a</w> <w>b</w> <w>c</w> <w n="20"/> <gap/>', ['5', '10', '15', '20', '25']),
+    ('<w n="5">a</w> <gap/>', ['5', '10'])
 ]
 @pytest.mark.parametrize(('xml_str', 'expected_local_ids'), test_local_id_elements_main)
 def test_set_missing_local_ids_on_main_edition(xml_str: str, expected_local_ids: list[str]):
@@ -60,7 +62,8 @@ def test_set_missing_local_ids_on_main_edition(xml_str: str, expected_local_ids:
 test_local_id_elements_main_and_simple_lemmatized = [
     '<w n="5">a</w> <w>b</w> <w n="10">c</w>',
     '<w n="5">a</w> <w>b</w> <w>c</w> <w n="20"/>',
-    '<w n="5">a</w> <w>b</w> <w>c</w> <w/> <w/> <w n="10"/>'
+    '<w n="5">a</w> <w>b</w> <w>c</w> <w/> <w/> <w n="10"/>',
+    '<w n="5">a</w> <w>b</w> <w>c</w> <w/> <w/> <w n="10"/> <gap/>'
 ]
 @pytest.mark.parametrize('xml_str', test_local_id_elements_main_and_simple_lemmatized)
 def test_set_missing_local_ids_on_main_edition_and_lemmatized_edition(xml_str: str):
