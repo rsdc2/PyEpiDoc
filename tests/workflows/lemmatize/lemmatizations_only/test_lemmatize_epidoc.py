@@ -110,6 +110,7 @@ def test_lemmatize_on_separate_edition_compare_file(
     correct elements are copied across (i.e. only
     <w>, <orig> and <gap>).
     """
+
     # Arrange
     filename, _ = filename_with_tag_counts
     doc = EpiDoc(unlemmatized_path + filename)
@@ -126,3 +127,19 @@ def test_lemmatize_on_separate_edition_compare_file(
     )
 
 
+def test_lemmatize_on_separate_edition_where_separate_lemmatized_edition_already_exists_throws_error():
+
+    """
+    Test that calling the `lemmatize` method 
+    on an EpiDoc document throws an error when a lemmatized edition 
+    already exists.
+    """
+    # Arrange
+    doc = EpiDoc(unlemmatized_path + 'ISic000001.xml')
+
+    # Act
+    doc.lemmatize(dummy_lemmatizer, 'separate')
+
+    # Assert    
+    with pytest.raises(ValueError):
+        doc.lemmatize(dummy_lemmatizer, 'separate')
