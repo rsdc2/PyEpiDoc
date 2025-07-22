@@ -142,4 +142,22 @@ def test_lemmatize_on_separate_edition_where_separate_lemmatized_edition_already
 
     # Assert    
     with pytest.raises(ValueError):
-        doc.lemmatize(dummy_lemmatizer, 'separate')
+        doc.lemmatize(dummy_lemmatizer, 'separate', fail_if_existing_lemmatized_edition=True)
+
+
+def test_lemmatize_on_separate_edition_where_separate_lemmatized_edition_already_does_not_throw_error():
+
+    """
+    Test that calling the `lemmatize` method 
+    on an EpiDoc document does not throw an error when a lemmatized edition 
+    already exists if option set not to fail.
+    """
+    # Arrange
+    doc = EpiDoc(unlemmatized_path + 'ISic000001.xml')
+
+    # Act
+    doc.lemmatize(dummy_lemmatizer, 'separate')
+
+    # Assert    
+    with not pytest.raises(ValueError):
+        doc.lemmatize(dummy_lemmatizer, 'separate', fail_if_existing_lemmatized_edition=False)
