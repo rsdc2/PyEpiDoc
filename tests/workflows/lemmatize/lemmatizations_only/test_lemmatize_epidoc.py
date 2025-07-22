@@ -158,6 +158,5 @@ def test_lemmatize_on_separate_edition_where_separate_lemmatized_edition_already
     # Act
     doc.lemmatize(dummy_lemmatizer, 'separate')
 
-    # Assert    
-    with not pytest.raises(ValueError):
-        doc.lemmatize(dummy_lemmatizer, 'separate', fail_if_existing_lemmatized_edition=False)
+    # No error expected
+    doc.lemmatize(dummy_lemmatizer, 'separate', fail_if_existing_lemmatized_edition=False)
