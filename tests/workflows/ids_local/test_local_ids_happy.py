@@ -71,7 +71,7 @@ def test_set_missing_local_ids_on_main_edition_and_lemmatized_edition(xml_str: s
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
     ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
-    doc.lemmatize(lambda s: 'lemma', where='separate')
+    doc.lemmatize(lambda _: 'lemma', where='separate')
 
     # Act
     doc.main_edition.set_missing_local_ids()

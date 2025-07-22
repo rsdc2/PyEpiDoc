@@ -735,16 +735,16 @@ class EpiDoc(DocRoot):
             # Create a separate lemmatized edition if not already present
             lemmatized_edition = self.edition_by_subtype('simple-lemmatized') 
 
-            if lemmatized_edition is None:
+            # Check what should do if a lemmatized edition is already present
+            if lemmatized_edition and fail_if_existing_lemmatized_edition:
+                raise ValueError('A lemmatized edition is already present; PyEpiDoc is '
+                                 'currently set to stop if this is the case.')
+            elif lemmatized_edition is None:
                 lemmatized_edition = self.ensure_lemmatized_edition(resp=resp_stmt)
                 self.body.copy_lemmatizable_to_lemmatized_edition(
                     source=main_edition, 
                     target=lemmatized_edition
                 )
-            # Check what should do if a lemmatized edition is already present
-            if lemmatized_edition and fail_if_existing_lemmatized_edition:
-                raise ValueError('A lemmatized edition is already present; PyEpiDoc is '
-                                 'currently set to stop if this is the case.')
 
             edition = lemmatized_edition
 
