@@ -705,7 +705,8 @@ class EpiDoc(DocRoot):
             where: Literal['main', 'separate'],
             resp_stmt: RespStmt | None = None,
             change: Change | None = None,
-            verbose = False
+            verbose = False,
+            fail_if_existing_lemmatized_edition: bool = True
         ) -> EpiDoc:
 
         """
@@ -720,8 +721,12 @@ class EpiDoc(DocRoot):
         either on a separate <div> or on the main <div>. 
         If a separate edition is not present, one is created 
         containing copies of the elements that need lemmatizing.
+
+        :param fail_if_existing_lemmatized_edition: Raise exception
+        if a lemmatized edition is already present.
         """
 
+        # Check there is a main edition
         main_edition = self.edition_by_subtype(None)
         if main_edition is None:
             raise ValueError('No main edition could be found.')
@@ -736,6 +741,10 @@ class EpiDoc(DocRoot):
                     source=main_edition, 
                     target=lemmatized_edition
                 )
+            # Check what should do if a lemmatized edition is already present
+            if lemmatized_edition and fail_if_existing_lemmatized_edition:
+                raise ValueError('A lemmatized edition is already present; PyEpiDoc is '
+                                 'currently set to stop if this is the case.')
 
             edition = lemmatized_edition
 
