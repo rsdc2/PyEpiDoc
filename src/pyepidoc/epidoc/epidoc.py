@@ -1397,6 +1397,8 @@ class EpiDoc(DocRoot):
         
         if len(self.w_tokens) == 0 or retokenize:
             self.main_edition.tokenize()
+        else:
+            print(f'Did not tokenize {self.id} because already contains <w> elements.')
 
         if add_space_between_words:
             self.space_tokens()
