@@ -41,6 +41,10 @@ class Change(EpiDocElement):
         })
         elem.append_node(text)
         return Change(elem)
+    
+    @staticmethod
+    def from_dict(dict: dict[str, str]) -> Change:
+        return Change.from_details(dict['when'], dict['who'], dict['text'])
 
     @property
     def when(self) -> str | None:
