@@ -2,6 +2,7 @@ from .edition_elements.abbr import Abbr
 from .edition_elements.am import Am
 from .edition_elements.choice import Choice
 from .edition_elements.del_elem import Del
+from .edition_elements.desc import Desc
 from .edition_elements.ex import Ex
 from .edition_elements.expan import Expan
 from .edition_elements.g import G
@@ -23,6 +24,7 @@ elem_classes: dict[str, type] = {
     'abbr': Abbr,
     'am': Am,
     'choice': Choice,
+    'desc': Desc,
     'ex': Ex, 
     'del': Del,
     'expan': Expan,
