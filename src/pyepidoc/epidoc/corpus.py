@@ -660,20 +660,20 @@ class EpiDocCorpus:
         return docs[0]
 
     def _handle_fp(self, _p: Path | str, max_iter: int | None = None, ids_to_exclude: list[str] | None = None) -> None:
-        path = Path(_p)
+        folder_path = Path(_p)
         
-        if not path.exists():
-            raise FileExistsError(f'Directory {path} does not exist.')
+        if not folder_path.exists():
+            raise FileExistsError(f'Directory {folder_path} does not exist.')
         
-        if not path.is_dir():
-            raise FileExistsError(f'Path {path} is not a directory.')
+        if not folder_path.is_dir():
+            raise FileExistsError(f'Path {folder_path} is not a directory.')
 
         iterations = 0
         docs: list[EpiDoc] = []
 
         if max_iter is None:
-            for fp in path.iterdir():
-                if ids_to_exclude and path.stem in ids_to_exclude:
+            for fp in folder_path.iterdir():
+                if ids_to_exclude and fp.stem in ids_to_exclude:
                     continue
                 if fp.suffix != '.xml':
                     continue
@@ -684,7 +684,6 @@ class EpiDocCorpus:
                     continue
             
         else:
-            
             for fp in Path(_p).iterdir():
                 if fp.suffix == '.xml':
                     docs += [EpiDoc(fp)]
@@ -694,8 +693,7 @@ class EpiDocCorpus:
                     break
             
             if iterations == 0:
-                print('WARNING: No .xml files found in '
-                      f'{_p}')
+                print(f'WARNING: No .xml files found in {_p}')
         self._docs = docs
 
     @property
