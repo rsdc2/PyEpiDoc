@@ -1367,7 +1367,8 @@ class EpiDoc(DocRoot):
             convert_ws_to_names: bool = False,
             verbose: bool = True,
             insert_ws_inside_named_entities: bool = False,
-            throw_if_no_main_edition: bool = True
+            throw_if_no_main_edition: bool = True,
+            retokenize: bool = True
         ) -> EpiDoc:
         
         """
@@ -1382,6 +1383,7 @@ class EpiDoc(DocRoot):
         :param verbose: If True, prints a message with the id of the file that is being tokenized.
         :param insert_ws_inside_names_and_nums: If True, inserts <w> tag inside <name> and <num> tags
         :param throw_if_no_main_edition: Throw an error if there is no main edition
+        :param retokenize: Redo the tokenization if there are already <w> tokens presentt
         """
 
         if verbose: 
@@ -1393,7 +1395,8 @@ class EpiDoc(DocRoot):
             else:
                 return self
         
-        self.main_edition.tokenize()
+        if len(self.w_tokens) == 0 or retokenize:
+            self.main_edition.tokenize()
 
         if add_space_between_words:
             self.space_tokens()

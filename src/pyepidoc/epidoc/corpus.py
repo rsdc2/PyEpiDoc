@@ -49,7 +49,8 @@ class EpiDocCorpus:
     def __init__(
         self,
         inpt: EpiDocCorpus,
-        max_iter: int | None = None
+        max_iter: int | None = None,
+        ids_to_exclude: list[str] | None = None
         ):
 
         """
@@ -64,7 +65,8 @@ class EpiDocCorpus:
     def __init__(
         self,
         inpt: list[EpiDoc],
-        max_iter: int | None = None
+        max_iter: int | None = None,
+        ids_to_exclude: list[str] | None = None
         ):
 
         """
@@ -79,7 +81,8 @@ class EpiDocCorpus:
     def __init__(
         self,
         inpt: str,
-        max_iter: int | None = None
+        max_iter: int | None = None,
+        ids_to_exclude: list[str] | None = None
     ):
         """
         :param inpt: path to the corpus as a str
@@ -93,7 +96,8 @@ class EpiDocCorpus:
     def __init__(
         self,
         inpt: Path,
-        max_iter: int | None = None
+        max_iter: int | None = None,
+        ids_to_exclude: list[str] | None = None
     ):
         """
         :param inpt: path to the corpus as a Path object
@@ -106,12 +110,13 @@ class EpiDocCorpus:
     def __init__(
         self, 
         inpt: EpiDocCorpus | list[EpiDoc] | str | Path,
-        max_iter: int | None = None
+        max_iter: int | None = None,
+        ids_to_exclude: list[str] | None = None
     ):
 
         # inpt is an EpiDocCorpus
         if isinstance(inpt, EpiDocCorpus):
-            self._docs = inpt.docs
+            self._docs = inpt.exclude_by_id(ids_to_exclude if ids_to_exclude else []).docs
             return
         
         # inpt is a list of EpiDoc
@@ -122,7 +127,8 @@ class EpiDocCorpus:
 
             if isinstance(inpt[0], EpiDoc):
                 inpt = cast(list[EpiDoc], inpt)
-                self._docs = [doc for doc in inpt]
+
+                self._docs = [doc for doc in inpt if doc.id not in (ids_to_exclude if ids_to_exclude else [])]
 
                 return
 
@@ -131,7 +137,7 @@ class EpiDocCorpus:
         
         # inpt is a path
         elif isinstance(inpt, (str, Path)):
-            self._handle_fp(Path(inpt), max_iter=max_iter)
+            self._handle_fp(Path(inpt), max_iter=max_iter, ids_to_exclude=ids_to_exclude)
             return
         
         raise TypeError("Invalid input type.")
@@ -653,22 +659,32 @@ class EpiDocCorpus:
         
         return docs[0]
 
-    def _handle_fp(self, _p: Path | str, max_iter: int | None = None) -> None:
-
-        if not Path(_p).exists():
-            raise FileExistsError(f'Directory {_p} does not exist.')
+    def _handle_fp(self, _p: Path | str, max_iter: int | None = None, ids_to_exclude: list[str] | None = None) -> None:
+        path = Path(_p)
         
-        if not Path(_p).is_dir():
-            raise FileExistsError(f'Path {_p} is not a directory.')
+        if not path.exists():
+            raise FileExistsError(f'Directory {path} does not exist.')
+        
+        if not path.is_dir():
+            raise FileExistsError(f'Path {path} is not a directory.')
 
         iterations = 0
+        docs: list[EpiDoc] = []
 
         if max_iter is None:
-            self._docs = (EpiDoc(fp) for fp in Path(_p).iterdir()
-                        if fp.suffix == '.xml')
-            return
+            for fp in path.iterdir():
+                if ids_to_exclude and path.stem in ids_to_exclude:
+                    continue
+                if fp.suffix != '.xml':
+                    continue
+                try:
+                    docs.append(EpiDoc(fp))
+                except TypeError as e:
+                    print(f'Could not include {fp}. This may be because of an XML syntax error.')
+                    continue
+            
         else:
-            docs: list[EpiDoc] = []
+            
             for fp in Path(_p).iterdir():
                 if fp.suffix == '.xml':
                     docs += [EpiDoc(fp)]
@@ -680,7 +696,7 @@ class EpiDocCorpus:
             if iterations == 0:
                 print('WARNING: No .xml files found in '
                       f'{_p}')
-            self._docs = docs
+        self._docs = docs
 
     @property
     def id_carriers(self) -> list[EpiDocElement]:
@@ -990,7 +1006,8 @@ class EpiDocCorpus:
         convert_ws_to_names: bool = True,
         insert_ws_inside_name_and_num: bool = True,
         verbose: bool = False,
-        overwrite_existing: bool = False
+        overwrite_existing: bool = False,
+        retokenize: bool = True
     ) -> None:
 
         """
@@ -1014,7 +1031,8 @@ class EpiDocCorpus:
                         set_n_ids=set_n_ids,
                         convert_ws_to_names=convert_ws_to_names, 
                         verbose=verbose,
-                        insert_ws_inside_named_entities=insert_ws_inside_name_and_num
+                        insert_ws_inside_named_entities=insert_ws_inside_name_and_num,
+                        retokenize=retokenize
                     )
                 else: 
                     print(f'Could not tokenize {doc.id}: no main edition found.')
