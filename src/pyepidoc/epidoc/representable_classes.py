@@ -29,7 +29,7 @@ representable_classes: dict[str, type] = {
     'am': Am,
     'choice': Choice,
     'corr': Corr,
-    # 'desc': Desc,
+    'desc': Desc,
     'ex': Ex, 
     'del': Del,
     'expan': Expan,

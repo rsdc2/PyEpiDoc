@@ -50,6 +50,8 @@ class Representable(EpiDocElement):
         """
         if self.representable_cls_inst is None:
             return self.text_desc
+        if type(self.representable_cls_inst) is type(self):
+            raise TypeError(f'Class {type(self)} must implement property `leiden_form`.')
         return self.representable_cls_inst.leiden_form
 
     @property
@@ -85,6 +87,9 @@ class Representable(EpiDocElement):
             
             return acc + [node]
 
+        if type(self.representable_cls_inst) is type(self):
+            raise TypeError(f'Class {type(self)} must implement property `leiden_plus_form`.')
+        
         preceding = reversed([e for e in self.preceding_nodes_in_ab])
         following = [e for e in self.following_nodes_in_ab]
 
@@ -130,6 +135,8 @@ class Representable(EpiDocElement):
         
         if self.representable_cls_inst is None:
             return self.text_desc
+        if type(self.representable_cls_inst) is type(self):
+            raise TypeError(f'Class {type(self)} must implement property `normalized_form`.')
         return self.representable_cls_inst.normalized_form
     
     @cached_property
