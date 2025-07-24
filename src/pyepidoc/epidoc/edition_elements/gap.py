@@ -4,6 +4,7 @@ from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from pyepidoc.epidoc.representable import Representable
 from pyepidoc.shared.constants import XMLNS
 
+
 class Gap(Representable):
     """
     Provides services for abbreviation expansions 

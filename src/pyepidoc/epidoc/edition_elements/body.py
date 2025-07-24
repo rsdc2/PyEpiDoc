@@ -85,8 +85,11 @@ class Body(EpiDocElement):
                     target_elem._e.append(child_copy._e)
                     
                     for desc in ab.descendant_elements:
-                        if desc.localname in StandoffEditionElements:
-                            representable = Token(desc).representable
+                        representable = Token(desc).representable_cls_inst
+                        if desc.localname in StandoffEditionElements and representable is None:
+                            breakpoint()
+                            raise ValueError(f'{desc} should have a representable instance.')
+                        if desc.localname in StandoffEditionElements and representable is not None:
                             desc_copy_token = representable.simple_lemmatized_edition_element    
                             desc_copy_token.remove_attr('id', XMLNS)
                             ab_copy._e.append(desc_copy_token.e)   

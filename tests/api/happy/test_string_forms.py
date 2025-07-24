@@ -5,6 +5,7 @@ or sequences of tokens, are as expected.
 
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import elem_from_str, abify
+from pyepidoc.epidoc.representable import Representable
 
 import pytest
 
@@ -49,17 +50,23 @@ leiden_plus_tests = [
 ]
 
 
-@pytest.mark.parametrize(['xml', 'normalized_tokens', 'leiden_tokens'], leiden_and_normalized_tests)
+@pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'leiden_tokens'], leiden_and_normalized_tests)
 def test_normalized_string_forms(
     xml: str, 
-    normalized_tokens: list[str],
+    expected_normalized_tokens: list[str],
     leiden_tokens: list[str]):
     """
     Tests token strings correct
     """
 
+    # Arrange
     ab = Ab(elem_from_str(abify(xml)))
-    assert ab.tokens_list_normalized_str == normalized_tokens
+
+    # Act
+    normalized_tokens = ab.tokens_list_normalized_str
+
+    # Assert
+    assert normalized_tokens == expected_normalized_tokens
 
 
 @pytest.mark.parametrize(['xml', 'normalized_tokens', 'leiden_tokens'], leiden_and_normalized_tests)
@@ -92,3 +99,47 @@ def test_leiden_plus_forms(
         breakpoint()
 
     assert [token.leiden_plus_form for token in ab.tokens] == leiden_plus_forms
+
+
+non_token_tests = [
+    ('<gap reason="lost" unit="line" quantity="1"><desc>[-?-]</desc></gap>', 
+     ['[-?-]'], [' [-?-] ']),
+    ('<gap reason="lost" unit="line" quantity="1">[-?-]</gap>', 
+     ['[-?-]'], [' [-?-] '])
+]
+@pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'leiden_tokens'], non_token_tests)
+def test_non_tokens_normalized_string_forms(
+    xml: str, 
+    expected_normalized_tokens: list[str],
+    leiden_tokens: list[str]):
+    """
+    Tests token strings correct
+    """
+
+    # Arrange
+    ab = Ab(elem_from_str(abify(xml)))
+
+    # Act
+    normalized_tokens = [Representable(child).normalized_form for child in ab.children]
+
+    # Assert
+    assert normalized_tokens == expected_normalized_tokens
+
+
+@pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'expected_leiden_tokens'], non_token_tests)
+def test_non_tokens_leiden_string_forms(
+    xml: str, 
+    expected_normalized_tokens: list[str],
+    expected_leiden_tokens: list[str]):
+    """
+    Tests token strings correct
+    """
+
+    # Arrange
+    ab = Ab(elem_from_str(abify(xml)))
+
+    # Act
+    leiden_tokens = [Representable(child).leiden_form for child in ab.children]
+
+    # Assert
+    assert leiden_tokens == expected_leiden_tokens

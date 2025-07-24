@@ -45,7 +45,7 @@ class Orig(Representable):
         return self.text_desc.upper()
     
     @cached_property
-    def simple_lemmatized_edition_form(self) -> str | None:
+    def simple_lemmatized_edition_form(self) -> str:
         if not self.has_parent('choice'):       
             return self.normalized_form
-        return None
+        return ''
