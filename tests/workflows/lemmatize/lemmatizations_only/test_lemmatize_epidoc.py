@@ -52,6 +52,7 @@ def test_lemmatize_on_main_edition():
 
 filenames_with_tag_counts = [
     ('single_token.xml', {'w': 1, 'orig': 0, 'gap': 0}),
+    # ('descendant.xml', {'desc': 1}),
     ('ISic000001.xml', {'w': 6, 'orig': 0, 'gap': 0}),
     ('gap_and_orig.xml', {'w': 2, 'orig': 1, 'gap': 1}),
     ('textpart_fragment_physical.xml', {'w': 0, 'gap': 4, 'orig': 2}),
@@ -85,11 +86,13 @@ def test_lemmatize_on_separate_edition(
         assert lemmatized_ed.w_tokens[0].lemma == 'lemma'
 
     assert len(lemmatized_ed.descendant_elements_by_local_name('w')) \
-        == tag_counts['w']
+        == tag_counts.get('w', 0)
     assert len(lemmatized_ed.descendant_elements_by_local_name('orig')) \
-        ==  tag_counts['orig']
+        ==  tag_counts.get('orig', 0)
     assert len(lemmatized_ed.descendant_elements_by_local_name('gap')) \
-        == tag_counts['gap']
+        == tag_counts.get('gap', 0)
+    # assert len(lemmatized_ed.descendant_elements_by_local_name('desc')) \
+    #     == tag_counts.get('desc', 0)
     
     # Check that only those elements have been copied across
     assert lemmatized_ed.descendant_element_name_set - \
