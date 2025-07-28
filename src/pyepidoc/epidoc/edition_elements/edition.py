@@ -740,7 +740,7 @@ class Edition(EpiDocElement):
         """
 
         return [Token(word) 
-                for word in self._get_desc_tokens(include_nested=False)]        
+                for word in self._get_desc_tokens(include_nested=True)]        
 
     @property
     def token_g_dividers(self) -> list[EpiDocElement]:
