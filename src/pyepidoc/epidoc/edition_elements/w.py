@@ -3,6 +3,8 @@ from __future__ import annotations
 from lxml.etree import _Element
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.epidoc.representable import Representable
+from pyepidoc.shared.iterables import maxone
+from pyepidoc.shared.constants import XMLNS
 
 class W(Representable):
     """
@@ -46,7 +48,7 @@ class W(Representable):
             'g': G,
             'lb': Lb
         }
-        # breakpoint()
+        
         return leiden_str_from_children(
             self.e, 
             element_classes, 
@@ -75,6 +77,22 @@ class W(Representable):
             raise TypeError(f'Cannot set attribute on {self} because lemma value is not a string.')
         
         self.lemma = value
+
+    def move_xml_id_to_inner_w(self):
+        """
+        Move `@xml:id` attribute to inner `<w>` element 
+        """
+        xml_id = self.xml_id
+        if self.xml_id is None:
+            return
+        
+        inner_w = maxone(self.descendant_elements_by_local_name('w'), None, True)
+        
+        if inner_w is None:
+            return
+        
+        inner_w.set_attrib('id', xml_id, XMLNS)
+        self.remove_attr('id', XMLNS, True)
 
     @property
     def normalized_form(self) -> str:

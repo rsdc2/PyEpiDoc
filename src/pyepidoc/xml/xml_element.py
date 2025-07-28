@@ -240,7 +240,8 @@ class XmlElement(Showable):
     def descendant_elements_by_local_name(self, localname: str) -> list[XmlElement]:
         """
         Return a list of all the descendant elements
-        with the localname matching `localname`
+        with the localname matching `localname`.
+        Does not incude the element itself.
         """
         return [elem for elem in self.descendant_elements
                 if elem.tag.name == localname]
