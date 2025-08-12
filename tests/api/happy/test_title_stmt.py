@@ -1,7 +1,6 @@
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.metadata.title_stmt import TitleStmt
-from .test_epidoc_happy import relative_filepaths
 from tests.config import EMPTY_TEMPLATE_PATH
+
 
 def test_append_resp_stmt():
 
