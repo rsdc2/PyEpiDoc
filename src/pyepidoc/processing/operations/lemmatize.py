@@ -58,10 +58,10 @@ def apply_lemmatization(
         w.lemma = lemmatize(w.normalized_form or '')
     
     if resp_stmt:
-        epidoc._append_resp_stmt(resp_stmt)
+        epidoc.append_resp_stmt(resp_stmt)
 
     if change:
-        epidoc._append_change(change)
+        epidoc.append_change(change)
 
     epidoc.prettify(prettifier='pyepidoc', verbose=verbose)
     
@@ -107,7 +107,7 @@ def update_lemmatized_edition(
 
     epidoc.prettify()
     if change and old_lemmatized_edition_ids != new_lemmatized_edition.local_ids:
-        epidoc._append_change(change)
+        epidoc.append_change(change)
     return epidoc
             
     

@@ -16,7 +16,7 @@ class TitleStmt(EpiDocElement):
         """
         if resp_stmt.resp is None:
             raise TypeError('resp value cannot be None')
-        if not self.has_resp(resp_stmt.resp):
+        if not self.has_resp_initials(resp_stmt.initials):
             self.e.append(resp_stmt.e)
         return self
 
@@ -50,11 +50,12 @@ class TitleStmt(EpiDocElement):
         resp_stmt_elems = self.descendant_elements_by_local_name("respStmt")
         return list(map(RespStmt.from_element, resp_stmt_elems))
     
-    def has_resp(self, resp: str) -> bool:
+    def has_resp_initials(self, resp_initials: str) -> bool:
         for resp_stmt in self.resp_stmts:
-            if resp_stmt.resp == resp:
+            if resp_stmt.initials == resp_initials:
                 return True
             
         return False
+
 
     

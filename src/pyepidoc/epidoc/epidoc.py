@@ -121,7 +121,7 @@ class EpiDoc(DocRoot):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
     
-    def _append_change(self, change: Change) -> EpiDoc:
+    def append_change(self, change: Change) -> EpiDoc:
         self.ensure_tei_header().ensure_revision_desc().append_change(change)
         return self
     
@@ -133,19 +133,20 @@ class EpiDoc(DocRoot):
         self.e.insert(0, tei_header_elem.e)
         return self
 
-    def _append_resp_stmt(self, resp_stmt: RespStmt | None) -> EpiDoc:
+    def append_resp_stmt(self, resp_stmt: RespStmt) -> EpiDoc:
         """
-        Add a <respStmt> element to the `<titleStmt>`. Creates the necessary element  
+        Add a `<respStmt>` element to the `<titleStmt>`. Creates the necessary element  
         hierarchy if not present.
         """
-        if resp_stmt is not None: 
-            if self.title_stmt is None:
-                if self.file_desc is None:
-                    if self.tei_header is None:
-                        self._append_new_tei_header()
-                    self.tei_header.append_new_file_desc() #type: ignore
-                self.file_desc.append_title_stmt(EpiDocElement.create_new('titleStmt')) #type: ignore
-            self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
+
+        if self.title_stmt is None:
+            if self.file_desc is None:
+                if self.tei_header is None:
+                    self._append_new_tei_header()
+                self.tei_header.append_new_file_desc() #type: ignore
+            self.file_desc.append_title_stmt(EpiDocElement.create_new('titleStmt')) #type: ignore
+
+        self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
 
         return self
     
@@ -385,7 +386,7 @@ class EpiDoc(DocRoot):
         # Create edition if it does not already exist
         self.body.append_new_edition('simple-lemmatized', resp=resp)
         if change is not None: 
-            self._append_change(change)
+            self.append_change(change)
         edition = self.body.edition_by_subtype('simple-lemmatized')
 
         # Raise an error if could not be created
@@ -758,10 +759,10 @@ class EpiDoc(DocRoot):
             w.lemma = lemmatize(w.normalized_form or '')
         
         if resp_stmt:
-            self._append_resp_stmt(resp_stmt)
+            self.append_resp_stmt(resp_stmt)
 
         if change:
-            self._append_change(change)
+            self.append_change(change)
 
         self.prettify(prettifier='pyepidoc', verbose=verbose)
         

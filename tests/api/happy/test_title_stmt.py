@@ -31,3 +31,19 @@ def test_does_not_append_resp_stmt_if_already_exists():
 
     # Assert
     assert new_resp_stmt_count == resp_stmt_count
+
+
+def test_does_not_append_resp_stmt_if_resp_with_initials_already_exists():
+
+    # Arrange
+    epidoc = EpiDoc(EMPTY_TEMPLATE_PATH)
+    title_stmt = epidoc.title_stmt
+    title_stmt.append_new_resp_stmt("Robert Crellin", "RC", "xyz", "abc")
+    resp_stmt_count = len(title_stmt.resp_stmts)
+
+    # Act
+    title_stmt.append_new_resp_stmt("Robert Crellin", "RC", "zyx", "gwer")
+    new_resp_stmt_count = len(title_stmt.resp_stmts)
+
+    # Assert
+    assert new_resp_stmt_count == resp_stmt_count
