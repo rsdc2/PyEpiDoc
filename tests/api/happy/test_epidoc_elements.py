@@ -113,10 +113,12 @@ def test_expans_1():
 
 
 def test_expans_2():
+    # Arrange
     xml = f'<expan xmlns="{TEINS}">Kal<abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
     elem = etree.fromstring(xml, None)
     expan = Expan(elem)
-    # breakpoint()
+    
+    # Assert
     assert expan._desc_textnode_is_desc_of('1', 'expan')
 
 

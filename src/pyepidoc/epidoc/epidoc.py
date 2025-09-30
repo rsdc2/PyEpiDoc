@@ -121,40 +121,9 @@ class EpiDoc(DocRoot):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
     
-    def _append_change(self, change: Change) -> EpiDoc:
+    def append_change(self, change: Change) -> EpiDoc:
         self.ensure_tei_header().ensure_revision_desc().append_change(change)
         return self
-
-    def _append_new_lemmatized_edition(
-            self, 
-            resp: RespStmt | None = None,
-            change: Change | None = None
-            ) -> Edition:
-
-        """
-        Add a new edition to the document, ready to contain
-        lemmatized elements, but no words are copied
-        or lemmatized.
-        Raises an error if the edition already exists, or
-        if the edition could not be created.
-        """
-
-        # Check no lemmatized editions already
-        lemmatized_edition = self.body.edition_by_subtype('simple-lemmatized')
-        if lemmatized_edition is not None:
-            raise ValueError('Lemmatized edition already present.')
-
-        # Create edition if it does not already exist
-        self.body.append_new_edition('simple-lemmatized', resp=resp)
-        if change is not None: 
-            self._append_change(change)
-        edition = self.body.edition_by_subtype('simple-lemmatized')
-
-        # Raise an error if could not be created
-        if edition is None:
-            raise TypeError('Failed to create a simple lemmatized edition.')
-        
-        return edition
     
     def _append_new_tei_header(self) -> EpiDoc:
         """
@@ -164,19 +133,20 @@ class EpiDoc(DocRoot):
         self.e.insert(0, tei_header_elem.e)
         return self
 
-    def _append_resp_stmt(self, resp_stmt: RespStmt | None) -> EpiDoc:
+    def append_resp_stmt(self, resp_stmt: RespStmt) -> EpiDoc:
         """
-        Add a <respStmt> element to the `<titleStmt>`. Creates the necessary element  
+        Add a `<respStmt>` element to the `<titleStmt>`. Creates the necessary element  
         hierarchy if not present.
         """
-        if resp_stmt is not None: 
-            if self.title_stmt is None:
-                if self.file_desc is None:
-                    if self.tei_header is None:
-                        self._append_new_tei_header()
-                    self.tei_header.append_new_file_desc() #type: ignore
-                self.file_desc.append_title_stmt(EpiDocElement.create_new('titleStmt')) #type: ignore
-            self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
+
+        if self.title_stmt is None:
+            if self.file_desc is None:
+                if self.tei_header is None:
+                    self._append_new_tei_header()
+                self.tei_header.append_new_file_desc() #type: ignore
+            self.file_desc.append_title_stmt(EpiDocElement.create_new('titleStmt')) #type: ignore
+
+        self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
 
         return self
     
@@ -394,6 +364,37 @@ class EpiDoc(DocRoot):
 
         return self.body.editions(include_transliterations)
 
+    def ensure_lemmatized_edition(
+            self, 
+            resp: RespStmt | None = None,
+            change: Change | None = None
+            ) -> Edition:
+
+        """
+        Ensures a `simple-lemmatized` edition exists, ready to contain
+        lemmatized elements, but no words are copied
+        or lemmatized.
+        Returns either the existing `simple-lemmatized` edition, or
+        an empty one if one already exists.
+        """
+
+        # Check no lemmatized editions already
+        lemmatized_edition = self.body.edition_by_subtype('simple-lemmatized')
+        if lemmatized_edition is not None:
+            return lemmatized_edition
+
+        # Create edition if it does not already exist
+        self.body.append_new_edition('simple-lemmatized', resp=resp)
+        if change is not None: 
+            self.append_change(change)
+        edition = self.body.edition_by_subtype('simple-lemmatized')
+
+        # Raise an error if could not be created
+        if edition is None:
+            raise TypeError('Failed to create a simple lemmatized edition.')
+        
+        return edition
+
     def ensure_tei_header(self) -> TeiHeader:
         if self.tei_header is None:
             self._append_new_tei_header()
@@ -478,7 +479,7 @@ class EpiDoc(DocRoot):
         
         raise ValueError(f'Invalid lang_attr {lang_attr}')
 
-    def _get_textclasses(
+    def get_textclasses(
             self, 
             throw_if_more_than_one: bool) -> list[str]:
         """
@@ -648,7 +649,7 @@ class EpiDoc(DocRoot):
     def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 or len(self.langs) > 1
 
-    def _get_daterange_attrib(self, attrib_name:str) -> Optional[int]:
+    def _get_daterange_attrib(self, attrib_name: str) -> Optional[int]:
         if self.orig_date is None:
             return None
 
@@ -705,7 +706,8 @@ class EpiDoc(DocRoot):
             where: Literal['main', 'separate'],
             resp_stmt: RespStmt | None = None,
             change: Change | None = None,
-            verbose = False
+            verbose = False,
+            fail_if_existing_lemmatized_edition: bool = True
         ) -> EpiDoc:
 
         """
@@ -720,8 +722,12 @@ class EpiDoc(DocRoot):
         either on a separate <div> or on the main <div>. 
         If a separate edition is not present, one is created 
         containing copies of the elements that need lemmatizing.
+
+        :param fail_if_existing_lemmatized_edition: Raise exception
+        if a lemmatized edition is already present.
         """
 
+        # Check there is a main edition
         main_edition = self.edition_by_subtype(None)
         if main_edition is None:
             raise ValueError('No main edition could be found.')
@@ -730,9 +736,13 @@ class EpiDoc(DocRoot):
             # Create a separate lemmatized edition if not already present
             lemmatized_edition = self.edition_by_subtype('simple-lemmatized') 
 
-            if lemmatized_edition is None:
-                lemmatized_edition = self._append_new_lemmatized_edition(resp=resp_stmt)
-                self.body.copy_edition_items_to_appear_in_lemmatized_edition(
+            # Check what should do if a lemmatized edition is already present
+            if lemmatized_edition and fail_if_existing_lemmatized_edition:
+                raise ValueError('A lemmatized edition is already present; PyEpiDoc is '
+                                 'currently set to stop if this is the case.')
+            elif lemmatized_edition is None:
+                lemmatized_edition = self.ensure_lemmatized_edition(resp=resp_stmt)
+                self.body.copy_lemmatizable_to_lemmatized_edition(
                     source=main_edition, 
                     target=lemmatized_edition
                 )
@@ -749,10 +759,10 @@ class EpiDoc(DocRoot):
             w.lemma = lemmatize(w.normalized_form or '')
         
         if resp_stmt:
-            self._append_resp_stmt(resp_stmt)
+            self.append_resp_stmt(resp_stmt)
 
         if change:
-            self._append_change(change)
+            self.append_change(change)
 
         self.prettify(prettifier='pyepidoc', verbose=verbose)
         
@@ -1241,7 +1251,7 @@ class EpiDoc(DocRoot):
         the `throw_if_more_than_one` parameter set to False. 
         """
 
-        return self._get_textclasses(True)
+        return self.get_textclasses(True)
 
     @property
     def textlang(self) -> Optional[EpiDocElement]:
@@ -1358,7 +1368,8 @@ class EpiDoc(DocRoot):
             convert_ws_to_names: bool = False,
             verbose: bool = True,
             insert_ws_inside_named_entities: bool = False,
-            throw_if_no_main_edition: bool = True
+            throw_if_no_main_edition: bool = True,
+            retokenize: bool = True
         ) -> EpiDoc:
         
         """
@@ -1373,6 +1384,7 @@ class EpiDoc(DocRoot):
         :param verbose: If True, prints a message with the id of the file that is being tokenized.
         :param insert_ws_inside_names_and_nums: If True, inserts <w> tag inside <name> and <num> tags
         :param throw_if_no_main_edition: Throw an error if there is no main edition
+        :param retokenize: Redo the tokenization if there are already <w> tokens presentt
         """
 
         if verbose: 
@@ -1384,7 +1396,10 @@ class EpiDoc(DocRoot):
             else:
                 return self
         
-        self.main_edition.tokenize()
+        if len(self.w_tokens) == 0 or retokenize:
+            self.main_edition.tokenize()
+        else:
+            print(f'Did not tokenize {self.id} because already contains <w> elements.')
 
         if add_space_between_words:
             self.space_tokens()

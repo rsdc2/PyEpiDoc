@@ -8,8 +8,9 @@ from pyepidoc.shared.testing import (
     save_and_reload, 
     save_reload_and_compare_with_benchmark
 )
+from pyepidoc.processing.processor import Processor
 
-from pyepidoc.shared.constants import SEPARATE_LEMMATIZED_ITEMS
+from pyepidoc.epidoc.enums import StandoffEditionElements
 from tests.config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/lemmatizations_only/files/unlemmatized/'
@@ -28,28 +29,33 @@ def test_lemmatize_on_main_edition():
     <div type="edition"/> element.
     """
 
+    # Arrange
     filename = 'lemmatized_main_edition_with_dummy.xml'
 
     doc = EpiDoc(unlemmatized_path + 'single_token.xml')
-    doc.lemmatize(dummy_lemmatizer, 'main')
+    proc = Processor(doc)
 
-    # Check correct
+    # Act
+    lemmatized = proc.lemmatize(dummy_lemmatizer, 'main').epidoc
+
     doc_ = save_and_reload(
-        doc, 
+        lemmatized, 
         path=lemmatized_path + filename, 
         mode=FILE_WRITE_MODE
     )
     edition_ = doc_.body.edition_by_subtype(None)
 
+    # Assert
     assert edition_ is not None
     assert edition_.w_tokens[0].lemma == 'lemma'
 
 
 filenames_with_tag_counts = [
     ('single_token.xml', {'w': 1, 'orig': 0, 'gap': 0}),
-    ('ISic000001.xml', {'w': 6, 'orig': 0, 'gap': 0}),
-    ('gap_and_orig.xml', {'w': 2, 'orig': 1, 'gap': 1}),
-    ('textpart_fragment_physical.xml', {'w': 0, 'gap': 4, 'orig': 2}),
+    ('descendant.xml', {'desc': 1}),
+    ('ISic000001.xml', {'w': 6, 'orig': 0, 'gap': 0, 'desc': 0}),
+    ('gap_and_orig.xml', {'w': 2, 'orig': 1, 'gap': 1, 'desc': 1}),
+    ('textpart_fragment_physical.xml', {'w': 0, 'gap': 4, 'orig': 2, 'desc': 4}),
     ('persName.xml', {'w': 2, 'gap': 0, 'orig': 0})
 ] 
 @pytest.mark.parametrize(
@@ -80,15 +86,17 @@ def test_lemmatize_on_separate_edition(
         assert lemmatized_ed.w_tokens[0].lemma == 'lemma'
 
     assert len(lemmatized_ed.descendant_elements_by_local_name('w')) \
-        == tag_counts['w']
+        == tag_counts.get('w', 0)
     assert len(lemmatized_ed.descendant_elements_by_local_name('orig')) \
-        ==  tag_counts['orig']
+        ==  tag_counts.get('orig', 0)
     assert len(lemmatized_ed.descendant_elements_by_local_name('gap')) \
-        == tag_counts['gap']
+        == tag_counts.get('gap', 0)
+    assert len(lemmatized_ed.descendant_elements_by_local_name('desc')) \
+        == tag_counts.get('desc', 0)
     
     # Check that only those elements have been copied across
     assert lemmatized_ed.descendant_element_name_set - \
-        set(SEPARATE_LEMMATIZED_ITEMS) == set()
+        set(StandoffEditionElements) == set()
 
 
 @pytest.mark.parametrize(
@@ -105,6 +113,7 @@ def test_lemmatize_on_separate_edition_compare_file(
     correct elements are copied across (i.e. only
     <w>, <orig> and <gap>).
     """
+
     # Arrange
     filename, _ = filename_with_tag_counts
     doc = EpiDoc(unlemmatized_path + filename)
@@ -121,3 +130,36 @@ def test_lemmatize_on_separate_edition_compare_file(
     )
 
 
+def test_lemmatize_on_separate_edition_where_separate_lemmatized_edition_already_exists_throws_error():
+
+    """
+    Test that calling the `lemmatize` method 
+    on an EpiDoc document throws an error when a lemmatized edition 
+    already exists.
+    """
+    # Arrange
+    doc = EpiDoc(unlemmatized_path + 'ISic000001.xml')
+
+    # Act
+    doc.lemmatize(dummy_lemmatizer, 'separate')
+
+    # Assert    
+    with pytest.raises(ValueError):
+        doc.lemmatize(dummy_lemmatizer, 'separate', fail_if_existing_lemmatized_edition=True)
+
+
+def test_lemmatize_on_separate_edition_where_separate_lemmatized_edition_already_does_not_throw_error():
+
+    """
+    Test that calling the `lemmatize` method 
+    on an EpiDoc document does not throw an error when a lemmatized edition 
+    already exists if option set not to fail.
+    """
+    # Arrange
+    doc = EpiDoc(unlemmatized_path + 'ISic000001.xml')
+
+    # Act
+    doc.lemmatize(dummy_lemmatizer, 'separate')
+
+    # No error expected
+    doc.lemmatize(dummy_lemmatizer, 'separate', fail_if_existing_lemmatized_edition=False)

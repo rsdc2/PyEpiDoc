@@ -13,18 +13,13 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from ..xml import Namespace as ns
-from ..xml.utils import localname
-from ..shared import maxone, remove_none, head
-from ..shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
-from ..xml.xml_element import XmlElement
+from pyepidoc.xml import Namespace as ns
+from pyepidoc.xml.utils import localname
+from pyepidoc.shared import maxone, remove_none, head
+from pyepidoc.shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
+from pyepidoc.xml.xml_element import XmlElement
 
 from .epidoc_element import EpiDocElement
-from .utils import (
-    leiden_str_from_children, 
-    normalized_str_from_children,
-    descendant_atomic_tokens
-)
 
 from .enums import RegTextType
 
@@ -35,8 +30,8 @@ class Representable(EpiDocElement):
 
     @property
     def elem_classes(self) -> dict[str, type[Representable]]:
-        from .representable_classes import elem_classes
-        return elem_classes
+        from .representable_classes import representable_classes
+        return representable_classes
 
     @property
     def form_normalized(self) -> str:
@@ -53,10 +48,11 @@ class Representable(EpiDocElement):
         Returns the form per Leiden conventions, i.e. with
         abbreviations expanded with brackets
         """
-        cls = self.elem_classes[self.localname]
-        inst = cls(self._e)
-        # breakpoint()
-        return inst.leiden_form
+        if self.representable_cls_inst is None:
+            return self.text_desc
+        if type(self.representable_cls_inst) is type(self):
+            raise TypeError(f'Class {type(self)} must implement property `leiden_form`.')
+        return self.representable_cls_inst.leiden_form
 
     @property
     def leiden_plus_form(self) -> str:
@@ -91,6 +87,9 @@ class Representable(EpiDocElement):
             
             return acc + [node]
 
+        if type(self.representable_cls_inst) is type(self):
+            raise TypeError(f'Class {type(self)} must implement property `leiden_plus_form`.')
+        
         preceding = reversed([e for e in self.preceding_nodes_in_ab])
         following = [e for e in self.following_nodes_in_ab]
 
@@ -134,9 +133,11 @@ class Representable(EpiDocElement):
         Compare @form and @orig_form
         """
         
-        cls = self.elem_classes[self.localname]
-        inst = cls(self._e)
-        return inst.normalized_form
+        if self.representable_cls_inst is None:
+            return self.text_desc
+        if type(self.representable_cls_inst) is type(self):
+            raise TypeError(f'Class {type(self)} must implement property `normalized_form`.')
+        return self.representable_cls_inst.normalized_form
     
     @cached_property
     def orig_form(self) -> str:
@@ -155,9 +156,16 @@ class Representable(EpiDocElement):
         return self._clean_text(''.join([str(t) for t in normalized_text]))
     
     @property
-    def representable(self) -> Representable:
-        clstype = self.elem_classes[self.localname]
-        inst = clstype(self._e)
+    def representable_cls_inst(self) -> Representable | None:
+        """
+        An instance of a class inheriting from Representable giving 
+        behaviours specific to the element in question, e.g. W, G, Expan etc.
+        """
+
+        cls = self.elem_classes.get(self.localname)
+        if cls is None:
+            return None
+        inst = cls(self._e)
         return inst
 
     @property

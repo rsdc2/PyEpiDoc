@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Optional, Sequence, Literal
+from typing import Optional, Sequence, Literal, Callable
 import re
 
 from lxml import etree
@@ -19,6 +19,7 @@ from pyepidoc.shared import default_str
 from pyepidoc.shared.types import Base
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.iterables import maxone, seek, default_str
+from pyepidoc.epidoc.metadata.change import Change
 
 from pyepidoc.xml.namespace import Namespace as ns
 
@@ -45,8 +46,8 @@ from pyepidoc.epidoc.enums import (
     SubatomicTagType, 
     CompoundTokenType, 
     ContainerType,
-    N_IDableElements,
-    XML_IDableElements,
+    ElementsWithLocalIds,
+    ElementsWithXmlIds,
     RepresentableElements
 )
 
@@ -324,6 +325,10 @@ class Edition(EpiDocElement):
     @property
     def expans(self) -> list[Expan]:
         return [Expan(e.e) for e in self.expan_elems]
+    
+    # def filter_elements(self, predicate: Callable[[EpiDocElement], bool]) -> list[EpiDocElement]:
+    #     self.des
+
 
     @property
     def formatted_text(self) -> str:
@@ -431,7 +436,7 @@ class Edition(EpiDocElement):
         if type == 'leiden':
 
             leiden = ' '.join([repr.leiden_form 
-                               for repr in self.representable_no_nested])
+                               for repr in self.representable_no_subatomic])
             
             leiden = re.sub(r'\|\s+?\|', '|', leiden)
             leiden = re.sub(r'·\s+?·', '·', leiden)
@@ -442,7 +447,7 @@ class Edition(EpiDocElement):
         
         elif type == 'normalized':
             normalized = ' '.join([repr.normalized_form 
-                               for repr in self.representable_no_nested])
+                               for repr in self.representable_no_subatomic])
             return re.sub(r'\s{2,}', ' ', normalized).strip()
         
         elif type == 'xml':
@@ -456,7 +461,7 @@ class Edition(EpiDocElement):
         receive an `@n` id.
         """
 
-        elems = self.get_desc_tei_elems(N_IDableElements.values())
+        elems = self.get_desc_tei_elems(ElementsWithLocalIds.values())
         return list(map(EpiDocElement, elems))
     
     @property
@@ -467,7 +472,7 @@ class Edition(EpiDocElement):
         receive an `@xml:id` id.
         """
 
-        elems = self.get_desc_tei_elems(XML_IDableElements.values())
+        elems = self.get_desc_tei_elems(ElementsWithXmlIds.values())
         return list(map(EpiDocElement, elems))
 
     @staticmethod
@@ -588,7 +593,7 @@ class Edition(EpiDocElement):
         return self
     
     @property
-    def representable_no_nested(self) -> list[Representable]:
+    def representable_no_subatomic(self) -> list[Representable]:
         """
         :return: the descendant elements carrying text that should be represented
         in a text edition (either Leiden or normalized)
@@ -640,14 +645,14 @@ class Edition(EpiDocElement):
         """
         elements = self.local_idable_elements
 
-        for i, element in enumerate(elements):
+        for i, element in enumerate(elements, 1):
             if element.local_id is None:
-                previous_id_str = elements[i-1].local_id if i > 0 else "0"
+                previous_id_str = elements[i-2].local_id if i > 1 else "0"
                 if previous_id_str is None:
                     raise Exception
                 previous_id = int(previous_id_str)
 
-                match seek(lambda e: e.has_local_id, elements[i:]):
+                match seek(lambda e: e.has_local_id, elements[i-1:]):
                     case None:
                         element.local_id = str(i * interval)
                     case position_of_next_element_with_id, element_:
@@ -660,8 +665,10 @@ class Edition(EpiDocElement):
                                 this_id = int(this_id_float)
                                 if this_id == next_id or this_id == previous_id:
                                     raise ValueError("Could not generate unique ID")
+                                
                                 element.local_id = str(int(this_id))
 
+        assert len(list(set(self.local_ids))) == len(self.local_ids)
         return self
 
     def set_local_ids(self, interval: int=5) -> Edition:
@@ -698,7 +705,7 @@ class Edition(EpiDocElement):
         return [TextPart(part) 
                 for part in self.get_div_descendants('textpart')]
 
-    def token_by_id(self, id: str) -> Token | None:
+    def token_by_local_id(self, local_id: str) -> Token | None:
 
         """
         Return the token with the specified ID. Returns None
@@ -707,7 +714,20 @@ class Edition(EpiDocElement):
         """
 
         result = [token for token in self.tokens_incl_nested
-                  if token.xml_id == id]
+                  if token.local_id == local_id]
+        
+        return maxone(result, None, True)
+
+    def token_by_xml_id(self, xml_id: str) -> Token | None:
+
+        """
+        Return the token with the specified ID. Returns None
+        if not found. Raises an error if more than one token 
+        is found with the same ID.
+        """
+
+        result = [token for token in self.tokens_incl_nested
+                  if token.xml_id == xml_id]
         
         return maxone(result, None, True)
 
@@ -720,7 +740,7 @@ class Edition(EpiDocElement):
         """
 
         return [Token(word) 
-                for word in self._get_desc_tokens(include_nested=False)]        
+                for word in self._get_desc_tokens(include_nested=True)]        
 
     @property
     def token_g_dividers(self) -> list[EpiDocElement]:
@@ -782,3 +802,7 @@ class Edition(EpiDocElement):
     def w_tokens(self) -> list[Token]:
         return [Token(word) for word in self.get_desc(['w'])]
     
+    @property
+    def xml_ids(self) -> list[str | None]:
+        return list(map(lambda e: default_str(e.xml_id), self.xml_idable_elements))
+

@@ -1,6 +1,5 @@
 
 from __future__ import annotations
-from copy import deepcopy
 from typing import Literal
 
 from lxml import etree
@@ -10,18 +9,18 @@ from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
-from pyepidoc.epidoc.edition_elements.w import W
-from pyepidoc.epidoc.edition_elements.orig import Orig
 from pyepidoc.epidoc.token import Token
 
 from pyepidoc.xml.namespace import Namespace as ns
 
-from pyepidoc.shared.constants import ( 
-                         TEINS, 
-                         XMLNS,
-                         SEPARATE_LEMMATIZED_ITEMS, 
-                         SEPARATE_LEMMATIZED_CONTAINER_ITEMS,
-                         SEPARATE_LEMMATIZED_TEXT_ITEMS)
+from pyepidoc.shared.constants import TEINS, XMLNS
+from pyepidoc.epidoc.enums import (
+    StandoffEditionElements, 
+    ContainerStandoffEditionType,
+    RepresentableStandoffEditionType
+)
+
+
 
 from pyepidoc.shared.iterables import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
@@ -45,7 +44,7 @@ class Body(EpiDocElement):
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self.tag}> element.')
 
-    def copy_edition_items_to_appear_in_lemmatized_edition(
+    def copy_lemmatizable_to_lemmatized_edition(
             self,
             source: Edition,
             target: Edition) -> Edition:
@@ -73,7 +72,7 @@ class Body(EpiDocElement):
                 
                 child_copy = child.deepcopy()
 
-                if child.tag.name in SEPARATE_LEMMATIZED_CONTAINER_ITEMS and child.tag.name != 'ab':
+                if child.tag.name in ContainerStandoffEditionType.values() and child.tag.name != 'ab':
                     child_copy.remove_children()
                     child_copy.remove_attr('id', XMLNS)
                     target_elem._e.append(child_copy._e)
@@ -83,13 +82,16 @@ class Body(EpiDocElement):
                     ab = child
                     ab_copy = child_copy
                     ab_copy.remove_children()
-                    ab_copy.remove_attr('id', XMLNS)
                     target_elem._e.append(child_copy._e)
                     
                     for desc in ab.descendant_elements:
-                        if desc.localname in SEPARATE_LEMMATIZED_ITEMS:
-                            representable = Token(desc).representable
+                        representable = Token(desc).representable_cls_inst
+                        if desc.localname in StandoffEditionElements and representable is None:
+                            breakpoint()
+                            raise ValueError(f'{desc} should have a representable instance.')
+                        if desc.localname in StandoffEditionElements and representable is not None:
                             desc_copy_token = representable.simple_lemmatized_edition_element    
+                            desc_copy_token.remove_attr('id', XMLNS)
                             ab_copy._e.append(desc_copy_token.e)   
 
         append_items(source, EpiDocElement(target))
@@ -199,4 +201,4 @@ class Body(EpiDocElement):
             raise ValueError(
                 f'No edition found with subtype {edition_subtype}.')
 
-        return edition.token_by_id(token_id)
+        return edition.token_by_xml_id(token_id)

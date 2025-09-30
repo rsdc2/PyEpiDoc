@@ -48,4 +48,4 @@ class Orig(Representable):
     def simple_lemmatized_edition_form(self) -> str:
         if not self.has_parent('choice'):       
             return self.normalized_form
-        return ""   
+        return ''

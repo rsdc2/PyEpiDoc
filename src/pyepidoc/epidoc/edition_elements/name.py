@@ -1,5 +1,6 @@
 from __future__ import annotations
 from lxml.etree import _Element
+
 from .w import W
 
 

@@ -387,8 +387,7 @@ xml_to_tokenize = [
      '<roleName type="civic" subtype="duumvir"><w>duum</w><w>vir</w></roleName>'),
 
     ('<g ref="#interpunct">·</g> v<hi rend="tall">i</hi>r',
-     '<g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w>'),
-
+     '<g ref="#interpunct">·</g><w>v<hi rend="tall">i</hi>r</w>')
 ]
 
 
@@ -430,3 +429,29 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
     # Assert
     assert tokenized_str == benchmark_str
     assert tokenized.get_child_tokens() != []
+
+
+def test_does_not_tokenize_if_already_w_tokens_present_and_retokenize_set_to_false():
+    # Arrange
+    ab = Edition.from_xml_str('deus magnus <w>est</w>').abs[0]
+    epidoc = EpiDoc('templates/empty_template.xml')
+    epidoc.main_edition.append_ab(ab)
+
+    # Act
+    epidoc.tokenize(retokenize = False)
+
+    # Assert
+    assert len(epidoc.w_tokens) == 1
+
+
+def test_does_tokenize_if_already_w_tokens_present_and_retokenize_set_to_true():
+    # Arrange
+    ab = Edition.from_xml_str('deus magnus <w>est</w>').abs[0]
+    epidoc = EpiDoc('templates/empty_template.xml')
+    epidoc.main_edition.append_ab(ab)
+
+    # Act
+    epidoc.tokenize(retokenize = True)
+
+    # Assert
+    assert len(epidoc.w_tokens) == 3

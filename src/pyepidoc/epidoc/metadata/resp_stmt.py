@@ -46,6 +46,15 @@ class RespStmt(EpiDocElement):
         resp_stmt_elem.append(resp_elem)
         resp_stmt = RespStmt(resp_stmt_elem)
         return resp_stmt
+    
+    @staticmethod
+    def from_dict(dict: dict[str, str]) -> RespStmt:
+        return RespStmt.from_details(
+            dict['name'], 
+            dict['initials'], 
+            dict['ref'], 
+            dict['resp_text']
+        )
 
     @staticmethod
     def from_element(elem: XmlElement) -> RespStmt:

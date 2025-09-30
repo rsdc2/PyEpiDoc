@@ -53,7 +53,7 @@ def test_copy_edition_content():
     target = doc.body.append_new_edition('simple-lemmatized')
 
     # Copy the edition content
-    doc.body.copy_edition_items_to_appear_in_lemmatized_edition(source, target)
+    doc.body.copy_lemmatizable_to_lemmatized_edition(source, target)
 
     doc.prettify('pyepidoc')
 
@@ -87,7 +87,7 @@ def test_copy_edition_content_parametrized_no_lemmas():
     target = doc.body.append_new_edition('simple-lemmatized')
 
     # Copy the edition content
-    doc.body.copy_edition_items_to_appear_in_lemmatized_edition(source, target)
+    doc.body.copy_lemmatizable_to_lemmatized_edition(source, target)
 
     doc = doc.prettify('pyepidoc')
 

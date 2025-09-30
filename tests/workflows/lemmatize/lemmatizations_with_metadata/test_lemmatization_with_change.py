@@ -9,7 +9,6 @@ from pyepidoc.shared.testing import (
     save_reload_and_compare_with_benchmark
 )
 
-from pyepidoc.shared.constants import SEPARATE_LEMMATIZED_ITEMS
 from tests.config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/lemmatizations_with_metadata/files/unlemmatized/'

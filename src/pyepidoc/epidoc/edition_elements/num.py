@@ -1,9 +1,8 @@
 from lxml.etree import _Element
-from ..epidoc_element import EpiDocElement
-from ..utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.edition_elements.w import W
 
-
-class Num(EpiDocElement):
+class Num(W):
     """
     Provides services for abbreviation expansions 
     given in <num> elements.

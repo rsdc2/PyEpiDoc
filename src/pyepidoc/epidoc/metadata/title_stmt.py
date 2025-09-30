@@ -11,8 +11,13 @@ class TitleStmt(EpiDocElement):
         self,
         resp_stmt: RespStmt
     ) -> TitleStmt:
-        
-        self.e.append(resp_stmt.e)
+        """
+        Append `<respStmt>` if `@resp` value does not already exist on document.
+        """
+        if resp_stmt.resp is None:
+            raise TypeError('resp value cannot be None')
+        if not self.has_resp_initials(resp_stmt.initials):
+            self.e.append(resp_stmt.e)
         return self
 
     def append_new_resp_stmt(
@@ -23,10 +28,10 @@ class TitleStmt(EpiDocElement):
         resp_text: str) -> TitleStmt:
 
         """
-        Add a new <respStmt> element to the <titleStmt/> element
+        Add a new `<respStmt>` element to the `<titleStmt>` element
         """
         resp_stmt = RespStmt.from_details(name, initials, ref, resp_text)
-        self.e.append(resp_stmt.e)
+        self.append_resp_stmt(resp_stmt)
 
         return self
     
@@ -44,5 +49,13 @@ class TitleStmt(EpiDocElement):
         
         resp_stmt_elems = self.descendant_elements_by_local_name("respStmt")
         return list(map(RespStmt.from_element, resp_stmt_elems))
+    
+    def has_resp_initials(self, resp_initials: str) -> bool:
+        for resp_stmt in self.resp_stmts:
+            if resp_stmt.initials == resp_initials:
+                return True
+            
+        return False
+
 
     
