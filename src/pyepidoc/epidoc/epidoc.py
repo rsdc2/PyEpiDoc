@@ -767,6 +767,20 @@ class EpiDoc(DocRoot):
         self.prettify(prettifier='pyepidoc', verbose=verbose)
         
         return self
+    
+    @property
+    def local_ids(self) -> list[str]:
+        """
+        Convenience property for the element @n IDs in the editions of the document
+        """
+
+        abs = chain(*[edition.abs 
+                      for edition in self.editions()])
+        elems = chain(*[ab.id_carriers for ab in abs])
+
+        return [elem.local_id for elem in elems 
+                if elem.local_id is not None
+                and elem.tag.name != "lb"]
 
     @property
     def main_edition(self) -> Edition | None:
