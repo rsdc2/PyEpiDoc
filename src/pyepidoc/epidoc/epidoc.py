@@ -767,6 +767,19 @@ class EpiDoc(DocRoot):
         self.prettify(prettifier='pyepidoc', verbose=verbose)
         
         return self
+    
+    @property
+    def local_idable_elements(self) -> list[EpiDocElement]:
+
+        """
+        Get all the tokens in the main edition that should 
+        receive an `@n` id.
+        """
+
+        if self.edition_main is None:
+            raise ValueError('No main edition. Cannot extract n_id elements.')
+
+        return self.edition_main.local_idable_elements
 
     @property
     def main_edition(self) -> Edition | None:
@@ -824,18 +837,7 @@ class EpiDoc(DocRoot):
         names = filter(predicate, map(Name, edition.get_desc('name')))
         return list(names)
 
-    @property
-    def local_idable_elements(self) -> list[EpiDocElement]:
 
-        """
-        Get all the tokens in the main edition that should 
-        receive an `@n` id.
-        """
-
-        if self.edition_main is None:
-            raise ValueError('No main edition. Cannot extract n_id elements.')
-
-        return self.edition_main.local_idable_elements
 
     @property
     def nums(self) -> list[Num]:

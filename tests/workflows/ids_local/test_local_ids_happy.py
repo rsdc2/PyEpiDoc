@@ -38,12 +38,32 @@ def test_set_local_ids(filename_with_result: tuple[str, list[str]]):
     assert [token.local_id for token in with_local_ids.local_idable_elements] == result
     
 
+test_get_local_ids_on_main_edition_cases = [
+    ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', '', '10']),
+    ('<lb n="1"/><w n="5">a</w> <w n="10">b</w> <w n="15">c</w>', ['5', '10', '15']),
+]
+@pytest.mark.parametrize(('xml_str', 'expected_local_ids'), test_get_local_ids_on_main_edition_cases)
+def test_get_local_ids_on_main_edition(xml_str: str, expected_local_ids: list[str]):
+    # Arrange
+    doc = EpiDoc(EMPTY_TEMPLATE_PATH)
+    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    doc.main_edition.append_ab(ab)
+
+    # Act
+    local_ids = doc.main_edition.local_ids
+
+    # Assert
+    assert local_ids == expected_local_ids
+
 test_local_id_elements_main = [
     ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', '7', '10']),
     ('<w n="5">a</w> <w>b</w> <w>c</w> <w n="20"/>', ['5', '10', '15', '20']),
     ('<w n="5">a</w> <w>b</w> <w>c</w> <w/> <w/> <w n="10"/>', ['5', '6', '7', '8', '9', '10']),
     ('<w n="5">a</w> <w>b</w> <w>c</w> <w n="20"/> <gap/>', ['5', '10', '15', '20', '25']),
-    ('<w n="5">a</w> <gap/>', ['5', '10'])
+    ('<w n="5">a</w> <gap/>', ['5', '10']),
+    ('<w>a</w> <gap/>', ['5', '10']),
+    ('<w>a</w> <gap n="10"/>', ['5', '10']),
+    ('<lb n="1"/><w>a</w> <gap n="10"/>', ['5', '10'])
 ]
 @pytest.mark.parametrize(('xml_str', 'expected_local_ids'), test_local_id_elements_main)
 def test_set_missing_local_ids_on_main_edition(xml_str: str, expected_local_ids: list[str]):
