@@ -769,18 +769,17 @@ class EpiDoc(DocRoot):
         return self
     
     @property
-    def local_ids(self) -> list[str]:
+    def local_idable_elements(self) -> list[EpiDocElement]:
+
         """
-        Convenience property for the element @n IDs in the editions of the document
+        Get all the tokens in the main edition that should 
+        receive an `@n` id.
         """
 
-        abs = chain(*[edition.abs 
-                      for edition in self.editions()])
-        elems = chain(*[ab.id_carriers for ab in abs])
+        if self.edition_main is None:
+            raise ValueError('No main edition. Cannot extract n_id elements.')
 
-        return [elem.local_id for elem in elems 
-                if elem.local_id is not None
-                and elem.tag.name != "lb"]
+        return self.edition_main.local_idable_elements
 
     @property
     def main_edition(self) -> Edition | None:
@@ -838,18 +837,7 @@ class EpiDoc(DocRoot):
         names = filter(predicate, map(Name, edition.get_desc('name')))
         return list(names)
 
-    @property
-    def local_idable_elements(self) -> list[EpiDocElement]:
 
-        """
-        Get all the tokens in the main edition that should 
-        receive an `@n` id.
-        """
-
-        if self.edition_main is None:
-            raise ValueError('No main edition. Cannot extract n_id elements.')
-
-        return self.edition_main.local_idable_elements
 
     @property
     def nums(self) -> list[Num]:
