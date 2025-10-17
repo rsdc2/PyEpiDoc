@@ -19,9 +19,6 @@ import inspect
 import io
 from io import BytesIO
 
-from pyepidoc.tei.teidoc import TeiDoc
-
-
 import pyepidoc
 from pyepidoc.xml.docroot import DocRoot
 from pyepidoc.shared import (
@@ -32,28 +29,15 @@ from pyepidoc.shared import (
 )
 from pyepidoc.shared.types import Base
 
-from .token import Token
-from .errors import TEINSError, EpiDocValidationError
-from .epidoc_element import EpiDocElement, XmlElement
-
-from .edition_elements.ab import Ab
-from .body import Body
-from .edition_elements.edition import Edition
-from .edition_elements.name import Name
-from .edition_elements.pers_name import PersName
-from .edition_elements.g import G
-from .edition_elements.num import Num
-from .edition_elements.role_name import RoleName
-from .edition_elements.expan import Expan
-from .edition_elements.w import W
-from .enums import (
-    SpaceUnit,
-    AbbrType,
-    DoNotPrettifyChildren
-)
+from pyepidoc.xml.xml_element import XmlElement
+from .metadata.title_stmt import TitleStmt
+from .metadata.resp_stmt import RespStmt
+from .metadata.file_desc import FileDesc
+from .metadata.tei_header import TeiHeader
+from .metadata.change import Change
 
 
-class EpiDoc(TeiDoc):
+class TeiDoc(DocRoot):
 
     """
     This class provides services for interacting with individual
@@ -66,41 +50,26 @@ class EpiDoc(TeiDoc):
     
     def __init__(
             self, 
-            inpt: Path | BytesIO | str | _ElementTree | XmlElement,
-            validate_on_load: bool=False,
-            verbose: bool=True):
+            inpt: Path | BytesIO | str | _ElementTree | XmlElement):
         
         """
-        Initialize an EpiDoc object on a given input 
+        Initialize an TeiDoc object on a given input 
         (string, Path or lxml _ElementTree).
         On load checks that the file has the TEI namespace 
         "http://www.tei-c.org/ns/1.0" declared.
 
         :param inpt: string (containing path to document), 
             Path or lxml _ElementTree
-
-        :param validate_on_load: if True, validates against 
-            EpiDoc RelaxNG schema, "tei-epidoc.rng", found in the root 
-            directory of the package
         """
         
         super().__init__(inpt)
         self.assert_has_tei_ns()
 
-        if validate_on_load:
-            validation_result, msg = self.validate()
-            
-            if not validation_result:
-                raise EpiDocValidationError(msg)
-            
-            if verbose:
-                print(f'{self._p} is a valid EpiDoc file')
-
     def __repr__(self) -> str:
         return f'EpiDoc(id="{self.id}")'
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, EpiDoc):
+        if not isinstance(other, TeiDoc):
             raise TypeError(f'Cannot compare type EpiDoc with {type(other)}')
         
         return self.id == other.id
@@ -116,7 +85,36 @@ class EpiDoc(TeiDoc):
     @property
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
-        
+    
+    def append_change(self, change: Change) -> TeiDoc:
+        self.ensure_tei_header().ensure_revision_desc().append_change(change)
+        return self
+    
+    def _append_new_tei_header(self) -> TeiDoc:
+        """
+        Insert a <teiHeader> element as the first child
+        """
+        tei_header_elem = TeiHeader.create()
+        self.e.insert(0, tei_header_elem.e)
+        return self
+
+    def append_resp_stmt(self, resp_stmt: RespStmt) -> TeiDoc:
+        """
+        Add a `<respStmt>` element to the `<titleStmt>`. Creates the necessary element  
+        hierarchy if not present.
+        """
+
+        if self.title_stmt is None:
+            if self.file_desc is None:
+                if self.tei_header is None:
+                    self._append_new_tei_header()
+                self.tei_header.append_new_file_desc() #type: ignore
+            self.file_desc.append_title_stmt(EpiDocElement.create_new('titleStmt')) #type: ignore
+
+        self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
+
+        return self
+    
     def assert_has_tei_ns(self) -> bool:
         """
         Return True if uses TEI namespaces;
@@ -136,6 +134,21 @@ class EpiDoc(TeiDoc):
         return True
 
     @property
+    def authority(self) -> Optional[str]:
+        if self.publication_stmt is None:
+            return None
+
+        elem = maxone(self
+            .publication_stmt
+            .get_desc_tei_elems('authority'), 
+        )
+
+        if elem is None:
+            return None
+        
+        return elem.text
+
+    @property
     def body(self) -> Body:
 
         """
@@ -153,33 +166,7 @@ class EpiDoc(TeiDoc):
     @property
     def commentary(self) -> list[_Element]:
         return self.get_div_descendants_by_type('commentary')
-
-    @property
-    def compound_words(self) -> list[EpiDocElement]:
-        return [item for edition in self.editions() 
-            for item in edition.compound_tokens]
-
-    def convert_ids(self, oldbase: Base, newbase: Base) -> None:
-        """
-        Put IDs (xml:id) on all elements of the edition,
-        in place
-        """
-        for edition in self.editions():
-            edition.convert_ids(oldbase, newbase)
     
-    def convert_ws_to_names(self) -> EpiDoc:
-        """
-        Converts all <w> to <name> in the main edition, in place, if they 
-        begin with a capital.
-        """
-        
-        if self.main_edition is None:
-            raise ValueError('No main edition. Not converting <w> to <name>.')
-
-        self.main_edition.convert_ws_to_names()
-        
-        return self
-
     @property
     def date(self) -> Optional[int]:
         if self.orig_date is None:
@@ -247,132 +234,11 @@ class EpiDoc(TeiDoc):
         
         return elem.text
 
-    @property
-    def div_langs(self) -> set[str]:
-
-        """
-        Used by I.Sicily to host language information.
-        """
-        
-        textpart_langs = [textpart.lang 
-            for edition in self.editions()
-                for textpart in edition.textparts
-                    if textpart.lang is not None]
-
-        edition_langs = [edition.lang for edition in self.editions()
-            if edition.lang is not None]
-
-        combined = textpart_langs + edition_langs
-
-        return set(combined)
-
-    @property
-    def edition_main(self) -> Edition | None:
-        
-        """
-        Return the main edition (i.e. not transliteration or
-        lemmatized edition).
-
-        If the @subtype attribute is set to 'unsupplied',
-        this is currently treated as though the 
-        main edition is not present, and None is returned.
-        """
-        try:
-            return self.body.edition_by_subtype(subtype=None) or \
-                self.body.edition_by_subtype(subtype='PHI') or \
-                self.body.edition_by_subtype(subtype='EDR')
-        except ValueError as e:
-            raise ValueError(f"Encountered the following error in {self.id}:\n"
-                             f"{e.args[0]}")
-
-    def edition_by_subtype(self, subtype: str | None) -> Edition | None:
-        
-        """
-        Return an edition according to the subtype given in the 
-        subtype parameter, if it exists; else None. 
-
-        :param subtype: the subtype of the edition to be found.
-        If None, attempts to return the main edition.
-        """
-
-        return self.body.edition_by_subtype(subtype)
-    
-    @property
-    def _edition_subtypes(self) -> list[str]:
-        """
-        Return a list of edition subtype strings. For 
-        establishing which subtypes exist on the corpus.
-        """
-
-        return remove_none([edition.get_attrib('subtype') 
-                for edition in self.editions(include_transliterations=True)
-                ])
-
-    def editions(self, include_transliterations=False) -> list[Edition]:
-
-        """
-        Return a list of Edition elements
-        """
-
-        return self.body.editions(include_transliterations)
-
-    def ensure_lemmatized_edition(
-            self, 
-            resp: RespStmt | None = None,
-            change: Change | None = None
-            ) -> Edition:
-
-        """
-        Ensures a `simple-lemmatized` edition exists, ready to contain
-        lemmatized elements, but no words are copied
-        or lemmatized.
-        Returns either the existing `simple-lemmatized` edition, or
-        an empty one if one already exists.
-        """
-
-        # Check no lemmatized editions already
-        lemmatized_edition = self.body.edition_by_subtype('simple-lemmatized')
-        if lemmatized_edition is not None:
-            return lemmatized_edition
-
-        # Create edition if it does not already exist
-        self.body.append_new_edition('simple-lemmatized', resp=resp)
-        if change is not None: 
-            self.append_change(change)
-        edition = self.body.edition_by_subtype('simple-lemmatized')
-
-        # Raise an error if could not be created
-        if edition is None:
-            raise TypeError('Failed to create a simple lemmatized edition.')
-        
-        return edition
-
     def ensure_tei_header(self) -> TeiHeader:
         if self.tei_header is None:
             self._append_new_tei_header()
         assert self.tei_header is not None
         return self.tei_header
-
-    @property
-    def expans(self) -> list[Expan]:
-        """
-        Returns a list of abbreviated items (including both 
-        abbreviation and expansion)
-        """
-        
-        return list(chain(*[edition.expans 
-                         for edition in self.editions()]))
-
-    def expans_by_type(self, abbr_type:Optional[AbbrType]) -> list[Expan]:
-        """
-        Returns all the expans of the type specified in abbr_type.
-        If abbr_type is None, returns all the expans.
-        """
-        if abbr_type is None:
-            return self.expans
-        
-        return [expan for expan in self.expans 
-                if expan.abbr_types == abbr_type]
     
     @property
     def file_desc(self) -> FileDesc | None:
@@ -380,56 +246,6 @@ class EpiDoc(TeiDoc):
         if tei_header is None: 
             return None
         return tei_header.file_desc
-
-    @property
-    def first_edition(self) -> Optional[Edition]:
-        """
-        Return the first edition in the document,
-        regardless of its type
-        """
-        return self.editions(True)[0] if self.editions(True) != [] else None
-
-    @property
-    def formatted_text(self) -> str:
-        _text = '\n'.join([edition.formatted_text 
-                           for edition in self.editions()])
-        return f'\n{self.id}\n{len(self.id) * "-"}\n{_text}\n'
-
-    @property
-    def forms(self) -> set[str]:
-        return set([str(word) for word in self.tokens_no_nested])
-
-    @property
-    def gs(self) -> list[G]:
-
-        """
-        Return a list of <g> (= divider) elements
-        """
-
-        edition = self.editions()[0]
-        if edition is None:
-            return []
-        
-        gs = map(G, edition.get_desc('g'))
-        return list(gs)
-
-    @property
-    def gaps(self) -> list[EpiDocElement]:
-        items = [edition.gaps for edition in self.editions()]
-        return [item for item in list(chain(*items))]
-
-    def get_lang_attr(
-            self, 
-            lang_attr: Literal['div_langs'] | Literal['langs']
-        ) -> set[str]:
-        
-        if lang_attr == 'div_langs':
-            return self.div_langs
-        
-        elif lang_attr == 'langs':
-            return set(self.langs)
-        
-        raise ValueError(f'Invalid lang_attr {lang_attr}')
 
     def get_textclasses(
             self, 
@@ -474,44 +290,6 @@ class EpiDoc(TeiDoc):
         return functions
 
     @property
-    def has_no_main_edition(self) -> bool:
-        return self.main_edition is None or \
-            self.main_edition.is_empty or \
-            self.edition_by_subtype('unsupplied') is not None
-
-    def has_gap(self, reasons: list[str]=[]) -> bool:
-
-        """
-        Returns True if the document contains a <gap> element with a reason
-        contained in the "reasons" attribute.
-        If "reasons" is set to an empty list, 
-        returns True if there are any gaps regardless of reason.
-        """
-
-        if self.gaps == []:
-            return False
-        
-        # There must be gaps
-        if reasons == []:
-            return True
-
-        for gap in self.gaps:
-            doc_gap_reasons = gap.get_attrib('reason')
-            if doc_gap_reasons is None:
-                continue
-            doc_gap_reasons_split = doc_gap_reasons.split()
-            intersection = set(reasons).intersection(set(doc_gap_reasons_split))
-
-            if len(intersection) > 0:
-                return True
-
-        return False
-
-    @property
-    def has_supplied(self) -> bool:
-        return self.supplied != []
-
-    @property
     def id(self) -> str:
 
         """
@@ -548,23 +326,6 @@ class EpiDoc(TeiDoc):
 
         return idno_elem.text or ''
 
-    @property
-    def id_carriers(self) -> list[EpiDocElement]:
-        return list(chain(*[edition.local_idable_elements 
-                            for edition in self.editions()]))
-
-    def insert_w_inside_name_and_num(self) -> EpiDoc:
-        """
-        Enclose contents of <name> and <num> tags in <w> tag,
-        in place for all editions. By default does nothing if already contains a <w> 
-        element.
-        """
-
-        for edition in self.editions(True):
-            edition.insert_ws_inside_named_entities()
-
-        return self
-
     def is_after(self, start: int) -> bool:
         """
         Return True if either @notBefore is greater than 
@@ -593,10 +354,6 @@ class EpiDoc(TeiDoc):
         
         return False
     
-    @property
-    def is_lemmatizable(self) -> bool:
-        return self.tokens_no_nested.__len__() > 0
-
     @property
     def is_multilingual(self) -> bool:
         return len(self.div_langs) > 1 or len(self.langs) > 1
@@ -644,104 +401,6 @@ class EpiDoc(TeiDoc):
 
         return langs
     
-    @cached_property
-    def leiden_text(self) -> str:
-        """
-        Return the Leiden-formatted text of the inscriptions.
-        Alias for `text_leiden` property.
-        """
-        return self.text_leiden
-
-    def lemmatize(
-            self, 
-            lemmatize: Callable[[str], str],
-            where: Literal['main', 'separate'],
-            resp_stmt: RespStmt | None = None,
-            change: Change | None = None,
-            verbose = False,
-            fail_if_existing_lemmatized_edition: bool = True
-        ) -> EpiDoc:
-
-        """
-        Lemmatize all the <w> elements in 
-        the EpiDoc document.
-
-        :param lemmatize: a function with one parameter,
-        the form needing lemmatization, returning the 
-        lemma.
-
-        :param where: where to put the lemmatized version,
-        either on a separate <div> or on the main <div>. 
-        If a separate edition is not present, one is created 
-        containing copies of the elements that need lemmatizing.
-
-        :param fail_if_existing_lemmatized_edition: Raise exception
-        if a lemmatized edition is already present.
-        """
-
-        # Check there is a main edition
-        main_edition = self.edition_by_subtype(None)
-        if main_edition is None:
-            raise ValueError('No main edition could be found.')
-
-        if where == 'separate':
-            # Create a separate lemmatized edition if not already present
-            lemmatized_edition = self.edition_by_subtype('simple-lemmatized') 
-
-            # Check what should do if a lemmatized edition is already present
-            if lemmatized_edition and fail_if_existing_lemmatized_edition:
-                raise ValueError('A lemmatized edition is already present; PyEpiDoc is '
-                                 'currently set to stop if this is the case.')
-            elif lemmatized_edition is None:
-                lemmatized_edition = self.ensure_lemmatized_edition(resp=resp_stmt)
-                self.body.copy_lemmatizable_to_lemmatized_edition(
-                    source=main_edition, 
-                    target=lemmatized_edition
-                )
-
-            edition = lemmatized_edition
-
-        elif where == 'main':
-            edition = main_edition
-        else:
-            raise TypeError(
-                f'Invalid destination for lemmatized items: {where}')
-
-        for w in edition.w_tokens:
-            w.lemma = lemmatize(w.normalized_form or '')
-        
-        if resp_stmt:
-            self.append_resp_stmt(resp_stmt)
-
-        if change:
-            self.append_change(change)
-
-        self.prettify(prettifier='pyepidoc', verbose=verbose)
-        
-        return self
-    
-    @property
-    def local_idable_elements(self) -> list[EpiDocElement]:
-
-        """
-        Get all the tokens in the main edition that should 
-        receive an `@n` id.
-        """
-
-        if self.edition_main is None:
-            raise ValueError('No main edition. Cannot extract n_id elements.')
-
-        return self.edition_main.local_idable_elements
-
-    @property
-    def main_edition(self) -> Edition | None:
-        """
-        Return the main edition of the document, i.e. not
-        the transliteration or the lemmatized editions
-        """
-
-        return self.edition_main
-
     @property
     def mainlang(self) -> Optional[str]:
         if self.textlang is None:
@@ -753,13 +412,6 @@ class EpiDoc(TeiDoc):
         return self.date_mean
 
     @property
-    def lemmata(self) -> set[str]:
-        _lemmata = [word.lemma for word in self.tokens_no_nested 
-            if word.lemma is not None]
-
-        return set(_lemmata)
-
-    @property
     def materialclasses(self) -> list[str]:
 
         material_e = self.get_desc('material')
@@ -769,36 +421,6 @@ class EpiDoc(TeiDoc):
         
         return remove_none([EpiDocElement(e).get_attrib('ana') 
                             for e in material_e])
-
-    def names(self, 
-              predicate: Callable[[Name], bool] = lambda _: True
-              ) -> list[Name]:
-        """
-        Return a list of `Name` objects for all the
-        <name> elements in the document's main edition.
-
-        :param name_predicate: a function containing
-        a condition for whether or not to include a name.
-        Defaults to returning True.
-        """
-
-        edition = self.main_edition
-        if edition is None:
-            return []
-        
-        names = filter(predicate, map(Name, edition.get_desc('name')))
-        return list(names)
-
-
-
-    @property
-    def nums(self) -> list[Num]:
-        edition = self.editions()[0]
-        if edition is None:
-            return []
-        
-        nums = map(Num, edition.get_desc('num'))
-        return list(nums)
 
     @property
     def not_after(self) -> Optional[int]:
@@ -870,29 +492,6 @@ class EpiDoc(TeiDoc):
         return otherlangs.split()
 
     @property
-    def pers_names(self) -> list[PersName]:
-
-        """
-        Return a list of <persName> elements wrapped in
-        PersName objects.
-        """
-
-        if self.editions() == []:
-            return []
-        
-        pers_name_elems = (self
-            .editions()[0]
-            .get_desc_tei_elems('persName')
-        )
-        
-        pers_names = map(
-            lambda elem: PersName(elem.e), 
-            pers_name_elems
-        )
-    
-        return list(pers_names)
-
-    @property
     def prefix(self) -> str:
         if self.authority == "I.Sicily":
             return "ISic"
@@ -905,7 +504,7 @@ class EpiDoc(TeiDoc):
             self, 
             prettifier: Literal['pyepidoc'] = 'pyepidoc',
             prettify_main_edition: bool = True,
-            verbose = False) -> EpiDoc:
+            verbose = False) -> TeiDoc:
 
         """
         Use prettify function in `lxml` to prettify the whole document.
@@ -935,7 +534,7 @@ class EpiDoc(TeiDoc):
 
         return self
 
-    def _prettify_with_lxml(self) -> EpiDoc:
+    def _prettify_with_lxml(self) -> TeiDoc:
 
         """
         Use the prettifier in `lxml` to prettify the 
@@ -959,14 +558,14 @@ class EpiDoc(TeiDoc):
         )
 
         tree = root_elem.getroottree()
-        prettified_doc = EpiDoc(tree)
+        prettified_doc = TeiDoc(tree)
 
         return prettified_doc
     
     def _prettify_with_pyepidoc(
             self, 
             space_unit: str,
-            multiplier: int = 4) -> EpiDoc:
+            multiplier: int = 4) -> TeiDoc:
         """
         Use pyepidoc's internal prettifier to prettify the document.
         """
@@ -1011,12 +610,6 @@ class EpiDoc(TeiDoc):
         if self.main_edition is not None:
             self.main_edition.prettify(spaceunit, number)
 
-    def print_leiden(self) -> None:
-        """
-        Print Leiden text to stdout
-        """
-        print(self.leiden_text)
-
     def print_translation(self) -> None:
         """
         Print translation text to stdout
@@ -1048,85 +641,6 @@ class EpiDoc(TeiDoc):
         for use in validation.
         """
         return Path(self._pyepidoc_module_path).parent / Path('tei-epidoc.rng')
-
-    @property
-    def role_names(self) -> list[RoleName]:
-        """
-        Return a list of RoleName objects for each 
-        <roleName> in the edition.
-        If there is no edition, returns an empty list.  
-        """
-
-        if self.editions() == []:
-            return []
-        
-        role_name_elems = (self
-            .editions()[0]
-            .get_desc_tei_elems('roleName')
-        )
-        
-        role_names = map(
-            lambda elem: RoleName(elem.e), 
-            role_name_elems
-        )
-    
-        return list(role_names)
-
-    def set_ids(self, base: Base=100) -> None:
-        
-        """
-        Put @xml:id on all elements of the edition,
-        in place. There are two options, using either
-        Base 52 or Base 100. Should keep any id that 
-        already exist on an element.
-        """
-        # TODO remove this method
-
-        for edition in self.editions():
-            edition.set_ids(base)
-
-    def set_full_ids(self, base: Base=100) -> None:
-        """
-        Put @xml:id on all elements of the edition,
-        in place. There are two options, using either
-        Base 52 or Base 100. Should keep any id that 
-        already exist on an element.
-        """
-
-        self.set_ids(base)
-
-    def set_local_ids(self, interval: int = 5) -> EpiDoc:
-        
-        """
-        Put @n on certain elements in the edition
-
-        :param interval: the interval between ids, e.g. 
-        with 5, it will be 5, 10, 15, 20 etc.
-        """
-
-        if self.main_edition is None:
-            raise ValueError('No main edition found to set'
-                             '@n ids on.')
-        
-        self.main_edition.set_local_ids(interval=interval)
-        return self
-
-    @property
-    def simple_lemmatized_edition(self) -> Edition | None:
-        """
-        Return the 'simple-lemmatized' edition, if it exists,
-        or None if not.
-        """
-
-        return self.body.edition_by_subtype('simple-lemmatized')
-
-    def space_tokens(self) -> None:
-        for edition in self.editions():
-            edition.space_tokens()
-
-    @property
-    def supplied(self) -> list[XmlElement]:
-        return list(chain(*[edition.supplied for edition in self.editions()]))
 
     @property
     def tei(self) -> Optional[_Element]:
@@ -1166,23 +680,6 @@ class EpiDoc(TeiDoc):
         elems = chain(*[ab.descendant_elements for ab in self.abs])
         return list(map(EpiDocElement, elems))
 
-    @cached_property
-    def text_leiden(self) -> str:
-        """
-        :return: a string containing the Leiden representation of the
-        document including line breaks
-        """
-
-        return self.text('leiden')
-
-    @property
-    def text_normalized(self) -> str:
-        """
-        :return: a normalized version of the edition text (i.e.
-        all abbreviations expanded etc.) with no line breaks
-        """
-        return self.text('normalized')
-    
     @property
     def text_xml(self) -> str:
 
@@ -1310,123 +807,6 @@ class EpiDoc(TeiDoc):
         return io.BytesIO(self.to_byte_str(collapse_empty_elements))
 
     @property
-    def token_count(self) -> int:
-        return len(self.tokens_no_nested)
-
-    def tokenize(
-            self, 
-            add_space_between_words: bool = True,
-            prettify_edition: bool = True,
-            set_universal_ids: bool = False,
-            set_n_ids: bool = False,
-            convert_ws_to_names: bool = False,
-            verbose: bool = True,
-            insert_ws_inside_named_entities: bool = False,
-            throw_if_no_main_edition: bool = True,
-            retokenize: bool = True
-        ) -> EpiDoc:
-        
-        """
-        Tokenizes the EpiDoc document, in place.
-
-        :param add_space_between_words: if True, adds a space
-        between token elements
-        :param prettify_edition: if True, prettify the <div type="edition"> element (overriding xml:space="preserve")
-        :param set_ids: sets full ids on the tokenized elements
-        :param convert_ws_to_names: attempts to convert <w> elements to <name>
-        on the basis of capital letters
-        :param verbose: If True, prints a message with the id of the file that is being tokenized.
-        :param insert_ws_inside_names_and_nums: If True, inserts <w> tag inside <name> and <num> tags
-        :param throw_if_no_main_edition: Throw an error if there is no main edition
-        :param retokenize: Redo the tokenization if there are already <w> tokens presentt
-        """
-
-        if verbose: 
-            print(f'Tokenizing {self.id}...')
-
-        if self.main_edition is None:
-            if throw_if_no_main_edition:
-                raise ValueError(f'No main edition to tokenize in {self.id}.')
-            else:
-                return self
-        
-        if len(self.w_tokens) == 0 or retokenize:
-            self.main_edition.tokenize()
-        else:
-            print(f'Did not tokenize {self.id} because already contains <w> elements.')
-
-        if add_space_between_words:
-            self.space_tokens()
-        
-        if convert_ws_to_names:
-            self.convert_ws_to_names()
-
-        if insert_ws_inside_named_entities:
-            self.main_edition.insert_ws_inside_named_entities()
-
-        if set_universal_ids:
-            self.set_ids(base=100)
-
-        if set_n_ids:
-            self.set_local_ids()
-            
-        if prettify_edition:
-            self.prettify_main_edition(
-                spaceunit=SpaceUnit.Space.value, 
-                number=4,
-                verbose=verbose
-            )
-
-        return self
-
-    @property
-    def tokens(self) -> list[Token]:
-        """
-        :return: a list of all the tokens in the document, 
-        excluding tokens within tokens
-        """
-        return self.tokens_no_nested
-
-    @property
-    def tokens_incl_nested(self) -> list[Token]:
-        """
-        :return: a list of all the tokens in the document, 
-        including tokens within tokens
-        """
-        tokens = chain(*[edition.tokens_incl_nested 
-                         for edition in self.editions()])
-        return list(tokens)        
-
-    @property
-    def tokens_as_strings(self) -> list[str]:
-        """
-        :return: tokens as a list of strings
-        """
-        return [str(token) for token in self.tokens]
-
-    @property
-    def tokens_no_nested(self) -> list[Token]:
-        """
-        :return: a list of all the tokens in the document, 
-        excluding tokens within tokens
-        """
-        tokens = chain(*[edition.tokens_no_nested 
-                         for edition in self.editions()])
-        return list(tokens)
-        
-    @property
-    def tokens_normalized_no_nested(self) -> list[Token]:
-
-        """
-        Returns list of tokens of the <div type="edition">.
-        If the normalised form is an empty string,
-        does not include the token.
-        """
-
-        return list(chain(*[edition.tokens_normalized_no_nested
-                            for edition in self.editions()]))
-
-    @property
     def translation_text(self) -> str:
         """
         :return: the text for all translations, if present
@@ -1446,11 +826,6 @@ class EpiDoc(TeiDoc):
         confirming that the file is valid.
         """
         return self.validate_by_relaxng(self._rng_path)
-    
-    @property
-    def w_tokens(self) -> list[Token]:
-        return list(chain(*[edition.w_tokens 
-                            for edition in self.editions()]))
     
     @property
     def xml_ids(self) -> list[str]:

@@ -464,6 +464,7 @@ class XmlElement(Showable):
     def get_div_descendants(
         self, 
         divtype: str, 
+        level: str = '',
         lang: Optional[str]=None
     ) -> list[_Element]:
 
@@ -471,11 +472,11 @@ class XmlElement(Showable):
             return []
 
         if not lang:
-            return cast(list[_Element], self.e.xpath(f".//ns:div[@type='{divtype}']", namespaces={'ns': TEINS}) )
+            return cast(list[_Element], self.e.xpath(f".//ns:div{level}[@type='{divtype}']", namespaces={'ns': TEINS}) )
 
         elif lang:
             return cast(list[_Element], self.e.xpath(
-                f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
+                f".//ns:div{level}[@type='{divtype} @xml:lang='{lang}']",
                 namespaces={'ns': TEINS, 'xml': XMLNS}) 
             )
         

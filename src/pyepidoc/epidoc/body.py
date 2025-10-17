@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 from typing import Literal
 
@@ -19,9 +18,6 @@ from pyepidoc.epidoc.enums import (
     ContainerStandoffEditionType,
     RepresentableStandoffEditionType
 )
-
-
-
 from pyepidoc.shared.iterables import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
 
@@ -172,7 +168,6 @@ class Body(EpiDocElement):
 
         if include_transliterations:
             return editions
-
         else:
             return listfilter(
                 lambda ed: ed.subtype != 'transliteration', 

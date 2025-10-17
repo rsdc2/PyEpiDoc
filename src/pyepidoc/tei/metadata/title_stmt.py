@@ -16,6 +16,7 @@ class TitleStmt(EpiDocElement):
         """
         if resp_stmt.resp is None:
             raise TypeError('resp value cannot be None')
+        
         if not self.has_resp_initials(resp_stmt.initials):
             self.e.append(resp_stmt.e)
         return self

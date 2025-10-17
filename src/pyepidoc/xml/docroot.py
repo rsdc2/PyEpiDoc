@@ -165,8 +165,8 @@ class DocRoot:
         return self._p.stem
 
     def get_desc(self, 
-        elemnames:Union[list[str], str], 
-        attribs:Optional[dict[str, str]]=None
+        elemnames: Union[list[str], str], 
+        attribs: Optional[dict[str, str]]=None
     ) -> list[_Element]:
 
         if self.e is None: 
