@@ -1095,7 +1095,7 @@ class EpiDoc(DocRoot):
         Returns the path of the 'tei-epidoc.rng' file
         for use in validation.
         """
-        return Path(self._pyepidoc_module_path).parent / Path('tei-epidoc.rng')
+        return Path(self._pyepidoc_module_path).parent.parent / Path('pyepidoc-schemas/tei-epidoc.rng')
 
     @property
     def role_names(self) -> list[RoleName]:

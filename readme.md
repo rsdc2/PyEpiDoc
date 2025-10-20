@@ -268,14 +268,15 @@ Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) ([MI
 
 
 ## Acknowledgements and licencing
-
-- The software for PyEpiDoc was written by Robert Crellin as part of the Crossreads project at the Faculty of Classics, University of Oxford, and is licensed under the MIT license (see [LICENSES/LICENSE-pyepidoc](LICENSES/LICENSE-pyepidoc)). 
+- The software for PyEpiDoc ([src/](src/pyepidoc) ) was written by Robert Crellin as part of the Crossreads project at the Faculty of Classics, University of Oxford, and is licensed under MIT (see [LICENSES/LICENSE-pyepidoc](LICENSES/LICENSE-pyepidoc)). 
 
 - Example and test ```.xml``` files, contained in the ```examples/```, ```example_corpus/``` and ```tests/``` subfolders, as well as elsewhere in the source code, are either directly form, or derived from, the [I.Sicily corpus](https://github.com/ISicily/ISicily), which are made available under the [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/) (see [LICENSES/LICENSE-texts](LICENSES/LICENSE-texts)).
 
-- The [TEI EpiDoc schema](src/pyepidoc/tei-epidoc.rng) is licensed under the GNU General Public license (see the license on the [EpiDoc repository](https://github.com/EpiDoc/Source/blob/main/schema/LICENSE.txt)).
+- The [TEI EpiDoc schema](src/pyepidoc-schemas/tei-epidoc.rng) is licensed under the GNU General Public license (see the license on the [EpiDoc repository](https://github.com/EpiDoc/Source/blob/main/schema/LICENSE.txt)).
 
 - For further details and acknowledgements on the generation of ISicily token IDs (```pyepidoc/epidoc/ids```), see [https://github.com/rsdc2/ISicID](https://github.com/rsdc2/ISicID).
+
+- The repository as a whole is licensed under the [GNU GPL v 3 license](https://github.com/EpiDoc/Source/blob/main/schema/LICENSE.txt). My understanding is that this license is compatible with the CC-BY-4.0 licence and GNU GPL v 3 licenses.
 
 
 ## Funding
