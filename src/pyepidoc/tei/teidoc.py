@@ -30,6 +30,9 @@ from pyepidoc.shared import (
 from pyepidoc.shared.types import Base
 
 from pyepidoc.xml.xml_element import XmlElement
+
+from .body import Body
+from .errors import TEINSError
 from .metadata.title_stmt import TitleStmt
 from .metadata.resp_stmt import RespStmt
 from .metadata.file_desc import FileDesc
@@ -53,7 +56,7 @@ class TeiDoc(DocRoot):
             inpt: Path | BytesIO | str | _ElementTree | XmlElement):
         
         """
-        Initialize an TeiDoc object on a given input 
+        Initialize a TeiDoc object on a given input 
         (string, Path or lxml _ElementTree).
         On load checks that the file has the TEI namespace 
         "http://www.tei-c.org/ns/1.0" declared.
@@ -66,7 +69,7 @@ class TeiDoc(DocRoot):
         self.assert_has_tei_ns()
 
     def __repr__(self) -> str:
-        return f'EpiDoc(id="{self.id}")'
+        return f'TeiDoc(id="{self.id}")'
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, TeiDoc):
@@ -76,11 +79,6 @@ class TeiDoc(DocRoot):
 
     def __hash__(self) -> int:
         return hash(self.id)
-
-    @property
-    def abs(self) -> list[Ab]:
-        return list(chain(*[edition.abs 
-                            for edition in self.editions()]))
 
     @property
     def apparatus(self) -> list[_Element]:
@@ -167,53 +165,6 @@ class TeiDoc(DocRoot):
     def commentary(self) -> list[_Element]:
         return self.get_div_descendants_by_type('commentary')
     
-    @property
-    def date(self) -> Optional[int]:
-        if self.orig_date is None:
-            return None
-            
-        date = self.orig_date.get_attrib('when-custom')
-
-        try:
-            return int(date) if date is not None else None
-        except ValueError:
-            return None
-
-    @property
-    def daterange(self) -> tuple[Optional[int], Optional[int]]:
-        """
-        Return a pair (not_before, not_after). If the document
-        has a single date, the pair (date, date) is a returned.
-        """
-
-        _daterange = (self.not_before, self.not_after)
-
-        if _daterange == (None, None):
-            return (self.date, self.date)
-        
-        return _daterange
-        
-    @property
-    def date_mean(self) -> Optional[int]:
-        """
-        Return a single date for the document.
-        If the document has a single `date`, this is
-        returned. Otherwise the mean date is returned,
-        calculated by summing the `not_before` and 
-        `not_after` property and dividing by two, returning
-        as an `int`.
-        """
-
-        if self.date is not None:
-            return self.date
-
-        not_before, not_after = self.daterange
-        if not_before is None or not_after is None:
-            return None
-    
-        mean = (not_before + not_after) / 2
-        return int(mean)
-
     @property
     def distributor(self) -> Optional[str]:
         

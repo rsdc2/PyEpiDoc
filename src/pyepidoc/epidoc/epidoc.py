@@ -33,11 +33,10 @@ from pyepidoc.shared import (
 from pyepidoc.shared.types import Base
 
 from .token import Token
-from .errors import TEINSError, EpiDocValidationError
+from .errors import EpiDocValidationError
 from .epidoc_element import EpiDocElement, XmlElement
 
 from .edition_elements.ab import Ab
-from .body import Body
 from .edition_elements.edition import Edition
 from .edition_elements.name import Name
 from .edition_elements.pers_name import PersName
@@ -85,7 +84,6 @@ class EpiDoc(TeiDoc):
         """
         
         super().__init__(inpt)
-        self.assert_has_tei_ns()
 
         if validate_on_load:
             validation_result, msg = self.validate()
@@ -117,39 +115,6 @@ class EpiDoc(TeiDoc):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
         
-    def assert_has_tei_ns(self) -> bool:
-        """
-        Return True if uses TEI namespaces;
-        raises an AssertionError if not
-        """
-        if self.e is None:
-            raise TypeError("No root element present")
-        
-        nsmap: dict[str, str] = self.e.nsmap
-
-        if nsmap is None:
-             raise TEINSError("No namespaces are specified")
-
-        if not 'http://www.tei-c.org/ns/1.0' in nsmap.values():
-            raise TEINSError("TEI namespace is not present in the nsmap")
-        
-        return True
-
-    @property
-    def body(self) -> Body:
-
-        """
-        Return the body element of the XML file
-        as a `Body` object.
-        """
-        
-        body = maxone(self.get_desc(['body']))
-
-        if body is None:
-            raise ValueError('No body element found.')
-        
-        return Body(body)
-
     @property
     def commentary(self) -> list[_Element]:
         return self.get_div_descendants_by_type('commentary')
@@ -226,26 +191,6 @@ class EpiDoc(TeiDoc):
     
         mean = (not_before + not_after) / 2
         return int(mean)
-
-    @property
-    def distributor(self) -> Optional[str]:
-        
-        """
-        IRT (Tripolitania) does not use <authority>
-        """
-
-        if self.publication_stmt is None:
-            return None
-
-        elem = maxone(self
-            .publication_stmt
-            .get_desc_tei_elems('distributor'), 
-        )
-
-        if elem is None:
-            return None
-        
-        return elem.text
 
     @property
     def div_langs(self) -> set[str]:

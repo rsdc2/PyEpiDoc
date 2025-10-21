@@ -1,6 +1,6 @@
 from pyepidoc.shared.iterables import maxone, listfilter
 
-from pyepidoc.epidoc.body import Body
+from pyepidoc.tei.body import Body
 from pyepidoc.epidoc.edition_elements.edition import Edition
 
 class ArioBody(Body):
