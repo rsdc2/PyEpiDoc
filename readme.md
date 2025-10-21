@@ -272,11 +272,9 @@ Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) ([MI
 
 - Example and test ```.xml``` files, contained in the ```examples/```, ```example_corpus/``` and ```tests/``` subfolders, as well as elsewhere in the source code, are either directly form, or derived from, the [I.Sicily corpus](https://github.com/ISicily/ISicily), which are made available under the [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/) (see [LICENSES/LICENSE-texts](LICENSES/LICENSE-texts)).
 
-- The [TEI EpiDoc schema](src/pyepidoc-schemas/tei-epidoc.rng) is licensed under the GNU General Public license (see the license on the [EpiDoc repository](https://github.com/EpiDoc/Source/blob/main/schema/LICENSE.txt)).
+- The [TEI EpiDoc schema](src/pyepidoc_data/schemas/tei-epidoc.rng) is licensed under the GNU General Public license (see the license on the [EpiDoc repository](https://github.com/EpiDoc/Source/blob/main/schema/LICENSE.txt)) (see [LICENSES/LICENSE-EpiDoc-schema](LICENSES/LICENSE-EpiDoc-schema) and [LICENSES/gpl-3.0.txt](LICENSES/gpl-3.0.txt)).
 
-- For further details and acknowledgements on the generation of ISicily token IDs (```pyepidoc/epidoc/ids```), see [https://github.com/rsdc2/ISicID](https://github.com/rsdc2/ISicID).
-
-- The repository as a whole is licensed under the [GNU GPL v 3 license](https://github.com/EpiDoc/Source/blob/main/schema/LICENSE.txt). My understanding is that this license is compatible with the CC-BY-4.0 licence and GNU GPL v 3 licenses.
+- The repository as a whole is licensed under the [GNU GPL v 3 license](LICENSES/gpl-3.0.txt). My understanding is that this license is one-way compatible with the CC-BY-4.0 licence and MIT licenses, such that it is possible for the requirements of those licenses to be fulfilled under GPL (see [https://creativecommons.org/2015/10/08/cc-by-sa-4-0-now-one-way-compatible-with-gplv3/](https://creativecommons.org/2015/10/08/cc-by-sa-4-0-now-one-way-compatible-with-gplv3/)).
 
 
 ## Funding
