@@ -267,7 +267,7 @@ PyEpiDoc depends on [lxml](https://lxml.de/) ([BSD](https://github.com/lxml/lxml
 Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) ([MIT](https://github.com/python/mypy/blob/master/LICENSE)), [pytest](https://docs.pytest.org/en/7.4.x/) ([MIT](https://github.com/pytest-dev/pytest/blob/main/LICENSE)) and [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) ([MIT](https://github.com/pytest-dev/pytest-cov?tab=MIT-1-ov-file#readme)). Licenses for these dependencies are included in the `LICENSES` directory.
 
 
-## Acknowledgements and licencing
+# Licencing
 - The software for PyEpiDoc ([src/pyepidoc](src/pyepidoc) ) was written by Robert Crellin as part of the Crossreads project at the Faculty of Classics, University of Oxford, and is licensed under MIT (see [LICENSES/LICENSE-pyepidoc](LICENSES/LICENSE-pyepidoc)). 
 
 - Example and test ```.xml``` files, contained in the ```examples/```, ```example_corpus/``` and ```tests/``` subfolders, as well as elsewhere in the source code, are either directly form, or derived from, the [I.Sicily corpus](https://github.com/ISicily/ISicily), which are made available under the [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/) (see [LICENSES/LICENSE-texts](LICENSES/LICENSE-texts) and [https://github.com/ISicily/ISicily/blob/master/licence.txt](https://github.com/ISicily/ISicily/blob/master/licence.txt)).
