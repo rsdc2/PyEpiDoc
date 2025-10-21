@@ -270,7 +270,7 @@ Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) ([MI
 ## Acknowledgements and licencing
 - The software for PyEpiDoc ([src/pyepidoc](src/pyepidoc) ) was written by Robert Crellin as part of the Crossreads project at the Faculty of Classics, University of Oxford, and is licensed under MIT (see [LICENSES/LICENSE-pyepidoc](LICENSES/LICENSE-pyepidoc)). 
 
-- Example and test ```.xml``` files, contained in the ```examples/```, ```example_corpus/``` and ```tests/``` subfolders, as well as elsewhere in the source code, are either directly form, or derived from, the [I.Sicily corpus](https://github.com/ISicily/ISicily), which are made available under the [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/) (see [LICENSES/LICENSE-texts](LICENSES/LICENSE-texts)).
+- Example and test ```.xml``` files, contained in the ```examples/```, ```example_corpus/``` and ```tests/``` subfolders, as well as elsewhere in the source code, are either directly form, or derived from, the [I.Sicily corpus](https://github.com/ISicily/ISicily), which are made available under the [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/) (see [LICENSES/LICENSE-texts](LICENSES/LICENSE-texts) and [https://github.com/ISicily/ISicily/blob/master/licence.txt](https://github.com/ISicily/ISicily/blob/master/licence.txt)).
 
 - The [TEI EpiDoc schema](src/pyepidoc_data/schemas/tei-epidoc.rng) is licensed under the GNU General Public license (see the license on the [EpiDoc repository](https://github.com/EpiDoc/Source/blob/main/schema/LICENSE.txt)) (see [LICENSES/LICENSE-EpiDoc-schema](LICENSES/LICENSE-EpiDoc-schema) and [LICENSES/gpl-3.0.txt](LICENSES/gpl-3.0.txt)).
 
