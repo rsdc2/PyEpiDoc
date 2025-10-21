@@ -268,7 +268,7 @@ Development dependencies are [mypy](https://mypy.readthedocs.io/en/stable/) ([MI
 
 
 ## Acknowledgements and licencing
-- The software for PyEpiDoc ([src/](src/pyepidoc) ) was written by Robert Crellin as part of the Crossreads project at the Faculty of Classics, University of Oxford, and is licensed under MIT (see [LICENSES/LICENSE-pyepidoc](LICENSES/LICENSE-pyepidoc)). 
+- The software for PyEpiDoc ([src/pyepidoc](src/pyepidoc) ) was written by Robert Crellin as part of the Crossreads project at the Faculty of Classics, University of Oxford, and is licensed under MIT (see [LICENSES/LICENSE-pyepidoc](LICENSES/LICENSE-pyepidoc)). 
 
 - Example and test ```.xml``` files, contained in the ```examples/```, ```example_corpus/``` and ```tests/``` subfolders, as well as elsewhere in the source code, are either directly form, or derived from, the [I.Sicily corpus](https://github.com/ISicily/ISicily), which are made available under the [CC-BY-4.0 licence](https://creativecommons.org/licenses/by/4.0/) (see [LICENSES/LICENSE-texts](LICENSES/LICENSE-texts)).
 
