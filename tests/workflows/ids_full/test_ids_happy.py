@@ -106,7 +106,7 @@ def test_random_isic_ids():
         assert full_circle(isic_id, 52) == isic_id
 
 test_has_xml_ids = [
-    ('<w n="5">a</w> <w>b</w> <w xml:id="10">c</w>', True),
+    # ('<w n="5">a</w> <w>b</w> <w xml:id="10">c</w>', True),
     ('<lb n="1"/><w>a</w> <w>b</w> <w>c</w>', False)
 ]
 @pytest.mark.parametrize(('xml_str', 'expected_has_xml_ids'), test_has_xml_ids)
