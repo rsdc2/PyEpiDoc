@@ -452,6 +452,28 @@ class Edition(EpiDocElement):
         
         elif type == 'xml':
             return self.text_desc_compressed_whitespace
+        
+    @property
+    def has_local_ids(self) -> bool:
+        """
+        Return True if any element that can receive a local `@n` ID has one. Return False otherwise.
+        """
+        for elem in self.local_idable_elements:
+            if elem.local_id is not None:
+                return True
+            
+        return False
+    
+    @property
+    def has_xml_ids(self) -> bool:
+        """
+        Return True if any element that can receive an `@xml:id` ID has one. Return False otherwise.
+        """
+        for elem in self.xml_idable_elements:
+            if elem.xml_id is not None:
+                return True
+            
+        return False
 
     @property
     def local_idable_elements(self) -> list[EpiDocElement]:
@@ -563,7 +585,7 @@ class Edition(EpiDocElement):
 
     @property
     def local_ids(self) -> list[str | None]:
-        return list(map(lambda e: default_str(e.local_id), self.local_idable_elements))
+        return list(map(lambda e: e.local_id, self.local_idable_elements))
 
     @property
     def ls(self) -> list[Ab]:
@@ -804,5 +826,5 @@ class Edition(EpiDocElement):
     
     @property
     def xml_ids(self) -> list[str | None]:
-        return list(map(lambda e: default_str(e.xml_id), self.xml_idable_elements))
+        return list(map(lambda e: e.xml_id, self.xml_idable_elements))
 

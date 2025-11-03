@@ -121,7 +121,7 @@ def test_lemmatized_does_not_have_xml_id(main_xml: str, lemmatized_xml: str, exp
     # Assert    
     if synced.main_edition is None: raise TypeError()
     for id in doc.ensure_lemmatized_edition().xml_ids:
-        assert id == ''
+        assert id is None
 
 
 update_lemmatized_test_data = [('<w n="5">hello</w> <w n="10">world</w> <w n="15">goodbye</w>',

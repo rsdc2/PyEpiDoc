@@ -71,6 +71,10 @@ class RespStmt(EpiDocElement):
     def create_name(name: str, initials: str, ref: str) -> _Element:
         """
         Create a new <name> element
+
+        :param name: The name of the person responsible
+        :param initials: The person's initials
+        :param ref: A unique identifier, e.g. ORCID
         """
         tag = ns.give_ns("name", TEINS)
         elem: _Element = etree.Element(tag)
