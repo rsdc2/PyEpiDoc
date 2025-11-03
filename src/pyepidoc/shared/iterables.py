@@ -184,7 +184,7 @@ def maxoneT(
     return lst[0]
 
 
-def default_str(str_or_none:Optional[str]):
+def default_str(str_or_none: Optional[str]):
     if str_or_none is None:
         return ''
     if type(str_or_none) is str:
