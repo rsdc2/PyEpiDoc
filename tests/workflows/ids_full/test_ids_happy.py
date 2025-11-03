@@ -1,7 +1,14 @@
-from pyepidoc.epidoc.ids import compress, decompress, pad_and_insert_fixed_strs
 import random
 import pytest
 from typing import Literal
+
+from tests.config import EMPTY_TEMPLATE_PATH
+
+from pyepidoc import EpiDoc, EpiDocCorpus
+from pyepidoc.epidoc.ids import compress, decompress, pad_and_insert_fixed_strs
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.epidoc.edition_elements.ab import Ab
+from pyepidoc.xml.utils import abify
 
 compressions_52 = [
     ("ISic000001-0001", "AADkR", "First token id"),
@@ -97,3 +104,20 @@ def test_random_isic_ids():
 
         isic_id = pad_and_insert_fixed_strs(doc_id_str, 4)
         assert full_circle(isic_id, 52) == isic_id
+
+test_has_xml_ids = [
+    ('<w n="5">a</w> <w>b</w> <w xml:id="10">c</w>', True),
+    ('<lb n="1"/><w>a</w> <w>b</w> <w>c</w>', False)
+]
+@pytest.mark.parametrize(('xml_str', 'expected_has_xml_ids'), test_has_xml_ids)
+def test_has_xml_ids(xml_str: str, expected_has_xml_ids: bool):
+    # Arrange
+    doc = EpiDoc(EMPTY_TEMPLATE_PATH)
+    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    doc.main_edition.append_ab(ab)
+
+    # Act
+    has_xml_ids = doc.main_edition.has_xml_ids
+
+    # Assert
+    assert has_xml_ids == expected_has_xml_ids
