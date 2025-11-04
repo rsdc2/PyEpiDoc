@@ -2,8 +2,8 @@ from __future__ import annotations
 from typing import Callable, Literal
 
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
-from pyepidoc.epidoc.metadata.change import Change
+from pyepidoc.tei.metadata.resp_stmt import RespStmt
+from pyepidoc.tei.metadata.change import Change
 
 from .operations import apply_lemmatization, update_lemmatized_edition
 

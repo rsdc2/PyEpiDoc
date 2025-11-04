@@ -4,7 +4,7 @@ from lxml import etree
 from pathlib import Path
 
 from pyepidoc.epidoc.epidoc import EpiDoc
-from pyepidoc.epidoc.metadata.title_stmt import TitleStmt
+from pyepidoc.tei.metadata.title_stmt import TitleStmt
 from pyepidoc.shared import head
 from pyepidoc.epidoc.dom import lang, line
 

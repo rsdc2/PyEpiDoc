@@ -2,8 +2,8 @@ from typing import Callable, Literal
 
 from pyepidoc import EpiDoc
 from pyepidoc.epidoc.edition_elements.edition import Edition
-from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
-from pyepidoc.epidoc.metadata.change import Change
+from pyepidoc.tei.metadata.resp_stmt import RespStmt
+from pyepidoc.tei.metadata.change import Change
 from pyepidoc.epidoc import enums
 from pyepidoc.shared.generic_collection import GenericCollection as Collection, remove_none
 from pyepidoc.epidoc.representable import Representable

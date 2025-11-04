@@ -3,7 +3,7 @@ from typing import Callable
 import pytest
 
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
+from pyepidoc.tei.metadata.resp_stmt import RespStmt
 from pyepidoc.shared.testing import (
     save_and_reload, 
     save_reload_and_compare_with_benchmark

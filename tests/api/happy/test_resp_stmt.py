@@ -1,6 +1,6 @@
 from lxml.etree import _Element
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.metadata.resp_stmt import RespStmt
+from pyepidoc.tei.metadata.resp_stmt import RespStmt
 
 
 def test_create_resp_stmt():

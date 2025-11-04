@@ -19,7 +19,7 @@ from pyepidoc.shared import default_str
 from pyepidoc.shared.types import Base
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.iterables import maxone, seek, default_str
-from pyepidoc.epidoc.metadata.change import Change
+from pyepidoc.tei.metadata.change import Change
 
 from pyepidoc.xml.namespace import Namespace as ns
 
