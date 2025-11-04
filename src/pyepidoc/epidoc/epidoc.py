@@ -3,7 +3,8 @@ from typing import (
     Optional, 
     Literal, 
     overload,
-    Callable
+    Callable, 
+    override
 )
 from functools import cached_property
 
@@ -19,16 +20,20 @@ import inspect
 import io
 from io import BytesIO
 
+from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.teidoc import TeiDoc
 from pyepidoc.tei.metadata.tei_header import TeiHeader
+from pyepidoc.tei.metadata.change import Change
+from pyepidoc.tei.metadata.resp_stmt import RespStmt
+from pyepidoc.tei.metadata.file_desc import FileDesc
+from pyepidoc.tei.metadata.file_desc import TitleStmt
 
 import pyepidoc
-from pyepidoc.xml.docroot import DocRoot
-from pyepidoc.shared import (
-    maxone, 
-    listfilter, 
-    head,
-    remove_none
+from pyepidoc.shared import maxone, head, remove_none
+from pyepidoc.shared.enums import (
+    SpaceUnit,
+    AbbrType,
+    DoNotPrettifyChildren
 )
 from pyepidoc.shared.types import Base
 
@@ -44,12 +49,6 @@ from .edition_elements.g import G
 from .edition_elements.num import Num
 from .edition_elements.role_name import RoleName
 from .edition_elements.expan import Expan
-from .edition_elements.w import W
-from ..shared.enums import (
-    SpaceUnit,
-    AbbrType,
-    DoNotPrettifyChildren
-)
 
 
 class EpiDoc(TeiDoc):
@@ -1017,6 +1016,11 @@ class EpiDoc(TeiDoc):
     
         return list(role_names)
 
+    @override
+    @property
+    def root_elem(self) -> TeiElement:
+        return TeiElement(self.e)
+
     def set_ids(self, base: Base=100) -> None:
         
         """
@@ -1165,6 +1169,15 @@ class EpiDoc(TeiDoc):
             return None
 
         return textlang
+    
+    @property
+    def text_elems(self) -> list[EditionElement]:
+        """
+        All elements in the document responsible for carrying
+        text information as part of the edition
+        """
+        elems = chain(*[ab.descendant_elements for ab in self.abs])
+        return list(map(EditionElement, elems))
     
     @property
     def texttype(self) -> str | None:
@@ -1410,3 +1423,15 @@ class EpiDoc(TeiDoc):
         return [elem.xml_id for elem in elems 
                 if elem.xml_id is not None]
 
+    @property
+    def xml_ids(self) -> list[str]:
+        """
+        Convenience property for the element @xml:id IDs in the editions of the document
+        """
+
+        abs = chain(*[edition.abs 
+                      for edition in self.editions()])
+        elems = chain(*[ab.id_carriers for ab in abs])
+
+        return [elem.xml_id for elem in elems 
+                if elem.xml_id is not None]

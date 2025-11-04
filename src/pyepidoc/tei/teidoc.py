@@ -28,7 +28,7 @@ from pyepidoc.shared import (
 
 from pyepidoc.shared.types import Base
 from pyepidoc.xml.xml_element import XmlElement
-from pyepidoc.shared.enums import SpaceUnit
+from pyepidoc.shared.enums import SpaceUnit, DoNotPrettifyChildren
 from pyepidoc.tei.tei_element import TeiElement
 
 from .body import Body
@@ -225,7 +225,7 @@ class TeiDoc(DocRoot):
         if textclass_e is None:
             return []
 
-        textclass_element = EpiDocElement(textclass_e)
+        textclass_element = TeiElement(textclass_e)
 
         terms = textclass_element.get_desc_tei_elems('term')
         terms_with_ana = [term for term in terms 
@@ -325,7 +325,7 @@ class TeiDoc(DocRoot):
 
         """Used by EDH to host language information."""
 
-        language_elems = [EpiDocElement(language) 
+        language_elems = [TeiElement(language) 
                           for language in self.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
@@ -370,7 +370,7 @@ class TeiDoc(DocRoot):
         if material_e is None:
             return []
         
-        return remove_none([EpiDocElement(e).get_attrib('ana') 
+        return remove_none([TeiElement(e).get_attrib('ana') 
                             for e in material_e])
 
     @property
@@ -394,7 +394,7 @@ class TeiDoc(DocRoot):
         return not_before_custom or not_before
 
     @property
-    def orig_date(self) -> Optional[EpiDocElement]:
+    def orig_date(self) -> Optional[TeiElement]:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
             self.get_desc('origDate'),
@@ -406,14 +406,14 @@ class TeiDoc(DocRoot):
 
         if orig_date.attrib == dict():
             orig_date = maxone(
-                EpiDocElement(orig_date).get_desc('origDate'), 
+                TeiElement(orig_date).get_desc('origDate'), 
                 throw_if_more_than_one=False
             )    
 
         if orig_date is None:
             return None        
 
-        return EpiDocElement(orig_date)
+        return TeiElement(orig_date)
  
     @property
     def orig_place(self) -> str:
@@ -568,11 +568,11 @@ class TeiDoc(DocRoot):
         print(self.translation_text)
 
     @property
-    def publication_stmt(self) -> Optional[EpiDocElement]:
+    def publication_stmt(self) -> Optional[TeiElement]:
         publication_stmt = maxone(self.get_desc('publicationStmt'))
         if publication_stmt is None:
             return None
-        return EpiDocElement(publication_stmt)
+        return TeiElement(publication_stmt)
     
     @property
     def _pyepidoc_module_path(self) -> Path:
@@ -623,15 +623,6 @@ class TeiDoc(DocRoot):
         return '\n'.join(leiden_editions)    
 
     @property
-    def text_elems(self) -> list[EpiDocElement]:
-        """
-        All elements in the document responsible for carrying
-        text information as part of the edition
-        """
-        elems = chain(*[ab.descendant_elements for ab in self.abs])
-        return list(map(EpiDocElement, elems))
-
-    @property
     def text_xml(self) -> str:
 
         """
@@ -656,12 +647,12 @@ class TeiDoc(DocRoot):
         return self.get_textclasses(True)
 
     @property
-    def textlang(self) -> Optional[EpiDocElement]:
+    def textlang(self) -> Optional[TeiElement]:
         """
         Used by I.Sicily to host language information.        
         """
 
-        textlang = maxone([EpiDocElement(textlang) 
+        textlang = maxone([TeiElement(textlang) 
             for textlang in self.get_desc('textLang')])
         
         if textlang is None: 
@@ -683,7 +674,7 @@ class TeiDoc(DocRoot):
         if elem is None:
             return None
         else:
-            return EpiDocElement(elem).text
+            return TeiElement(elem).text
         
     @property
     def title_stmt(self) -> TitleStmt | None:
@@ -765,7 +756,7 @@ class TeiDoc(DocRoot):
         
         translation_divs = self.get_div_descendants_by_type('translation')
 
-        return '\n'.join([EpiDocElement(div).text_desc_compressed_whitespace 
+        return '\n'.join([TeiElement(div).text_desc_compressed_whitespace 
                        for div in translation_divs])
     
     def validate(self) -> tuple[bool, str]:
@@ -777,17 +768,4 @@ class TeiDoc(DocRoot):
         confirming that the file is valid.
         """
         return self.validate_by_relaxng(self._rng_path)
-    
-    @property
-    def xml_ids(self) -> list[str]:
-        """
-        Convenience property for the element @xml:id IDs in the editions of the document
-        """
-
-        abs = chain(*[edition.abs 
-                      for edition in self.editions()])
-        elems = chain(*[ab.id_carriers for ab in abs])
-
-        return [elem.xml_id for elem in elems 
-                if elem.xml_id is not None]
 

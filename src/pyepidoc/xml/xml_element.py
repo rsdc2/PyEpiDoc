@@ -446,19 +446,6 @@ class XmlElement(Showable):
             defaultval=None,
             throw_if_more_than_one=throw_if_more_than_one
         )
-
-    def get_desc_tei_elems(self, 
-        elem_names: list[str] | str, 
-        attribs: dict[str, str] | None = None
-    ) -> list[XmlElement]:
-        
-        """
-        Get all the descendant elements within a particular
-        set of names in the TEI namespace.
-        """
-
-        return [XmlElement(desc) 
-            for desc in self.get_desc(elemnames=elem_names, attribs=attribs)]
     
     def get_div_descendants(
         self, 

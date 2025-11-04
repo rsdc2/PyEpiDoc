@@ -59,3 +59,16 @@ class TeiElement(XmlElement):
             None
         )
         return TeiElement(elem)
+    
+    def get_desc_tei_elems(self, 
+        elem_names: list[str] | str, 
+        attribs: dict[str, str] | None = None
+    ) -> list[XmlElement]:
+        
+        """
+        Get all the descendant elements within a particular
+        set of names in the TEI namespace.
+        """
+
+        return [XmlElement(desc) 
+            for desc in self.get_desc(elemnames=elem_names, attribs=attribs)]
