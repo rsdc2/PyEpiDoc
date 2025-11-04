@@ -33,6 +33,11 @@ class Change(EpiDocElement):
 
         """
         Create a new Change from the details to be provided.
+
+        :param when: Date string in format yyyy-mm-dd
+        :param who: Identifier corresponding to the `@xml:id` attribute of the name 
+        element in the <respStmt>, prefixed by `#`, e.g. for the initials 'JB', this value should be '#JB'
+        :text: Free text to describe the change
         """
 
         elem = EpiDocElement.create_new('change', {
@@ -53,4 +58,3 @@ class Change(EpiDocElement):
     @property
     def who(self) -> str | None:
         return self.get_attrib('who')
-
