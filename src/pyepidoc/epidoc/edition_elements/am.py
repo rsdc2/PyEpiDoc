@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 from pyepidoc.epidoc.utils import descendant_text
 from typing import Optional
 
-class Am(EpiDocElement):    
+class Am(EditionElement):    
 
     """
     Provides services for <am> ('abbreviation marker') elements.

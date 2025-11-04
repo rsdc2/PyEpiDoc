@@ -1,8 +1,8 @@
 from lxml.etree import _Element
-from ..epidoc_element import EpiDocElement
-from pyepidoc.epidoc.enums import AtomicTokenType
+from ..edition_element import EditionElement
+from pyepidoc.shared.enums import AtomicTokenType
 
-class G(EpiDocElement):
+class G(EditionElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.

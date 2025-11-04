@@ -9,7 +9,7 @@ from functools import reduce
 from pyepidoc import EpiDocCorpus
 from pyepidoc.epidoc.edition_elements.expan import Expan
 from pyepidoc.shared.classes import SetRelation
-from pyepidoc.epidoc.enums import AbbrType
+from pyepidoc.shared.enums import AbbrType
 from pyepidoc.epidoc.dom import lang, doc_id
 
 

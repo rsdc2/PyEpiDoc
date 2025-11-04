@@ -1,9 +1,9 @@
 from lxml.etree import _Element
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 from ..utils import leiden_str_from_children, normalized_str_from_children
 
 
-class Corr(EpiDocElement):
+class Corr(EditionElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.

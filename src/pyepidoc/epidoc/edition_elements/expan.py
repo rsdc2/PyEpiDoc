@@ -7,34 +7,34 @@ from lxml.etree import _Element
 
 from ...shared import head
 
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 
 from .ex import Ex
 from .abbr import Abbr
 from .am import Am
 from .g import G
 
-from ..enums import AbbrType
+from ...shared.enums import AbbrType
 from ..utils import (leiden_str_from_children, 
                      callable_from_localname, 
                      localname,
                      normalized_str_from_children)
 
 
-class Expan(EpiDocElement):
+class Expan(EditionElement):
 
     """
     Provides services for <expan> elements in EpiDoc XML.
     Will normally contain <abbr> and <ex> elements.
     """
 
-    def __init__(self, e: _Element | EpiDocElement):
-        if not isinstance(e, (_Element, EpiDocElement)):
+    def __init__(self, e: _Element | EditionElement):
+        if not isinstance(e, (_Element, EditionElement)):
             raise TypeError('e should be _Element or EpiDocElement type.')
 
         if isinstance(e, _Element):
             self._e = e
-        elif isinstance(e, EpiDocElement):
+        elif isinstance(e, EditionElement):
             self._e = e._e
 
         if localname(self._e) != 'expan':
@@ -94,8 +94,8 @@ class Expan(EpiDocElement):
         return len(self.am_elems)
     
     @property
-    def as_element(self) -> EpiDocElement:
-        return EpiDocElement(self.e)
+    def as_element(self) -> EditionElement:
+        return EditionElement(self.e)
     
     def contains_g(self, with_ref: str | None = None) -> bool:
         """

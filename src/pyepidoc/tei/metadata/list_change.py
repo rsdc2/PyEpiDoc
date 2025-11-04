@@ -1,8 +1,8 @@
 from __future__ import annotations
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from .change import Change
 
-class ListChange(EpiDocElement):
+class ListChange(EditionElement):
 
     def append_change(self, change: Change) -> ListChange:
         """
@@ -18,11 +18,11 @@ class ListChange(EpiDocElement):
 
     @staticmethod
     def create_new():
-        elem = EpiDocElement.create_new('listChange')
+        elem = EditionElement.create_new('listChange')
         return ListChange(elem)
     
     @staticmethod
-    def from_epidoc_element(element: EpiDocElement):
+    def from_epidoc_element(element: EditionElement):
         if element.localname != 'listChange':
             raise Exception('Element localname must be "listChange"')
         

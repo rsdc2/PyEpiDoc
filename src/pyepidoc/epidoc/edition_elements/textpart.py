@@ -1,8 +1,8 @@
 from ...shared.constants import XMLNS
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 
 
-class TextPart(EpiDocElement):
+class TextPart(EditionElement):
 
     @property
     def lang(self):

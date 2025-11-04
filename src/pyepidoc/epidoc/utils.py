@@ -7,13 +7,13 @@ from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
 from pyepidoc.xml.utils import localname
 from pyepidoc.xml.xml_element import XmlElement
-from pyepidoc.epidoc.enums import (
+from pyepidoc.shared.enums import (
     NonNormalized, 
     RegTextType, 
     AtomicTokenType
 )
 from pyepidoc.shared.constants import TEINS
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 
 
 def callable_from_localname(
@@ -43,8 +43,8 @@ def callable_from_localname(
     return elem_cls(elem)
 
 
-def descendant_atomic_tokens(elem: EpiDocElement) -> list[EpiDocElement]:
-    desc_tokens = map(EpiDocElement, elem.get_desc(AtomicTokenType.values()))
+def descendant_atomic_tokens(elem: EditionElement) -> list[EditionElement]:
+    desc_tokens = map(EditionElement, elem.get_desc(AtomicTokenType.values()))
 
     return [token for token 
         in desc_tokens
@@ -141,7 +141,7 @@ def normalized_str_from_children(
     
     children: list[_Element | _ElementUnicodeResult] = \
         [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
-    objs = cast(list[EpiDocElement], [classes.get(localname(child), descendant_text)(child) 
+    objs = cast(list[EditionElement], [classes.get(localname(child), descendant_text)(child) 
             for child in children])
     
     # breakpoint()

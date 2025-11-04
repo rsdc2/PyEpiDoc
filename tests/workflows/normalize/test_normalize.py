@@ -2,7 +2,7 @@ import pytest
 from pyepidoc.epidoc.edition_elements.w import W
 from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.representable import Representable
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
 
 w_elements = [
@@ -23,7 +23,7 @@ def test_w_normalization(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, normalized_form = inpt
-    elem = EpiDocElement.from_xml_str(xml_str)
+    elem = EditionElement.from_xml_str(xml_str)
 
     # Act 
     try:
@@ -54,7 +54,7 @@ def test_token_normalization(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, normalized_form = inpt
-    elem = EpiDocElement.from_xml_str(xml_str)
+    elem = EditionElement.from_xml_str(xml_str)
     
     # Act
     token = Token(elem.e)
@@ -73,7 +73,7 @@ def test_representable_normalization(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, normalized_form = inpt
-    elem = EpiDocElement.from_xml_str(xml_str)
+    elem = EditionElement.from_xml_str(xml_str)
     
     # Act
     representable = Representable(elem.e)

@@ -19,14 +19,14 @@ from pyepidoc.shared import maxone, remove_none, head
 from pyepidoc.shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
 from pyepidoc.xml.xml_element import XmlElement
 
-from .epidoc_element import EpiDocElement
+from .edition_element import EditionElement
 
-from .enums import RegTextType
+from ..shared.enums import RegTextType
 
 Node = Union[_Element, _ElementUnicodeResult]
 
 
-class Representable(EpiDocElement):
+class Representable(EditionElement):
 
     @property
     def elem_classes(self) -> dict[str, type[Representable]]:
@@ -106,7 +106,7 @@ class Representable(EpiDocElement):
         return prec_text + self.leiden_form + following_text        
 
     @cached_property
-    def simple_lemmatized_edition_element(self) -> EpiDocElement:
+    def simple_lemmatized_edition_element(self) -> EditionElement:
         """
         Element for use in simple-lemmatized edition
         """

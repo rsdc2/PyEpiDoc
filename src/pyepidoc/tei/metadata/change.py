@@ -7,11 +7,11 @@ from lxml.etree import _Element
 from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared.iterables import head
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.xml.xml_element import XmlElement
 
 
-class Change(EpiDocElement):
+class Change(EditionElement):
     """
     The <respStmt> node, including collections of
     <respStmt>
@@ -40,7 +40,7 @@ class Change(EpiDocElement):
         :text: Free text to describe the change
         """
 
-        elem = EpiDocElement.create_new('change', {
+        elem = EditionElement.create_new('change', {
             'when': when,
             'who': who
         })

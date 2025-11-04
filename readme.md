@@ -138,7 +138,7 @@ Given a corpus of EpiDoc XML files in a folder ```corpus/``` in the current work
 
 ```python
 from pyepidoc import EpiDocCorpus
-from pyepidoc.epidoc.enums import TextClass
+from pyepidoc.shared.enums import TextClass
 from pyepidoc.file.funcs import str_to_file
 
 # Load the corpus

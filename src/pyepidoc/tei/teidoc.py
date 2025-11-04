@@ -2,10 +2,8 @@ from __future__ import annotations
 from typing import (
     Optional, 
     Literal, 
-    overload,
-    Callable
+    overload
 )
-from functools import cached_property
 
 from lxml import etree
 from lxml.etree import (
@@ -27,9 +25,11 @@ from pyepidoc.shared import (
     head,
     remove_none
 )
-from pyepidoc.shared.types import Base
 
+from pyepidoc.shared.types import Base
 from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.shared.enums import SpaceUnit
+from pyepidoc.tei.tei_element import TeiElement
 
 from .body import Body
 from .errors import TEINSError
@@ -107,7 +107,7 @@ class TeiDoc(DocRoot):
                 if self.tei_header is None:
                     self._append_new_tei_header()
                 self.tei_header.append_new_file_desc() #type: ignore
-            self.file_desc.append_title_stmt(EpiDocElement.create_new('titleStmt')) #type: ignore
+            self.file_desc.append_title_stmt(TeiElement.create_new('titleStmt')) #type: ignore
 
         self.title_stmt.append_resp_stmt(resp_stmt) #type: ignore
 

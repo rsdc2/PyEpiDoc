@@ -1,10 +1,10 @@
 from lxml.etree import _Element
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 from pyepidoc.epidoc.utils import localname
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 
 
-class Hi(EpiDocElement):
+class Hi(EditionElement):
     """
     Provides services for abbreviation expansions 
     given in <hi> elements.

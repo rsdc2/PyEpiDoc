@@ -20,7 +20,7 @@ import io
 from io import BytesIO
 
 from pyepidoc.tei.teidoc import TeiDoc
-
+from pyepidoc.tei.metadata.tei_header import TeiHeader
 
 import pyepidoc
 from pyepidoc.xml.docroot import DocRoot
@@ -34,7 +34,7 @@ from pyepidoc.shared.types import Base
 
 from .token import Token
 from .errors import EpiDocValidationError
-from .epidoc_element import EpiDocElement, XmlElement
+from .edition_element import EditionElement, XmlElement
 
 from .edition_elements.ab import Ab
 from .edition_elements.edition import Edition
@@ -45,7 +45,7 @@ from .edition_elements.num import Num
 from .edition_elements.role_name import RoleName
 from .edition_elements.expan import Expan
 from .edition_elements.w import W
-from .enums import (
+from ..shared.enums import (
     SpaceUnit,
     AbbrType,
     DoNotPrettifyChildren
@@ -120,7 +120,7 @@ class EpiDoc(TeiDoc):
         return self.get_div_descendants_by_type('commentary')
 
     @property
-    def compound_words(self) -> list[EpiDocElement]:
+    def compound_words(self) -> list[EditionElement]:
         return [item for edition in self.editions() 
             for item in edition.compound_tokens]
 
@@ -359,7 +359,7 @@ class EpiDoc(TeiDoc):
         return list(gs)
 
     @property
-    def gaps(self) -> list[EpiDocElement]:
+    def gaps(self) -> list[EditionElement]:
         items = [edition.gaps for edition in self.editions()]
         return [item for item in list(chain(*items))]
 
@@ -403,7 +403,7 @@ class EpiDoc(TeiDoc):
         if textclass_e is None:
             return []
 
-        textclass_element = EpiDocElement(textclass_e)
+        textclass_element = EditionElement(textclass_e)
 
         terms = textclass_element.get_desc_tei_elems('term')
         terms_with_ana = [term for term in terms 
@@ -494,7 +494,7 @@ class EpiDoc(TeiDoc):
         return idno_elem.text or ''
 
     @property
-    def id_carriers(self) -> list[EpiDocElement]:
+    def id_carriers(self) -> list[EditionElement]:
         return list(chain(*[edition.local_idable_elements 
                             for edition in self.editions()]))
 
@@ -562,7 +562,7 @@ class EpiDoc(TeiDoc):
 
         """Used by EDH to host language information."""
 
-        language_elems = [EpiDocElement(language) 
+        language_elems = [EditionElement(language) 
                           for language in self.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
@@ -666,7 +666,7 @@ class EpiDoc(TeiDoc):
         return self
     
     @property
-    def local_idable_elements(self) -> list[EpiDocElement]:
+    def local_idable_elements(self) -> list[EditionElement]:
 
         """
         Get all the tokens in the main edition that should 
@@ -712,7 +712,7 @@ class EpiDoc(TeiDoc):
         if material_e is None:
             return []
         
-        return remove_none([EpiDocElement(e).get_attrib('ana') 
+        return remove_none([EditionElement(e).get_attrib('ana') 
                             for e in material_e])
 
     def names(self, 
@@ -766,7 +766,7 @@ class EpiDoc(TeiDoc):
         return not_before_custom or not_before
 
     @property
-    def orig_date(self) -> Optional[EpiDocElement]:
+    def orig_date(self) -> Optional[EditionElement]:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
             self.get_desc('origDate'),
@@ -778,14 +778,14 @@ class EpiDoc(TeiDoc):
 
         if orig_date.attrib == dict():
             orig_date = maxone(
-                EpiDocElement(orig_date).get_desc('origDate'), 
+                EditionElement(orig_date).get_desc('origDate'), 
                 throw_if_more_than_one=False
             )    
 
         if orig_date is None:
             return None        
 
-        return EpiDocElement(orig_date)
+        return EditionElement(orig_date)
  
     @property
     def orig_place(self) -> str:
@@ -969,11 +969,11 @@ class EpiDoc(TeiDoc):
         print(self.translation_text)
 
     @property
-    def publication_stmt(self) -> Optional[EpiDocElement]:
+    def publication_stmt(self) -> Optional[EditionElement]:
         publication_stmt = maxone(self.get_desc('publicationStmt'))
         if publication_stmt is None:
             return None
-        return EpiDocElement(publication_stmt)
+        return EditionElement(publication_stmt)
     
     @property
     def _pyepidoc_module_path(self) -> Path:
@@ -1103,13 +1103,13 @@ class EpiDoc(TeiDoc):
         return '\n'.join(leiden_editions)    
 
     @property
-    def text_elems(self) -> list[EpiDocElement]:
+    def text_elems(self) -> list[EditionElement]:
         """
         All elements in the document responsible for carrying
         text information as part of the edition
         """
         elems = chain(*[ab.descendant_elements for ab in self.abs])
-        return list(map(EpiDocElement, elems))
+        return list(map(EditionElement, elems))
 
     @cached_property
     def text_leiden(self) -> str:
@@ -1153,12 +1153,12 @@ class EpiDoc(TeiDoc):
         return self.get_textclasses(True)
 
     @property
-    def textlang(self) -> Optional[EpiDocElement]:
+    def textlang(self) -> Optional[EditionElement]:
         """
         Used by I.Sicily to host language information.        
         """
 
-        textlang = maxone([EpiDocElement(textlang) 
+        textlang = maxone([EditionElement(textlang) 
             for textlang in self.get_desc('textLang')])
         
         if textlang is None: 
@@ -1180,7 +1180,7 @@ class EpiDoc(TeiDoc):
         if elem is None:
             return None
         else:
-            return EpiDocElement(elem).text
+            return EditionElement(elem).text
         
     @property
     def title_stmt(self) -> TitleStmt | None:
@@ -1379,7 +1379,7 @@ class EpiDoc(TeiDoc):
         
         translation_divs = self.get_div_descendants_by_type('translation')
 
-        return '\n'.join([EpiDocElement(div).text_desc_compressed_whitespace 
+        return '\n'.join([EditionElement(div).text_desc_compressed_whitespace 
                        for div in translation_divs])
     
     def validate(self) -> tuple[bool, str]:

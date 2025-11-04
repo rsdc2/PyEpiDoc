@@ -7,11 +7,11 @@ from lxml.etree import _Element
 from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared.iterables import head
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.xml.xml_element import XmlElement
 
 
-class RespStmt(EpiDocElement):
+class RespStmt(EditionElement):
     """
     The <respStmt> node, including collections of
     <respStmt>
@@ -78,7 +78,7 @@ class RespStmt(EpiDocElement):
         """
         tag = ns.give_ns("name", TEINS)
         elem: _Element = etree.Element(tag)
-        epidoc_elem = EpiDocElement(elem)
+        epidoc_elem = EditionElement(elem)
         epidoc_elem.set_attrib("id", initials, XMLNS)
         epidoc_elem.set_attrib("ref", ref)
         epidoc_elem.text = name

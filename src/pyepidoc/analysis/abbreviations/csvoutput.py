@@ -6,7 +6,7 @@ from typing import Literal, Optional
 from .distribution import overall_distribution_via_expans 
 from .instances import raw_abbreviations, abbreviation_count
 
-from pyepidoc.epidoc.enums import AbbrType
+from pyepidoc.shared.enums import AbbrType
 from pyepidoc import EpiDocCorpus
 from pyepidoc.shared.csv import pivot_dict
 

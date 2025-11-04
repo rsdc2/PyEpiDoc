@@ -10,7 +10,7 @@ from pyepidoc.shared.testing import (
 )
 from pyepidoc.processing.processor import Processor
 
-from pyepidoc.epidoc.enums import StandoffEditionElements
+from pyepidoc.shared.enums import StandoffEditionElements
 from tests.config import FILE_WRITE_MODE
 
 unlemmatized_path = 'tests/workflows/lemmatize/lemmatizations_only/files/unlemmatized/'

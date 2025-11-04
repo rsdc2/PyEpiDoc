@@ -11,13 +11,13 @@ from pyepidoc.shared import maxone, head
 from pyepidoc.xml.utils import localname
 
 from .epidoc import EpiDoc
-from .epidoc_element import EpiDocElement
+from .edition_element import EditionElement
 from .edition_elements.ab import Ab
 from .edition_elements.edition import Edition
 from .edition_elements.lb import Lb
 
 
-def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
+def ancestor_abs(elem: EditionElement) -> Sequence[Ab]:
     """
     Returns a |Sequence| of |Ab|s containing an |Element|,
     starting with the ancestor closest to the |Element|
@@ -26,7 +26,7 @@ def ancestor_abs(elem: EpiDocElement) -> Sequence[Ab]:
         if elem.localname == 'ab']
 
 
-def owner_doc(elem: EpiDocElement) -> Optional[EpiDoc]:
+def owner_doc(elem: EditionElement) -> Optional[EpiDoc]:
     """
     Returns the |EpiDoc| document owning an element.
     """
@@ -38,14 +38,14 @@ def owner_doc(elem: EpiDocElement) -> Optional[EpiDoc]:
     return EpiDoc(roottree)
 
 
-def ancestor_edition(elem: EpiDocElement) -> Optional[Edition]:
+def ancestor_edition(elem: EditionElement) -> Optional[Edition]:
 
     """
     Returns the |Edition| containing an element (if any).
     """
 
     editions = [Edition(elem) for elem in elem.get_ancestors_incl_self()
-        if EpiDocElement(elem).is_edition]
+        if EditionElement(elem).is_edition]
 
     edition = maxone(
         lst=editions,
@@ -59,7 +59,7 @@ def ancestor_edition(elem: EpiDocElement) -> Optional[Edition]:
     return edition
 
 
-def ancestor_ab(elem: EpiDocElement) -> Optional[Ab]:
+def ancestor_ab(elem: EditionElement) -> Optional[Ab]:
     """
     Returns the Ab containing the element (if any)
     """
@@ -75,7 +75,7 @@ def ancestor_ab(elem: EpiDocElement) -> Optional[Ab]:
         return None
 
 
-def doc_id(elem: EpiDocElement) -> Optional[str]:
+def doc_id(elem: EditionElement) -> Optional[str]:
     """
     Finds the document id containing a given element.
     """
@@ -88,7 +88,7 @@ def doc_id(elem: EpiDocElement) -> Optional[str]:
     return doc.id
 
 
-def lang(elem: EpiDocElement) -> Optional[str]:
+def lang(elem: EditionElement) -> Optional[str]:
     """
     Returns the language of the element, based on 
     the language specified either in the 
@@ -120,7 +120,7 @@ def lang(elem: EpiDocElement) -> Optional[str]:
     return doc.mainlang
     
 
-def last_in_ab(elem: EpiDocElement) -> bool:
+def last_in_ab(elem: EditionElement) -> bool:
     """
     Return True if the element is last in its <ab/>
     """
@@ -132,7 +132,7 @@ def last_in_ab(elem: EpiDocElement) -> bool:
     return id(elem.e) == id(ab.tokens[-1].e)
 
 
-def line(elem: EpiDocElement) -> Optional[Lb]:
+def line(elem: EditionElement) -> Optional[Lb]:
     lb = elem.has_lb_in_preceding_or_ancestor
     
     if lb is None:
@@ -141,7 +141,7 @@ def line(elem: EpiDocElement) -> Optional[Lb]:
     return Lb(lb)
 
 
-def line_ends_inside(elem: EpiDocElement) -> int:
+def line_ends_inside(elem: EditionElement) -> int:
     """
     Count the number of <lb/> elements that are 
     descendants of the element
@@ -155,7 +155,7 @@ def line_ends_inside(elem: EpiDocElement) -> int:
     return len(list(lbs))
 
 
-def line_end_after(elem: EpiDocElement) -> bool:
+def line_end_after(elem: EditionElement) -> bool:
     """
     Returns True if the token or part of the token
     appears at a line end
@@ -192,7 +192,7 @@ def line_end_after(elem: EpiDocElement) -> bool:
         return False
     
 
-def line_ends(elem: EpiDocElement) -> int:
+def line_ends(elem: EditionElement) -> int:
     inside = line_ends_inside(elem)
     after = line_end_after(elem)
 
@@ -201,7 +201,7 @@ def line_ends(elem: EpiDocElement) -> int:
     else:
         return inside
 
-def materialclasses(elem: EpiDocElement) -> list[str]:
+def materialclasses(elem: EditionElement) -> list[str]:
     """
     Returns a list of the material classes of the owner
     document

@@ -1,5 +1,5 @@
 from lxml.etree import _Element
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 from ..utils import leiden_str_from_children, normalized_str_from_children
 
 from .abbr import Abbr
@@ -13,7 +13,7 @@ element_classes: dict[str, type] = {
 }
 
 
-class Unclear(EpiDocElement):
+class Unclear(EditionElement):
     """
     Provides services for abbreviation expansions 
     given in <unclear> elements.

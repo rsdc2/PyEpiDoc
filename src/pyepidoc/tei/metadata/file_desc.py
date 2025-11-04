@@ -1,9 +1,9 @@
 from __future__ import annotations
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from .title_stmt import TitleStmt
 from .publication_stmt import PublicationStmt
 
-class FileDesc(EpiDocElement):
+class FileDesc(EditionElement):
     """
     The <fileDesc> element
     """
@@ -36,7 +36,7 @@ class FileDesc(EpiDocElement):
             raise ValueError('Cannot append <publicationStmt> since there is already '
                              'one present in the document')
         
-        publication_stmt = EpiDocElement.create_new('publicationStmt')
+        publication_stmt = EditionElement.create_new('publicationStmt')
         self.append_node(publication_stmt)
         
         if self.publication_stmt is None:
@@ -59,7 +59,7 @@ class FileDesc(EpiDocElement):
         appends a new <publicationStmt>
         """
         if self.title_stmt is None:
-            title_stmt = TitleStmt(EpiDocElement.create_new('titleStmt'))
+            title_stmt = TitleStmt(EditionElement.create_new('titleStmt'))
             return self.append_title_stmt(title_stmt)
 
         return self.title_stmt

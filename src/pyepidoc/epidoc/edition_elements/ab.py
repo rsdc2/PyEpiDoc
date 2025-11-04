@@ -6,11 +6,11 @@ from functools import reduce
 from itertools import chain
 from lxml.etree import _Element 
 
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 from .textpart import TextPart
 from ..token import Token
 from .expan import Expan
-from ..enums import (
+from ...shared.enums import (
     IdCarrier,
     TokenCarrier, 
     AtomicTokenType, 
@@ -52,14 +52,14 @@ class Ab(Representable):
 
     """
 
-    def __init__(self, e: Optional[_Element | EpiDocElement | XmlElement]=None):
+    def __init__(self, e: Optional[_Element | EditionElement | XmlElement]=None):
 
-        if type(e) not in [_Element, EpiDocElement, XmlElement] and e is not None:
+        if type(e) not in [_Element, EditionElement, XmlElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')
 
         if type(e) is _Element:
             self._e = e
-        elif type(e) is EpiDocElement:
+        elif type(e) is EditionElement:
             self._e = e.e
         elif type(e) is XmlElement:
             self._e = e.e
@@ -68,8 +68,8 @@ class Ab(Representable):
             raise TypeError('Element should be of type <ab>.')
 
     @property
-    def compound_tokens(self) -> list[EpiDocElement]:
-        return [EpiDocElement(item) for item 
+    def compound_tokens(self) -> list[EditionElement]:
+        return [EditionElement(item) for item 
             in self.get_desc(
                 CompoundTokenType.values() 
             )
@@ -99,23 +99,23 @@ class Ab(Representable):
         return head(self.tokens)
 
     @property
-    def g_dividers(self) -> list[EpiDocElement]:
-        return [EpiDocElement(boundary) for boundary 
+    def g_dividers(self) -> list[EditionElement]:
+        return [EditionElement(boundary) for boundary 
             in self.get_desc('g')
         ]
 
     @property
     def gaps(self):
-        return [EpiDocElement(gap) for gap in self.get_desc('gap')]
+        return [EditionElement(gap) for gap in self.get_desc('gap')]
 
     @property
-    def id_carriers(self) -> list[EpiDocElement]:
+    def id_carriers(self) -> list[EditionElement]:
 
         """
         id_carriers are XML elements that carry an 
         @xml:id attribute
         """
-        return [EpiDocElement(element) 
+        return [EditionElement(element) 
                 for element in self.descendant_elements
                 if element.tag.name in IdCarrier]
 
@@ -128,7 +128,7 @@ class Ab(Representable):
         node, at which point returns the <div> @lang attribute, if any.
         """
         
-        def _get_lang(elem:EpiDocElement) -> Optional[str]:
+        def _get_lang(elem:EditionElement) -> Optional[str]:
             
             lang = elem.get_attrib('lang', XMLNS)
             
@@ -146,17 +146,17 @@ class Ab(Representable):
         return _get_lang(self)
 
     @property
-    def lbs(self) -> Sequence[EpiDocElement]:
-        return [EpiDocElement(lb) 
+    def lbs(self) -> Sequence[EditionElement]:
+        return [EditionElement(lb) 
                 for lb in self.get_desc_tei_elems(['lb'])]
 
     @property
-    def no_space_before(self) -> list[EpiDocElement]:
+    def no_space_before(self) -> list[EditionElement]:
         """
         :return: a |list| of |Element|s that should not be separated by spaces.
         """
 
-        return [EpiDocElement(item) for item 
+        return [EditionElement(item) for item 
             in self.get_desc(
                 NoSpaceBefore.values() 
             )
@@ -173,7 +173,7 @@ class Ab(Representable):
         token_carriers = chain(*self._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
 
-        def _redfunc(acc:list[str], element:EpiDocElement) -> list[str]:
+        def _redfunc(acc:list[str], element:EditionElement) -> list[str]:
             if element.text is None and \
                 element.tail_completer is None and \
                     element._tail_prototokens == []:

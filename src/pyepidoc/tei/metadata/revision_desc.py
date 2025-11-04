@@ -1,9 +1,9 @@
 from __future__ import annotations
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from .change import Change
 from .list_change import ListChange
 
-class RevisionDesc(EpiDocElement):
+class RevisionDesc(EditionElement):
     """
     The <revisionDesc> element
     """
@@ -20,12 +20,12 @@ class RevisionDesc(EpiDocElement):
         """
         Create a new <revisionDesc> element with an empty <listChange> 
         """
-        revision_desc = RevisionDesc(EpiDocElement.create_new('revisionDesc'))
+        revision_desc = RevisionDesc(EditionElement.create_new('revisionDesc'))
         list_change = ListChange.create_new()
         revision_desc.append_node(list_change)
         return revision_desc
     
-    def from_epidoc_element(element: EpiDocElement) -> RevisionDesc:
+    def from_epidoc_element(element: EditionElement) -> RevisionDesc:
         if element.localname != 'revisionDesc':
             raise Exception('Element must have localname "revisionDesc"')
         
@@ -45,5 +45,5 @@ class RevisionDesc(EpiDocElement):
         if list_change is None:
             raise Exception('No <listChange> element present in <revisionDesc>')
         
-        return ListChange.from_epidoc_element(EpiDocElement(list_change))
+        return ListChange.from_epidoc_element(EditionElement(list_change))
 

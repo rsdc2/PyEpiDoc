@@ -1,7 +1,7 @@
 from pathlib import Path
 from io import BytesIO
 
-from .enums import (
+from ..shared.enums import (
     SpaceUnit
 )
 from .epidoc import EpiDoc

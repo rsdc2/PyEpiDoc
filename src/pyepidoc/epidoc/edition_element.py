@@ -1,16 +1,13 @@
 from __future__ import annotations
 from typing import (
-    List,
     Sequence,
     Optional, 
     cast,
-    overload,
-    Callable
+    overload
 )
-import sys
 from itertools import chain
 
-from pyepidoc.shared.classes import Showable, ExtendableSeq, SetRelation
+from pyepidoc.shared.classes import Showable, SetRelation
 from pyepidoc.shared import update_set_inplace
 from pyepidoc.shared.string import to_lower, to_upper
 from pyepidoc.xml.xml_element import XmlElement
@@ -29,6 +26,7 @@ from lxml.etree import (
 )
 
 from pyepidoc.xml.namespace import Namespace as ns
+from pyepidoc.tei.tei_element import TeiElement
 
 from pyepidoc.shared.constants import (
     A_TO_Z_SET, 
@@ -40,7 +38,7 @@ from pyepidoc.shared.constants import (
 )
 from pyepidoc.shared.types import Base
 
-from .enums import (
+from pyepidoc.shared.enums import (
     whitespace, 
     AtomicTokenType, 
     CompoundTokenType, 
@@ -56,7 +54,7 @@ from pyepidoc.shared import maxoneT, head, last
 
 # sys.setrecursionlimit(10000)
 
-def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
+def tokenize_subatomic_tags(subelement: _Element) -> EditionElement:
     """
     Check that subelement does not contain atomic tags
     If it does, tokenizer does not surround in an atomic tag
@@ -64,7 +62,7 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
 
     atomic_token_set = AtomicTokenType.value_set()
     atomic_non_token_set = AtomicNonTokenType.value_set()
-    epidoc_elem = EpiDocElement(subelement)
+    epidoc_elem = EditionElement(subelement)
     # atomic_descs = epidoc_elem.get_desc_elems_by_name(list(atomic_token_set))
     all_descs = epidoc_elem.descendant_elements
     all_name_set = epidoc_elem.descendant_element_name_set
@@ -76,13 +74,13 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
     elif epidoc_elem.localname == 'choice' and all_name_set.issubset({*atomic_token_set, 'orig', 'reg', 'sic', 'corr'}) \
         and len(all_descs) != 0 and not {'orig', 'reg', 'sic', 'corr'}.issuperset(all_name_set):
         # i.e. descendant elements are all in <choice> and at least one descendant has been tokenized
-        w = EpiDocElement(subelement)  
+        w = EditionElement(subelement)  
 
     elif atomic_token_set.intersection(all_name_set) == {'num'}:
         # i.e. there is at least one subtoken that is an atomic token
         # and that element is a <num/> element
         # in which case surround with <w> token
-        w = EpiDocElement.w_factory(subelements=[subelement])
+        w = EditionElement.w_factory(subelements=[subelement])
 
     elif atomic_token_set.intersection(all_name_set) != set():
         # i.e. there is at least one subtoken that is an atomic token
@@ -94,12 +92,11 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
 
         # i.e. subelements are only atomic non-tokens, with no
         # external text
-        
         w = epidoc_elem
 
     else:
         # Surround in Atomic token tag
-        w = EpiDocElement.w_factory(subelements=[subelement])
+        w = EditionElement.w_factory(subelements=[subelement])
 
     if subelement.tail is not None and subelement.tail != '' and subelement.tail[-1] in ' ':
         w._final_space = True
@@ -108,18 +105,18 @@ def tokenize_subatomic_tags(subelement: _Element) -> EpiDocElement:
 
 
 
-class EpiDocElement(XmlElement, Showable):    
+class EditionElement(TeiElement, Showable):    
+    """
+    Provides services for EpiDoc edition elements, 
+    i.e. elements that would be represented in a text edition.
+    """
 
     _final_space: bool = False
-
-    """
-    Provides basic services for all EpiDoc elements.
-    """
 
     @overload
     def __init__(
         self, 
-        e: EpiDocElement,
+        e: EditionElement,
         final_space: bool = False
     ):
         ...
@@ -142,26 +139,24 @@ class EpiDocElement(XmlElement, Showable):
 
     def __init__(
         self, 
-        e: _Element | EpiDocElement | XmlElement,
+        e: _Element | EditionElement | XmlElement,
         final_space: bool = False
     ):
         
-        if not isinstance(e, (_Element, EpiDocElement, XmlElement)):
+        if not isinstance(e, (_Element, EditionElement, XmlElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
         if isinstance(e, _Element):
             self._e = e
-        elif isinstance(e, EpiDocElement):
+        elif isinstance(e, EditionElement):
             self._e = e.e
         elif isinstance(e, XmlElement):
             self._e = e.e
 
         self._final_space = final_space
-        # if final_space:
-        #     self._e.tail = ' '
 
-    def __add__(self, other: Optional[EpiDocElement]) -> list[EpiDocElement]:
+    def __add__(self, other: Optional[EditionElement]) -> list[EditionElement]:
         """
         Handles appending |Element|s.
         """
@@ -169,7 +164,7 @@ class EpiDocElement(XmlElement, Showable):
         if other is None:
             return [self]
 
-        if type(other) not in [EpiDocElement]:
+        if type(other) not in [EditionElement]:
             raise TypeError(f"Other element is of type {type(other)}.")
 
         if self._e is None and other._e is not None:
@@ -196,14 +191,14 @@ class EpiDocElement(XmlElement, Showable):
             
             if self._can_subsume(other):
                 self_e.append(other_e)
-                return [EpiDocElement(self_e, other._final_space)]
+                return [EditionElement(self_e, other._final_space)]
 
             if self._is_subsumable_by(other):
                 self_e.tail = other.text    # type: ignore
                 other_e.text = ''   # type: ignore
                 other_e.insert(0, self_e)
                 
-                return [EpiDocElement(other_e)]
+                return [EditionElement(other_e)]
             
             return [self, other]
 
@@ -230,7 +225,7 @@ class EpiDocElement(XmlElement, Showable):
 
                         for child in other_e.getchildren():
                             self_e.append(child)
-                        return [EpiDocElement(self_e, other._final_space)]
+                        return [EditionElement(self_e, other._final_space)]
 
             # Look inside self to see if other tag can 
             # subsume it;
@@ -240,9 +235,9 @@ class EpiDocElement(XmlElement, Showable):
                     if other._can_subsume(last_child):
                         for child in other_e.getchildren():
                             self_e.append(child)
-                        return [EpiDocElement(self_e, other._final_space)]
+                        return [EditionElement(self_e, other._final_space)]
             
-        return [EpiDocElement(self_e, self._final_space), EpiDocElement(other_e, other._final_space)]
+        return [EditionElement(self_e, self._final_space), EditionElement(other_e, other._final_space)]
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail
@@ -263,58 +258,28 @@ class EpiDocElement(XmlElement, Showable):
         return self.text_desc_compressed_whitespace
 
     @property
-    def abbr_elems(self) -> Sequence[EpiDocElement]:
+    def abbr_elems(self) -> Sequence[EditionElement]:
         """
         Return all abbreviation elements as a |list| of |Element|.
         """
 
-        return [EpiDocElement(abbr) 
+        return [EditionElement(abbr) 
                 for abbr in self.get_desc_tei_elems('abbr')]
         
     @property
-    def am_elems(self) -> Sequence[EpiDocElement]:
+    def am_elems(self) -> Sequence[EditionElement]:
         """
         Returns a |list| of abbreviation marker elements <am>.
         See https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-am.html,
         last accessed 2023-04-13.
         """
 
-        return [EpiDocElement(abbr) 
+        return [EditionElement(abbr) 
                 for abbr in self.get_desc_tei_elems('am')]
 
-    def append_node(
-            self, 
-            item: _Element | _ElementUnicodeResult | str | XmlElement) -> EpiDocElement:
 
-        """
-        Append either element or text to an element
-        """
 
-        if isinstance(item, (_ElementUnicodeResult, str)):
-            if self.last_child is None:
-                if self.text is None:
-                    self.text = item
-                else:
-                    self.text += item
-        
-            else:
-                if self.last_child.tail is None:
-                    self.last_child.tail = item
-                else:
-                    self.last_child.tail += item
-
-        elif isinstance(item, XmlElement):
-            self.e.append(item.e)
-
-        elif isinstance(item, _Element):
-            self.e.append(item)
-
-        else:
-            raise TypeError(f'Expected: _Element or _ElementUnicodeResult; got {type(item)}')
-        
-        return self
-
-    def append_space(self) -> EpiDocElement:
+    def append_space(self) -> EditionElement:
         """
         Appends a space to the element in place.
         """
@@ -336,8 +301,8 @@ class EpiDocElement(XmlElement, Showable):
         self._e.tail = self._e.tail + ' '   # type: ignore
         return self
 
-    def _can_subsume(self, other: EpiDocElement) -> bool:
-        if type(other) is not EpiDocElement: 
+    def _can_subsume(self, other: EditionElement) -> bool:
+        if type(other) is not EditionElement: 
             return False
         
         matches = list(filter(
@@ -353,8 +318,8 @@ class EpiDocElement(XmlElement, Showable):
             else "other"
     
     @property
-    def child_elems(self) -> list[EpiDocElement]:
-        return [EpiDocElement(child) for child in self.child_elements]
+    def child_elems(self) -> list[EditionElement]:
+        return [EditionElement(child) for child in self.child_elements]
     
     def convert_id(self, oldbase: Base, newbase: Base) -> None:
         """
@@ -366,30 +331,16 @@ class EpiDocElement(XmlElement, Showable):
             return 
         
         self.xml_id = ids.convert(current_id, oldbase, newbase)
-
-    @classmethod
-    def create_new(cls, localname: str, attributes: dict[str, str] = dict()) -> EpiDocElement:
-        """
-        Create a new EpiDocElement in the TEI namespace with local name `localname` and `attributes`
-        """
-
-        tag = ns.give_ns(localname, TEINS)
-        elem = etree.Element(
-            tag, 
-            {k: v for k, v in attributes.items()}, 
-            None
-        )
-        return EpiDocElement(elem)
     
-    def deepcopy(self) -> EpiDocElement:
-        return EpiDocElement(deepcopy(self._e))
+    def deepcopy(self) -> EditionElement:
+        return EditionElement(deepcopy(self._e))
 
     @property
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
         return len([parent for parent in self.get_ancestors_incl_self()
-            if type(parent.parent) is EpiDocElement])
+            if type(parent.parent) is EditionElement])
 
     @property
     def dict_desc(self) -> dict[str, str | dict]:
@@ -407,23 +358,23 @@ class EpiDocElement(XmlElement, Showable):
         return self._e
 
     @property
-    def ex_elems(self) -> Sequence[EpiDocElement]:
+    def ex_elems(self) -> Sequence[EditionElement]:
         """
         Return all abbreviation expansions (minus abbreviation) 
         as a |list| of |Element|.
         """
 
-        return [EpiDocElement(ex) 
+        return [EditionElement(ex) 
                 for ex in self.get_desc_tei_elems('ex')]
 
     @property
-    def expan_elems(self) -> Sequence[EpiDocElement]:
+    def expan_elems(self) -> Sequence[EditionElement]:
         """
         Return all abbreviation expansions (i.e. abbreviation + expansion) 
         as a |list| of |Element|.
         """
 
-        return [EpiDocElement(expan) 
+        return [EditionElement(expan) 
                 for expan in self.get_desc_tei_elems('expan')]
 
     @property
@@ -454,7 +405,7 @@ class EpiDocElement(XmlElement, Showable):
         return self._internal_prototokens[0]
 
     @property
-    def first_internal_word_element(self) -> Optional[EpiDocElement]:
+    def first_internal_word_element(self) -> Optional[EditionElement]:
 
         internal_token_elements = self.get_internal_token_elements()
         if internal_token_elements == []:
@@ -498,8 +449,8 @@ class EpiDocElement(XmlElement, Showable):
         return self._clean_text(self.text_desc)
 
     @property
-    def gaps(self) -> list[EpiDocElement]:
-        return [EpiDocElement(gap) for gap in self.get_desc('gap')]
+    def gaps(self) -> list[EditionElement]:
+        return [EditionElement(gap) for gap in self.get_desc('gap')]
     
     @property
     def has_abbr(self) -> bool:
@@ -561,7 +512,7 @@ class EpiDocElement(XmlElement, Showable):
         Unique computed element id based on hierarchical position in the XML document. 
         """
         
-        def _recfunc(acc: list[int], element: Optional[EpiDocElement]) -> list[int]:
+        def _recfunc(acc: list[int], element: Optional[EditionElement]) -> list[int]:
             if element is None:
                 return acc 
 
@@ -625,7 +576,7 @@ class EpiDocElement(XmlElement, Showable):
 
         return self.text_desc.split()
 
-    def get_internal_token_elements(self) -> list[EpiDocElement]:
+    def get_internal_token_elements(self) -> list[EditionElement]:
 
         def remove_internal_extraneous_whitespace(e: _Element) -> _Element:
             """
@@ -665,24 +616,24 @@ class EpiDocElement(XmlElement, Showable):
 
             return _e      
             
-        def make_internal_token(e: _Element) -> list[EpiDocElement]:
+        def make_internal_token(e: _Element) -> list[EditionElement]:
 
             """TODO merge with w_factory"""
 
             _e = deepcopy(e)
             _e.tail = self.tail_completer   # type: ignore
-            _element = EpiDocElement(_e)
+            _element = EditionElement(_e)
             if _element.e is None:
                 return []
 
             if _element.tag.name in AtomicNonTokenType.values():
                 internalprotowords = _element._internal_prototokens
                 if internalprotowords == []:
-                    return [EpiDocElement(_e, final_space=True)]
+                    return [EditionElement(_e, final_space=True)]
 
                 if len(internalprotowords) == 1:
                     _e.tail = ''    # type: ignore
-                    elems = EpiDocElement(_e) + EpiDocElement.w_factory(internalprotowords[0])
+                    elems = EditionElement(_e) + EditionElement.w_factory(internalprotowords[0])
 
                     # Make sure there is a bound to the right if there are multiple tokens in the tail
                     if len(self.create_tail_token_elements()) > 0:
@@ -695,7 +646,7 @@ class EpiDocElement(XmlElement, Showable):
                 return [_element] # i.e. do nothing because already a token
 
             elif _element.tag.name in CompoundTokenType.values():
-                epidoc_elem = EpiDocElement(_element)
+                epidoc_elem = EditionElement(_element)
                 internal_tokenized = epidoc_elem.make_child_tokens_for_container()
                 epidoc_elem.remove_children()
                 for element in internal_tokenized:
@@ -710,7 +661,7 @@ class EpiDocElement(XmlElement, Showable):
                 comment = deepcopy(_element.e)
                 comment.tail = ""   # type: ignore
 
-                return [EpiDocElement(comment)]
+                return [EditionElement(comment)]
 
             raise ValueError(f"Invalid _element.tag.name: {_element.tag.name}")
         
@@ -739,7 +690,7 @@ class EpiDocElement(XmlElement, Showable):
         if prev_sibling is None:
             return False
         
-        return EpiDocElement(prev_sibling)._join_to_next
+        return EditionElement(prev_sibling)._join_to_next
 
     @property
     def has_lb_in_preceding_or_ancestor(self) -> Optional[_Element]:
@@ -751,7 +702,7 @@ class EpiDocElement(XmlElement, Showable):
         last accessed 2023-04-20.
         """
 
-        def get_preceding_lb(elem: EpiDocElement) -> list[_Element]:
+        def get_preceding_lb(elem: EditionElement) -> list[_Element]:
             
             result = elem.xpath('preceding::*[descendant-or-self::ns:lb]')
 
@@ -788,14 +739,14 @@ class EpiDocElement(XmlElement, Showable):
         return True
     
     @property
-    def leiden_elems(self) -> Sequence[EpiDocElement]:
+    def leiden_elems(self) -> Sequence[EditionElement]:
         """
         Return all abbreviation expansions 
         (i.e. abbreviation, expansion, supplied, gap) 
         as a |list| of |Element|.
         """
 
-        return [EpiDocElement(expan) 
+        return [EditionElement(expan) 
                 for expan in self.get_desc_tei_elems([
                     'abbr',
                     'ex',
@@ -805,16 +756,16 @@ class EpiDocElement(XmlElement, Showable):
                     'g'
                 ])]
 
-    def _find_next_no_spaces(self) -> list[EpiDocElement]:
+    def _find_next_no_spaces(self) -> list[EditionElement]:
 
         """Returns a list of the next |Element|s not 
         separated by whitespace."""
 
-        def no_break_next(element: EpiDocElement) -> bool:
+        def no_break_next(element: EditionElement) -> bool:
             """Keep going if element is a linebreak with no word break"""
             next_elem = element.find_next_sibling()
 
-            if isinstance(next_elem, EpiDocElement):
+            if isinstance(next_elem, EditionElement):
                 if next_elem.e is None:
                     return False
                 if next_elem.e.tag == ns.give_ns('lb', TEINS):
@@ -825,9 +776,9 @@ class EpiDocElement(XmlElement, Showable):
 
             return False
                 
-        def next_no_spaces(acc: list[EpiDocElement], element: Optional[EpiDocElement]):
+        def next_no_spaces(acc: list[EditionElement], element: Optional[EditionElement]):
             
-            if not isinstance(element, EpiDocElement): 
+            if not isinstance(element, EditionElement): 
                 return acc
 
             if no_break_next(element):
@@ -840,7 +791,7 @@ class EpiDocElement(XmlElement, Showable):
 
         return next_no_spaces([], self)
 
-    def find_next_sibling(self) -> Optional[EpiDocElement]:
+    def find_next_sibling(self) -> Optional[EditionElement]:
 
         """
         Finds the next non-comment sibling |EpiDocElement|.
@@ -868,7 +819,7 @@ class EpiDocElement(XmlElement, Showable):
         _next = _get_next(self._e)
         
         if isinstance(_next, _Element):
-            return EpiDocElement(_next)
+            return EditionElement(_next)
         elif _next is None:
             return None
 
@@ -898,44 +849,44 @@ class EpiDocElement(XmlElement, Showable):
         return self._tail_prototokens == [] and not self.has_whitepace_tail
 
     @property
-    def nonword_element(self) -> Optional[EpiDocElement]:
+    def nonword_element(self) -> Optional[EditionElement]:
         if self._e is None:
             return None
 
         if self.tag.name in AtomicNonTokenType.values():
             _e = deepcopy(self._e)
             _e.tail = None  # type: ignore
-            return EpiDocElement(_e)
+            return EditionElement(_e)
         
         return None
 
     @property
-    def nonword_elements(self) -> list[EpiDocElement]:
+    def nonword_elements(self) -> list[EditionElement]:
         if self.nonword_element is None:
             return []
-        elif type(self.nonword_element) is EpiDocElement:
+        elif type(self.nonword_element) is EditionElement:
             return [self.nonword_element]
 
         return []
     
     @property
-    def no_space_before(self) -> list[EpiDocElement]:
+    def no_space_before(self) -> list[EditionElement]:
         """
         :return: |Element|s that should not be separated by spaces.
         """
-        return [EpiDocElement(item) for item 
+        return [EditionElement(item) for item 
             in self.get_desc(
                 NoSpaceBefore.values() 
             )
         ]
 
     @property
-    def parent(self) -> Optional[EpiDocElement]:
+    def parent(self) -> Optional[EditionElement]:
         if self._e is None:
             return None
         _parent = self._e.getparent()
         if type(_parent) is _Element:    
-            return EpiDocElement(_parent)
+            return EditionElement(_parent)
         elif _parent is None:
             return None
         else:
@@ -1131,21 +1082,21 @@ class EpiDocElement(XmlElement, Showable):
             elem.append_space()
 
     @property
-    def space_separated_elements(self) -> list[EpiDocElement]:
+    def space_separated_elements(self) -> list[EditionElement]:
         """
         :return: |Element|s that should be separated by spaces. Elements
         contained in an AtomicTokenType element, such as `<w>` will not 
         have any spaces inserted between them.
         """
         elems = [item
-                 for item in map(EpiDocElement, self.get_desc(SpaceSeparated.values()))
+                 for item in map(EditionElement, self.get_desc(SpaceSeparated.values()))
                  if not item.has_ancestors_by_names(AtomicTokenType.values())]
         
         return [elem for elem in elems 
                 if elem.find_next_sibling() not in self.no_space_before]
 
-    def _is_subsumable_by(self, other:EpiDocElement) -> bool:
-        if type(other) is not EpiDocElement: 
+    def _is_subsumable_by(self, other:EditionElement) -> bool:
+        if type(other) is not EditionElement: 
             return False
 
         matches = list(filter(self._subsume_filterfunc(head=other, dep=self), SubsumableRels))
@@ -1153,7 +1104,7 @@ class EpiDocElement(XmlElement, Showable):
         return len(matches) > 0
 
     @staticmethod
-    def _subsume_filterfunc(head: EpiDocElement, dep: EpiDocElement):
+    def _subsume_filterfunc(head: EditionElement, dep: EditionElement):
 
         def _filterfunc(item) -> bool:
             if item['head'] != head.dict_desc:
@@ -1195,8 +1146,8 @@ class EpiDocElement(XmlElement, Showable):
 
         return self.tail
 
-    def get_supplied(self) -> list[EpiDocElement]:
-        return [EpiDocElement(supplied) for supplied in self.get_desc('supplied')]
+    def get_supplied(self) -> list[EditionElement]:
+        return [EditionElement(supplied) for supplied in self.get_desc('supplied')]
 
     @property
     def _tail_prototokens(self) -> list[str]:
@@ -1226,10 +1177,10 @@ class EpiDocElement(XmlElement, Showable):
         else:
             return []
     
-    def create_tail_token_elements(self) -> list[EpiDocElement]:
+    def create_tail_token_elements(self) -> list[EditionElement]:
 
-        def make_words(protoword: Optional[str]) -> EpiDocElement:
-            w = EpiDocElement.w_factory(protoword)
+        def make_words(protoword: Optional[str]) -> EditionElement:
+            w = EditionElement.w_factory(protoword)
             
             if protoword is not None and protoword[-1] in whitespace:
                 w._final_space = True
@@ -1269,7 +1220,7 @@ class EpiDocElement(XmlElement, Showable):
         self._e.text = value    # type: ignore
 
     @property
-    def tokenized_children(self) -> list[EpiDocElement]:
+    def tokenized_children(self) -> list[EditionElement]:
         """
         Returns children that are already tokenized, including Comment nodes
         """
@@ -1278,7 +1229,7 @@ class EpiDocElement(XmlElement, Showable):
             if child.localname in AtomicTokenType.values() or \
                 child.tag.name == "Comment"]
 
-    def find_token_carriers(self) -> list[EpiDocElement]:
+    def find_token_carriers(self) -> list[EditionElement]:
 
         """
         WordCarriers are XML elements that carry text fragments
@@ -1287,11 +1238,11 @@ class EpiDocElement(XmlElement, Showable):
         acc = []
         for element in self.descendant_elements:
             if element.tag.name in TokenCarrier:
-                epidoc_element = EpiDocElement(element)
+                epidoc_element = EditionElement(element)
                 acc.append(epidoc_element)
         return acc
 
-    def _find_token_carrier_sequences(self) -> list[list[EpiDocElement]]:
+    def _find_token_carrier_sequences(self) -> list[list[EditionElement]]:
 
         """
         Returns maximal sequences of word_carriers between whitespace.
@@ -1299,10 +1250,10 @@ class EpiDocElement(XmlElement, Showable):
         """
         
         def get_word_carrier_sequences(
-            acc: list[list[EpiDocElement]], 
-            acc_desc: set[EpiDocElement], 
-            tokenables: list[EpiDocElement]
-        ) -> list[list[EpiDocElement]]:
+            acc: list[list[EditionElement]], 
+            acc_desc: set[EditionElement], 
+            tokenables: list[EditionElement]
+        ) -> list[list[EditionElement]]:
 
             if tokenables == []:
                 return acc
@@ -1316,7 +1267,7 @@ class EpiDocElement(XmlElement, Showable):
 
             next_no_spaces_desc = [element_.descendant_elements 
                                    for element_ in element._find_next_no_spaces()] + [element._find_next_no_spaces()]
-            next_no_spaces_desc_flat = [EpiDocElement(item) 
+            next_no_spaces_desc_flat = [EditionElement(item) 
                                         for item in chain(*next_no_spaces_desc)]
             
             # NB this doesn't work if use 'update_set_copy'
@@ -1333,9 +1284,9 @@ class EpiDocElement(XmlElement, Showable):
             )
 
         def remove_subsets(
-            acc: list[list[EpiDocElement]], 
-            sequence: list[EpiDocElement]
-        ) -> list[list[EpiDocElement]]:
+            acc: list[list[EditionElement]], 
+            sequence: list[EditionElement]
+        ) -> list[list[EditionElement]]:
             
             if any([SetRelation.propersubset(set(sequence), set(acc_item))
                 for acc_item in tokencarrier_sequences]):
@@ -1361,7 +1312,7 @@ class EpiDocElement(XmlElement, Showable):
         ab_prototokens = (self.text or '').split()  # split the string into tokens
 
         # Create token elements from the split string elements
-        ab_tokens = [EpiDocElement.w_factory(word) for word in ab_prototokens]     
+        ab_tokens = [EditionElement.w_factory(word) for word in ab_prototokens]     
 
         # Ensure that any final space is preserved
         if self.text and self.text[-1] == ' ' and len(ab_tokens) > 0:
@@ -1377,7 +1328,7 @@ class EpiDocElement(XmlElement, Showable):
         # Remove the initial text element that has now been tokenized
         self.text = ''
 
-    def make_child_tokens_for_container(self) -> list[EpiDocElement]:
+    def make_child_tokens_for_container(self) -> list[EditionElement]:
         """
         Return the child tokens for the container. To do this
         it first tokenizes the initial text of the container in place.
@@ -1387,7 +1338,7 @@ class EpiDocElement(XmlElement, Showable):
         token_carriers = chain(*self._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
         
-        def _redfunc(acc: list[EpiDocElement], element: EpiDocElement) -> list[EpiDocElement]:
+        def _redfunc(acc: list[EditionElement], element: EditionElement) -> list[EditionElement]:
             
             if element._join_to_next:
                 if acc == []:
@@ -1397,8 +1348,8 @@ class EpiDocElement(XmlElement, Showable):
                     return acc
             
                 def sumfunc(
-                    acc: list[EpiDocElement], 
-                    elem: EpiDocElement) -> list[EpiDocElement]:
+                    acc: list[EditionElement], 
+                    elem: EditionElement) -> list[EditionElement]:
 
                     if acc == []:
                         return [elem]
@@ -1413,13 +1364,13 @@ class EpiDocElement(XmlElement, Showable):
                 return reduce(
                     sumfunc, 
                     reversed(element.get_child_tokens() + acc[:1]), 
-                    cast(list[EpiDocElement], [])) + acc[1:]
+                    cast(list[EditionElement], [])) + acc[1:]
 
             return element.get_child_tokens() + acc
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
 
-    def get_child_tokens(self) -> list[EpiDocElement]:
+    def get_child_tokens(self) -> list[EditionElement]:
         """
         Returns all potential child tokens.
         For use in tokenization.
@@ -1441,7 +1392,7 @@ class EpiDocElement(XmlElement, Showable):
 
         return token_elems
 
-    def tokenize(self, inplace=True) -> EpiDocElement:
+    def tokenize(self, inplace=True) -> EditionElement:
         """
         Tokenizes the current node. 
         """
@@ -1482,7 +1433,7 @@ class EpiDocElement(XmlElement, Showable):
         prototoken: Optional[str]=None, 
         subelements: list[_Element]=[],
         parent: Optional[_Element]=None
-    ) -> EpiDocElement:
+    ) -> EditionElement:
 
         """
         TODO merge w_factory and make_word functions.
@@ -1492,7 +1443,7 @@ class EpiDocElement(XmlElement, Showable):
 
             if _tail is not None:
                 tailword_strs = _tail.split()
-                tailtokens = [EpiDocElement.w_factory(prototoken=tailtoken_str) 
+                tailtokens = [EditionElement.w_factory(prototoken=tailtoken_str) 
                     for tailtoken_str in tailword_strs]
                 for tailtoken in tailtokens:
                     if tailtoken.e is not None:
@@ -1516,7 +1467,7 @@ class EpiDocElement(XmlElement, Showable):
                 new_g.append(e)
 
             # Final space because result of a split operation
-            g_elem = EpiDocElement(new_g, final_space=True) 
+            g_elem = EditionElement(new_g, final_space=True) 
 
             return g_elem
 
@@ -1540,7 +1491,7 @@ class EpiDocElement(XmlElement, Showable):
                 e_without_tail.tail = None   # type: ignore
                 localname = ns.remove_ns(e.tag)
 
-                if localname == 'lb' and EpiDocElement(e).get_attrib('break') == 'no':
+                if localname == 'lb' and EditionElement(e).get_attrib('break') == 'no':
                     lb = e_without_tail
                     lb_tail = e.tail
 
@@ -1564,7 +1515,7 @@ class EpiDocElement(XmlElement, Showable):
                 elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>, <hi>
                     if localname in CompoundTokenType.values(): # this is intended for <hi>, which is also a compound token
                         tokenized = tokenize_subatomic_tags(e_without_tail)
-                        if EpiDocElement(new_parent).children == []:
+                        if EditionElement(new_parent).children == []:
                             new_parent.append(tokenized.e)
 
                         elif tokenized.last_child is None:
@@ -1581,12 +1532,12 @@ class EpiDocElement(XmlElement, Showable):
                         new_parent = append_tail_or_text(e.tail, new_parent)              
                     
                 elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>, <roleName>
-                    new_w_elem = EpiDocElement.w_factory(parent=e_without_tail)
+                    new_w_elem = EditionElement.w_factory(parent=e_without_tail)
                     if new_w_elem.e is not None:
                         new_parent.append(new_w_elem.e)
                         new_parent = append_tail_or_text(e.tail, new_parent)
 
-            return EpiDocElement(new_parent, final_space=True)
+            return EditionElement(new_parent, final_space=True)
         else:
             if prototoken: 
                 tagname = ns.give_ns('w', ns=TEINS)
@@ -1598,7 +1549,7 @@ class EpiDocElement(XmlElement, Showable):
             for child in subelements:
                 new_w.append(child)
 
-        return EpiDocElement(new_w, final_space=True)
+        return EditionElement(new_w, final_space=True)
     
     @property
     def xml_id(self) -> Optional[str]:

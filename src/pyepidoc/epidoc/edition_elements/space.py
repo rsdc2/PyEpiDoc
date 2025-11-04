@@ -1,6 +1,6 @@
 from functools import cached_property
 from lxml.etree import _Element
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.representable import Representable
 from pyepidoc.shared.constants import XMLNS
 
@@ -35,7 +35,7 @@ class Space(Representable):
         return self.get_attrib('quantity')
     
     @cached_property
-    def simple_lemmatized_edition_element(self) -> EpiDocElement:
+    def simple_lemmatized_edition_element(self) -> EditionElement:
         """
         Element for use in simple-lemmatized edition
         """

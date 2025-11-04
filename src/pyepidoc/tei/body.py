@@ -6,14 +6,14 @@ from lxml.etree import _Element
 
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.metadata.resp_stmt import RespStmt
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.token import Token
 
 from pyepidoc.xml.namespace import Namespace as ns
 
 from pyepidoc.shared.constants import TEINS, XMLNS
-from pyepidoc.epidoc.enums import (
+from pyepidoc.shared.enums import (
     StandoffEditionElements, 
     ContainerStandoffEditionType,
     RepresentableStandoffEditionType
@@ -22,7 +22,7 @@ from pyepidoc.shared.iterables import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
 
 
-class Body(EpiDocElement):    
+class Body(EditionElement):    
 
     """
     Provides services for the <body> element of the EpiDoc file
@@ -30,7 +30,7 @@ class Body(EpiDocElement):
 
     def __init__(
         self, 
-        e: _Element | EpiDocElement | XmlElement
+        e: _Element | EditionElement | XmlElement
     ) -> None:
         
         super().__init__(e, False)
@@ -56,8 +56,8 @@ class Body(EpiDocElement):
         """
 
         def append_items(
-                source_elem: EpiDocElement, 
-                target_elem: EpiDocElement) -> None:
+                source_elem: EditionElement, 
+                target_elem: EditionElement) -> None:
             
             """
             Recursive function appending children of elements
@@ -90,7 +90,7 @@ class Body(EpiDocElement):
                             desc_copy_token.remove_attr('id', XMLNS)
                             ab_copy._e.append(desc_copy_token.e)   
 
-        append_items(source, EpiDocElement(target))
+        append_items(source, EditionElement(target))
         return target
 
     def append_new_edition(

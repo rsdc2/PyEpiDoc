@@ -1,10 +1,10 @@
 from __future__ import annotations
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from .file_desc import FileDesc
 from .revision_desc import RevisionDesc
 
 
-class TeiHeader(EpiDocElement):
+class TeiHeader(EditionElement):
     """
     The <teiHeader> element
     """
@@ -24,7 +24,7 @@ class TeiHeader(EpiDocElement):
         """
         if self.file_desc is not None:
             raise Exception('<fileDesc> already exists on <teiHeader>')
-        file_desc_elem = EpiDocElement.create_new(localname='fileDesc')
+        file_desc_elem = EditionElement.create_new(localname='fileDesc')
         self.e.append(file_desc_elem.e)
 
         return self
@@ -46,7 +46,7 @@ class TeiHeader(EpiDocElement):
         Create a new <teiHeader> element, but do not
         append it to its host document
         """
-        tei_header_elem = EpiDocElement.create_new('teiHeader')
+        tei_header_elem = EditionElement.create_new('teiHeader')
         return TeiHeader(tei_header_elem)
     
     def ensure_revision_desc(self) -> RevisionDesc:

@@ -1,8 +1,8 @@
 from __future__ import annotations
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from .resp_stmt import RespStmt
 
-class TitleStmt(EpiDocElement):
+class TitleStmt(EditionElement):
     """
     The <titleStmt> node, including collections of <respStmt>
     """
@@ -38,7 +38,7 @@ class TitleStmt(EpiDocElement):
     
     @staticmethod
     def from_details(title: str) -> TitleStmt:
-        title_elem = EpiDocElement.create_new('titleStmt')
+        title_elem = EditionElement.create_new('titleStmt')
         title_elem.text = title
         return TitleStmt(title_elem)
 

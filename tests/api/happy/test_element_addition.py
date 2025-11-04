@@ -1,6 +1,6 @@
 from pyepidoc.shared.constants import TEINS
 from lxml import etree
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 import pytest
 
 xmls =[
@@ -21,8 +21,8 @@ def test_w_hi(xml_pair: tuple[str, str, str]):
     e1 = etree.fromstring(xml1, None)
     e2 = etree.fromstring(xml2, None)
 
-    elem1 = EpiDocElement(e1)
-    elem2 = EpiDocElement(e2)
+    elem1 = EditionElement(e1)
+    elem2 = EditionElement(e2)
 
     elem = elem1 + elem2
 

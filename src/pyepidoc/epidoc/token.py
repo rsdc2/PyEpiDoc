@@ -37,7 +37,7 @@ from .edition_elements.surplus import Surplus
 from .edition_elements.unclear import Unclear
 from .edition_elements.w import W
 
-from .enums import (
+from ..shared.enums import (
     CompoundTokenType, 
     AtomicTokenType,
     PUNCTUATION,

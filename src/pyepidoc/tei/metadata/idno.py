@@ -7,11 +7,11 @@ from lxml.etree import _Element
 from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared.iterables import head
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.xml.xml_element import XmlElement
 
 
-class Idno(EpiDocElement):
+class Idno(EditionElement):
     """
     The <idno> element
     """

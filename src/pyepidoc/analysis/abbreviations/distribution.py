@@ -4,7 +4,7 @@ an EpiDoc corpus
 """
 from typing import Iterable, Callable
 from pyepidoc import EpiDocCorpus
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.edition_elements.expan import Expan
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.epidoc.dom import lang
@@ -46,7 +46,7 @@ def overall_distribution_via_expans(corpus: EpiDocCorpus) -> dict[str, dict[str,
     tokens = corpus.tokens.to_list()
     expans = corpus.expans
 
-    latin_pred: Callable[[EpiDocElement], bool] = lambda token: lang(token) == 'la'
+    latin_pred: Callable[[EditionElement], bool] = lambda token: lang(token) == 'la'
 
     latin_tokens = filter(latin_pred, tokens)
     greek_tokens = filter(lambda token: lang(token) == 'grc', tokens)

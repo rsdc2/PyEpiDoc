@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TypeVar
 from enum import Enum
-from ..shared.classes import EnumerableEnum
+from .classes import EnumerableEnum
 
 T = TypeVar('T')
 

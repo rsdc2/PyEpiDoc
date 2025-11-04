@@ -12,7 +12,7 @@ from lxml.etree import _Element, _ElementUnicodeResult, _Comment
 
 from pyepidoc.xml import XmlElement
 from pyepidoc.xml.utils import editionify
-from pyepidoc.epidoc.enums import NamedEntities
+from pyepidoc.shared.enums import NamedEntities
 from pyepidoc.analysis.utils.division import Division
 from pyepidoc.shared.constants import XMLNS
 from pyepidoc.shared import default_str
@@ -26,7 +26,7 @@ from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.shared.constants import TEINS, XMLNS
 
 from .. import ids
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 from .ab import Ab
 from .expan import Expan
 from .l import L
@@ -36,7 +36,7 @@ from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.representable import Representable
 from .textpart import TextPart
 
-from pyepidoc.epidoc.enums import (
+from pyepidoc.shared.enums import (
     SpaceUnit, 
     SpaceSeparated,
     NoSpaceBefore,
@@ -203,21 +203,21 @@ def prettify(
     return edition
 
 
-class Edition(EpiDocElement):
+class Edition(EditionElement):
 
     """
     Provides services for <div type="edition> elements.
     """
 
-    def __init__(self, e:Optional[_Element | EpiDocElement | XmlElement]=None):
-        if not isinstance(e, (_Element, EpiDocElement, XmlElement)) and \
+    def __init__(self, e:Optional[_Element | EditionElement | XmlElement]=None):
+        if not isinstance(e, (_Element, EditionElement, XmlElement)) and \
             e is not None:
             
             raise TypeError(f'Input element is of type {type(e)}. It should be _Element or Element type, or None.')
 
         if type(e) is _Element:
             self._e = e
-        elif type(e) is EpiDocElement:
+        elif type(e) is EditionElement:
             self._e = e.e
         elif type(e) is XmlElement:
             self._e = e.e
@@ -273,7 +273,7 @@ class Edition(EpiDocElement):
         return Ab(ab_elem)
 
     @property
-    def atomic_non_tokens(self) -> list[EpiDocElement]:
+    def atomic_non_tokens(self) -> list[EditionElement]:
         """
         Atomic elements that are not analyzable as 'words' 
         i.e. cannot be lemmatized
@@ -281,8 +281,8 @@ class Edition(EpiDocElement):
         return self._get_desc_atomic_non_tokens()
 
     @property
-    def compound_tokens(self) -> list[EpiDocElement]:
-        return [EpiDocElement(item) for item 
+    def compound_tokens(self) -> list[EditionElement]:
+        return [EditionElement(item) for item 
             in self.get_desc(
                 CompoundTokenType.values() 
             )
@@ -351,13 +351,13 @@ class Edition(EpiDocElement):
         return Edition(XmlElement.from_xml_str(editionify(xml_str, wrap_in_ab=wrap_in_ab)))
 
     @property
-    def gaps(self) -> list[EpiDocElement]:
-        return [EpiDocElement(gap) 
+    def gaps(self) -> list[EditionElement]:
+        return [EditionElement(gap) 
                 for gap in self.get_desc('gap')]
 
     def _get_desc_representable_elements(
             self, 
-            items_with_atomic_ancestors: bool = False) -> list[EpiDocElement]:
+            items_with_atomic_ancestors: bool = False) -> list[EditionElement]:
 
         """
         Get the elements that should be represented in a text edition
@@ -368,7 +368,7 @@ class Edition(EpiDocElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EpiDocElement, self.get_desc(RepresentableElements))
+        desc = map(EditionElement, self.get_desc(RepresentableElements))
 
         if items_with_atomic_ancestors:
             return list(desc)
@@ -378,7 +378,7 @@ class Edition(EpiDocElement):
 
     def _get_desc_atomic_non_tokens(
             self, 
-            items_with_token_ancestors: bool = False) -> list[EpiDocElement]:
+            items_with_token_ancestors: bool = False) -> list[EditionElement]:
 
         """
         Get the atomic non-token descendants e.g. `<orig>`.  
@@ -389,7 +389,7 @@ class Edition(EpiDocElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EpiDocElement, self.get_desc(AtomicNonTokenType.values()))
+        desc = map(EditionElement, self.get_desc(AtomicNonTokenType.values()))
 
         if items_with_token_ancestors:
             return list(desc)
@@ -476,7 +476,7 @@ class Edition(EpiDocElement):
         return False
 
     @property
-    def local_idable_elements(self) -> list[EpiDocElement]:
+    def local_idable_elements(self) -> list[EditionElement]:
         
         """
         Get all the tokens in the edition that should 
@@ -484,10 +484,10 @@ class Edition(EpiDocElement):
         """
 
         elems = self.get_desc_tei_elems(ElementsWithLocalIds.values())
-        return list(map(EpiDocElement, elems))
+        return list(map(EditionElement, elems))
     
     @property
-    def xml_idable_elements(self) -> list[EpiDocElement]:
+    def xml_idable_elements(self) -> list[EditionElement]:
         
         """
         Get all the tokens in the edition that should 
@@ -495,10 +495,10 @@ class Edition(EpiDocElement):
         """
 
         elems = self.get_desc_tei_elems(ElementsWithXmlIds.values())
-        return list(map(EpiDocElement, elems))
+        return list(map(EditionElement, elems))
 
     @staticmethod
-    def _insert_w_inside_tag(element: EpiDocElement) -> EpiDocElement:
+    def _insert_w_inside_tag(element: EditionElement) -> EditionElement:
 
         """
         Enclose contents of `element` in <w> element. If already contains
@@ -506,11 +506,11 @@ class Edition(EpiDocElement):
         """
 
         child_nodes = element.child_nodes
-        w = EpiDocElement.create_new('w')
+        w = EditionElement.create_new('w')
 
         for node in child_nodes:
             if isinstance(node, _Element):
-                EpiDocElement(node).tail = ''
+                EditionElement(node).tail = ''
             w.append_node(node)
 
         element.remove_children()
@@ -533,7 +533,7 @@ class Edition(EpiDocElement):
                 if name.contains('w') and ignore_if_contains_ws:
                     return self
                 else:
-                    self._insert_w_inside_tag(EpiDocElement(name))
+                    self._insert_w_inside_tag(EditionElement(name))
 
         return self
 
@@ -558,7 +558,7 @@ class Edition(EpiDocElement):
         return self.get_attrib('lang', XMLNS)
 
     @property
-    def lbs(self) -> list[EpiDocElement]:
+    def lbs(self) -> list[EditionElement]:
         return list(chain(*[ab.lbs for ab in self.abs]))
 
     @property
@@ -765,8 +765,8 @@ class Edition(EpiDocElement):
                 for word in self._get_desc_tokens(include_nested=True)]        
 
     @property
-    def token_g_dividers(self) -> list[EpiDocElement]:
-        return [EpiDocElement(boundary) for boundary 
+    def token_g_dividers(self) -> list[EditionElement]:
+        return [EditionElement(boundary) for boundary 
             in self.get_desc('g')
         ]
 

@@ -9,7 +9,7 @@ from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.edition_elements.ab import Ab
 
 from pyepidoc.xml.xml_element import XmlElement
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc import EpiDoc
 
 

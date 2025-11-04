@@ -21,16 +21,16 @@ from pyepidoc.shared.iterables import maxone, top, remove_none
 from pyepidoc.shared.numbers import percentage
 from pyepidoc.shared.string import format_year
 from pyepidoc.shared.generic_collection import GenericCollection
+from pyepidoc.shared.enums import TextClass
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
-from .epidoc_element import EpiDocElement
+from .edition_element import EditionElement
 from .token import Token
 from .edition_elements.expan import Expan
 from .edition_elements.name import Name
 from .edition_elements.g import G
 from .edition_elements.num import Num
-from .enums import TextClass
 from .edition_elements.role_name import RoleName
 from .edition_elements.pers_name import PersName
 
@@ -697,7 +697,7 @@ class EpiDocCorpus:
         self._docs = docs
 
     @property
-    def id_carriers(self) -> list[EpiDocElement]:
+    def id_carriers(self) -> list[EditionElement]:
         return list(chain(*[doc.id_carriers for doc in self.docs]))
 
     @cached_property

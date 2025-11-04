@@ -1,9 +1,9 @@
 from lxml.etree import _Element
-from ..epidoc_element import EpiDocElement
+from ..edition_element import EditionElement
 from pyepidoc.epidoc.utils import localname
 
 
-class Ex(EpiDocElement):
+class Ex(EditionElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.

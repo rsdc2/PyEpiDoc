@@ -1,11 +1,11 @@
 from __future__ import annotations
 from pyepidoc.shared.constants import TEINS, XMLNS
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.shared.iterables import maxone
 from .idno import Idno
 
 
-class PublicationStmt(EpiDocElement):
+class PublicationStmt(EditionElement):
     """
     The <publicationStmt> node, including collections of
     <publicationStmt>
@@ -28,7 +28,7 @@ class PublicationStmt(EpiDocElement):
     def set_idno_by_type(self, idno_type: str, value: str) -> None:
         idno = self.get_idno_by_type(idno_type)
         if idno is None:
-            idno_element = EpiDocElement.create_new('idno', {'type': idno_type})
+            idno_element = EditionElement.create_new('idno', {'type': idno_type})
             self.append_idno(Idno(idno_element))
             return
         idno.value = value

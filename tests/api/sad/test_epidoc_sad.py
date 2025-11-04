@@ -1,9 +1,7 @@
 from pyepidoc import EpiDoc
 from pathlib import Path
-from pyepidoc.epidoc.errors import (
-    TEINSError, 
-    EpiDocValidationError
-)
+from pyepidoc.epidoc.errors import EpiDocValidationError
+from pyepidoc.tei.errors import TEINSError
 import pytest
 
 test_files_path = "tests/api/files/"

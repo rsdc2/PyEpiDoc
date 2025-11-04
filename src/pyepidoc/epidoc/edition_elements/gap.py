@@ -1,6 +1,6 @@
 from functools import cached_property
 from lxml.etree import _Element
-from pyepidoc.epidoc.epidoc_element import EpiDocElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.representable import Representable
 from pyepidoc.shared.constants import XMLNS
 
@@ -48,14 +48,14 @@ class Gap(Representable):
         return f' [-{self.extent}-] '
     
     @cached_property
-    def simple_lemmatized_edition_element(self) -> EpiDocElement:
+    def simple_lemmatized_edition_element(self) -> EditionElement:
         """
         Element for use in simple-lemmatized edition
         """
         elem = self.deepcopy()
         elem.remove_children()
         elem.remove_attr('id', XMLNS)
-        desc_elem = EpiDocElement.create_new('desc')
+        desc_elem = EditionElement.create_new('desc')
         desc_elem.text = self.simple_lemmatized_edition_form
         elem.append_node(desc_elem.e)
         return elem
