@@ -38,8 +38,27 @@ def test_set_local_ids(filename_with_result: tuple[str, list[str]]):
     assert [token.local_id for token in with_local_ids.local_idable_elements] == result
     
 
+test_has_local_ids = [
+    ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', True),
+    ('<lb n="1"/><w n="5">a</w> <w n="10">b</w> <w n="15">c</w>', True),
+    ('<lb n="1"/><w>a</w> <w>b</w> <w>c</w>', False)
+]
+@pytest.mark.parametrize(('xml_str', 'expected_has_local_ids'), test_has_local_ids)
+def test_has_local_ids(xml_str: str, expected_has_local_ids: bool):
+    # Arrange
+    doc = EpiDoc(EMPTY_TEMPLATE_PATH)
+    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    doc.main_edition.append_ab(ab)
+
+    # Act
+    has_local_ids = doc.main_edition.has_local_ids
+
+    # Assert
+    assert has_local_ids == expected_has_local_ids
+
+
 test_get_local_ids_on_main_edition_cases = [
-    ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', '', '10']),
+    ('<w n="5">a</w> <w>b</w> <w n="10">c</w>', ['5', None, '10']),
     ('<lb n="1"/><w n="5">a</w> <w n="10">b</w> <w n="15">c</w>', ['5', '10', '15']),
 ]
 @pytest.mark.parametrize(('xml_str', 'expected_local_ids'), test_get_local_ids_on_main_edition_cases)
