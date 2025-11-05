@@ -44,7 +44,7 @@ def test_lemmatize_on_separate_edition_creates_resp_stmt(filename: str):
     )
 
     # Act
-    doc.lemmatize(dummy_lemmatizer, 'separate', resp_stmt=resp_stmt)
+    doc.lemmatize(dummy_lemmatizer, 'separate', resp_stmts=resp_stmt)
     doc.prettify()
     doc_ = save_and_reload(
         doc, 
@@ -77,7 +77,7 @@ def test_lemmatize_on_separate_edition_has_resp_attribute(filename: str):
     )
 
     # Act
-    doc.lemmatize(dummy_lemmatizer, 'separate', resp_stmt=resp_stmt)
+    doc.lemmatize(dummy_lemmatizer, 'separate', resp_stmts=resp_stmt)
     doc.prettify()
     doc_ = save_and_reload(
         doc, 

@@ -39,7 +39,7 @@ def test_lemmatize_on_separate_edition_creates_change_stmt(filename: str):
     change = Change.from_details("2025-06-12", "#JB", "Joe Bloggs lemmatized the text")
 
     # Act
-    doc.lemmatize(dummy_lemmatizer, 'separate', change=change)
+    doc.lemmatize(dummy_lemmatizer, 'separate', changes=change)
     doc.prettify()
     doc_ = save_and_reload(
         doc, 

@@ -101,13 +101,21 @@ class Body(EpiDocElement):
             self, 
             subtype: str | None = None, 
             lang: str | None = None,
-            resp: RespStmt | None = None,
+            resp_stmts: RespStmt | list[RespStmt] | None = None,
             xmlspace_preserve: Literal['preserve', None] = None) -> Edition:
 
         """
         Add an edition of the specified subtype to the Body,
         and insert it directly after the main edition.
         """
+        initials = None
+        # Generate initials
+        if isinstance(resp_stmts, RespStmt):
+            initials = '#' + resp_stmts.initials if resp_stmts.initials else None
+        elif isinstance(resp_stmts, list):
+            initials = ' '.join(('#' + resp_stmt.initials if resp_stmt.initials else '') for resp_stmt in resp_stmts)
+            if initials.strip() == '':
+                initials = None
 
         # Create the edition element
         edition_elem: _Element = etree.Element(
@@ -117,7 +125,7 @@ class Body(EpiDocElement):
                 'subtype': subtype,
                 ns.give_ns('space', XMLNS): xmlspace_preserve,
                 'lang': lang,
-                'resp': '#' + resp.initials if resp and resp.initials else None
+                'resp': initials
             }),
             nsmap = None
         )
