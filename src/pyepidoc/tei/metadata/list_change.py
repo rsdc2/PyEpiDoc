@@ -17,8 +17,8 @@ class ListChange(EditionElement):
         return list(map(lambda child: Change(child), children))
 
     @staticmethod
-    def create_new():
-        elem = EditionElement.create_new('listChange')
+    def create():
+        elem = EditionElement.create('listChange')
         return ListChange(elem)
     
     @staticmethod

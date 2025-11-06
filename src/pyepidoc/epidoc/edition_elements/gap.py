@@ -55,7 +55,7 @@ class Gap(Representable):
         elem = self.deepcopy()
         elem.remove_children()
         elem.remove_attr('id', XMLNS)
-        desc_elem = EditionElement.create_new('desc')
+        desc_elem = EditionElement.create('desc')
         desc_elem.text = self.simple_lemmatized_edition_form
         elem.append_node(desc_elem.e)
         return elem

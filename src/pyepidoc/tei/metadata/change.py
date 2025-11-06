@@ -46,7 +46,7 @@ class Change(EditionElement):
         if date is None:
             date = datetime.today().strftime('%Y-%m-%d')
 
-        elem = TeiElement.create_new(
+        elem = TeiElement.create(
             'change', {
                 'when': date,
                 'who': who

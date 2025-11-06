@@ -20,8 +20,8 @@ class RevisionDesc(EditionElement):
         """
         Create a new <revisionDesc> element with an empty <listChange> 
         """
-        revision_desc = RevisionDesc(EditionElement.create_new('revisionDesc'))
-        list_change = ListChange.create_new()
+        revision_desc = RevisionDesc(EditionElement.create('revisionDesc'))
+        list_change = ListChange.create()
         revision_desc.append_node(list_change)
         return revision_desc
     

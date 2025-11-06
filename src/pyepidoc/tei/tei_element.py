@@ -47,7 +47,7 @@ class TeiElement(XmlElement):
         return self
 
     @classmethod
-    def create_new(cls, localname: str, attributes: dict[str, str] = dict()) -> TeiElement:
+    def create(cls, localname: str, attributes: dict[str, str] = dict()) -> TeiElement:
         """
         Create a new Element in the TEI namespace with local name `localname` and `attributes`
         """

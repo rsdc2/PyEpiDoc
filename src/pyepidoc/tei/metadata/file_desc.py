@@ -38,7 +38,7 @@ class FileDesc(TeiElement):
             raise ValueError('Cannot append <publicationStmt> since there is already '
                              'one present in the document')
         
-        publication_stmt = TeiElement.create_new('publicationStmt')
+        publication_stmt = TeiElement.create('publicationStmt')
         self.append_node(publication_stmt)
         
         if self.publication_stmt is None:
@@ -61,7 +61,7 @@ class FileDesc(TeiElement):
         appends a new <publicationStmt>
         """
         if self.title_stmt is None:
-            title_stmt = TitleStmt(TeiElement.create_new('titleStmt'))
+            title_stmt = TitleStmt(TeiElement.create('titleStmt'))
             return self.append_title_stmt(title_stmt)
 
         return self.title_stmt

@@ -40,7 +40,7 @@ class TitleStmt(TeiElement):
     
     @staticmethod
     def from_details(title: str) -> TitleStmt:
-        title_elem = TeiElement.create_new('titleStmt')
+        title_elem = TeiElement.create('titleStmt')
         title_elem.text = title
         return TitleStmt(title_elem)
 

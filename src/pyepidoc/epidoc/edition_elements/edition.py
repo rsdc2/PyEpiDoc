@@ -506,7 +506,7 @@ class Edition(EditionElement):
         """
 
         child_nodes = element.child_nodes
-        w = EditionElement.create_new('w')
+        w = EditionElement.create('w')
 
         for node in child_nodes:
             if isinstance(node, _Element):

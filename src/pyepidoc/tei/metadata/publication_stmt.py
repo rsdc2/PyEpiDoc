@@ -28,7 +28,7 @@ class PublicationStmt(EditionElement):
     def set_idno_by_type(self, idno_type: str, value: str) -> None:
         idno = self.get_idno_by_type(idno_type)
         if idno is None:
-            idno_element = EditionElement.create_new('idno', {'type': idno_type})
+            idno_element = EditionElement.create('idno', {'type': idno_type})
             self.append_idno(Idno(idno_element))
             return
         idno.value = value

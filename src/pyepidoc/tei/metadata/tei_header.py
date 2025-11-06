@@ -24,7 +24,7 @@ class TeiHeader(EditionElement):
         """
         if self.file_desc is not None:
             raise Exception('<fileDesc> already exists on <teiHeader>')
-        file_desc_elem = EditionElement.create_new(localname='fileDesc')
+        file_desc_elem = EditionElement.create(localname='fileDesc')
         self.e.append(file_desc_elem.e)
 
         return self
@@ -46,7 +46,7 @@ class TeiHeader(EditionElement):
         Create a new <teiHeader> element, but do not
         append it to its host document
         """
-        tei_header_elem = EditionElement.create_new('teiHeader')
+        tei_header_elem = EditionElement.create('teiHeader')
         return TeiHeader(tei_header_elem)
     
     def ensure_revision_desc(self) -> RevisionDesc:
