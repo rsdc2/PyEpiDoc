@@ -64,6 +64,7 @@ def test_lemmatize_on_separate_edition_creates_multiple_change_stmts(filename: s
     doc = EpiDoc(unlemmatized_path + filename)
     change1 = Change.from_details("2025-06-12", "#JB", "Joe Bloggs lemmatized the text")
     change2 = Change.from_details("2025-06-12", "#JC", "Joe Cloggs lemmatized the text")
+    
     # Act
     doc.lemmatize(dummy_lemmatizer, 'separate', changes=[change1, change2])
     doc.prettify()

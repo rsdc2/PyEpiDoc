@@ -5,6 +5,7 @@ from datetime import datetime
 from lxml import etree
 from lxml.etree import _Element
 
+from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared.iterables import head
 from pyepidoc.xml.namespace import Namespace as ns
@@ -45,10 +46,12 @@ class Change(EditionElement):
         if date is None:
             date = datetime.today().strftime('%Y-%m-%d')
 
-        elem = EpiDocElement.create_new('change', {
-            'when': date,
-            'who': who
-        })
+        elem = TeiElement.create_new(
+            'change', {
+                'when': date,
+                'who': who
+            }
+        )
         elem.append_node(text)
         return Change(elem)
     
