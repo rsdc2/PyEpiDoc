@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import overload
+from datetime import datetime
 
 from lxml import etree
 from lxml.etree import _Element
@@ -27,21 +28,25 @@ class Change(EditionElement):
 
     @staticmethod
     def from_details(
-        when: str, 
         who: str, 
-        text: str) -> Change:
+        text: str = '',
+        when: str | None = None) -> Change:
 
         """
         Create a new Change from the details to be provided.
 
-        :param when: Date string in format yyyy-mm-dd
         :param who: Identifier corresponding to the `@xml:id` attribute of the name 
         element in the <respStmt>, prefixed by `#`, e.g. for the initials 'JB', this value should be '#JB'
-        :text: Free text to describe the change
+        :param text: Free text to describe the change
+        :param when: Date string in format yyyy-mm-dd. If value is None (the default), uses the current date.
         """
+        date = when
 
-        elem = EditionElement.create_new('change', {
-            'when': when,
+        if date is None:
+            date = datetime.today().strftime('%Y-%m-%d')
+
+        elem = EpiDocElement.create_new('change', {
+            'when': date,
             'who': who
         })
         elem.append_node(text)

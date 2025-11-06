@@ -262,8 +262,8 @@ class EpiDoc(TeiDoc):
 
     def ensure_lemmatized_edition(
             self, 
-            resp: RespStmt | None = None,
-            change: Change | None = None
+            resp_stmts: list[RespStmt] | RespStmt | None = None,
+            changes: list[Change] | Change | None = None
             ) -> Edition:
 
         """
@@ -280,9 +280,14 @@ class EpiDoc(TeiDoc):
             return lemmatized_edition
 
         # Create edition if it does not already exist
-        self.body.append_new_edition('simple-lemmatized', resp=resp)
-        if change is not None: 
-            self.append_change(change)
+        self.body.append_new_edition('simple-lemmatized', resp_stmts=resp_stmts)
+
+        if isinstance(changes, Change):
+            self.append_change(changes)
+        if isinstance(changes, list):
+            for change in changes:
+                self.append_change(change)
+
         edition = self.body.edition_by_subtype('simple-lemmatized')
 
         # Raise an error if could not be created
@@ -600,8 +605,8 @@ class EpiDoc(TeiDoc):
             self, 
             lemmatize: Callable[[str], str],
             where: Literal['main', 'separate'],
-            resp_stmt: RespStmt | None = None,
-            change: Change | None = None,
+            resp_stmts: list[RespStmt] | RespStmt | None = None,
+            changes: list[Change] | Change | None = None,
             verbose = False,
             fail_if_existing_lemmatized_edition: bool = True
         ) -> EpiDoc:
@@ -637,7 +642,7 @@ class EpiDoc(TeiDoc):
                 raise ValueError('A lemmatized edition is already present; PyEpiDoc is '
                                  'currently set to stop if this is the case.')
             elif lemmatized_edition is None:
-                lemmatized_edition = self.ensure_lemmatized_edition(resp=resp_stmt)
+                lemmatized_edition = self.ensure_lemmatized_edition(resp_stmts=resp_stmts)
                 self.body.copy_lemmatizable_to_lemmatized_edition(
                     source=main_edition, 
                     target=lemmatized_edition
@@ -654,11 +659,17 @@ class EpiDoc(TeiDoc):
         for w in edition.w_tokens:
             w.lemma = lemmatize(w.normalized_form or '')
         
-        if resp_stmt:
-            self.append_resp_stmt(resp_stmt)
+        if isinstance(resp_stmts, list):
+            for resp_stmt in resp_stmts:
+                self.append_resp_stmt(resp_stmt)
+        elif isinstance(resp_stmts, RespStmt):
+            self.append_resp_stmt(resp_stmts)
 
-        if change:
-            self.append_change(change)
+        if isinstance(changes, list):
+            for change in changes:
+                self.append_change(change)
+        elif isinstance(changes, Change):
+            self.append_change(changes)
 
         self.prettify(prettifier='pyepidoc', verbose=verbose)
         

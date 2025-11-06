@@ -39,7 +39,7 @@ def test_lemmatize_on_separate_edition_creates_change_stmt(filename: str):
     change = Change.from_details("2025-06-12", "#JB", "Joe Bloggs lemmatized the text")
 
     # Act
-    doc.lemmatize(dummy_lemmatizer, 'separate', change=change)
+    doc.lemmatize(dummy_lemmatizer, 'separate', changes=change)
     doc.prettify()
     doc_ = save_and_reload(
         doc, 
@@ -51,3 +51,31 @@ def test_lemmatize_on_separate_edition_creates_change_stmt(filename: str):
     last_change = doc_.ensure_tei_header().ensure_revision_desc().list_change.changes[-1]
     assert last_change == change
 
+
+@pytest.mark.parametrize("filename", filenames)
+def test_lemmatize_on_separate_edition_creates_multiple_change_stmts(filename: str):
+
+    """
+    Test that calling the `lemmatize` method 
+    on an EpiDoc document with a <respStmt> puts the 
+    <respStmt> on the document
+    """
+    # Arrange
+    doc = EpiDoc(unlemmatized_path + filename)
+    change1 = Change.from_details("2025-06-12", "#JB", "Joe Bloggs lemmatized the text")
+    change2 = Change.from_details("2025-06-12", "#JC", "Joe Cloggs lemmatized the text")
+    # Act
+    doc.lemmatize(dummy_lemmatizer, 'separate', changes=[change1, change2])
+    doc.prettify()
+    doc_ = save_and_reload(
+        doc, 
+        lemmatized_with_change_path + filename, 
+        mode=FILE_WRITE_MODE
+    )
+
+    # Assert
+    changes = doc_.ensure_tei_header().ensure_revision_desc().list_change.changes
+    penultimate_change = changes[-2]
+    last_change = changes[-1]
+    assert penultimate_change == change1
+    assert last_change == change2
