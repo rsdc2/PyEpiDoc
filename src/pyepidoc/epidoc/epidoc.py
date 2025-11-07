@@ -1182,15 +1182,6 @@ class EpiDoc(TeiDoc):
         return textlang
     
     @property
-    def text_elems(self) -> list[EditionElement]:
-        """
-        All elements in the document responsible for carrying
-        text information as part of the edition
-        """
-        elems = chain(*[ab.descendant_elements for ab in self.abs])
-        return list(map(EditionElement, elems))
-    
-    @property
     def texttype(self) -> str | None:
         """
         Used by IRCyr to store text type (text class) 
@@ -1424,24 +1415,11 @@ class EpiDoc(TeiDoc):
     @property
     def xml_ids(self) -> list[str]:
         """
-        Convenience property for the element @xml:id IDs in the editions of the document
+        Convenience property for the element @xml:id IDs 
+        in the editions of the document
         """
 
-        abs = chain(*[edition.abs 
-                      for edition in self.editions()])
-        elems = chain(*[ab.id_carriers for ab in abs])
-
-        return [elem.xml_id for elem in elems 
-                if elem.xml_id is not None]
-
-    @property
-    def xml_ids(self) -> list[str]:
-        """
-        Convenience property for the element @xml:id IDs in the editions of the document
-        """
-
-        abs = chain(*[edition.abs 
-                      for edition in self.editions()])
+        abs = chain(*[edition.abs for edition in self.editions()])
         elems = chain(*[ab.id_carriers for ab in abs])
 
         return [elem.xml_id for elem in elems 
