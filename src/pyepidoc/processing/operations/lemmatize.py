@@ -40,7 +40,7 @@ def apply_lemmatization(
         lemmatized_edition = epidoc.edition_by_subtype('simple-lemmatized') 
 
         if lemmatized_edition is None:
-            lemmatized_edition = epidoc.ensure_lemmatized_edition(resp=resp_stmt)
+            lemmatized_edition = epidoc.ensure_lemmatized_edition(resp_stmts=resp_stmt)
             epidoc.body.copy_lemmatizable_to_lemmatized_edition(
                 source=main_edition, 
                 target=lemmatized_edition
