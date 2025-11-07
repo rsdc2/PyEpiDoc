@@ -35,7 +35,7 @@ where = ["src"]
 
 [tool.mypy]
 ignore_missing_imports = true
-exclude = ['out', 'build']
+exclude = ["out", "build", "tests"]
 
 [tool.setuptools.package-data]
 "pyepidoc_data" = ["schemas/*.rng"]

@@ -120,7 +120,7 @@ class DocRoot:
 
         for elem in self.desc_elems:
             if elem.text == '':
-                elem.text = None
+                elem.e.text = None
 
         return self
 
