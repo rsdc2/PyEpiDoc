@@ -7,6 +7,7 @@ from pyepidoc.xml import XmlElement
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.shared.constants import TEINS
 
+from pyepidoc.shared.iterables import maxone
 
 class TeiElement(XmlElement):
 
@@ -47,9 +48,15 @@ class TeiElement(XmlElement):
         return self
 
     @classmethod
-    def create(cls, localname: str, attributes: dict[str, str] = dict()) -> TeiElement:
+    def create(
+            cls, 
+            localname: str, 
+            attributes: dict[str, str] = dict()
+        ) -> TeiElement:
+        
         """
-        Create a new Element in the TEI namespace with local name `localname` and `attributes`
+        Create a new Element in the TEI namespace with local name 
+        `localname` and `attributes`
         """
 
         tag = ns.give_ns(localname, TEINS)
@@ -60,15 +67,37 @@ class TeiElement(XmlElement):
         )
         return TeiElement(elem)
     
-    def get_desc_tei_elems(self, 
-        elem_names: list[str] | str, 
-        attribs: dict[str, str] | None = None
-    ) -> list[XmlElement]:
+    def get_descendant_tei_element(
+            self, 
+            elem_name: str, 
+            attribs: dict[str, str] | None = None,
+            throw_if_more_than_one: bool = False
+        ) -> XmlElement | None:
+        
+        """
+        Get first descendant TEI namespace element with the specified
+        name and attributes
+        """
+
+        return maxone(
+            lst=self.get_desc_tei_elems([elem_name], attribs=attribs),
+            defaultval=None,
+            throw_if_more_than_one=throw_if_more_than_one
+        )
+
+    def get_desc_tei_elems(
+            self, 
+            elem_names: list[str] | str, 
+            attribs: dict[str, str] | None = None
+        ) -> list[XmlElement]:
         
         """
         Get all the descendant elements within a particular
         set of names in the TEI namespace.
+
+        :param elem_names: the local names of the elements wanted
+        :param attribs: the attributes of the elements wanted
         """
 
         return [XmlElement(desc) 
-            for desc in self.get_desc(elemnames=elem_names, attribs=attribs)]
+            for desc in self.get_desc(elem_names=elem_names, attribs=attribs)]

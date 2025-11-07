@@ -382,10 +382,10 @@ class XmlElement(Showable):
         return self.child_elements[-1]
 
     def get_attrib(
-        self, 
-        attribname:str, 
-        namespace:Optional[str]=None
-    ) -> Optional[str]:
+            self, 
+            attribname: str, 
+            namespace: Optional[str]=None
+        ) -> Optional[str]:
 
         """
         Returns the value of the named attribute.
@@ -396,56 +396,43 @@ class XmlElement(Showable):
 
         return self._e.attrib.get(ns().give_ns(attribname, namespace), None)
 
-    def get_desc(self, 
-        elemnames: Union[list[str], str], 
-        attribs: Optional[dict[str, str]]=None,
-        ns_prefix: str="ns:",
-        namespace: str=TEINS
-    ) -> list[_Element]:
+    def get_desc(
+            self, 
+            elem_names: Union[list[str], str], 
+            attribs: Optional[dict[str, str]]=None,
+            ns_prefix: str='ns:',
+            namespace: str=TEINS
+        ) -> list[_Element]:
 
         """
         Return all descendant elements with the names 
         given in elemnames and attributes given in 
         attribs
+        
+        :param elem_names: the local names of the elements wanted
+        :param attribs: the attributes of the elements wanted
+        :param namespace: the namespace of the descendant elements sought
         """
 
         if self.e is None: 
             return []
-        if type(elemnames) is str:
-            _elemnames = [elemnames]
-        elif type(elemnames) is list:
-            _elemnames = elemnames
+        if type(elem_names) is str:
+            _elemnames = [elem_names]
+        elif type(elem_names) is list:
+            _elemnames = elem_names
         else:
             raise TypeError("elemnames has incorrect type.")
 
-        xpathstr = ' | '.join([f".//{ns_prefix}{elemname}" + self._compile_attribs(attribs) for elemname in _elemnames])
+        xpathstr = ' | '.join([f".//{ns_prefix}{elemname}" + self._compile_attribs(attribs) 
+                               for elemname in _elemnames])
 
-        xpathRes = (self
-            .e
-            .xpath(xpathstr, namespaces={'ns': namespace})
-        )
+        # TODO: should 'ns' here be actually the ns variable?
+        xpathRes = self.e.xpath(xpathstr, namespaces={'ns': namespace})
 
         if type(xpathRes) is list:
             return cast(list[_Element], xpathRes)
 
         raise TypeError('XPath result is of the wrong type.')
-
-    def get_descendant_tei_element(self, 
-        elem_name: str, 
-        attribs: dict[str, str] | None = None,
-        throw_if_more_than_one: bool = False
-    ) -> XmlElement | None:
-        
-        """
-        Get first descendant TEI namespace element with the specified
-        name and attributes
-        """
-
-        return maxone(
-            lst=self.get_desc_tei_elems([elem_name], attribs=attribs),
-            defaultval=None,
-            throw_if_more_than_one=throw_if_more_than_one
-        )
     
     def get_div_descendants(
         self, 
