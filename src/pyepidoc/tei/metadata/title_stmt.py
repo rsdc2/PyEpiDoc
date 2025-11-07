@@ -10,15 +10,17 @@ class TitleStmt(TeiElement):
     """
 
     def append_resp_stmt(
-        self,
-        resp_stmt: RespStmt
-    ) -> TitleStmt:
+            self,
+            resp_stmt: RespStmt
+        ) -> TitleStmt:
+
         """
         Append `<respStmt>` if `@resp` value does not already exist on document.
         """
         if resp_stmt.resp is None:
-            raise TypeError('resp value cannot be None')
-        
+            raise TypeError('resp_stmt value cannot be None')
+        if resp_stmt.initials is None:
+            raise TypeError('resp_stmt.initials cannot be None ')
         if not self.has_resp_initials(resp_stmt.initials):
             self.e.append(resp_stmt.e)
         return self
