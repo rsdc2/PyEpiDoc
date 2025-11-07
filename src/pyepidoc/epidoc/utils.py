@@ -115,8 +115,6 @@ def leiden_str_from_children(
         objs = [classes.get(localname(child), descendant_text)(child) 
                 for child in children]
         
-    # breakpoint()
-
     return ''.join([obj.leiden_form if hasattr(obj, 'leiden_form') else str(obj) for obj in objs])
 
 
