@@ -3,7 +3,8 @@ from typing import (
     Sequence,
     Optional, 
     cast,
-    overload
+    overload,
+    override
 )
 from itertools import chain
 
@@ -317,6 +318,11 @@ class EditionElement(TeiElement, Showable):
         return "latin" if set(self.form) - A_TO_Z_SET == set() \
             else "other"
     
+    @override
+    @property
+    def child_elems(self) -> list[EditionElement]:
+        return [EditionElement(child) for child in self.child_elements]
+
     def convert_id(self, oldbase: Base, newbase: Base) -> None:
         """
         Convert the element's @xml:id attribute to a different base
