@@ -1,8 +1,8 @@
 from __future__ import annotations
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.tei.tei_element import TeiElement
 from .change import Change
 
-class ListChange(EditionElement):
+class ListChange(TeiElement):
 
     def append_change(self, change: Change) -> ListChange:
         """
@@ -18,11 +18,11 @@ class ListChange(EditionElement):
 
     @staticmethod
     def create():
-        elem = EditionElement.create('listChange')
+        elem = TeiElement.create('listChange')
         return ListChange(elem)
     
     @staticmethod
-    def from_epidoc_element(element: EditionElement):
+    def from_tei_element(element: TeiElement):
         if element.localname != 'listChange':
             raise Exception('Element localname must be "listChange"')
         

@@ -145,53 +145,6 @@ class EpiDoc(TeiDoc):
         return self
 
     @property
-    def date(self) -> Optional[int]:
-        if self.orig_date is None:
-            return None
-            
-        date = self.orig_date.get_attrib('when-custom')
-
-        try:
-            return int(date) if date is not None else None
-        except ValueError:
-            return None
-
-    @property
-    def daterange(self) -> tuple[Optional[int], Optional[int]]:
-        """
-        Return a pair (not_before, not_after). If the document
-        has a single date, the pair (date, date) is a returned.
-        """
-
-        _daterange = (self.not_before, self.not_after)
-
-        if _daterange == (None, None):
-            return (self.date, self.date)
-        
-        return _daterange
-        
-    @property
-    def date_mean(self) -> Optional[int]:
-        """
-        Return a single date for the document.
-        If the document has a single `date`, this is
-        returned. Otherwise the mean date is returned,
-        calculated by summing the `not_before` and 
-        `not_after` property and dividing by two, returning
-        as an `int`.
-        """
-
-        if self.date is not None:
-            return self.date
-
-        not_before, not_after = self.daterange
-        if not_before is None or not_after is None:
-            return None
-    
-        mean = (not_before + not_after) / 2
-        return int(mean)
-
-    @property
     def div_langs(self) -> set[str]:
 
         """
@@ -856,6 +809,7 @@ class EpiDoc(TeiDoc):
         
         return ""
 
+    @override
     def prettify(
             self, 
             prettifier: Literal['pyepidoc'] = 'pyepidoc',
@@ -872,23 +826,34 @@ class EpiDoc(TeiDoc):
         :param prettify_main_edition: If True, aligns the main edition
         on <lb> elements.
         """
-
-        if prettifier == 'lxml':
-            # self = self._prettify_with_lxml()
-            raise NotImplementedError()
-
-        elif prettifier == 'pyepidoc':
-
-            self._prettify_with_pyepidoc(SpaceUnit.Space.value, 4)
-    
-        else:
-            raise TypeError('Prettifier must either be '
-                            'lxml or pyepidoc.')
+        super().prettify(prettifier=prettifier)
 
         if prettify_main_edition:
             self.prettify_main_edition(SpaceUnit.Space.value, 4, verbose=verbose)
 
         return self
+
+    def prettify_main_edition(
+        self, 
+        spaceunit = SpaceUnit.Space.value, 
+        number = 4, 
+        verbose = True
+    ) -> None:
+
+        """
+        Prettify the xml of the <div type="edition"> element; this
+        cannot be done automatically using lxml since this element
+        will have @xml:space="preserve".
+
+        :param replace_tabs: If True, replaces all tab characters with 
+        the correct multiple of spaceunit.
+        """
+    
+        if verbose: 
+            print(f'Prettifying {self.id}...')
+
+        if self.main_edition is not None:
+            self.main_edition.prettify(spaceunit, number)
 
     def _prettify_with_lxml(self) -> EpiDoc:
 
@@ -943,28 +908,6 @@ class EpiDoc(TeiDoc):
             else '\n' + space_unit * multiplier + (self.root_elem.text or '').strip()
         
         return epidoc
-
-    def prettify_main_edition(
-        self, 
-        spaceunit = SpaceUnit.Space.value, 
-        number = 4, 
-        verbose = True
-    ) -> None:
-
-        """
-        Prettify the xml of the <div type="edition"> element; this
-        cannot be done automatically using lxml since this element
-        will have @xml:space="preserve".
-
-        :param replace_tabs: If True, replaces all tab characters with 
-        the correct multiple of spaceunit.
-        """
-    
-        if verbose: 
-            print(f'Prettifying {self.id}...')
-
-        if self.main_edition is not None:
-            self.main_edition.prettify(spaceunit, number)
 
     def print_leiden(self) -> None:
         """

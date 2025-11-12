@@ -166,6 +166,53 @@ class TeiDoc(DocRoot):
         return self.get_div_descendants_by_type('commentary')
     
     @property
+    def date(self) -> Optional[int]:
+        if self.orig_date is None:
+            return None
+            
+        date = self.orig_date.get_attrib('when-custom')
+
+        try:
+            return int(date) if date is not None else None
+        except ValueError:
+            return None
+
+    @property
+    def daterange(self) -> tuple[Optional[int], Optional[int]]:
+        """
+        Return a pair (not_before, not_after). If the document
+        has a single date, the pair (date, date) is a returned.
+        """
+
+        _daterange = (self.not_before, self.not_after)
+
+        if _daterange == (None, None):
+            return (self.date, self.date)
+        
+        return _daterange
+        
+    @property
+    def date_mean(self) -> Optional[int]:
+        """
+        Return a single date for the document.
+        If the document has a single `date`, this is
+        returned. Otherwise the mean date is returned,
+        calculated by summing the `not_before` and 
+        `not_after` property and dividing by two, returning
+        as an `int`.
+        """
+
+        if self.date is not None:
+            return self.date
+
+        not_before, not_after = self.daterange
+        if not_before is None or not_after is None:
+            return None
+    
+        mean = (not_before + not_after) / 2
+        return int(mean)
+
+    @property
     def distributor(self) -> Optional[str]:
         
         """
@@ -304,10 +351,6 @@ class TeiDoc(DocRoot):
             return True
         
         return False
-    
-    @property
-    def is_multilingual(self) -> bool:
-        return len(self.div_langs) > 1 or len(self.langs) > 1
 
     def _get_daterange_attrib(self, attrib_name: str) -> Optional[int]:
         if self.orig_date is None:
@@ -453,9 +496,8 @@ class TeiDoc(DocRoot):
 
     def prettify(
             self, 
-            prettifier: Literal['pyepidoc'] = 'pyepidoc',
-            prettify_main_edition: bool = True,
-            verbose = False) -> TeiDoc:
+            prettifier: Literal['pyepidoc'] = 'pyepidoc'
+            ) -> TeiDoc:
 
         """
         Use prettify function in `lxml` to prettify the whole document.
@@ -473,15 +515,11 @@ class TeiDoc(DocRoot):
             raise NotImplementedError()
 
         elif prettifier == 'pyepidoc':
-
             self._prettify_with_pyepidoc(SpaceUnit.Space.value, 4)
     
         else:
             raise TypeError('Prettifier must either be '
                             'lxml or pyepidoc.')
-
-        if prettify_main_edition:
-            self.prettify_main_edition(SpaceUnit.Space.value, 4, verbose=verbose)
 
         return self
 
@@ -539,28 +577,6 @@ class TeiDoc(DocRoot):
         
         return epidoc
 
-    def prettify_main_edition(
-        self, 
-        spaceunit = SpaceUnit.Space.value, 
-        number = 4, 
-        verbose = True
-    ) -> None:
-
-        """
-        Prettify the xml of the <div type="edition"> element; this
-        cannot be done automatically using lxml since this element
-        will have @xml:space="preserve".
-
-        :param replace_tabs: If True, replaces all tab characters with 
-        the correct multiple of spaceunit.
-        """
-    
-        if verbose: 
-            print(f'Prettifying {self.id}...')
-
-        if self.main_edition is not None:
-            self.main_edition.prettify(spaceunit, number)
-
     def print_translation(self) -> None:
         """
         Print translation text to stdout
@@ -602,34 +618,12 @@ class TeiDoc(DocRoot):
 
     @property
     def tei_header(self) -> Optional[TeiHeader]:
-        tei_header_elem = maxone(self.root_elem.get_desc_tei_elems('teiHeader'))
+        root = TeiElement(self)
+        tei_header_elem = maxone(root.get_desc_tei_elems('teiHeader'))
         if tei_header_elem is None:
             return None
         
-        return TeiHeader(tei_header_elem)
-
-    def text(self, type: Literal['leiden', 'normalized', 'xml']) -> str:
-        
-        """
-        :param type: the type of text wanted, whether
-        the Leiden version or a normalized version (i.e. with all the 
-        abbreviations expanded), or the raw text content of the descendant
-        XML nodes
-        :return: the edition text of the document
-        """
-        leiden_editions = [edition.get_text(type) 
-                        for edition in self.editions()]
-        
-        return '\n'.join(leiden_editions)    
-
-    @property
-    def text_xml(self) -> str:
-
-        """
-        Raw text from XML nodes
-        """
-
-        return self.text('xml')
+        return TeiHeader(tei_header_elem)  
 
     @property
     def textclasses(self) -> list[str]:

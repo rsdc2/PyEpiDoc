@@ -47,6 +47,10 @@ class TeiElement(XmlElement):
         
         return self
 
+    @property
+    def child_elems(self) -> list[TeiElement]:
+        return [TeiElement(child) for child in self.child_elements]
+
     @classmethod
     def create(
             cls, 

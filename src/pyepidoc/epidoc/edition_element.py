@@ -317,10 +317,6 @@ class EditionElement(TeiElement, Showable):
         return "latin" if set(self.form) - A_TO_Z_SET == set() \
             else "other"
     
-    @property
-    def child_elems(self) -> list[EditionElement]:
-        return [EditionElement(child) for child in self.child_elements]
-    
     def convert_id(self, oldbase: Base, newbase: Base) -> None:
         """
         Convert the element's @xml:id attribute to a different base
@@ -1225,7 +1221,7 @@ class EditionElement(TeiElement, Showable):
         Returns children that are already tokenized, including Comment nodes
         """
 
-        return [child for child in self.child_elems
+        return [EditionElement(child) for child in self.child_elems
             if child.localname in AtomicTokenType.values() or \
                 child.tag.name == "Comment"]
 

@@ -5,6 +5,7 @@ from lxml import etree
 from lxml.etree import _Element
 
 from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.metadata.resp_stmt import RespStmt
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
@@ -15,8 +16,7 @@ from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.shared.enums import (
     StandoffEditionElements, 
-    ContainerStandoffEditionType,
-    RepresentableStandoffEditionType
+    ContainerStandoffEditionType
 )
 from pyepidoc.shared.iterables import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
@@ -72,7 +72,7 @@ class Body(EditionElement):
                     child_copy.remove_children()
                     child_copy.remove_attr('id', XMLNS)
                     target_elem._e.append(child_copy._e)
-                    append_items(child, child_copy)
+                    append_items(EditionElement(child), EditionElement(child_copy))
 
                 elif child.tag.name == 'ab':
                     ab = child

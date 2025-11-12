@@ -1,9 +1,11 @@
 from __future__ import annotations
-from pyepidoc.epidoc.edition_element import EditionElement
+from typing import override
+from pyepidoc.tei.tei_element import TeiElement
 from .change import Change
 from .list_change import ListChange
 
-class RevisionDesc(EditionElement):
+
+class RevisionDesc(TeiElement):
     """
     The <revisionDesc> element
     """
@@ -15,17 +17,20 @@ class RevisionDesc(EditionElement):
         self.list_change.append_change(change)
         return self
 
-    @staticmethod
-    def create() -> RevisionDesc:
+    @override
+    @classmethod
+    def create(
+            cls      
+        ) -> RevisionDesc:
         """
         Create a new <revisionDesc> element with an empty <listChange> 
         """
-        revision_desc = RevisionDesc(EditionElement.create('revisionDesc'))
+        revision_desc = RevisionDesc(TeiElement.create('revisionDesc'))
         list_change = ListChange.create()
         revision_desc.append_node(list_change)
         return revision_desc
     
-    def from_epidoc_element(element: EditionElement) -> RevisionDesc:
+    def from_epidoc_element(element: TeiElement) -> RevisionDesc:
         if element.localname != 'revisionDesc':
             raise Exception('Element must have localname "revisionDesc"')
         
@@ -45,5 +50,5 @@ class RevisionDesc(EditionElement):
         if list_change is None:
             raise Exception('No <listChange> element present in <revisionDesc>')
         
-        return ListChange.from_epidoc_element(EditionElement(list_change))
+        return ListChange.from_tei_element(TeiElement(list_change))
 
