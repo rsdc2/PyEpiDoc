@@ -209,8 +209,8 @@ class EditionElement(TeiElement, Showable):
             # spaces have already been taken into 
             # account in generating like adjacent tags
             
-            first_child = head(other.child_elems)
-            last_child = last(self.child_elems)
+            first_child = head(list(other.child_elems))
+            last_child = last(list(self.child_elems))
             text = other.text
             if last_child is not None:
                 tail = last_child.tail
@@ -320,7 +320,7 @@ class EditionElement(TeiElement, Showable):
     
     @override
     @property
-    def child_elems(self) -> list[EditionElement]:
+    def child_elems(self) -> Sequence[EditionElement]:
         return [EditionElement(child) for child in self.child_elements]
 
     def convert_id(self, oldbase: Base, newbase: Base) -> None:
@@ -733,7 +733,7 @@ class EditionElement(TeiElement, Showable):
         if self.localname == 'lb' and self.get_attrib('break') == 'no':
             return False
         
-        first_child = head(self.child_elems)
+        first_child = head(list(self.child_elems))
         if first_child is not None and (self.text == '' or self.text is None):
             if  first_child.localname == 'lb' and first_child.get_attrib('break') == 'no':
                 return False
@@ -988,7 +988,7 @@ class EditionElement(TeiElement, Showable):
         if self.localname == "Commment":
             return False
 
-        last_child = last(self.child_elems)
+        last_child = last(list(self.child_elems))
         if last_child is not None and (last_child.tail == '' or last_child.tail is None):
             if  last_child.localname == 'lb' and last_child.get_attrib('break') == 'no':
                 return False

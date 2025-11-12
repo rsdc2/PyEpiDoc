@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Sequence
+
 from lxml import etree
 from lxml.etree import _Element, _ElementUnicodeResult
 
@@ -8,6 +10,7 @@ from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.shared.constants import TEINS
 
 from pyepidoc.shared.iterables import maxone
+
 
 class TeiElement(XmlElement):
 
@@ -48,7 +51,7 @@ class TeiElement(XmlElement):
         return self
 
     @property
-    def child_elems(self) -> list[TeiElement]:
+    def child_elems(self) -> Sequence[TeiElement]:
         return [TeiElement(child) for child in self.child_elements]
 
     @classmethod
