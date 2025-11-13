@@ -21,7 +21,7 @@ import io
 from io import BytesIO
 
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.tei.teidoc import TeiDoc
+from pyepidoc.tei.tei_doc import TeiDoc
 from pyepidoc.tei.metadata.tei_header import TeiHeader
 from pyepidoc.tei.metadata.change import Change
 from pyepidoc.tei.metadata.resp_stmt import RespStmt
