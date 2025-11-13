@@ -17,7 +17,7 @@ class PublicationStmt(EditionElement):
 
     @property
     def idnos(self) -> list[Idno]:
-        elements = self.child_elems_by_local_name('idno')
+        elements = self.child_elements_by_local_name('idno')
         return list(map(Idno, elements))
     
     def get_idno_by_type(self, idno_type: str) -> Idno | None:

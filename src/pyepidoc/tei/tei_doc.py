@@ -629,7 +629,7 @@ class TeiDoc(DocRoot):
 
     @property
     def text(self) -> Text:
-        text = self.root_elem.child_elem_by_local_name('text')
+        text = self.root_elem.child_element_by_local_name('text')
         return Text(text)
 
     @property
