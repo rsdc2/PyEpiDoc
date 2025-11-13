@@ -30,6 +30,7 @@ from pyepidoc.shared.types import Base
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.enums import SpaceUnit, DoNotPrettifyChildren
 from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.tei.tei_text import Text
 
 from .body import Body
 from .errors import TEINSError
@@ -154,7 +155,8 @@ class TeiDoc(DocRoot):
         as a `Body` object.
         """
         
-        body = maxone(self.get_desc(['body']))
+        body = self.text.body
+        # body = maxone(self.get_desc(['body']))
 
         if body is None:
             raise ValueError('No body element found.')
@@ -624,6 +626,11 @@ class TeiDoc(DocRoot):
             return None
         
         return TeiHeader(tei_header_elem)  
+
+    @property
+    def text(self) -> Text:
+        text = self.root_elem.child_elem_by_local_name('text')
+        return Text(text)
 
     @property
     def textclasses(self) -> list[str]:

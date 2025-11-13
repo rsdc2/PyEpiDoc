@@ -36,7 +36,7 @@ class Body(EditionElement):
         super().__init__(e, False)
         body_tag = ns.give_ns('body', TEINS)
 
-        if e.tag != body_tag:
+        if e.e.tag != body_tag:
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self.tag}> element.')
 

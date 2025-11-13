@@ -194,6 +194,20 @@ class EpiDoc(TeiDoc):
 
         return self.body.edition_by_subtype(subtype)
     
+    def edition_text(self, type: Literal['leiden', 'normalized', 'xml']) -> str:
+        
+        """
+        :param type: the type of text wanted, whether
+        the Leiden version or a normalized version (i.e. with all the 
+        abbreviations expanded), or the raw text content of the descendant
+        XML nodes
+        :return: the edition text of the document
+        """
+        leiden_editions = [edition.get_text(type) 
+                        for edition in self.editions()]
+        
+        return '\n'.join(leiden_editions)    
+
     @property
     def _edition_subtypes(self) -> list[str]:
         """
@@ -1046,20 +1060,6 @@ class EpiDoc(TeiDoc):
         
         return TeiHeader(tei_header_elem)
 
-    def text(self, type: Literal['leiden', 'normalized', 'xml']) -> str:
-        
-        """
-        :param type: the type of text wanted, whether
-        the Leiden version or a normalized version (i.e. with all the 
-        abbreviations expanded), or the raw text content of the descendant
-        XML nodes
-        :return: the edition text of the document
-        """
-        leiden_editions = [edition.get_text(type) 
-                        for edition in self.editions()]
-        
-        return '\n'.join(leiden_editions)    
-
     @property
     def text_elems(self) -> list[EditionElement]:
         """
@@ -1076,7 +1076,7 @@ class EpiDoc(TeiDoc):
         document including line breaks
         """
 
-        return self.text('leiden')
+        return self.edition_text('leiden')
 
     @property
     def text_normalized(self) -> str:
@@ -1084,7 +1084,7 @@ class EpiDoc(TeiDoc):
         :return: a normalized version of the edition text (i.e.
         all abbreviations expanded etc.) with no line breaks
         """
-        return self.text('normalized')
+        return self.edition_text('normalized')
     
     @property
     def text_xml(self) -> str:
@@ -1093,7 +1093,7 @@ class EpiDoc(TeiDoc):
         Raw text from XML nodes
         """
 
-        return self.text('xml')
+        return self.edition_text('xml')
 
     @property
     def textclasses(self) -> list[str]:
