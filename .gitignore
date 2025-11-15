@@ -20,3 +20,5 @@ out
 .ipynb_checkpoints
 .coverage
 .VSCodeCounter
+.coverage
+.idea
