@@ -442,27 +442,6 @@ class XmlElement(Showable):
 
         raise TypeError('XPath result is of the wrong type.')
     
-    def get_div_descendants(
-        self, 
-        divtype: str, 
-        level: str = '',
-        lang: Optional[str]=None
-    ) -> list[_Element]:
-
-        if self.e is None: 
-            return []
-
-        if not lang:
-            return cast(list[_Element], self.e.xpath(f".//ns:div{level}[@type='{divtype}']", namespaces={'ns': TEINS}) )
-
-        elif lang:
-            return cast(list[_Element], self.e.xpath(
-                f".//ns:div{level}[@type='{divtype} @xml:lang='{lang}']",
-                namespaces={'ns': TEINS, 'xml': XMLNS}) 
-            )
-        
-        return []
-
     def get_first_parent_by_name(
             self, 
             parent_tag_names:list[str]) -> Optional[XmlElement]:

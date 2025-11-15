@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Sequence, cast
 
 from lxml import etree
 from lxml.etree import _Element, _ElementUnicodeResult
 
 from pyepidoc.xml import XmlElement
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.shared.constants import TEINS
+from pyepidoc.shared.constants import TEINS, XMLNS
 
 from pyepidoc.shared.iterables import maxone
 
@@ -108,3 +108,24 @@ class TeiElement(XmlElement):
 
         return [XmlElement(desc) 
             for desc in self.get_desc(elem_names=elem_names, attribs=attribs)]
+    
+    def get_div_descendants(
+        self, 
+        divtype: str, 
+        level: str = '',
+        lang: str | None = None
+    ) -> list[_Element]:
+
+        if self.e is None: 
+            return []
+
+        if not lang:
+            return cast(list[_Element], self.e.xpath(f".//ns:div{level}[@type='{divtype}']", namespaces={'ns': TEINS}) )
+
+        elif lang:
+            return cast(list[_Element], self.e.xpath(
+                f".//ns:div{level}[@type='{divtype} @xml:lang='{lang}']",
+                namespaces={'ns': TEINS, 'xml': XMLNS}) 
+            )
+        
+        return []
