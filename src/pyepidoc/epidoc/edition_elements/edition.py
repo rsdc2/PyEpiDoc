@@ -14,7 +14,7 @@ from pyepidoc.xml import XmlElement
 from pyepidoc.xml.utils import editionify
 from pyepidoc.shared.enums import NamedEntities
 from pyepidoc.analysis.utils.division import Division
-from pyepidoc.shared.constants import XMLNS
+from pyepidoc.shared.namespaces import XMLNS, TEINS
 from pyepidoc.shared import default_str
 from pyepidoc.shared.types import Base
 from pyepidoc.shared.classes import SetRelation
@@ -23,7 +23,6 @@ from pyepidoc.tei.metadata.change import Change
 
 from pyepidoc.xml.namespace import Namespace as ns
 
-from pyepidoc.shared.constants import TEINS, XMLNS
 
 from .. import ids
 from ..edition_element import EditionElement

@@ -110,17 +110,18 @@ class TeiElement(XmlElement):
             for desc in self.get_desc(elem_names=elem_names, attribs=attribs)]
     
     def get_div_descendants(
-        self, 
-        divtype: str, 
-        level: str = '',
-        lang: str | None = None
-    ) -> list[_Element]:
+            self, 
+            divtype: str, 
+            level: str = '',
+            lang: str | None = None
+        ) -> list[_Element]:
 
         if self.e is None: 
             return []
 
         if not lang:
-            return cast(list[_Element], self.e.xpath(f".//ns:div{level}[@type='{divtype}']", namespaces={'ns': TEINS}) )
+            xpath_str = f".//ns:div{level}[@type='{divtype}']"
+            return cast(list[_Element], self.e.xpath(xpath_str, namespaces={'ns': TEINS}))
 
         elif lang:
             return cast(list[_Element], self.e.xpath(

@@ -5,8 +5,8 @@ from lxml.etree import _Element
 
 from ..edition_element import EditionElement
 
-from ...xml import XmlElement
-from ...shared.constants import XMLNS
+from pyepidoc.xml import XmlElement
+from pyepidoc.shared.namespaces import XMLNS
 
 from .ab import Ab
 

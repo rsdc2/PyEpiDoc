@@ -22,7 +22,7 @@ from ...shared.enums import (
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.xml import XmlElement
 from pyepidoc.shared import update_set_inplace, head
-from pyepidoc.shared.constants import XMLNS
+from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.types import Base
 from pyepidoc.epidoc.representable import Representable
 from pyepidoc.epidoc.utils import descendant_atomic_tokens

@@ -4,7 +4,7 @@ from lxml.etree import _Element
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.epidoc.representable import Representable
 from pyepidoc.shared.iterables import maxone
-from pyepidoc.shared.constants import XMLNS
+from pyepidoc.shared.namespaces import XMLNS
 
 class W(Representable):
     """

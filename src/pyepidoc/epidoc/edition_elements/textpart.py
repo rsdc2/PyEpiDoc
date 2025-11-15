@@ -1,5 +1,5 @@
-from ...shared.constants import XMLNS
-from ..edition_element import EditionElement
+from pyepidoc.shared.constants import XMLNS
+from pyepidoc.epidoc.edition_element import EditionElement
 
 
 class TextPart(EditionElement):

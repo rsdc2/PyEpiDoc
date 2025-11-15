@@ -2,7 +2,7 @@ from functools import cached_property
 from lxml.etree import _Element
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.representable import Representable
-from pyepidoc.shared.constants import XMLNS
+from pyepidoc.shared.namespaces import XMLNS
 
 
 class Gap(Representable):
