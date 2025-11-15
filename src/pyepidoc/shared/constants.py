@@ -1,5 +1,4 @@
-TEINS = "http://www.tei-c.org/ns/1.0"
-XMLNS = "http://www.w3.org/XML/1998/namespace"
+from .namespaces import TEINS
 
 NE = NAMED_ENTITIES = {'g', 'w', 'name', 'persName', 'num', 'roleName', 'orgName', 'placeName', 'measure'}
 NE_TEXT = NAMED_ENTITIES_CONTAINING_TEXT = {'g', 'w', 'name', 'num', 'measure'}
