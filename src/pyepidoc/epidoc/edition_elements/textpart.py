@@ -1,4 +1,4 @@
-from pyepidoc.shared.constants import XMLNS
+from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.epidoc.edition_element import EditionElement
 
 

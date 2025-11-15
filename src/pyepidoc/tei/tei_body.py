@@ -1,24 +1,10 @@
 from __future__ import annotations
-from typing import Literal
-
-from lxml import etree
 from lxml.etree import _Element
 
+from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.tei.metadata.resp_stmt import RespStmt
-from pyepidoc.epidoc.edition_elements.edition import Edition
-from pyepidoc.epidoc.token import Token
-
-from pyepidoc.xml.namespace import Namespace as ns
-
-from pyepidoc.shared.constants import TEINS, XMLNS
-from pyepidoc.shared.enums import (
-    StandoffEditionElements, 
-    ContainerStandoffEditionType
-)
-from pyepidoc.shared.iterables import maxone, listfilter
-from pyepidoc.shared.dicts import dict_remove_none
+from pyepidoc.shared.namespaces import TEINS
 
 
 class TeiBody(TeiElement):    

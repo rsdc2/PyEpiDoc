@@ -13,15 +13,11 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from pyepidoc.xml import Namespace as ns
 from pyepidoc.xml.utils import localname
-from pyepidoc.shared import maxone, remove_none, head
-from pyepidoc.shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
-from pyepidoc.xml.xml_element import XmlElement
 
+from pyepidoc.shared.namespaces import XMLNS
+from pyepidoc.shared.enums import RegTextType
 from .edition_element import EditionElement
-
-from ..shared.enums import RegTextType
 
 Node = Union[_Element, _ElementUnicodeResult]
 

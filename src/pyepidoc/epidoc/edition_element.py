@@ -28,14 +28,11 @@ from lxml.etree import (
 
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.tei.tei_element import TeiElement
-
+from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.constants import (
     A_TO_Z_SET, 
-    TEINS, 
-    XMLNS, 
     SubsumableRels,
-    ROMAN_NUMERAL_CHARS,
-    VALID_BASES
+    ROMAN_NUMERAL_CHARS
 )
 from pyepidoc.shared.types import Base
 

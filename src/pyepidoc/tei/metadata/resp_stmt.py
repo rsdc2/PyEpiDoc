@@ -1,10 +1,9 @@
 from __future__ import annotations
-from typing import overload
 
 from lxml import etree
 from lxml.etree import _Element
 
-from pyepidoc.shared.constants import TEINS, XMLNS
+from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.iterables import head
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.epidoc.edition_element import EditionElement

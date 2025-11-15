@@ -14,12 +14,17 @@ from lxml.etree import (
     _ElementUnicodeResult
 )
 
-from ..xml import Namespace as ns
-from ..shared import maxone, remove_none, head
-from ..shared.constants import TEINS, XMLNS, A_TO_Z_SET, ROMAN_NUMERAL_CHARS
-from ..xml.xml_element import XmlElement
+from pyepidoc.xml import Namespace as ns
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.shared import maxone, remove_none, head
+from pyepidoc.shared.namespaces import TEINS, XMLNS
+from pyepidoc.shared.enums import (
+    PUNCTUATION,
+    RegTextType
+)
 
 from .utils import descendant_atomic_tokens
+from .representable import Representable
 from .edition_elements.abbr import Abbr
 from .edition_elements.am import Am
 from .edition_elements.choice import Choice
@@ -37,13 +42,6 @@ from .edition_elements.surplus import Surplus
 from .edition_elements.unclear import Unclear
 from .edition_elements.w import W
 
-from ..shared.enums import (
-    CompoundTokenType, 
-    AtomicTokenType,
-    PUNCTUATION,
-    NonNormalized,
-    RegTextType
-)
 
 Node = Union[_Element, _ElementUnicodeResult]
 
@@ -65,7 +63,6 @@ elem_classes: dict[str, type] = {
     'w': W
 }
 
-from .representable import Representable
 
 class Token(Representable):
 

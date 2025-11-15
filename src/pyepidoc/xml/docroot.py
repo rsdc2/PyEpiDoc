@@ -22,7 +22,7 @@ from lxml.etree import (
     DocumentInvalid
 )
 
-from pyepidoc.shared.constants import TEINS, XMLNS
+from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.xml.xml_element import XmlElement
 from .xml_element import XmlElement
 from .errors import handle_xmlsyntaxerror

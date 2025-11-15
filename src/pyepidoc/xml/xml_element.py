@@ -5,7 +5,6 @@ from typing import (
     Callable,
     Optional, 
     Union, 
-    Iterable,
     cast,
     overload
 )
@@ -26,8 +25,8 @@ from pyepidoc.shared.classes import Tag, Showable, ExtendableSeq, SetRelation
 
 from .namespace import Namespace as ns
 
-from pyepidoc.shared.constants import TEINS, XMLNS, SubsumableRels
-from pyepidoc.shared import maxone, head
+from pyepidoc.shared.namespaces import TEINS, XMLNS
+from pyepidoc.shared import maxone
 from pyepidoc.xml.utils import localname
 
 

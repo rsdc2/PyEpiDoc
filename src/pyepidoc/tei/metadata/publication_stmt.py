@@ -1,5 +1,4 @@
 from __future__ import annotations
-from pyepidoc.shared.constants import TEINS, XMLNS
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.shared.iterables import maxone
 from .idno import Idno

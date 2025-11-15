@@ -7,7 +7,7 @@ from lxml.etree import _Element, _ElementUnicodeResult
 
 from pyepidoc.xml import XmlElement
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.shared.constants import TEINS, XMLNS
+from pyepidoc.shared.namespaces import TEINS, XMLNS
 
 from pyepidoc.shared.iterables import maxone
 

@@ -13,7 +13,7 @@ from pyepidoc.epidoc.token import Token
 
 from pyepidoc.xml.namespace import Namespace as ns
 
-from pyepidoc.shared.constants import TEINS, XMLNS
+from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.enums import (
     StandoffEditionElements, 
     ContainerStandoffEditionType
