@@ -1,7 +1,7 @@
 from typing import override
 
 from pyepidoc.tei.tei_doc import TeiDoc
-from .ariobody import ArioBody
+from .ario_body import ArioBody
 
 
 class ArioDoc(TeiDoc):

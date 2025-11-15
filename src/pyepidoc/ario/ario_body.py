@@ -3,6 +3,7 @@ from pyepidoc.shared.iterables import maxone, listfilter
 from pyepidoc.tei.tei_body import TeiBody
 from pyepidoc.epidoc.edition_elements.edition import Edition
 
+
 class ArioBody(TeiBody):
     
     def editions(self, include_transliterations=False) -> list[Edition]:
