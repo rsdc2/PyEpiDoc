@@ -1,9 +1,10 @@
 from typing import override
 
-from pyepidoc.epidoc.epidoc import EpiDoc
+from pyepidoc.tei.tei_doc import TeiDoc
 from .ariobody import ArioBody
 
-class ArioDoc(EpiDoc):
+
+class ArioDoc(TeiDoc):
     
     @override
     @property

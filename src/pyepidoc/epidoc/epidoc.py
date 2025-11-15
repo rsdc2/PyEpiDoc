@@ -37,6 +37,7 @@ from pyepidoc.shared.enums import (
 )
 from pyepidoc.shared.types import Base
 
+from .body import Body
 from .token import Token
 from .errors import EpiDocValidationError
 from .edition_element import EditionElement, XmlElement
@@ -114,6 +115,18 @@ class EpiDoc(TeiDoc):
     def apparatus(self) -> list[_Element]:
         return self.get_div_descendants_by_type('apparatus')
         
+    @override
+    @property
+    def body(self) -> Body:
+
+        """
+        Return the body element of the XML file
+        as a `Body` object.
+        """
+        
+        body = super().body        
+        return Body(body)
+
     @property
     def commentary(self) -> list[_Element]:
         return self.get_div_descendants_by_type('commentary')

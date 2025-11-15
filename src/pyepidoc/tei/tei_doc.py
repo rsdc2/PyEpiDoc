@@ -32,7 +32,7 @@ from pyepidoc.shared.enums import SpaceUnit, DoNotPrettifyChildren
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.tei_text import Text
 
-from .body import Body
+from .tei_body import TeiBody
 from .errors import TEINSError
 from .metadata.title_stmt import TitleStmt
 from .metadata.resp_stmt import RespStmt
@@ -148,20 +148,15 @@ class TeiDoc(DocRoot):
         return elem.text
 
     @property
-    def body(self) -> Body:
+    def body(self) -> TeiBody:
 
         """
         Return the body element of the XML file
         as a `Body` object.
         """
         
-        body = self.text.body
-        # body = maxone(self.get_desc(['body']))
-
-        if body is None:
-            raise ValueError('No body element found.')
-        
-        return Body(body)
+        body = self.text.body        
+        return TeiBody(body)
 
     @property
     def commentary(self) -> list[_Element]:

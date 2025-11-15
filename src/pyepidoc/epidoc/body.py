@@ -7,7 +7,7 @@ from lxml.etree import _Element
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.metadata.resp_stmt import RespStmt
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.tei.tei_body import TeiBody
 from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.token import Token
 
@@ -22,7 +22,7 @@ from pyepidoc.shared.iterables import maxone, listfilter
 from pyepidoc.shared.dicts import dict_remove_none
 
 
-class Body(EditionElement):    
+class Body(TeiBody):    
 
     """
     Provides services for the <body> element of the EpiDoc file
@@ -30,10 +30,10 @@ class Body(EditionElement):
 
     def __init__(
         self, 
-        e: _Element | EditionElement | XmlElement
+        e: _Element | TeiElement | XmlElement
     ) -> None:
         
-        super().__init__(e, False)
+        super().__init__(e)
         body_tag = ns.give_ns('body', TEINS)
 
         if e.e.tag != body_tag:
@@ -56,8 +56,8 @@ class Body(EditionElement):
         """
 
         def append_items(
-                source_elem: EditionElement, 
-                target_elem: EditionElement) -> None:
+                source_elem: TeiElement, 
+                target_elem: TeiElement) -> None:
             
             """
             Recursive function appending children of elements
@@ -72,7 +72,7 @@ class Body(EditionElement):
                     child_copy.remove_children()
                     child_copy.remove_attr('id', XMLNS)
                     target_elem._e.append(child_copy._e)
-                    append_items(EditionElement(child), EditionElement(child_copy))
+                    append_items(TeiElement(child), TeiElement(child_copy))
 
                 elif child.tag.name == 'ab':
                     ab = child
@@ -90,7 +90,7 @@ class Body(EditionElement):
                             desc_copy_token.remove_attr('id', XMLNS)
                             ab_copy._e.append(desc_copy_token.e)   
 
-        append_items(source, EditionElement(target))
+        append_items(source, TeiElement(target))
         return target
 
     def append_new_edition(
