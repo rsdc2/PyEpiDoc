@@ -1,24 +1,16 @@
-from pyepidoc.shared.iterables import maxone, listfilter
-
+from pyepidoc.shared.iterables import maxone
 from pyepidoc.tei.tei_body import TeiBody
-from pyepidoc.epidoc.edition_elements.edition import Edition
+from .ario_div1 import ArioDiv1 as Div1
 
 
 class ArioBody(TeiBody):
     
-    def editions(self, include_transliterations=False) -> list[Edition]:
-
-        """
-        Return a list of Edition elements
-        """
-
-        editions = [Edition(edition) 
-            for edition in self.get_div_descendants('edition')]
-
-        if include_transliterations:
-            return editions
-        else:
-            return listfilter(
-                lambda ed: ed.subtype != 'transliteration', 
-                editions
-            )
+    @property
+    def discourse_body(self) -> Div1 | None:
+        discourse_candidates = [div1 for div1 in self.div1s 
+                                if div1.type == 'discourse'
+                                and div1.subtype == 'body']
+        discourse = maxone(discourse_candidates)
+        if discourse is None: 
+            return None
+        return Div1(discourse)

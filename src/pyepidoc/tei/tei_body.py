@@ -6,6 +6,7 @@ from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.shared.namespaces import TEINS
 
+from .tei_div1 import TeiDiv1 as Div1
 
 class TeiBody(TeiElement):    
 
@@ -24,3 +25,8 @@ class TeiBody(TeiElement):
         if e.e.tag != body_tag:
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self.tag}> element.')
+
+    @property
+    def div1s(self) -> list[Div1]:
+        return [Div1(child) for child in self.child_elements
+                if child.localname == 'div1']

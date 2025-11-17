@@ -15,5 +15,5 @@ class ArioDoc(TeiDoc):
         as a `Body` object.
         """
         
-        body_element = super().body.e
+        body_element = super().body
         return ArioBody(body_element)
