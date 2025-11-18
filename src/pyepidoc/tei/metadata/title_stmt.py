@@ -22,7 +22,7 @@ class TitleStmt(TeiElement):
         if resp_stmt.initials is None:
             raise TypeError('resp_stmt.initials cannot be None ')
         if not self.has_resp_initials(resp_stmt.initials):
-            self.e.append(resp_stmt.e)
+            self._e._e.append(resp_stmt.e)
         return self
 
     def append_new_resp_stmt(
@@ -43,7 +43,7 @@ class TitleStmt(TeiElement):
     @staticmethod
     def from_details(title: str) -> TitleStmt:
         title_elem = TeiElement.create('titleStmt')
-        title_elem.text = title
+        title_elem._e.text = title
         return TitleStmt(title_elem)
 
     @property
@@ -52,7 +52,7 @@ class TitleStmt(TeiElement):
         Return all the <resp/> statements
         """
         
-        resp_stmt_elems = self.descendant_elements_by_local_name("respStmt")
+        resp_stmt_elems = self._e.descendant_elements_by_local_name("respStmt")
         return list(map(RespStmt.from_element, resp_stmt_elems))
     
     def has_resp_initials(self, resp_initials: str) -> bool:

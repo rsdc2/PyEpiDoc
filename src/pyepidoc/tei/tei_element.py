@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Sequence, cast
+from typing import Sequence, cast, overload
 
 from lxml import etree
 from lxml.etree import _Element, _ElementUnicodeResult
@@ -12,47 +12,52 @@ from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.iterables import maxone
 
 
-class TeiElement(XmlElement):
+class TeiElement:
 
     """
     Provides services to all TeiElement objects
     """
 
-    def append_node(
-            self, 
-            item: _Element | _ElementUnicodeResult | str | XmlElement) -> TeiElement:
+    _e: XmlElement
 
+    @overload
+    def __init__(self, e: TeiElement):
+        ...
+
+    @overload
+    def __init__(self, e: XmlElement):
+        ...
+
+    @overload
+    def __init__(self, e: _Element):
         """
-        Append either element or text to an element
+        :param e: lxml |_Element|; |_Comment| is subclass of |_Element|
         """
+        ...
 
-        if isinstance(item, (_ElementUnicodeResult, str)):
-            if self.last_child is None:
-                if self.text is None:
-                    self.text = item
-                else:
-                    self.text += item
+    def __init__(self, e: _Element | XmlElement):
+        error_msg = (f'Expected type is _Element or BaseElement '
+                     f'type or None. Actual type is {type(e)}.')
         
-            else:
-                if self.last_child.tail is None:
-                    self.last_child.tail = item
-                else:
-                    self.last_child.tail += item
+        if not isinstance(e, (_Element, XmlElement, TeiElement)):
+            raise TypeError(error_msg)
 
-        elif isinstance(item, XmlElement):
-            self.e.append(item.e)
+        if isinstance(e, _Element):
+            self._e = XmlElement(e)
 
-        elif isinstance(item, _Element):
-            self.e.append(item)
+        elif isinstance(e, XmlElement):
+            self._e = e
 
-        else:
-            raise TypeError(f'Expected: _Element or _ElementUnicodeResult; got {type(item)}')
-        
-        return self
+        elif isinstance(e, TeiElement):
+            self._e = e._e
+
+    def append(self, tei_element: TeiElement) -> TeiElement:
+        element = self._e.append_node(tei_element._e)
+        return TeiElement(element)
 
     @property
     def child_elems(self) -> Sequence[TeiElement]:
-        return [TeiElement(child) for child in self.child_elements]
+        return [TeiElement(child) for child in self._e.child_elements]
 
     @classmethod
     def create(
@@ -74,12 +79,20 @@ class TeiElement(XmlElement):
         )
         return TeiElement(elem)
     
+    def get_attrib(
+            self, 
+            attribname: str, 
+            namespace: str | None=None
+        ) -> str | None:
+
+        return self._e.get_attrib(attribname, namespace)
+    
     def get_descendant_tei_element(
             self, 
             elem_name: str, 
             attribs: dict[str, str] | None = None,
             throw_if_more_than_one: bool = False
-        ) -> XmlElement | None:
+        ) -> TeiElement | None:
         
         """
         Get first descendant TEI namespace element with the specified
@@ -96,7 +109,7 @@ class TeiElement(XmlElement):
             self, 
             elem_names: list[str] | str, 
             attribs: dict[str, str] | None = None
-        ) -> list[XmlElement]:
+        ) -> list[TeiElement]:
         
         """
         Get all the descendant elements within a particular
@@ -106,8 +119,8 @@ class TeiElement(XmlElement):
         :param attribs: the attributes of the elements wanted
         """
 
-        return [XmlElement(desc) 
-            for desc in self.get_desc(elem_names=elem_names, attribs=attribs)]
+        return [TeiElement(desc) 
+            for desc in self._e.get_desc(elem_names=elem_names, attribs=attribs)]
     
     def get_div_descendants(
             self, 
@@ -116,15 +129,12 @@ class TeiElement(XmlElement):
             lang: str | None = None
         ) -> list[_Element]:
 
-        if self.e is None: 
-            return []
-
         if not lang:
             xpath_str = f".//ns:div{level}[@type='{divtype}']"
-            return cast(list[_Element], self.e.xpath(xpath_str, namespaces={'ns': TEINS}))
+            return cast(list[_Element], self._e.xpath(xpath_str, namespaces={'ns': TEINS}))
 
         elif lang:
-            return cast(list[_Element], self.e.xpath(
+            return cast(list[_Element], self._e.xpath(
                 f".//ns:div{level}[@type='{divtype} @xml:lang='{lang}']",
                 namespaces={'ns': TEINS, 'xml': XMLNS}) 
             )

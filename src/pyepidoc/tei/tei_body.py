@@ -14,19 +14,16 @@ class TeiBody(TeiElement):
     Provides services for the <body> element of the EpiDoc file
     """
 
-    def __init__(
-        self, 
-        e: _Element | TeiElement | XmlElement
-    ) -> None:
+    def __init__(self, e: _Element | TeiElement | XmlElement) -> None:
         
         super().__init__(e)
         body_tag = ns.give_ns('body', TEINS)
 
         if e.e.tag != body_tag:
             raise ValueError(f'Cannot make <body> element from '
-                             f'<{self.tag}> element.')
+                             f'<{self._e.tag}> element.')
 
     @property
     def div1s(self) -> list[Div1]:
-        return [Div1(child) for child in self.child_elements
+        return [Div1(child) for child in self._e.child_elements
                 if child.localname == 'div1']

@@ -112,7 +112,7 @@ class Abbreviations(GenericCollection[Expan]):
 
         return Abbreviations(
             [expan for expan in self._expans
-             if expan.has_ancestor_by_name(localname)]
+             if expan._e.has_ancestor_by_name(localname)]
         )
     
     def where_ancestor_is_not(self, localname: str) -> Abbreviations:
@@ -123,5 +123,5 @@ class Abbreviations(GenericCollection[Expan]):
 
         return Abbreviations(
             [expan for expan in self._expans
-             if not expan.has_ancestor_by_name(localname)]
+             if not expan._e.has_ancestor_by_name(localname)]
         )

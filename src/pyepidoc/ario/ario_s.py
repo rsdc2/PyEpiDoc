@@ -5,5 +5,5 @@ class ArioS(S):
     
     @property
     def ws(self) -> list[W]:
-        return [W(child) for child in self.children 
+        return [W(child) for child in self._e.children 
                 if child.localname == 'w']

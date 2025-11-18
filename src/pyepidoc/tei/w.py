@@ -5,7 +5,7 @@ class TeiW(TeiElement):
 
     @property
     def form(self) -> str:
-        return self.text
+        return self._e.text
     
     @property
     def lemma(self) -> str | None:

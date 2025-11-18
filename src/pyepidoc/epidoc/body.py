@@ -38,7 +38,7 @@ class Body(TeiBody):
 
         if e.e.tag != body_tag:
             raise ValueError(f'Cannot make <body> element from '
-                             f'<{self.tag}> element.')
+                             f'<{self._e.tag}> element.')
 
     def copy_lemmatizable_to_lemmatized_edition(
             self,

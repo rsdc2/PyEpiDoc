@@ -145,7 +145,7 @@ class TeiDoc(DocRoot):
         if elem is None:
             return None
         
-        return elem.text
+        return elem._e.text
 
     @property
     def body(self) -> TeiBody:
@@ -227,7 +227,7 @@ class TeiDoc(DocRoot):
         if elem is None:
             return None
         
-        return elem.text
+        return elem._e.text
 
     def ensure_tei_header(self) -> TeiHeader:
         if self.tei_header is None:
@@ -273,7 +273,7 @@ class TeiDoc(DocRoot):
 
         terms = textclass_element.get_desc_tei_elems('term')
         terms_with_ana = [term for term in terms 
-                                if term.has_attrib('ana')]
+                                if term._e.has_attrib('ana')]
 
         functions = []
         for term in terms_with_ana:
@@ -291,7 +291,7 @@ class TeiDoc(DocRoot):
         The document ID, e.g. ISic000001
         """
 
-        def get_idno_elems(s: str) -> list[XmlElement]:
+        def get_idno_elems(s: str) -> list[TeiElement]:
             if self.publication_stmt is None:
                 return []
 
@@ -353,7 +353,7 @@ class TeiDoc(DocRoot):
         if self.orig_date is None:
             return None
 
-        daterange_val = self.orig_date.get_attrib(attrib_name)
+        daterange_val = self.orig_date._e.get_attrib(attrib_name)
 
         try:
             return int(daterange_val) if daterange_val is not None else None
@@ -373,7 +373,7 @@ class TeiDoc(DocRoot):
             return []
 
         languages = lang_usage.get_desc_tei_elems('language')
-        idents = [language.get_attrib('ident') for language in languages]
+        idents = [language._e.get_attrib('ident') for language in languages]
         return [ident for ident in idents if ident is not None]
 
     @property
@@ -396,7 +396,7 @@ class TeiDoc(DocRoot):
     def mainlang(self) -> Optional[str]:
         if self.textlang is None:
             return None
-        return self.textlang.get_attrib('mainLang')
+        return self.textlang._e.get_attrib('mainLang')
 
     @property
     def mean_date(self) -> int | None:
@@ -410,7 +410,7 @@ class TeiDoc(DocRoot):
         if material_e is None:
             return []
         
-        return remove_none([TeiElement(e).get_attrib('ana') 
+        return remove_none([TeiElement(e)._e.get_attrib('ana') 
                             for e in material_e])
 
     @property
@@ -446,7 +446,7 @@ class TeiDoc(DocRoot):
 
         if orig_date.attrib == dict():
             orig_date = maxone(
-                TeiElement(orig_date).get_desc('origDate'), 
+                TeiElement(orig_date)._e.get_desc('origDate'), 
                 throw_if_more_than_one=False
             )    
 
@@ -752,7 +752,7 @@ class TeiDoc(DocRoot):
         
         translation_divs = self.get_div_descendants_by_type('translation')
 
-        return '\n'.join([TeiElement(div).text_desc_compressed_whitespace 
+        return '\n'.join([TeiElement(div)._e.text_desc_compressed_whitespace 
                        for div in translation_divs])
     
     def validate(self) -> tuple[bool, str]:

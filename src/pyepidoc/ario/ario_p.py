@@ -5,5 +5,5 @@ class ArioP(P):
     
     @property
     def ss(self) -> list[S]:
-        return [S(child) for child in self.child_elements
+        return [S(child) for child in self._e.child_elements
                 if child.tag.name == 's']

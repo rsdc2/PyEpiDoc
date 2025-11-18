@@ -14,7 +14,7 @@ class TeiHeader(EditionElement):
         file_desc: FileDesc
     ) -> TeiHeader:
         
-        self.e.append(file_desc.e)
+        self.e._e.append(file_desc._e._e)
         return self
 
     def append_new_file_desc(self) -> TeiHeader:

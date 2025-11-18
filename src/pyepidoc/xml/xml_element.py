@@ -37,6 +37,30 @@ class XmlElement(Showable):
     """
     _e: _Element
 
+    @overload
+    def __init__(self, e: XmlElement):
+        ...
+
+    @overload
+    def __init__(self, e: _Element):
+        """
+        :param e: lxml |_Element|; |_Comment| is subclass of |_Element|
+        """
+        ...
+
+    def __init__(self, e:Union[_Element, XmlElement]):
+        error_msg = (f'Expected type is _Element or BaseElement '
+                     f'type or None. Actual type is {type(e)}.')
+        
+        if not isinstance(e, (_Element, XmlElement)):
+            raise TypeError(error_msg)
+
+        if isinstance(e, _Element):
+            self._e = e
+
+        elif isinstance(e, XmlElement):
+            self._e = e.e
+
     def __eq__(self, other) -> bool:
         if type(other) is not XmlElement \
             and not issubclass(type(other), XmlElement):
@@ -65,30 +89,6 @@ class XmlElement(Showable):
             )
         )
 
-    @overload
-    def __init__(self, e: XmlElement):
-        ...
-
-    @overload
-    def __init__(self, e: _Element):
-        """
-        :param e: lxml |_Element|; |_Comment| is subclass of |_Element|
-        """
-        ...
-
-    def __init__(self, e:Union[_Element, XmlElement]):
-        error_msg = (f'Expected type is _Element or BaseElement '
-                     f'type or None. Actual type is {type(e)}.')
-        
-        if not isinstance(e, (_Element, XmlElement)):
-            raise TypeError(error_msg)
-
-        if isinstance(e, _Element):
-            self._e = e
-
-        elif isinstance(e, XmlElement):
-            self._e = e.e
-
     def __lt__(self, other) -> bool:
         if type(other) is not XmlElement and not issubclass(type(other), XmlElement):
             raise TypeError(f"Previous element is of type {type(other)}.")
@@ -100,7 +100,7 @@ class XmlElement(Showable):
 
     def __repr__(self) -> str:
         
-        return f"BaseElement({self.tag}: '{self.text_desc_compressed_whitespace.strip()}{self.tail.strip() if self.tail is not None else ''}')"
+        return f"XmlElement({self.tag}: '{self.text_desc_compressed_whitespace.strip()}{self.tail.strip() if self.tail is not None else ''}')"
 
     def __str__(self) -> str:
         return self.__repr__()
@@ -121,6 +121,38 @@ class XmlElement(Showable):
         if len(ancestors) > 0:
             return cast(ExtendableSeq[XmlElement], ancestors[1:])
         return cast(ExtendableSeq[XmlElement], [])
+
+    def append_node(
+            self, 
+            item: _Element | _ElementUnicodeResult | str | XmlElement) -> XmlElement:
+
+        """
+        Append either element or text to an element
+        """
+
+        if isinstance(item, (_ElementUnicodeResult, str)):
+            if self.last_child is None:
+                if self.text is None:
+                    self.text = item
+                else:
+                    self.text += item
+        
+            else:
+                if self.last_child.tail is None:
+                    self.last_child.tail = item
+                else:
+                    self.last_child.tail += item
+
+        elif isinstance(item, XmlElement):
+            self.e.append(item.e)
+
+        elif isinstance(item, _Element):
+            self.e.append(item)
+
+        else:
+            raise TypeError(f'Expected: _Element or _ElementUnicodeResult; got {type(item)}')
+        
+        return self
 
     @property
     def attrs(self) -> dict[str, str]:
@@ -300,22 +332,6 @@ class XmlElement(Showable):
     def e_type(self) -> type:
         return type(self._e)
 
-    # def eq(self, other: object, by_ref: bool = False) -> bool:
-    #     """
-    #     Compare an element with another
-
-    #     :param by_value: compare by value rather than by reference
-    #     """
-    #     if not isinstance(other, XmlElement):
-    #         return False
-        
-    #     if by_ref:
-    #         return self == other
-        
-        
-        
-
-
     def _equalize_id_length(
         self, 
         id1:list[int], 
@@ -397,9 +413,6 @@ class XmlElement(Showable):
         """
         Returns the value of the named attribute.
         """
-    
-        if self._e is None:
-            return ''
 
         return self._e.attrib.get(ns().give_ns(attribname, namespace), None)
 
