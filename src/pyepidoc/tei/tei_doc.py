@@ -319,7 +319,7 @@ class TeiDoc(DocRoot):
         if idno_elem is None:
             return 'None'
 
-        return idno_elem.text or ''
+        return idno_elem._e.text or ''
 
     def is_after(self, start: int) -> bool:
         """
@@ -670,7 +670,7 @@ class TeiDoc(DocRoot):
         if elem is None:
             return None
         else:
-            return TeiElement(elem).text
+            return TeiElement(elem)._e.text
         
     @property
     def title_stmt(self) -> TitleStmt | None:

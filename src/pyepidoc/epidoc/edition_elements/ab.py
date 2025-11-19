@@ -64,13 +64,13 @@ class Ab(Representable):
         elif type(e) is XmlElement:
             self._e = e.e
 
-        if self.tag.name != 'ab':
+        if self._e.tag.name != 'ab':
             raise TypeError('Element should be of type <ab>.')
 
     @property
     def compound_tokens(self) -> list[EditionElement]:
         return [EditionElement(item) for item 
-            in self.get_desc(
+            in self._e.get_desc(
                 CompoundTokenType.values() 
             )
         ]
@@ -101,7 +101,7 @@ class Ab(Representable):
     @property
     def g_dividers(self) -> list[EditionElement]:
         return [EditionElement(boundary) for boundary 
-            in self.get_desc('g')
+            in self._e.get_desc('g')
         ]
 
     @property
@@ -116,7 +116,7 @@ class Ab(Representable):
         @xml:id attribute
         """
         return [EditionElement(element) 
-                for element in self.descendant_elements
+                for element in self._e.descendant_elements
                 if element.tag.name in IdCarrier]
 
     @property
@@ -136,7 +136,7 @@ class Ab(Representable):
                 if elem.parent is None:
                     return None
                 
-                if elem.localname == 'div' and elem.get_attrib('type') == 'edition':
+                if elem._e.localname == 'div' and elem.get_attrib('type') == 'edition':
                     return lang
 
                 return _get_lang(elem.parent)
@@ -157,7 +157,7 @@ class Ab(Representable):
         """
 
         return [EditionElement(item) for item 
-            in self.get_desc(
+            in self._e.get_desc(
                 NoSpaceBefore.values() 
             )
         ]
@@ -227,11 +227,11 @@ class Ab(Representable):
 
         def parent_name_set(elem: _Element) -> set[str]:
             parent_names = [parent.localname 
-                            for parent in Token(elem).get_ancestors_incl_self()]
+                            for parent in Token(elem)._e.get_ancestors_incl_self()]
             return set(parent_names)
         
         return [Token(token_elem) for token_elem 
-            in self.get_desc(AtomicTokenType.values())
+            in self._e.get_desc(AtomicTokenType.values())
             if Token(token_elem).form_normalized != '' and \
                 parent_name_set(token_elem).intersection(NonNormalized.value_set()) == set()
         ]
@@ -243,5 +243,5 @@ class Ab(Representable):
     @property
     def w_tokens(self) -> list[Token]:
         return [Token(word) for word 
-            in self.get_desc(['w'])
+            in self._e.get_desc(['w'])
         ]

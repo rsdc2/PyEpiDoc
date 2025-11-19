@@ -8,7 +8,7 @@ class ListChange(TeiElement):
         """
         Append a <change> element to the <listChange>
         """
-        self.append_node(change)
+        self._e.append_node(change)
         return self
 
     @property
@@ -23,7 +23,7 @@ class ListChange(TeiElement):
     
     @staticmethod
     def from_tei_element(element: TeiElement):
-        if element.localname != 'listChange':
-            raise Exception('Element localname must be "listChange"')
+        if element._e.localname != 'listChange':
+            raise ValueError('Element localname must be "listChange"')
         
         return ListChange(element)

@@ -19,7 +19,7 @@ class TeiBody(TeiElement):
         super().__init__(e)
         body_tag = ns.give_ns('body', TEINS)
 
-        if e.e.tag != body_tag:
+        if self._e.tag != body_tag:
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self._e.tag}> element.')
 

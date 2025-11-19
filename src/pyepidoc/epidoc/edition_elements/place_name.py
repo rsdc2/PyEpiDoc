@@ -9,5 +9,5 @@ class PlaceName(PersName):
 
         self._e = e
 
-        if self.localname != 'placeName':
+        if self._e.localname != 'placeName':
             raise TypeError('Element should be <placeName>.')

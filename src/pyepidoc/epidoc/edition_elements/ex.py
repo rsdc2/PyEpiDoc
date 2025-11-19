@@ -24,10 +24,10 @@ class Ex(EditionElement):
     def leiden_form(self) -> str:
         return ''.join([
             '(',
-            self.text_desc_compressed_whitespace,
+            self._e.text_desc_compressed_whitespace,
             ')'
         ])
 
     @property
     def normalized_form(self) -> str:
-        return self.text_desc_compressed_whitespace
+        return self._e.text_desc_compressed_whitespace

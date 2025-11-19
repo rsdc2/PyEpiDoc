@@ -15,7 +15,7 @@ class Sic(EditionElement):
 
         self._e = e
 
-        if self.localname != 'sic':
+        if self._e.localname != 'sic':
             raise TypeError('Element should be <sic>.')
 
     @property

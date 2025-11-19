@@ -102,7 +102,7 @@ class Expan(EditionElement):
         Return True if contains a `<g>` element (optionally with the
         @ref attribute set)
         """    
-        gs = map(G, map(lambda elem: elem.e, self.descendant_elements_by_local_name('g')))
+        gs = map(G, map(lambda elem: elem.e, self._e.descendant_elements_by_local_name('g')))
         if with_ref is None:
             return len(list(gs)) > 0
         
@@ -144,7 +144,7 @@ class Expan(EditionElement):
 
     def _desc_text_node_parent(self, position: str) -> Optional[_Element]:
         xpath = f'descendant::text()[position()={position}]/parent::*'
-        result = head(self.xpath(xpath))
+        result = head(self._e.xpath(xpath))
         if result is None:
             return None
         return cast(_Element, result)
@@ -154,8 +154,8 @@ class Expan(EditionElement):
         desc_text_parent_of_abbr_xpath = (f'descendant::text()[position()={position}][ancestor::ns:{localname}]/'
                                           f'parent::*')
               
-        desc_text_parent_result = self.xpath(desc_text_parent_xpath)
-        desc_text_parent_of_abbr_result = self.xpath(desc_text_parent_of_abbr_xpath)
+        desc_text_parent_result = self._e.xpath(desc_text_parent_xpath)
+        desc_text_parent_of_abbr_result = self._e.xpath(desc_text_parent_of_abbr_xpath)
 
         if desc_text_parent_result == []:
             return False
@@ -163,8 +163,8 @@ class Expan(EditionElement):
         if desc_text_parent_of_abbr_result == []:
             return False
         
-        return self.xpath(desc_text_parent_of_abbr_xpath)[0] == \
-            self.xpath(desc_text_parent_xpath)[0]
+        return self._e.xpath(desc_text_parent_of_abbr_xpath)[0] == \
+            self._e.xpath(desc_text_parent_xpath)[0]
 
     @property
     def is_contraction(self) -> bool:
@@ -214,13 +214,13 @@ class Expan(EditionElement):
     @property
     def last_desc_text_node(self) -> str:
         xpath = 'descendant::text()[position()=last()]'
-        return ''.join(map(str, self.xpath(xpath)))
+        return ''.join(map(str, self._e.xpath(xpath)))
 
     def last_desc_textnode_is_desc_of(self, localname: str) -> bool:
         first_desc_of_abbr_xpath = (f'descendant::text()[ancestor::ns:{localname}]/'
                                     f'parent::*')
 
-        return self.xpath_float(first_desc_of_abbr_xpath) == 0.0
+        return self._e.xpath_float(first_desc_of_abbr_xpath) == 0.0
 
     @property
     def leiden_str(self) -> str:

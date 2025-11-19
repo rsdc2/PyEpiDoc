@@ -21,7 +21,7 @@ class Del(EditionElement):
 
         self._e = e
 
-        if self.localname != 'del':
+        if self._e.localname != 'del':
             raise TypeError('Element should be <supplied>.')
 
     @property

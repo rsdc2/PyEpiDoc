@@ -15,7 +15,7 @@ class Supplied(EditionElement):
 
         self._e = e
 
-        if self.localname != 'supplied':
+        if self._e.localname != 'supplied':
             raise TypeError('Element should be <supplied>.')
 
     @property

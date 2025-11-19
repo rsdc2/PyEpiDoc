@@ -10,5 +10,5 @@ class Measure(W):
 
         self._e = e
 
-        if self.localname != 'measure':
+        if self._e.localname != 'measure':
             raise TypeError('Element should be <measure>.')

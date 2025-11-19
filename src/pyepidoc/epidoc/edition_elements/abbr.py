@@ -49,7 +49,7 @@ class Abbr(Representable):
 
     @property
     def first_non_am_char(self) -> Optional[str]:
-        child_text_nodes = self.xpath('descendant::text()[not(ancestor::ns:am)]')
+        child_text_nodes = self._e.xpath('descendant::text()[not(ancestor::ns:am)]')
 
         text = ''.join(map(str, child_text_nodes))
         
@@ -89,7 +89,7 @@ class Abbr(Representable):
 
     @property
     def last_non_am_char_before_am(self) -> Optional[str]:
-        child_text_nodes = self.xpath('descendant::text()[not(ancestor::ns:am) and following-sibling::ns:am]')
+        child_text_nodes = self._e.xpath('descendant::text()[not(ancestor::ns:am) and following-sibling::ns:am]')
 
         text = ''.join(map(str, child_text_nodes))
         
@@ -118,16 +118,16 @@ class Abbr(Representable):
 
         # Return the empty string if only children
         # are <num>
-        if self.child_node_names == ['num']:
+        if self._e.child_node_names == ['num']:
             next_sibling = self.find_next_sibling()
             if next_sibling is not None and \
-                next_sibling.localname == 'ex':
+                next_sibling._e.localname == 'ex':
 
                 return ''
 
         # Remove sequences of capitals in e.g. AUgustis from 
         # e.g. <w><expan><abbr>A<am>A</am>U<am>U</am></abbr><ex>gustis</ex></expan></w>
-        if len(normalized) > 0 and head(self.child_node_names) != 'num':
+        if len(normalized) > 0 and head(self._e.child_node_names) != 'num':
             if normalized[0] == normalized[0].capitalize():
                 return normalized.capitalize()
 

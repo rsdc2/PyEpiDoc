@@ -43,7 +43,7 @@ class Change(EditionElement):
                 'who': who
             }
         )
-        elem.append_node(text)
+        elem._e.append_node(text)
         return Change(elem)
     
     @staticmethod

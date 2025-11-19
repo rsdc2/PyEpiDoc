@@ -15,7 +15,7 @@ class Corr(EditionElement):
 
         self._e = e
 
-        if self.localname != 'corr':
+        if self._e.localname != 'corr':
             raise TypeError('Element should be <corr>.')
 
     @property
@@ -31,4 +31,4 @@ class Corr(EditionElement):
     
     @property
     def normalized_form(self) -> str:
-        return self.text_desc_compressed_whitespace
+        return self._e.text_desc_compressed_whitespace

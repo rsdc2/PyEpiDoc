@@ -20,6 +20,7 @@ from pyepidoc.shared.types import Base
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.iterables import maxone, seek, default_str
 from pyepidoc.tei.metadata.change import Change
+from pyepidoc.tei.tei_element import TeiElement
 
 from pyepidoc.xml.namespace import Namespace as ns
 
@@ -173,19 +174,18 @@ def prettify(
 
         if tag in ['ab', 'lg']:
             for ab in desc_elems:
-                prettify_first_child(ab)
+                prettify_first_child(ab._e)
 
-        prevs = _get_previous_siblings(desc_elems)
+        prevs = _get_previous_siblings([elem._e for elem in desc_elems])
 
         for prev in prevs:
             if tag == 'lb':
                 # I.e. prettify the element immediately before the <lb>
                 prettify_lb(prev) 
-
             else:
                 prettify_prev(prev)
 
-        parents = get_parents_for_first_children(desc_elems)
+        parents = get_parents_for_first_children([elem._e for elem in desc_elems])
 
         for parent in parents:
             if tag == 'lb':
@@ -193,11 +193,9 @@ def prettify(
             else:
                 prettify_first_child(parent)
 
-        prettify_closing_tags(
-            edition.get_desc_tei_elems(
-                ['ab', 'l', 'lg' 'lb', 'div']
-                )
-            )
+        desc_tei_elems = edition.get_desc_tei_elems(['ab', 'l', 'lg' 'lb', 'div'])
+        xml_elems = [elem._e for elem in desc_tei_elems]
+        prettify_closing_tags(xml_elems)
         
     return edition
 
@@ -208,20 +206,20 @@ class Edition(EditionElement):
     Provides services for <div type="edition> elements.
     """
 
-    def __init__(self, e:Optional[_Element | EditionElement | XmlElement]=None):
-        if not isinstance(e, (_Element, EditionElement, XmlElement)) and \
+    def __init__(self, e: Optional[_Element | TeiElement | XmlElement]=None):
+        if not isinstance(e, (_Element, TeiElement, XmlElement)) and \
             e is not None:
             
             raise TypeError(f'Input element is of type {type(e)}. It should be _Element or Element type, or None.')
 
         if type(e) is _Element:
-            self._e = e
-        elif type(e) is EditionElement:
-            self._e = e.e
+            self._e = XmlElement(e)
+        elif type(e) is TeiElement:
+            self._e = e._e
         elif type(e) is XmlElement:
-            self._e = e.e
+            self._e = e
 
-        if self.tag.name != 'div':
+        if self._e.tag.name != 'div':
             raise TypeError('Element should be of type <div>.')
 
         if self.get_attrib('type') != 'edition':
@@ -246,10 +244,10 @@ class Edition(EditionElement):
         and returns the new Ab.
 
         """
-        if ab.localname != 'ab':
-            raise TypeError(f'The element is not <ab>, but is <{ab.localname}>')
+        if ab._e.localname != 'ab':
+            raise TypeError(f'The element is not <ab>, but is <{ab._e.localname}>')
 
-        self.append_node(ab)
+        self._e.append_node(ab)
         return self.abs[-1]
 
     def append_empty_ab(self) -> Ab:
@@ -268,7 +266,7 @@ class Edition(EditionElement):
             nsmap = None
         )
 
-        self._e.append(ab_elem)
+        self._e._e.append(ab_elem)
         return Ab(ab_elem)
 
     @property
@@ -282,7 +280,7 @@ class Edition(EditionElement):
     @property
     def compound_tokens(self) -> list[EditionElement]:
         return [EditionElement(item) for item 
-            in self.get_desc(
+            in self._e.get_desc(
                 CompoundTokenType.values() 
             )
         ]
@@ -303,12 +301,12 @@ class Edition(EditionElement):
         return self
 
     @property
-    def divs(self) -> list[XmlElement]:
-        return self.get_desc_tei_elems(['div'])
+    def divs(self) -> list[TeiElement]:
+        return TeiElement(self._e).get_desc_tei_elems(['div'])
 
     @property
     def edition_text(self) -> str:
-        return self.text_desc
+        return self._e.text_desc
     
     def ensure_ab(self) -> Ab:
         """
@@ -331,7 +329,7 @@ class Edition(EditionElement):
 
     @property
     def formatted_text(self) -> str:
-        _text = re.sub(r'\n\s+', '\n', self.text_desc)
+        _text = re.sub(r'\n\s+', '\n', self._e.text_desc)
         return re.sub(r'(\S)·(\S)', r'\1 · \2', _text)
     
     @staticmethod
@@ -352,7 +350,7 @@ class Edition(EditionElement):
     @property
     def gaps(self) -> list[EditionElement]:
         return [EditionElement(gap) 
-                for gap in self.get_desc('gap')]
+                for gap in self._e.get_desc('gap')]
 
     def _get_desc_representable_elements(
             self, 
@@ -367,13 +365,13 @@ class Edition(EditionElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EditionElement, self.get_desc(RepresentableElements))
+        desc = map(EditionElement, self._e.get_desc(RepresentableElements))
 
         if items_with_atomic_ancestors:
             return list(desc)
         
         return [item for item in desc 
-                if not item.has_ancestors_by_names(RepresentableElements)]
+                if not item._e.has_ancestors_by_names(RepresentableElements)]
 
     def _get_desc_atomic_non_tokens(
             self, 
@@ -388,13 +386,14 @@ class Edition(EditionElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EditionElement, self.get_desc(AtomicNonTokenType.values()))
+        desc = map(EditionElement, self._e.get_desc(AtomicNonTokenType.values()))
 
         if items_with_token_ancestors:
             return list(desc)
         
         else:
-            return [item for item in desc if not item.has_ancestors_by_names(AtomicTokenType.values())]
+            return [item for item in desc 
+                    if not item._e.has_ancestors_by_names(AtomicTokenType.values())]
 
     def _get_desc_tokens(self, include_nested: bool = False) -> list[Token]:
 
@@ -406,18 +405,18 @@ class Edition(EditionElement):
         :return: the descendant tokens
         """
 
-        desc = map(Token, self.get_desc(AtomicTokenType.values()))
+        desc = map(Token, self._e.get_desc(AtomicTokenType.values()))
 
         if include_nested:
             return list(desc)
         else:
             def has_not_token_ancestor(t: Token) -> bool:
-                return not t.has_ancestors_by_names(
+                return not t._e.has_ancestors_by_names(
                     AtomicTokenType.values(),
                     SetRelation.intersection
                 )
             
-            desc = map(Token, self.get_desc(AtomicTokenType.values()))
+            desc = map(Token, self._e.get_desc(AtomicTokenType.values()))
             
             return list(filter(has_not_token_ancestor, desc))        
 
@@ -450,7 +449,7 @@ class Edition(EditionElement):
             return re.sub(r'\s{2,}', ' ', normalized).strip()
         
         elif type == 'xml':
-            return self.text_desc_compressed_whitespace
+            return self._e.text_desc_compressed_whitespace
         
     @property
     def has_local_ids(self) -> bool:
@@ -504,17 +503,17 @@ class Edition(EditionElement):
         a <w> element returns the element unchanged
         """
 
-        child_nodes = element.child_nodes
+        child_nodes = element._e.child_nodes
         w = EditionElement.create('w')
 
         for node in child_nodes:
             if isinstance(node, _Element):
-                EditionElement(node).tail = ''
-            w.append_node(node)
+                EditionElement(node)._e.tail = ''
+            w._e.append_node(node)
 
-        element.remove_children()
+        element._e.remove_children()
 
-        element.append_node(w)
+        element._e.append_node(w)
         return element
 
     def insert_ws_inside_named_entities(
@@ -528,7 +527,7 @@ class Edition(EditionElement):
         """
         for elemname in NamedEntities.values():
 
-            for name in self.descendant_elements_by_local_name(elemname):
+            for name in self._e.descendant_elements_by_local_name(elemname):
                 if name.contains('w') and ignore_if_contains_ws:
                     return self
                 else:
@@ -547,10 +546,10 @@ class Edition(EditionElement):
         if self.get_attrib('supplied') == 'unsupplied':
             return True
 
-        if self.has_only_whitespace:
+        if self._e.has_only_whitespace:
             return True
         
-        return all([ab.has_only_whitespace for ab in self.abs])
+        return all([ab._e.has_only_whitespace for ab in self.abs])
 
     @property
     def lang(self):
@@ -718,7 +717,7 @@ class Edition(EditionElement):
 
     @property
     def supplied(self) -> Sequence[XmlElement]:
-        return [elem for elem in self.descendant_elements 
+        return [elem for elem in self._e.descendant_elements 
             if elem.localname == 'supplied']
 
     @property
@@ -766,7 +765,7 @@ class Edition(EditionElement):
     @property
     def token_g_dividers(self) -> list[EditionElement]:
         return [EditionElement(boundary) for boundary 
-            in self.get_desc('g')
+            in self._e.get_desc('g')
         ]
 
     @property
@@ -821,7 +820,7 @@ class Edition(EditionElement):
 
     @property
     def w_tokens(self) -> list[Token]:
-        return [Token(word) for word in self.get_desc(['w'])]
+        return [Token(word) for word in self._e.get_desc(['w'])]
     
     @property
     def xml_ids(self) -> list[str | None]:

@@ -339,7 +339,7 @@ class EpiDoc(TeiDoc):
         if edition is None:
             return []
         
-        gs = map(G, edition.get_desc('g'))
+        gs = map(G, edition._e.get_desc('g'))
         return list(gs)
 
     @property
@@ -391,7 +391,7 @@ class EpiDoc(TeiDoc):
 
         terms = textclass_element.get_desc_tei_elems('term')
         terms_with_ana = [term for term in terms 
-                                if term.has_attrib('ana')]
+                                if term._e.has_attrib('ana')]
 
         functions = []
         for term in terms_with_ana:
@@ -447,7 +447,7 @@ class EpiDoc(TeiDoc):
         The document ID, e.g. ISic000001
         """
 
-        def get_idno_elems(s: str) -> list[XmlElement]:
+        def get_idno_elems(s: str) -> list[TeiElement]:
             if self.publication_stmt is None:
                 return []
 
@@ -475,7 +475,7 @@ class EpiDoc(TeiDoc):
         if idno_elem is None:
             return 'None'
 
-        return idno_elem.text or ''
+        return idno_elem._e.text or ''
 
     @property
     def id_carriers(self) -> list[EditionElement]:
@@ -721,7 +721,7 @@ class EpiDoc(TeiDoc):
         if edition is None:
             return []
         
-        names = filter(predicate, map(Name, edition.get_desc('name')))
+        names = filter(predicate, map(Name, edition._e.get_desc('name')))
         return list(names)
 
 
@@ -732,7 +732,7 @@ class EpiDoc(TeiDoc):
         if edition is None:
             return []
         
-        nums = map(Num, edition.get_desc('num'))
+        nums = map(Num, edition._e.get_desc('num'))
         return list(nums)
 
     @property
@@ -768,7 +768,7 @@ class EpiDoc(TeiDoc):
 
         if orig_date.attrib == dict():
             orig_date = maxone(
-                EditionElement(orig_date).get_desc('origDate'), 
+                EditionElement(orig_date)._e.get_desc('origDate'), 
                 throw_if_more_than_one=False
             )    
 
@@ -821,7 +821,7 @@ class EpiDoc(TeiDoc):
         )
         
         pers_names = map(
-            lambda elem: PersName(elem.e), 
+            lambda elem: PersName(elem._e), 
             pers_name_elems
         )
     
@@ -929,10 +929,10 @@ class EpiDoc(TeiDoc):
         
         # Root element
         # Remove trailing text
-        self.root_elem.tail = ''
-        self.root_elem.text = '\n' + multiplier * space_unit + (self.root_elem.text or '').strip() \
+        self.root_elem._e.tail = ''
+        self.root_elem._e.text = '\n' + multiplier * space_unit + (self.root_elem._e.text or '').strip() \
             if len(self.desc_elems) > 0 \
-            else '\n' + space_unit * multiplier + (self.root_elem.text or '').strip()
+            else '\n' + space_unit * multiplier + (self.root_elem._e.text or '').strip()
         
         return epidoc
 
@@ -991,7 +991,7 @@ class EpiDoc(TeiDoc):
         )
         
         role_names = map(
-            lambda elem: RoleName(elem.e), 
+            lambda elem: RoleName(elem._e), 
             role_name_elems
         )
     
@@ -1000,7 +1000,7 @@ class EpiDoc(TeiDoc):
     @override
     @property
     def root_elem(self) -> TeiElement:
-        return TeiElement(self.e)
+        return TeiElement(self._e)
 
     def set_ids(self, base: Base=100) -> None:
         
@@ -1079,7 +1079,7 @@ class EpiDoc(TeiDoc):
         All elements in the document responsible for carrying
         text information as part of the edition
         """
-        elems = chain(*[ab.descendant_elements for ab in self.abs])
+        elems = chain(*[ab._e.descendant_elements for ab in self.abs])
         return list(map(EditionElement, elems))
 
     @cached_property
@@ -1350,7 +1350,7 @@ class EpiDoc(TeiDoc):
         
         translation_divs = self.get_div_descendants_by_type('translation')
 
-        return '\n'.join([EditionElement(div).text_desc_compressed_whitespace 
+        return '\n'.join([EditionElement(div)._e.text_desc_compressed_whitespace 
                        for div in translation_divs])
     
     def validate(self) -> tuple[bool, str]:

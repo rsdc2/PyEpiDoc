@@ -25,7 +25,7 @@ class TeiHeader(EditionElement):
         if self.file_desc is not None:
             raise Exception('<fileDesc> already exists on <teiHeader>')
         file_desc_elem = EditionElement.create(localname='fileDesc')
-        self.e.append(file_desc_elem.e)
+        self._e.append_node(file_desc_elem._e)
 
         return self
     
@@ -37,7 +37,7 @@ class TeiHeader(EditionElement):
         if self.revision_desc is not None:
             raise Exception('<revisionDesc> already exists on <teiHeader>')
         revision_desc = RevisionDesc.create()
-        self.append_node(revision_desc)
+        self._e.append_node(revision_desc)
         return self
     
     @staticmethod

@@ -8,20 +8,20 @@ class Desc(Representable):
 
         self._e = e
 
-        if self.localname != 'desc':
+        if self._e.localname != 'desc':
             raise TypeError('Element should be <desc>.')
         
     @property
     def leiden_form(self):
-        return f'[{self.text_desc}]'
+        return f'[{self._e.text_desc}]'
     
     @property
     def normalized_form(self):
-        return f'[{self.text_desc}]'
+        return f'[{self._e.text_desc}]'
 
     @property
     def simple_lemmatized_edition_form(self) -> str:
-        return f'{self.text_desc}'
+        return f'{self._e.text_desc}'
     
 
     

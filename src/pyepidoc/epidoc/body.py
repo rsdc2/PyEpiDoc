@@ -36,7 +36,7 @@ class Body(TeiBody):
         super().__init__(e)
         body_tag = ns.give_ns('body', TEINS)
 
-        if e.e.tag != body_tag:
+        if e._e.tag != body_tag:
             raise ValueError(f'Cannot make <body> element from '
                              f'<{self._e.tag}> element.')
 
@@ -66,28 +66,28 @@ class Body(TeiBody):
 
             for child in source_elem.child_elems:
                 
-                child_copy = child.deepcopy()
+                child_copy = child._e.deepcopy()
 
-                if child.tag.name in ContainerStandoffEditionType.values() and child.tag.name != 'ab':
+                if child._e.tag.name in ContainerStandoffEditionType.values() and child._e.tag.name != 'ab':
                     child_copy.remove_children()
                     child_copy.remove_attr('id', XMLNS)
-                    target_elem._e.append(child_copy._e)
+                    target_elem._e.append_node(child_copy._e)
                     append_items(TeiElement(child), TeiElement(child_copy))
 
-                elif child.tag.name == 'ab':
+                elif child._e.tag.name == 'ab':
                     ab = child
                     ab_copy = child_copy
                     ab_copy.remove_children()
-                    target_elem._e.append(child_copy._e)
+                    target_elem._e.append_node(child_copy._e)
                     
-                    for desc in ab.descendant_elements:
+                    for desc in ab._e.descendant_elements:
                         representable = Token(desc).representable_cls_inst
                         if desc.localname in StandoffEditionElements and representable is None:
                             breakpoint()
                             raise ValueError(f'{desc} should have a representable instance.')
                         if desc.localname in StandoffEditionElements and representable is not None:
                             desc_copy_token = representable.simple_lemmatized_edition_element    
-                            desc_copy_token.remove_attr('id', XMLNS)
+                            desc_copy_token._e.remove_attr('id', XMLNS)
                             ab_copy._e.append(desc_copy_token.e)   
 
         append_items(source, TeiElement(target))
@@ -133,8 +133,8 @@ class Body(TeiBody):
         if main_edition is None:
             raise ValueError("No main edition present.")
         
-        main_edition_idx = self._e.index(main_edition._e, None, None)
-        self._e.insert(main_edition_idx + 1, edition_elem)
+        main_edition_idx = self._e._e.index(main_edition._e, None, None)
+        self._e._e.insert(main_edition_idx + 1, edition_elem)
         return new_edition
 
     def edition_by_subtype(self, subtype: str | None) -> Edition | None:

@@ -14,7 +14,7 @@ class Num(W):
 
         self._e = e
 
-        if self.localname != 'num':
+        if self._e.localname != 'num':
             raise TypeError('Element should be <num>.')
 
     @property
@@ -56,7 +56,7 @@ class Num(W):
         
         # If part of abbreviation, spell out Roman numerals
         # TODO: add more numerals here
-        if self.has_ancestor_by_name('abbr'):
+        if self._e.has_ancestor_by_name('abbr'):
             if normalized_str == 'II':
                 return 'duo'
 

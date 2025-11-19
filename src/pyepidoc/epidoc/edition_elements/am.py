@@ -16,7 +16,7 @@ class Am(EditionElement):
     def first_char(self) -> Optional[str]:
         # .strip() is used to exclude cases where there is text, 
         # but is whitespace
-        text = self.text_desc_compressed_whitespace.strip()
+        text = self._e.text_desc_compressed_whitespace.strip()
         if len(text) > 0:
             return text[0]
 
@@ -27,7 +27,7 @@ class Am(EditionElement):
 
         return ''.join([
             '{',
-            self.text_desc_compressed_whitespace,
+            self._e.text_desc_compressed_whitespace,
             '}'
         ])
 

@@ -16,7 +16,7 @@ class Orig(Representable):
 
         self._e = e
 
-        if self.localname != 'orig':
+        if self._e.localname != 'orig':
             raise TypeError('Element should be <orig>.')
 
     def __repr__(self) -> str:
@@ -32,20 +32,20 @@ class Orig(Representable):
         }
         leiden_str = leiden_str_from_children(self.e, element_classes, 'node')
         
-        if self.has_ancestor_by_name('choice'):
+        if self._e.has_ancestor_by_name('choice'):
             return leiden_str
         
         return leiden_str.upper()
     
     @property
     def normalized_form(self) -> str:
-        if self.has_ancestor_by_name('choice'):
+        if self._e.has_ancestor_by_name('choice'):
             return ''
     
-        return self.text_desc.upper()
+        return self._e.text_desc.upper()
     
     @cached_property
     def simple_lemmatized_edition_form(self) -> str:
-        if not self.has_parent('choice'):       
+        if not self._e.has_parent('choice'):       
             return self.normalized_form
         return ''

@@ -44,12 +44,12 @@ def callable_from_localname(
 
 
 def descendant_atomic_tokens(elem: EditionElement) -> list[EditionElement]:
-    desc_tokens = map(EditionElement, elem.get_desc(AtomicTokenType.values()))
+    desc_tokens = map(EditionElement, elem._e.get_desc(AtomicTokenType.values()))
 
     return [token for token 
         in desc_tokens
         if set([ancestor.localname 
-                for ancestor in token.ancestors_excl_self])
+                for ancestor in token._e.ancestors_excl_self])
                     .isdisjoint(AtomicTokenType.value_set()) 
     ]
 

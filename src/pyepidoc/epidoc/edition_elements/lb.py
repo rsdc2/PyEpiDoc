@@ -14,7 +14,7 @@ class Lb(EditionElement):
 
     def __init__(self, e: _Element | EditionElement | XmlElement):
         type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-        node_name_err_msg = f'Element must be <lb>. Element is {EditionElement(e).localname}.'
+        node_name_err_msg = f'Element must be <lb>. Element is {EditionElement(e)._e.localname}.'
 
         if type(e) not in [_Element, EditionElement, XmlElement]:
             raise TypeError(type_err_msg)
@@ -26,7 +26,7 @@ class Lb(EditionElement):
         elif type(e) is XmlElement:
             self._e = e.e
 
-        if self.localname != 'lb':
+        if self._e.localname != 'lb':
             raise TypeError(node_name_err_msg)
 
     def __repr__(self):

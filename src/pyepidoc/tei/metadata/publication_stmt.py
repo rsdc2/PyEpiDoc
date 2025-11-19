@@ -11,12 +11,12 @@ class PublicationStmt(EditionElement):
     """
 
     def append_idno(self, idno: Idno) -> Idno:
-        self.append_node(idno)
+        self._e.append_node(idno)
         return idno
 
     @property
     def idnos(self) -> list[Idno]:
-        elements = self.child_elements_by_local_name('idno')
+        elements = self._e.child_elements_by_local_name('idno')
         return list(map(Idno, elements))
     
     def get_idno_by_type(self, idno_type: str) -> Idno | None:

@@ -19,11 +19,11 @@ class FileDesc(TeiElement):
             raise ValueError('Cannot append <titleStmt> since there is already one '
                              'present in the document')
         
-        if title_stmt.localname != 'titleStmt':
+        if title_stmt._e.localname != 'titleStmt':
             raise TypeError('The element to append is not a <titleStmt> element'
-                            f'but a <{title_stmt.localname}> element')
+                            f'but a <{title_stmt._e.localname}> element')
         
-        self.append_node(title_stmt)
+        self._e.append_node(title_stmt)
 
         if self.title_stmt is None:
             raise Exception('Failed to append <titleStmt>')
@@ -39,7 +39,7 @@ class FileDesc(TeiElement):
                              'one present in the document')
         
         publication_stmt = TeiElement.create('publicationStmt')
-        self.append_node(publication_stmt)
+        self._e.append_node(publication_stmt)
         
         if self.publication_stmt is None:
             raise TypeError('Failed to add <publicationStmt> element')

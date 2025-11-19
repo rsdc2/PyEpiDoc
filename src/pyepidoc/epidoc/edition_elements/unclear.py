@@ -25,7 +25,7 @@ class Unclear(EditionElement):
 
         self._e = e
 
-        if self.localname != 'unclear':
+        if self._e.localname != 'unclear':
             raise TypeError('Element should be <unclear>.')
 
     @property

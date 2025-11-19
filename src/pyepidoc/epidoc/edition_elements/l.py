@@ -25,6 +25,6 @@ class L(Ab):
         elif type(e) is XmlElement:
             self._e = e.e
 
-        if self.tag.name != 'l':
+        if self._e.tag.name != 'l':
             raise TypeError('Element should be of type <l>.')
 

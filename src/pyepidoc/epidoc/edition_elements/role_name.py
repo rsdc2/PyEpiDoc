@@ -18,7 +18,7 @@ class RoleName(EditionElement):
 
         self._e = e
 
-        if self.localname != 'roleName':
+        if self._e.localname != 'roleName':
             raise TypeError('Element should be <roleName>.')
 
     def __repr__(self) -> str:

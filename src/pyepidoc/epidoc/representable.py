@@ -45,7 +45,7 @@ class Representable(EditionElement):
         abbreviations expanded with brackets
         """
         if self.representable_cls_inst is None:
-            return self.text_desc
+            return self._e.text_desc
         if type(self.representable_cls_inst) is type(self):
             raise TypeError(f'Class {type(self)} must implement property `leiden_form`.')
         return self.representable_cls_inst.leiden_form
@@ -108,8 +108,8 @@ class Representable(EditionElement):
         """
         t = type(self)
         elem = t(self.deepcopy().e)
-        elem.remove_children()
-        elem.remove_attr('id', XMLNS)
+        elem._e.remove_children()
+        elem._e.remove_attr('id', XMLNS)
         elem.text = self.simple_lemmatized_edition_form
         return elem
     
@@ -130,7 +130,7 @@ class Representable(EditionElement):
         """
         
         if self.representable_cls_inst is None:
-            return self.text_desc
+            return self._e.text_desc
         if type(self.representable_cls_inst) is type(self):
             raise TypeError(f'Class {type(self)} must implement property `normalized_form`.')
         return self.representable_cls_inst.normalized_form
@@ -148,8 +148,8 @@ class Representable(EditionElement):
         ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                  for ancestor in non_ancestors])
 
-        normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
-        return self._clean_text(''.join([str(t) for t in normalized_text]))
+        normalized_text = self._e.xpath(f'descendant::text()[{ancestors_str}]')
+        return self._e._clean_text(''.join([str(t) for t in normalized_text]))
     
     @property
     def representable_cls_inst(self) -> Representable | None:
@@ -158,7 +158,7 @@ class Representable(EditionElement):
         behaviours specific to the element in question, e.g. W, G, Expan etc.
         """
 
-        cls = self.elem_classes.get(self.localname)
+        cls = self.elem_classes.get(self._e.localname)
         if cls is None:
             return None
         inst = cls(self._e)
@@ -166,4 +166,4 @@ class Representable(EditionElement):
 
     @property
     def type(self) -> str:
-        return self.tag.name
+        return self._e.tag.name

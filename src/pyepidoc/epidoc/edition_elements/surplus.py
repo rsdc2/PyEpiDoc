@@ -25,7 +25,7 @@ class Surplus(EditionElement):
 
         self._e = e
 
-        if self.localname != 'surplus':
+        if self._e.localname != 'surplus':
             raise TypeError('Element should be <surplus>.')
 
     @property

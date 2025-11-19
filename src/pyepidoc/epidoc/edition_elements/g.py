@@ -14,7 +14,7 @@ class G(EditionElement):
 
         self._e = e
 
-        if self.localname != 'g':
+        if self._e.localname != 'g':
             raise TypeError('Element should be <g>.')
 
     def __str__(self) -> str:
@@ -26,14 +26,14 @@ class G(EditionElement):
 
     @property
     def leiden_form(self) -> str:
-        if self.has_ancestors_by_names(AtomicTokenType.values()):
-            return self.text_desc_compressed_whitespace
+        if self._e.has_ancestors_by_names(AtomicTokenType.values()):
+            return self._e.text_desc_compressed_whitespace
         
-        return ' ' + self.text_desc_compressed_whitespace + ' '
+        return ' ' + self._e.text_desc_compressed_whitespace + ' '
 
     @property
     def normalized_form(self) -> str:
-        if self.text_desc_compressed_whitespace == '☧':
+        if self._e.text_desc_compressed_whitespace == '☧':
             return 'Χρ'
         
         return ''

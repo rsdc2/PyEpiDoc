@@ -16,7 +16,7 @@ class Space(Representable):
 
         self._e = e
 
-        if self.localname != 'space':
+        if self._e.localname != 'space':
             raise TypeError('Element should be <space>.')
         
     def __repr__(self) -> str:

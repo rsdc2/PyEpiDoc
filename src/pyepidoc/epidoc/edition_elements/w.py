@@ -17,7 +17,7 @@ class W(Representable):
 
         self._e = e
 
-        if self.localname != 'w':
+        if self._e.localname != 'w':
             raise TypeError('Element should be <w>.')
         
     def __str__(self) -> str:

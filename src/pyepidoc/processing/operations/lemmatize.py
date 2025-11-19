@@ -87,7 +87,7 @@ def update_lemmatized_edition(
     # Arrange
     old_lemmatized_edition = Edition(epidoc.simple_lemmatized_edition.deepcopy())
     old_lemmatized_edition_ids = old_lemmatized_edition.local_ids
-    epidoc.simple_lemmatized_edition.remove_children()
+    epidoc.simple_lemmatized_edition._e.remove_children()
     new_lemmatized_edition = epidoc.body.copy_lemmatizable_to_lemmatized_edition(
         epidoc.main_edition, 
         epidoc.simple_lemmatized_edition

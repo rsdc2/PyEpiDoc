@@ -20,7 +20,7 @@ class Choice(EditionElement):
 
         self._e = e
 
-        if self.localname != 'choice':
+        if self._e.localname != 'choice':
             raise TypeError('Element should be <choice>.')
 
     @property

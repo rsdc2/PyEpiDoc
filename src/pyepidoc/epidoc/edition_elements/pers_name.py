@@ -18,7 +18,7 @@ class PersName(EditionElement):
 
         self._e = e
 
-        if self.localname != 'persName':
+        if self._e.localname != 'persName':
             raise TypeError('Element should be <persName>.')
 
     def __repr__(self) -> str:

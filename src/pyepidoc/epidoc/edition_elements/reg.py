@@ -15,7 +15,7 @@ class Reg(EditionElement):
 
         self._e = e
 
-        if self.localname != 'reg':
+        if self._e.localname != 'reg':
             raise TypeError('Element should be <reg>.')
 
     @property
@@ -27,11 +27,11 @@ class Reg(EditionElement):
             'expan': Expan
         }
         
-        if self.has_ancestor_by_name('choice'):
+        if self._e.has_ancestor_by_name('choice'):
             return ''
 
         return leiden_str_from_children(self.e, element_classes, 'node')
     
     @property
     def normalized_form(self) -> str:
-        return self.text_desc_compressed_whitespace
+        return self._e.text_desc_compressed_whitespace

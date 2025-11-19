@@ -16,6 +16,7 @@ from lxml.etree import (
 
 from pyepidoc.xml import Namespace as ns
 from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.shared import maxone, remove_none, head
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.enums import (
@@ -87,7 +88,7 @@ class Token(Representable):
         Returns a list of <ab> and <div> parent |Element|.
         """
 
-        return self.get_ancestors_by_name(['ab', 'div'])
+        return self._e.get_ancestors_by_name(['ab', 'div'])
 
     @cached_property
     def ab_or_div_lang(self) -> Optional[str]:
@@ -106,7 +107,7 @@ class Token(Representable):
         return maxone(filtered_langs, throw_if_more_than_one=False)
 
     @property
-    def abbr(self) -> Optional[XmlElement]:
+    def abbr(self) -> Optional[TeiElement]:
         """
         Returns the first <abbr> |Element|, if present,
         else None.
@@ -144,12 +145,12 @@ class Token(Representable):
         change made.
         """
 
-        if self.text_desc is None:
+        if self._e.text_desc is None:
             return self
         
         if inplace:
-            if self.text_desc == self.text_desc.capitalize() and \
-                self.text_desc not in PUNCTUATION:
+            if self._e.text_desc == self._e.text_desc.capitalize() and \
+                self._e.text_desc not in PUNCTUATION:
 
                 self._e.tag = ns.give_ns('name', TEINS)    # type: ignore
 
@@ -202,8 +203,8 @@ class Token(Representable):
         ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
                                  for ancestor in non_ancestors])
 
-        normalized_text = self.xpath(f'descendant::text()[{ancestors_str}]')
-        return self._clean_text(''.join([str(t) for t in normalized_text]))
+        normalized_text = self._e.xpath(f'descendant::text()[{ancestors_str}]')
+        return self._e._clean_text(''.join([str(t) for t in normalized_text]))
 
     @property
     def pos(self) -> Optional[str]:

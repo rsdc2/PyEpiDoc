@@ -22,7 +22,7 @@ def ancestor_abs(elem: EditionElement) -> Sequence[Ab]:
     Returns a |Sequence| of |Ab|s containing an |Element|,
     starting with the ancestor closest to the |Element|
     """
-    return [Ab(elem) for elem in elem.get_ancestors_incl_self()
+    return [Ab(elem) for elem in elem._e.get_ancestors_incl_self()
         if elem.localname == 'ab']
 
 
@@ -44,7 +44,7 @@ def ancestor_edition(elem: EditionElement) -> Optional[Edition]:
     Returns the |Edition| containing an element (if any).
     """
 
-    editions = [Edition(elem) for elem in elem.get_ancestors_incl_self()
+    editions = [Edition(elem) for elem in elem._e.get_ancestors_incl_self()
         if EditionElement(elem).is_edition]
 
     edition = maxone(
@@ -66,7 +66,7 @@ def ancestor_ab(elem: EditionElement) -> Optional[Ab]:
 
     abs = filter(
         lambda elem: localname(elem.e) == 'ab', 
-        elem.ancestors_excl_self
+        elem._e.ancestors_excl_self
     )
 
     try:
@@ -149,7 +149,7 @@ def line_ends_inside(elem: EditionElement) -> int:
 
     lbs = filter(
         lambda elem: localname(elem.e) == 'lb', 
-        elem.descendant_elements
+        elem._e.descendant_elements
     )
 
     return len(list(lbs))

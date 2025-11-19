@@ -15,7 +15,7 @@ class Name(W):
 
         self._e = e
 
-        if self.localname != 'name':
+        if self._e.localname != 'name':
             raise TypeError('Element should be <name>.')
         
     def __eq__(self, other: object) -> bool:

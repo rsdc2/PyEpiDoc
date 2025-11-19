@@ -17,7 +17,7 @@ class Gap(Representable):
 
         self._e = e
 
-        if self.localname != 'gap':
+        if self._e.localname != 'gap':
             raise TypeError('Element should be <gap>.')
         
     def __repr__(self) -> str:
@@ -53,11 +53,11 @@ class Gap(Representable):
         Element for use in simple-lemmatized edition
         """
         elem = self.deepcopy()
-        elem.remove_children()
-        elem.remove_attr('id', XMLNS)
+        elem._e.remove_children()
+        elem._e.remove_attr('id', XMLNS)
         desc_elem = EditionElement.create('desc')
-        desc_elem.text = self.simple_lemmatized_edition_form
-        elem.append_node(desc_elem.e)
+        desc_elem._e.text = self.simple_lemmatized_edition_form
+        elem._e.append_node(desc_elem._e)
         return elem
 
     @cached_property

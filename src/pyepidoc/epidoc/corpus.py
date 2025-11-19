@@ -719,13 +719,13 @@ class EpiDocCorpus:
         suspensions = abbrs.suspensions.count
         name_suspensions = (abbrs.suspensions
                             .where_ancestor_is('name')
-                            .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
+                            .map(lambda expan: expan._e.get_ancestors_by_name(['name'])[0]._e)
                             .map(lambda elem: Name(elem))
                             .where(name_predicate)
                             .count)
         name_abbrs = (abbrs
                       .where_ancestor_is('name')
-                      .map(lambda expan: expan.get_ancestors_by_name(['name'])[0]._e)
+                      .map(lambda expan: expan._e.get_ancestors_by_name(['name'])[0]._e)
                       .map(lambda elem: Name(elem))
                       .where(name_predicate))
         name_abbr_unique_docs = (name_abbrs
