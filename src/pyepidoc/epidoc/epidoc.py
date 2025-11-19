@@ -999,8 +999,8 @@ class EpiDoc(TeiDoc):
 
     @override
     @property
-    def root_elem(self) -> TeiElement:
-        return TeiElement(self._e)
+    def root_elem(self) -> XmlElement:
+        return self._e
 
     def set_ids(self, base: Base=100) -> None:
         
@@ -1067,7 +1067,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def tei_header(self) -> Optional[TeiHeader]:
-        tei_header_elem = maxone(self.root_elem.get_desc_tei_elems('teiHeader'))
+        tei_header_elem = maxone(TeiElement(self.root_elem).get_desc_tei_elems('teiHeader'))
         if tei_header_elem is None:
             return None
         

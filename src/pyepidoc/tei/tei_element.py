@@ -41,15 +41,12 @@ class TeiElement:
         
         if not isinstance(e, (_Element, XmlElement, TeiElement)):
             raise TypeError(error_msg)
-
-        if isinstance(e, _Element):
-            self._e = XmlElement(e)
-
         elif isinstance(e, XmlElement):
             self._e = e
-
         elif isinstance(e, TeiElement):
             self._e = e._e
+        elif isinstance(e, _Element):
+            self._e = XmlElement(e)
 
     def append(self, tei_element: TeiElement) -> TeiElement:
         element = self._e.append_node(tei_element._e)

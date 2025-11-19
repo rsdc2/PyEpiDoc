@@ -5,9 +5,11 @@ from itertools import chain
 
 from lxml.etree import _Element
 
-from ...shared import head
+from pyepidoc.shared import head
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
 
-from ..edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import EditionElement
 
 from .ex import Ex
 from .abbr import Abbr
@@ -29,15 +31,17 @@ class Expan(EditionElement):
     """
 
     def __init__(self, e: _Element | EditionElement):
-        if not isinstance(e, (_Element, EditionElement)):
+        if not isinstance(e, (_Element, TeiElement, EditionElement)):
             raise TypeError('e should be _Element or EpiDocElement type.')
 
-        if isinstance(e, _Element):
-            self._e = e
         elif isinstance(e, EditionElement):
             self._e = e._e
+        elif isinstance(e, TeiElement):
+            self._e = e._e
+        elif isinstance(e, _Element):
+            self._e = XmlElement(e)
 
-        if localname(self._e) != 'expan':
+        if self._e.localname != 'expan':
             raise TypeError(f'Element should be of type <expan>, '
                             f'but is of type <{localname(self._e)}>.')
 

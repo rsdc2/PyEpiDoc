@@ -141,16 +141,16 @@ class EditionElement(TeiElement, Showable):
         final_space: bool = False
     ):
         
-        if not isinstance(e, (_Element, EditionElement, XmlElement)):
+        if not isinstance(e, (_Element, TeiElement, XmlElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
-        if isinstance(e, _Element):
-            self._e = e
-        elif isinstance(e, EditionElement):
-            self._e = e.e
+        elif isinstance(e, TeiElement):
+            self._e = e._e
         elif isinstance(e, XmlElement):
-            self._e = e.e
+            self._e = e
+        elif isinstance(e, _Element):
+            self._e = XmlElement(e)
 
         self._final_space = final_space
 
