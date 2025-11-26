@@ -48,7 +48,7 @@ class XmlElement(Showable):
         """
         ...
 
-    def __init__(self, e:Union[_Element, XmlElement]):
+    def __init__(self, e: _Element | XmlElement):
         error_msg = (f'Expected type is _Element or BaseElement '
                      f'type or None. Actual type is {type(e)}.')
         
@@ -59,7 +59,7 @@ class XmlElement(Showable):
             self._e = e
 
         elif isinstance(e, XmlElement):
-            self._e = e.e
+            self._e = e._e
 
     def __eq__(self, other) -> bool:
         if type(other) is not XmlElement \
@@ -889,7 +889,7 @@ class XmlElement(Showable):
         "http://www.tei-c.org/ns/1.0"
         """
 
-        result = self.e.xpath(xpathstr, namespaces=namespaces)
+        result = self._e.xpath(xpathstr, namespaces=namespaces)
 
         # NB the cast won't necessarily be correct for all test cases
         return list[Union[_Element,_ElementUnicodeResult]](result)

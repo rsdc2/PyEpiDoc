@@ -2,23 +2,23 @@ from __future__ import annotations
 
 from lxml.etree import _Element
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.iterables import maxone
 from pyepidoc.shared.namespaces import XMLNS
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
 
-class W(Representable):
+
+class W(RepresentableElement):
     """
     Provides services for string representation of <w> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
-
-        self._e = e
+    def __init__(self, e: _Element | XmlElement | TeiElement):
+        super().__init__(e)
 
         if self._e.localname != 'w':
-            raise TypeError('Element should be <w>.')
+            raise TypeError(f'Element should be <w> not {self._e.localname}.')
         
     def __str__(self) -> str:
         return self.leiden_form

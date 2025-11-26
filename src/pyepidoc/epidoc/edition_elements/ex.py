@@ -1,5 +1,6 @@
 from lxml.etree import _Element
-from ..edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.epidoc.utils import localname
 
 
@@ -9,15 +10,13 @@ class Ex(EditionElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+    def __init__(self, e: _Element | EditionElement | TeiElement):
 
-        self._e = e
+        super().__init__(e)
 
-        if localname(e) != 'ex':
+        if localname(self._e._e) != 'ex':
             raise TypeError(f'Element should be of type <ex>, '
-                            f'but is of type <{localname(e)}>.')
+                            f'but is of type <{localname(self._e._e)}>.')
 
 
     @property

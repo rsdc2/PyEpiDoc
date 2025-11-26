@@ -4,12 +4,12 @@ from typing import Optional
 
 from pyepidoc.shared import head
 
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from .am import Am
 
 
-class Abbr(Representable):    
+class Abbr(RepresentableElement):    
     def __str__(self) -> str:
 
         return self.leiden_form

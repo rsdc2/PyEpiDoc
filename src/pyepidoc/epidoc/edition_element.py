@@ -799,7 +799,7 @@ class EditionElement(TeiElement, Showable):
         # TODO: put into base element layer; 
         # previously tried to do this but caused recursion error
 
-        def _get_next(e: Optional[_Element]) -> Optional[_Element]:
+        def _get_next(e: _Element | None) -> Optional[_Element]:
             if e is None:
                 return None
 
@@ -815,7 +815,7 @@ class EditionElement(TeiElement, Showable):
         if self._e is None:
             return None
 
-        _next = _get_next(self._e)
+        _next = _get_next(self._e._e)
         
         if isinstance(_next, _Element):
             return EditionElement(_next)
@@ -1234,7 +1234,7 @@ class EditionElement(TeiElement, Showable):
         """
         acc = []
         for element in self._e.descendant_elements:
-            if element._e.tag.name in TokenCarrier:
+            if element.tag.name in TokenCarrier:
                 epidoc_element = EditionElement(element)
                 acc.append(epidoc_element)
         return acc

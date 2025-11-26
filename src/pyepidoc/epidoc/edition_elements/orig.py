@@ -1,10 +1,10 @@
 from functools import cached_property
 from lxml.etree import _Element
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 from ..utils import leiden_str_from_children
 
 
-class Orig(Representable):
+class Orig(RepresentableElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.

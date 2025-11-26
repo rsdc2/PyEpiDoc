@@ -26,5 +26,5 @@ def test_w_hi(xml_pair: tuple[str, str, str]):
 
     elem = elem1 + elem2
 
-    assert etree.tostring(elem[0].e) == result_
+    assert etree.tostring(elem[0]._e._e) == result_
 

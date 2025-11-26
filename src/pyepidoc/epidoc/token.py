@@ -25,7 +25,7 @@ from pyepidoc.shared.enums import (
 )
 
 from .utils import descendant_atomic_tokens
-from .representable import Representable
+from .representable import RepresentableElement
 from .edition_elements.abbr import Abbr
 from .edition_elements.am import Am
 from .edition_elements.choice import Choice
@@ -65,7 +65,7 @@ elem_classes: dict[str, type] = {
 }
 
 
-class Token(Representable):
+class Token(RepresentableElement):
 
     """
     Class for providing services for tokens, including

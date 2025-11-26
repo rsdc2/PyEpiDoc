@@ -61,4 +61,4 @@ def save_reload_and_compare_with_benchmark(
         doc_ = save_and_reload_to_file(doc, target_path)
         
     benchmark_doc = EpiDoc(benchmark_path)
-    return doc_.xml_byte_str == benchmark_doc.xml_byte_str
+    return doc_._xmlroot.xml_byte_str == benchmark_doc._xmlroot.xml_byte_str

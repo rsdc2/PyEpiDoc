@@ -3,7 +3,16 @@ from __future__ import annotations
 from typing import Sequence, cast, overload
 
 from lxml import etree
-from lxml.etree import _Element, _ElementUnicodeResult
+from lxml.etree import ( 
+    _Comment,
+    _Element, 
+    _ElementTree, 
+    _ElementUnicodeResult,
+    _ProcessingInstruction,
+    XMLSyntaxError, 
+    XMLSyntaxAssertionError,
+    DocumentInvalid
+)
 
 from pyepidoc.xml import XmlElement
 from pyepidoc.xml.namespace import Namespace as ns
@@ -135,5 +144,51 @@ class TeiElement:
                 f".//ns:div{level}[@type='{divtype} @xml:lang='{lang}']",
                 namespaces={'ns': TEINS, 'xml': XMLNS}) 
             )
+        
+        return []
+
+    def get_div_descendants_by_type(
+        self, 
+        divtype: str, 
+        lang: str | None = None
+    ) -> list[_Element]:
+
+        """
+        :param divtype: the value of the @type attribute of 
+        the <div/>, e.g. "edition" or "translation"
+        :param lang: the value of the @xml:lang attibute
+        of the <div/> element. If None, treated as not specified.
+        :return: a list of descendant elements where the
+        @type attribute matches divtype.
+        """
+
+        try:
+            if lang is None:
+                return cast(
+                    list[_Element], 
+                    self._e.xpath(
+                        f".//ns:div[@type='{divtype}']", 
+                        namespaces={'ns': TEINS}) 
+                    )
+            
+            elif lang is not None:
+                return cast(list[_Element], self._e.xpath(
+                    f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
+                    namespaces={'ns': TEINS, 'xml': XMLNS}) 
+                )
+            
+        except XMLSyntaxAssertionError as e:
+            print('XMLSyntaxAssertionError in getdivdescendants')
+            print(e)
+            return []
+        
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in getdivdescendants')
+            print(e)
+            return []
+        
+        except AssertionError as e:
+            print(e)
+            return []
         
         return []

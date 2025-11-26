@@ -28,7 +28,7 @@ from .xml_element import XmlElement
 from .errors import handle_xmlsyntaxerror
 
 
-class DocRoot:  
+class XmlRoot:  
     _roottree: _ElementTree  
     _e: _Element
     _p: Path
@@ -113,7 +113,7 @@ class DocRoot:
             .replace(' ', '')\
             .replace('\t', '')
 
-    def _collapse_empty_elements(self) -> DocRoot:
+    def _collapse_empty_elements(self) -> XmlRoot:
         """
         Turn a <tag></tag> to <tag/>
         """
@@ -204,52 +204,6 @@ class DocRoot:
             return cast(list[_Element], xpathRes)
 
         raise TypeError('XPath result is of the wrong type.')
-
-    def get_div_descendants_by_type(
-        self, 
-        divtype: str, 
-        lang: Optional[str]=None
-    ) -> list[_Element]:
-
-        """
-        :param divtype: the value of the @type attribute of 
-        the <div/>, e.g. "edition" or "translation"
-        :param lang: the value of the @xml:lang attibute
-        of the <div/> element. If None, treated as not specified.
-        :return: a list of descendant elements where the
-        @type attribute matches divtype.
-        """
-
-        try:
-            if lang is None:
-                return cast(
-                    list[_Element], 
-                    self.e.xpath(
-                        f".//ns:div[@type='{divtype}']", 
-                        namespaces={'ns': TEINS}) 
-                    )
-            
-            elif lang is not None:
-                return cast(list[_Element], self.e.xpath(
-                    f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
-                    namespaces={'ns': TEINS, 'xml': XMLNS}) 
-                )
-            
-        except XMLSyntaxAssertionError as e:
-            print('XMLSyntaxAssertionError in getdivdescendants')
-            print(e)
-            return []
-        
-        except XMLSyntaxError as e:
-            print('XMLSyntaxError in getdivdescendants')
-            print(e)
-            return []
-        
-        except AssertionError as e:
-            print(e)
-            return []
-        
-        return []
 
     def _load_e_from_file(self, inpt: Path | BytesIO) -> _Element:
 
@@ -462,6 +416,10 @@ class DocRoot:
         """
         return self.to_byte_str(collapse_empty_elements=True)
     
+    @property
+    def xml_element(self) -> XmlElement:
+        return XmlElement(self._e)
+
     @property
     def xml_str(self) -> str:
 

@@ -30,20 +30,16 @@ class Expan(EditionElement):
     Will normally contain <abbr> and <ex> elements.
     """
 
-    def __init__(self, e: _Element | EditionElement):
-        if not isinstance(e, (_Element, TeiElement, EditionElement)):
-            raise TypeError('e should be _Element or EpiDocElement type.')
+    def __init__(self, e: _Element | EditionElement | XmlElement | TeiElement):
+        if not isinstance(e, (_Element, TeiElement, XmlElement, EditionElement)):
+            raise TypeError('e should be _Element or EpiDocElement type. '
+                            f'not {type(e)}.')
 
-        elif isinstance(e, EditionElement):
-            self._e = e._e
-        elif isinstance(e, TeiElement):
-            self._e = e._e
-        elif isinstance(e, _Element):
-            self._e = XmlElement(e)
+        super().__init__(e)
 
         if self._e.localname != 'expan':
             raise TypeError(f'Element should be of type <expan>, '
-                            f'but is of type <{localname(self._e)}>.')
+                            f'but is of type <{self._e.localname}>.')
 
     def __repr__(self):
         tail = '' if self.tail is None else self.tail

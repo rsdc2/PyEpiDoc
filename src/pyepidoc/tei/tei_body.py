@@ -19,9 +19,9 @@ class TeiBody(TeiElement):
         super().__init__(e)
         body_tag = ns.give_ns('body', TEINS)
 
-        if self._e.tag != body_tag:
-            raise ValueError(f'Cannot make <body> element from '
-                             f'<{self._e.tag}> element.')
+        if self._e._e.tag != body_tag:
+            raise ValueError(f'Cannot make <body> element from a'
+                             f'<{self._e._e.tag}> element.')
 
     @property
     def div1s(self) -> list[Div1]:

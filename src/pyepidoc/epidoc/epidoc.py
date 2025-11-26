@@ -92,7 +92,7 @@ class EpiDoc(TeiDoc):
                 raise EpiDocValidationError(msg)
             
             if verbose:
-                print(f'{self._p} is a valid EpiDoc file')
+                print(f'{self._xmlroot._p} is a valid EpiDoc file')
 
     def __repr__(self) -> str:
         return f'EpiDoc(id="{self.id}")'
@@ -113,7 +113,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def apparatus(self) -> list[_Element]:
-        return self.get_div_descendants_by_type('apparatus')
+        return self._tei_element.get_div_descendants_by_type('apparatus')
         
     @override
     @property
@@ -129,7 +129,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def commentary(self) -> list[_Element]:
-        return self.get_div_descendants_by_type('commentary')
+        return self._tei_element.get_div_descendants_by_type('commentary')
 
     @property
     def compound_words(self) -> list[EditionElement]:
@@ -373,9 +373,9 @@ class EpiDoc(TeiDoc):
         element.
         """
         try:
-            textclass_elems = self.get_desc('textClass')
+            textclass_elems = self._xmlroot.get_desc('textClass')
             textclass_e = maxone(
-                self.get_desc('textClass'), 
+                self._xmlroot.get_desc('textClass'), 
                 throw_if_more_than_one=throw_if_more_than_one,
                 idx=len(textclass_elems) - 1)
             
@@ -547,7 +547,7 @@ class EpiDoc(TeiDoc):
         """Used by EDH to host language information."""
 
         language_elems = [EditionElement(language) 
-                          for language in self.get_desc('langUsage')]
+                          for language in self._xmlroot.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
         if lang_usage is None: 
@@ -697,7 +697,7 @@ class EpiDoc(TeiDoc):
     @property
     def materialclasses(self) -> list[str]:
 
-        material_e = self.get_desc('material')
+        material_e = self._xmlroot.get_desc('material')
         
         if material_e is None:
             return []
@@ -759,7 +759,7 @@ class EpiDoc(TeiDoc):
     def orig_date(self) -> Optional[EditionElement]:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
-            self.get_desc('origDate'),
+            self._xmlroot.get_desc('origDate'),
             defaultval=None,
             throw_if_more_than_one=False
         )
@@ -779,7 +779,7 @@ class EpiDoc(TeiDoc):
  
     @property
     def orig_place(self) -> str:
-        xpath_results = self.xpath('//ns:history/ns:origin/'
+        xpath_results = self._xmlroot.xpath('//ns:history/ns:origin/'
                                    'ns:origPlace/ns:placeName'
                                    '[@type="ancient"]/text()')
         result = head(
@@ -890,7 +890,7 @@ class EpiDoc(TeiDoc):
         """
 
         prettified_str: bytes = etree.tostring(
-            element_or_tree=self.e,
+            element_or_tree=self._xmlroot._e,
             xml_declaration=True, # type: ignore
             pretty_print=True # type: ignore
         )
@@ -919,8 +919,8 @@ class EpiDoc(TeiDoc):
         """
 
         epidoc = self
-        epidoc.desc_elems
-        elem = XmlElement(epidoc.e)
+        epidoc._xmlroot.desc_elems
+        elem = XmlElement(epidoc._xmlroot._e)
         elem.prettify_element_with_pyepidoc(
             space_unit, 
             multiplier, 
@@ -931,7 +931,7 @@ class EpiDoc(TeiDoc):
         # Remove trailing text
         self.root_elem._e.tail = ''
         self.root_elem._e.text = '\n' + multiplier * space_unit + (self.root_elem._e.text or '').strip() \
-            if len(self.desc_elems) > 0 \
+            if len(self._xmlroot.desc_elems) > 0 \
             else '\n' + space_unit * multiplier + (self.root_elem._e.text or '').strip()
         
         return epidoc
@@ -950,7 +950,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def publication_stmt(self) -> Optional[EditionElement]:
-        publication_stmt = maxone(self.get_desc('publicationStmt'))
+        publication_stmt = maxone(self._xmlroot.get_desc('publicationStmt'))
         if publication_stmt is None:
             return None
         return EditionElement(publication_stmt)
@@ -997,10 +997,9 @@ class EpiDoc(TeiDoc):
     
         return list(role_names)
 
-    @override
     @property
     def root_elem(self) -> XmlElement:
-        return self._e
+        return self._xmlroot._e
 
     def set_ids(self, base: Base=100) -> None:
         
@@ -1063,7 +1062,7 @@ class EpiDoc(TeiDoc):
         """
         Return the `<TEI>` root element
         """
-        return maxone(self.get_desc('TEI'))
+        return maxone(self._xmlroot.get_desc('TEI'))
 
     @property
     def tei_header(self) -> Optional[TeiHeader]:
@@ -1130,7 +1129,7 @@ class EpiDoc(TeiDoc):
         """
 
         textlang = maxone([EditionElement(textlang) 
-            for textlang in self.get_desc('textLang')])
+            for textlang in self._xmlroot.get_desc('textLang')])
         
         if textlang is None: 
             return None
@@ -1144,7 +1143,7 @@ class EpiDoc(TeiDoc):
         information
         """
 
-        elem = maxone([desc for desc in self.desc_elems
+        elem = maxone([desc for desc in self._xmlroot.desc_elems
                 if desc.localname == 'rs' and desc.get_attrib('type') == 'textType'],
                 throw_if_more_than_one=False)
         
@@ -1216,14 +1215,14 @@ class EpiDoc(TeiDoc):
             mode = 'xb'
         
         with open(dst, mode=mode) as f:
-            f.write(self.to_byte_str(collapse_empty_elements))
+            f.write(self._xmlroot.to_byte_str(collapse_empty_elements))
 
     def to_xml_file_object(self, collapse_empty_elements: bool = False) -> io.BytesIO:
         """
         Write the file to a file object in memory, rather than
         to a file on disk
         """
-        return io.BytesIO(self.to_byte_str(collapse_empty_elements))
+        return io.BytesIO(self._xmlroot.to_byte_str(collapse_empty_elements))
 
     @property
     def token_count(self) -> int:
@@ -1348,7 +1347,7 @@ class EpiDoc(TeiDoc):
         :return: the text for all translations, if present
         """
         
-        translation_divs = self.get_div_descendants_by_type('translation')
+        translation_divs = self._tei_element.get_div_descendants_by_type('translation')
 
         return '\n'.join([EditionElement(div)._e.text_desc_compressed_whitespace 
                        for div in translation_divs])
@@ -1361,7 +1360,7 @@ class EpiDoc(TeiDoc):
         message, either an error if it has failed, or a string 
         confirming that the file is valid.
         """
-        return self.validate_by_relaxng(self._rng_path)
+        return self._xmlroot.validate_by_relaxng(self._rng_path)
     
     @property
     def w_tokens(self) -> list[Token]:

@@ -1,21 +1,25 @@
 from lxml.etree import _Element
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.epidoc.edition_elements.w import W
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.epidoc.representable import RepresentableElement
 
-class Num(W):
+
+class Num(RepresentableElement):
     """
     Provides services for abbreviation expansions 
     given in <num> elements.
     """
 
+    _w: W
+
     def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+        super().__init__(e)
 
-        self._e = e
-
-        if self._e.localname != 'num':
-            raise TypeError('Element should be <num>.')
+        if self._e.localname != 'name':
+            raise TypeError('Element should be <name>.')
+        self._w = W(e)
 
     @property
     def leiden_form(self) -> str:

@@ -1,7 +1,7 @@
 from lxml.etree import _Element
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 
-class Desc(Representable):
+class Desc(RepresentableElement):
     def __init__(self, e: _Element):
         if type(e) is not _Element:
             raise TypeError('e should be of type _Element.')

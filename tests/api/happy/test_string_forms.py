@@ -5,7 +5,7 @@ or sequences of tokens, are as expected.
 
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import elem_from_str, abify
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 
 import pytest
 
@@ -120,7 +120,7 @@ def test_non_tokens_normalized_string_forms(
     ab = Ab(elem_from_str(abify(xml)))
 
     # Act
-    normalized_tokens = [Representable(child).normalized_form for child in ab.children]
+    normalized_tokens = [RepresentableElement(child).normalized_form for child in ab.children]
 
     # Assert
     assert normalized_tokens == expected_normalized_tokens
@@ -139,7 +139,7 @@ def test_non_tokens_leiden_string_forms(
     ab = Ab(elem_from_str(abify(xml)))
 
     # Act
-    leiden_tokens = [Representable(child).leiden_form for child in ab.children]
+    leiden_tokens = [RepresentableElement(child).leiden_form for child in ab.children]
 
     # Assert
     assert leiden_tokens == expected_leiden_tokens

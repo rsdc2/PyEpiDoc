@@ -24,11 +24,11 @@ from pyepidoc.xml import XmlElement
 from pyepidoc.shared import update_set_inplace, head
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.types import Base
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.epidoc.utils import descendant_atomic_tokens
+from pyepidoc.tei.tei_element import TeiElement
 
-
-class Ab(Representable):
+class Ab(RepresentableElement):
 
     """
     The Ab class provides services for interaction with 
@@ -53,17 +53,8 @@ class Ab(Representable):
     """
 
     def __init__(self, e: Optional[_Element | EditionElement | XmlElement]=None):
-
-        if type(e) not in [_Element, EditionElement, XmlElement] and e is not None:
-            raise TypeError('e should be _Element or Element type, or None.')
-
-        if type(e) is _Element:
-            self._e = e
-        elif type(e) is EditionElement:
-            self._e = e.e
-        elif type(e) is XmlElement:
-            self._e = e.e
-
+        super().__init__(e)
+        
         if self._e.tag.name != 'ab':
             raise TypeError('Element should be of type <ab>.')
 

@@ -6,7 +6,7 @@ from pyepidoc.tei.metadata.resp_stmt import RespStmt
 from pyepidoc.tei.metadata.change import Change
 from pyepidoc.shared import enums
 from pyepidoc.shared.generic_collection import GenericCollection as Collection, remove_none
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 
 def apply_lemmatization(
         epidoc: EpiDoc, 

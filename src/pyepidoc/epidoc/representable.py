@@ -22,10 +22,10 @@ from .edition_element import EditionElement
 Node = Union[_Element, _ElementUnicodeResult]
 
 
-class Representable(EditionElement):
+class RepresentableElement(EditionElement):
 
     @property
-    def elem_classes(self) -> dict[str, type[Representable]]:
+    def elem_classes(self) -> dict[str, type[RepresentableElement]]:
         from .representable_classes import representable_classes
         return representable_classes
 
@@ -152,7 +152,7 @@ class Representable(EditionElement):
         return self._e._clean_text(''.join([str(t) for t in normalized_text]))
     
     @property
-    def representable_cls_inst(self) -> Representable | None:
+    def representable_cls_inst(self) -> RepresentableElement | None:
         """
         An instance of a class inheriting from Representable giving 
         behaviours specific to the element in question, e.g. W, G, Expan etc.

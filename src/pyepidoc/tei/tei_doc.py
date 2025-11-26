@@ -18,7 +18,7 @@ import io
 from io import BytesIO
 
 import pyepidoc
-from pyepidoc.xml.docroot import DocRoot
+from pyepidoc.xml.docroot import XmlRoot
 from pyepidoc.shared import (
     maxone, 
     listfilter, 
@@ -41,7 +41,7 @@ from .metadata.tei_header import TeiHeader
 from .metadata.change import Change
 
 
-class TeiDoc(DocRoot):
+class TeiDoc:
 
     """
     This class provides services for interacting with individual
@@ -51,6 +51,9 @@ class TeiDoc(DocRoot):
     as well as that for accessing the editions present
     in the file.
     """
+
+    _xmlroot: XmlRoot
+    _tei_element: TeiElement
     
     def __init__(
             self, 
@@ -65,8 +68,8 @@ class TeiDoc(DocRoot):
         :param inpt: string (containing path to document), 
             Path or lxml _ElementTree
         """
-        
-        super().__init__(inpt)
+        self._xmlroot = XmlRoot(inpt)
+        self._tei_element = TeiElement(self._xmlroot._e)
         self.assert_has_tei_ns()
 
     def __repr__(self) -> str:
@@ -83,7 +86,7 @@ class TeiDoc(DocRoot):
 
     @property
     def apparatus(self) -> list[_Element]:
-        return self.get_div_descendants_by_type('apparatus')
+        return self._tei_element.get_div_descendants_by_type('apparatus')
     
     def append_change(self, change: Change) -> TeiDoc:
         self.ensure_tei_header().ensure_revision_desc().append_change(change)
@@ -94,7 +97,7 @@ class TeiDoc(DocRoot):
         Insert a <teiHeader> element as the first child
         """
         tei_header_elem = TeiHeader.create()
-        self.e.insert(0, tei_header_elem.e)
+        self._xmlroot._e.insert(0, tei_header_elem.e)
         return self
 
     def append_resp_stmt(self, resp_stmt: RespStmt) -> TeiDoc:
@@ -119,10 +122,10 @@ class TeiDoc(DocRoot):
         Return True if uses TEI namespaces;
         raises an AssertionError if not
         """
-        if self.e is None:
+        if self._xmlroot._e is None:
             raise TypeError("No root element present")
         
-        nsmap: dict[str, str] = self.e.nsmap
+        nsmap: dict[str, str] = self._xmlroot._e.nsmap
 
         if nsmap is None:
              raise TEINSError("No namespaces are specified")
@@ -160,7 +163,7 @@ class TeiDoc(DocRoot):
 
     @property
     def commentary(self) -> list[_Element]:
-        return self.get_div_descendants_by_type('commentary')
+        return self._tei_element.get_div_descendants_by_type('commentary')
     
     @property
     def date(self) -> Optional[int]:
@@ -255,9 +258,9 @@ class TeiDoc(DocRoot):
         element.
         """
         try:
-            textclass_elems = self.get_desc('textClass')
+            textclass_elems = self._tei_element.get_desc_tei_elems('textClass')
             textclass_e = maxone(
-                self.get_desc('textClass'), 
+                self._tei_element._e.get_desc('textClass'), 
                 throw_if_more_than_one=throw_if_more_than_one,
                 idx=len(textclass_elems) - 1)
             
@@ -366,7 +369,7 @@ class TeiDoc(DocRoot):
         """Used by EDH to host language information."""
 
         language_elems = [TeiElement(language) 
-                          for language in self.get_desc('langUsage')]
+                          for language in self._tei_element.get_desc_tei_elems('langUsage')]
         lang_usage = maxone(language_elems, None)
 
         if lang_usage is None: 
@@ -405,7 +408,7 @@ class TeiDoc(DocRoot):
     @property
     def materialclasses(self) -> list[str]:
 
-        material_e = self.get_desc('material')
+        material_e = self._tei_element.get_desc_tei_elems('material')
         
         if material_e is None:
             return []
@@ -437,14 +440,14 @@ class TeiDoc(DocRoot):
     def orig_date(self) -> Optional[TeiElement]:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
-            self.get_desc('origDate'),
+            self._tei_element.get_desc_tei_elems('origDate'),
             defaultval=None,
             throw_if_more_than_one=False
         )
         if orig_date is None:
             return None
 
-        if orig_date.attrib == dict():
+        if orig_date._e._e.attrib == dict():
             orig_date = maxone(
                 TeiElement(orig_date)._e.get_desc('origDate'), 
                 throw_if_more_than_one=False
@@ -457,7 +460,7 @@ class TeiDoc(DocRoot):
  
     @property
     def orig_place(self) -> str:
-        xpath_results = self.xpath('//ns:history/ns:origin/'
+        xpath_results = self._xmlroot.xml_element.xpath('//ns:history/ns:origin/'
                                    'ns:origPlace/ns:placeName'
                                    '[@type="ancient"]/text()')
         result = head(
@@ -528,7 +531,7 @@ class TeiDoc(DocRoot):
         """
 
         prettified_str: bytes = etree.tostring(
-            element_or_tree=self.e,
+            element_or_tree=self._tei_element._e._e,
             xml_declaration=True, # type: ignore
             pretty_print=True # type: ignore
         )
@@ -557,8 +560,8 @@ class TeiDoc(DocRoot):
         """
 
         epidoc = self
-        epidoc.desc_elems
-        elem = XmlElement(epidoc.e)
+        epidoc._xmlroot.desc_elems
+        elem = epidoc.xml_element
         elem.prettify_element_with_pyepidoc(
             space_unit, 
             multiplier, 
@@ -567,10 +570,10 @@ class TeiDoc(DocRoot):
         
         # Root element
         # Remove trailing text
-        self.root_elem.tail = ''
-        self.root_elem.text = '\n' + multiplier * space_unit + (self.root_elem.text or '').strip() \
-            if len(self.desc_elems) > 0 \
-            else '\n' + space_unit * multiplier + (self.root_elem.text or '').strip()
+        self._xmlroot.root_elem.tail = ''
+        self._xmlroot.root_elem.text = '\n' + multiplier * space_unit + (self._xmlroot.root_elem.text or '').strip() \
+            if len(self._xmlroot.desc_elems) > 0 \
+            else '\n' + space_unit * multiplier + (self._xmlroot.root_elem.text or '').strip()
         
         return epidoc
 
@@ -582,7 +585,7 @@ class TeiDoc(DocRoot):
 
     @property
     def publication_stmt(self) -> Optional[TeiElement]:
-        publication_stmt = maxone(self.get_desc('publicationStmt'))
+        publication_stmt = maxone(self._xmlroot.get_desc('publicationStmt'))
         if publication_stmt is None:
             return None
         return TeiElement(publication_stmt)
@@ -611,7 +614,7 @@ class TeiDoc(DocRoot):
         """
         Return the `<TEI>` root element
         """
-        return maxone(self.get_desc('TEI'))
+        return maxone(self._xmlroot.get_desc('TEI'))
 
     @property
     def tei_header(self) -> Optional[TeiHeader]:
@@ -624,7 +627,7 @@ class TeiDoc(DocRoot):
 
     @property
     def text(self) -> Text:
-        text = self.root_elem.child_element_by_local_name('text')
+        text = self._xmlroot.root_elem.child_element_by_local_name('text')
         return Text(text)
 
     @property
@@ -649,7 +652,7 @@ class TeiDoc(DocRoot):
         """
 
         textlang = maxone([TeiElement(textlang) 
-            for textlang in self.get_desc('textLang')])
+            for textlang in self._xmlroot.get_desc('textLang')])
         
         if textlang is None: 
             return None
@@ -663,7 +666,7 @@ class TeiDoc(DocRoot):
         information
         """
 
-        elem = maxone([desc for desc in self.desc_elems
+        elem = maxone([desc for desc in self._xmlroot.desc_elems
                 if desc.localname == 'rs' and desc.get_attrib('type') == 'textType'],
                 throw_if_more_than_one=False)
         
@@ -735,14 +738,14 @@ class TeiDoc(DocRoot):
             mode = 'xb'
         
         with open(dst, mode=mode) as f:
-            f.write(self.to_byte_str(collapse_empty_elements))
+            f.write(self._xmlroot.to_byte_str(collapse_empty_elements))
 
     def to_xml_file_object(self, collapse_empty_elements: bool = False) -> io.BytesIO:
         """
         Write the file to a file object in memory, rather than
         to a file on disk
         """
-        return io.BytesIO(self.to_byte_str(collapse_empty_elements))
+        return io.BytesIO(self._xmlroot.to_byte_str(collapse_empty_elements))
 
     @property
     def translation_text(self) -> str:
@@ -750,7 +753,7 @@ class TeiDoc(DocRoot):
         :return: the text for all translations, if present
         """
         
-        translation_divs = self.get_div_descendants_by_type('translation')
+        translation_divs = self._tei_element.get_div_descendants_by_type('translation')
 
         return '\n'.join([TeiElement(div)._e.text_desc_compressed_whitespace 
                        for div in translation_divs])
@@ -763,5 +766,14 @@ class TeiDoc(DocRoot):
         message, either an error if it has failed, or a string 
         confirming that the file is valid.
         """
-        return self.validate_by_relaxng(self._rng_path)
+        return self._xmlroot.validate_by_relaxng(self._rng_path)
+    
+    @property
+    def xml_element(self) -> XmlElement:
+        return self._xmlroot.xml_element
+
+    @property
+    def xmlroot(self) -> XmlRoot:
+        return self._xmlroot
+    
 

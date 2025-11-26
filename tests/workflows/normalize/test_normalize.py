@@ -1,7 +1,7 @@
 import pytest
 from pyepidoc.epidoc.edition_elements.w import W
 from pyepidoc.epidoc.token import Token
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
 
@@ -76,7 +76,7 @@ def test_representable_normalization(inpt: tuple[str, str]):
     elem = EditionElement.from_xml_str(xml_str)
     
     # Act
-    representable = Representable(elem.e)
+    representable = RepresentableElement(elem.e)
     # breakpoint()
     # Assert
     assert representable.normalized_form == normalized_form

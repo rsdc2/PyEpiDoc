@@ -1,33 +1,33 @@
 from __future__ import annotations
 from lxml.etree import _Element
 
+from pyepidoc.epidoc.representable import RepresentableElement
 from .w import W
 
-
-class Name(W):
+class Name(RepresentableElement):
     """
     Provides services for string representation of <w> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+    _w: W
 
-        self._e = e
+    def __init__(self, e: _Element):
+        super().__init__(e)
 
         if self._e.localname != 'name':
             raise TypeError('Element should be <name>.')
+        self._w = W(e)
         
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Name):
             return False
-        return self.leiden_str == other.leiden_str
+        return self._w.leiden_str == other._w.leiden_str
 
     def __hash__(self):
         return hash(self.leiden_str)
 
     def __repr__(self) -> str:
-        return f'Name("{self.leiden_str}")'
+        return f'Name("{self._w.leiden_str}")'
 
     @property
     def name_type(self) -> str:

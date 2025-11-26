@@ -13,20 +13,11 @@ class Lb(EditionElement):
     """
 
     def __init__(self, e: _Element | EditionElement | XmlElement):
-        type_err_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
-        node_name_err_msg = f'Element must be <lb>. Element is {EditionElement(e)._e.localname}.'
 
-        if type(e) not in [_Element, EditionElement, XmlElement]:
-            raise TypeError(type_err_msg)
-
-        if type(e) is _Element:
-            self._e = e
-        elif type(e) is EditionElement:
-            self._e = e.e
-        elif type(e) is XmlElement:
-            self._e = e.e
+        super().__init__(e)
 
         if self._e.localname != 'lb':
+            node_name_err_msg = f'Element must be <lb>. Element is {EditionElement(e)._e.localname}.'
             raise TypeError(node_name_err_msg)
 
     def __repr__(self):

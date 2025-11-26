@@ -33,7 +33,7 @@ from .l import L
 from .lb import Lb
 from .lg import Lg
 from pyepidoc.epidoc.token import Token
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 from .textpart import TextPart
 
 from pyepidoc.shared.enums import (
@@ -613,13 +613,13 @@ class Edition(EditionElement):
         return self
     
     @property
-    def representable_no_subatomic(self) -> list[Representable]:
+    def representable_no_subatomic(self) -> list[RepresentableElement]:
         """
         :return: the descendant elements carrying text that should be represented
         in a text edition (either Leiden or normalized)
         """
 
-        return [Representable(word) 
+        return [RepresentableElement(word) 
                 for word in self._get_desc_representable_elements(items_with_atomic_ancestors=False)]
 
     @property

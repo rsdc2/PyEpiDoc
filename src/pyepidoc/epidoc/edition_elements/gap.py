@@ -1,11 +1,11 @@
 from functools import cached_property
 from lxml.etree import _Element
 from pyepidoc.epidoc.edition_element import EditionElement
-from pyepidoc.epidoc.representable import Representable
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import XMLNS
 
 
-class Gap(Representable):
+class Gap(RepresentableElement):
     """
     Provides services for abbreviation expansions 
     given in <gap> elements.
