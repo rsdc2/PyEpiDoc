@@ -33,7 +33,7 @@ class Surplus(EditionElement):
         
         return ''.join([
             '{',
-            leiden_str_from_children(self.e, element_classes, 'node'),
+            leiden_str_from_children(self._e._e, element_classes, 'node'),
             '}'
         ])
 

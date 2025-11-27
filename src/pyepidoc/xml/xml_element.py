@@ -144,10 +144,10 @@ class XmlElement(Showable):
                     self.last_child.tail += item
 
         elif isinstance(item, XmlElement):
-            self.e.append(item.e)
+            self._e.append(item._e)
 
         elif isinstance(item, _Element):
-            self.e.append(item)
+            self._e._e.append(item)
 
         else:
             raise TypeError(f'Expected: _Element or _ElementUnicodeResult; got {type(item)}')

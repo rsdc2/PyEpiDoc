@@ -102,7 +102,7 @@ class Abbr(RepresentableElement):
     def leiden_form(self) -> str:
 
         return leiden_str_from_children(
-            self.e,
+            self._e._e,
             self._element_classes,
             'node'
         )
@@ -111,7 +111,7 @@ class Abbr(RepresentableElement):
     def normalized_form(self) -> str:
         
         normalized = normalized_str_from_children(
-            self.e,
+            self._e._e,
             self._element_classes,
             'node'
         )

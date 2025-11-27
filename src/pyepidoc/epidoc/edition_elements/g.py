@@ -1,6 +1,8 @@
 from lxml.etree import _Element
 from ..edition_element import EditionElement
 from pyepidoc.shared.enums import AtomicTokenType
+from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.xml.xml_element import XmlElement
 
 class G(EditionElement):
     """
@@ -8,15 +10,13 @@ class G(EditionElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+    def __init__(self, e: _Element | TeiElement | XmlElement):
 
-        self._e = e
+        super().__init__(e)
 
         if self._e.localname != 'g':
-            raise TypeError('Element should be <g>.')
-
+            raise TypeError(f'Element should be <g> not {self._e.localname}.')
+        
     def __str__(self) -> str:
         return self.leiden_form
 

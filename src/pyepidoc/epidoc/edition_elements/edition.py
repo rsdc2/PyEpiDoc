@@ -247,7 +247,7 @@ class Edition(EditionElement):
         if ab._e.localname != 'ab':
             raise TypeError(f'The element is not <ab>, but is <{ab._e.localname}>')
 
-        self._e.append_node(ab)
+        self._e.append_node(ab._e)
         return self.abs[-1]
 
     def append_empty_ab(self) -> Ab:

@@ -1,33 +1,30 @@
 from __future__ import annotations
 from lxml.etree import _Element
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
+from .w import _W
 
-from pyepidoc.epidoc.representable import RepresentableElement
-from .w import W
-
-class Name(RepresentableElement):
+class Name(_W):
     """
     Provides services for string representation of <w> elements.
     """
 
-    _w: W
-
-    def __init__(self, e: _Element):
+    def __init__(self, e: _Element | XmlElement | TeiElement):
         super().__init__(e)
 
         if self._e.localname != 'name':
-            raise TypeError('Element should be <name>.')
-        self._w = W(e)
+            raise TypeError(f'Element should be <w> not {self._e.localname}.')
         
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Name):
             return False
-        return self._w.leiden_str == other._w.leiden_str
+        return self.leiden_str == other.leiden_str
 
     def __hash__(self):
         return hash(self.leiden_str)
 
     def __repr__(self) -> str:
-        return f'Name("{self._w.leiden_str}")'
+        return f'Name("{self.leiden_str}")'
 
     @property
     def name_type(self) -> str:

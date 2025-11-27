@@ -129,6 +129,7 @@ def normalized_str_from_children(
     param:child_type sets whether or not the children are elements or
     nodes (where nodes include text content)
     """
+    assert type(parent) is _Element
     
     non_ancestors = NonNormalized.values()
     child_str = 'child::node()' if child_type == 'node' else 'child::*'

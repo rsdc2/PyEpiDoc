@@ -1,6 +1,9 @@
 from lxml.etree import _Element
-from ..edition_element import EditionElement
-from ..utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
 
 from .orig import Orig
 from .reg import Reg
@@ -14,14 +17,12 @@ class Choice(EditionElement):
     given in <choice> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+    def __init__(self, e: _Element | XmlElement | TeiElement):
 
-        self._e = e
+        super().__init__(e)
 
         if self._e.localname != 'choice':
-            raise TypeError('Element should be <choice>.')
+            raise TypeError(f'Element should be <choice> not {self._e.localname}.')
 
     @property
     def leiden_form(self) -> str:
@@ -36,7 +37,7 @@ class Choice(EditionElement):
             'corr': Corr
         }
     
-        return leiden_str_from_children(self.e, element_classes, 'node')
+        return leiden_str_from_children(self._e._e, element_classes, 'node')
     
     @property
     def normalized_form(self) -> str:
@@ -50,4 +51,4 @@ class Choice(EditionElement):
             'corr': Corr
         }        
 
-        return normalized_str_from_children(self.e, element_classes, 'node')
+        return normalized_str_from_children(self._e._e, element_classes, 'node')

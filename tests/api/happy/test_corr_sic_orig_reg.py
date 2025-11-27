@@ -17,7 +17,8 @@ tests = [
 @pytest.mark.parametrize(['xml', 'sic', 'corr'], tests)
 def test_corr(xml: str, sic: str, corr: str):
 
-    w = Token(elem_from_str(xml))
+    elem = elem_from_str(xml)
+    w = Token(elem)
     assert w.normalized_form == corr
 
 

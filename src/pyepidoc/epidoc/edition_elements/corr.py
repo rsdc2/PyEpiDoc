@@ -1,6 +1,8 @@
 from lxml.etree import _Element
-from ..edition_element import EditionElement
-from ..utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.xml.xml_element import XmlElement
 
 
 class Corr(EditionElement):
@@ -9,14 +11,12 @@ class Corr(EditionElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+    def __init__(self, e: _Element | TeiElement | XmlElement):
 
-        self._e = e
+        super().__init__(e)
 
         if self._e.localname != 'corr':
-            raise TypeError('Element should be <corr>.')
+            raise TypeError(f'Element should be <corr> not {self._e.localname}.')
 
     @property
     def leiden_form(self) -> str:
@@ -27,7 +27,7 @@ class Corr(EditionElement):
             'expan': Expan
         }
         
-        return leiden_str_from_children(self.e, element_classes, 'node')
+        return leiden_str_from_children(self._e._e, element_classes, 'node')
     
     @property
     def normalized_form(self) -> str:

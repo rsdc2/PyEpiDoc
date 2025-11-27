@@ -8,17 +8,13 @@ from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 
-
-class W(RepresentableElement):
+class _W(RepresentableElement):
     """
     Provides services for string representation of <w> elements.
     """
 
     def __init__(self, e: _Element | XmlElement | TeiElement):
         super().__init__(e)
-
-        if self._e.localname != 'w':
-            raise TypeError(f'Element should be <w> not {self._e.localname}.')
         
     def __str__(self) -> str:
         return self.leiden_form
@@ -50,7 +46,7 @@ class W(RepresentableElement):
         }
         
         return leiden_str_from_children(
-            self.e, 
+            self._e._e, 
             element_classes, 
             'node'
         )
@@ -86,7 +82,7 @@ class W(RepresentableElement):
         if self.xml_id is None:
             return
         
-        inner_w = maxone(self.descendant_elements_by_local_name('w'), None, True)
+        inner_w = maxone(self._e.descendant_elements_by_local_name('w'), None, True)
         
         if inner_w is None:
             return
@@ -116,8 +112,14 @@ class W(RepresentableElement):
         }
         
         return normalized_str_from_children(
-            self.e, 
+            self._e._e, 
             element_classes, 
             'node'
         )
     
+class W(_W):
+    def __init__(self, e: _Element | XmlElement | TeiElement):
+        super().__init__(e)
+
+        if self._e.localname != 'w':
+            raise TypeError(f'Element should be <w> not {self._e.localname}.')

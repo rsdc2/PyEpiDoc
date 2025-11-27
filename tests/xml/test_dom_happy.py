@@ -21,7 +21,7 @@ def test_child_node_names(
     """
 
     ab = Ab(elem_from_str(abify(xml)))
-    assert ab.child_node_names == child_node_names
+    assert ab._e.child_node_names == child_node_names
 
 
 def test_remove_attr():

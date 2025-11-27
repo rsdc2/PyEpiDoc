@@ -231,7 +231,7 @@ class Expan(EditionElement):
         """
 
         return leiden_str_from_children(
-            self.e, 
+            self._e._e, 
             self.element_classes, 
             'element'
         )
@@ -239,7 +239,7 @@ class Expan(EditionElement):
     @property
     def normalized_form(self) -> str:
         return normalized_str_from_children(
-            self.e, 
+            self._e._e, 
             self.element_classes, 
             'element'
         )

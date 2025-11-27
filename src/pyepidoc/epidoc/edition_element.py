@@ -165,43 +165,44 @@ class EditionElement(TeiElement, Showable):
         if type(other) not in [EditionElement]:
             raise TypeError(f"Other element is of type {type(other)}.")
 
-        if self._e is None and other._e is not None:
+        if self._e._e is None and other._e._e is not None:
             return [other]
         
-        if other._e is None and self._e is not None:
+        if other._e is None and self._e._e is not None:
             return [self]
 
-        if other._e is None and self._e is None:
+        if other._e is None and self._e._e is None:
             return [self]
 
-        self_e = deepcopy(self._e)
-        other_e = deepcopy(other._e)
+        self_e = deepcopy(self._e._e)
+        other_e = deepcopy(other._e._e)
 
         if self_e is None or other_e is None:
             return []
 
         # Handle unlike tags
-        if self._e.tag != other._e.tag:
+        if self._e._e.tag != other._e._e.tag:
             # If right-bounded, never subsume
             # <lb break='no'> does not constitute a bound
             if self.right_bound and other.left_bound:
                 return [self, other]
             
             if self._can_subsume(other):
-                self_e.append_node(other_e)
+                self_e.append(other_e)
                 return [EditionElement(self_e, other._final_space)]
 
             if self._is_subsumable_by(other):
                 self_e.tail = other.text    # type: ignore
                 other_e.text = ''   # type: ignore
-                other_e._e.insert(0, self_e)
+                other_e.insert(0, self_e)
                 
                 return [EditionElement(other_e)]
             
             return [self, other]
 
         # Handle like tags        
-        if self._e.tag.name in AtomicTokenType.values() and other._e.tag.name in AtomicTokenType.values(): # Are there any tags that can merge apart from <w>?
+        if self._e.tag.name in AtomicTokenType.values() \
+            and other._e.tag.name in AtomicTokenType.values(): # Are there any tags that can merge apart from <w>?
             # No check for right bound, as assume 
             # spaces have already been taken into 
             # account in generating like adjacent tags
@@ -210,7 +211,7 @@ class EditionElement(TeiElement, Showable):
             last_child = last(list(self.child_elems))
             text = other.text
             if last_child is not None:
-                tail = last_child.tail
+                tail = last_child._e.tail
             else:
                 tail = ''
 
@@ -241,10 +242,10 @@ class EditionElement(TeiElement, Showable):
         tail = '' if self.tail is None else self.tail
         content = ''.join([
             "'",
-            self.tag.name, 
+            self._e.tag.name, 
             "'",
             ": '", 
-            self.text_desc_compressed_whitespace.strip(), 
+            self._e.text_desc_compressed_whitespace.strip(), 
             "'",
             f"{'; tail: ' if tail.strip() != '' else ''}", 
             tail.strip()]
@@ -253,7 +254,7 @@ class EditionElement(TeiElement, Showable):
         return f"Element({content})"
 
     def __str__(self):
-        return self.text_desc_compressed_whitespace
+        return self._e.text_desc_compressed_whitespace
 
     @property
     def abbr_elems(self) -> Sequence[EditionElement]:
@@ -511,14 +512,14 @@ class EditionElement(TeiElement, Showable):
         Unique computed element id based on hierarchical position in the XML document. 
         """
         
-        def _recfunc(acc: list[int], element: Optional[EditionElement]) -> list[int]:
+        def _recfunc(acc: list[int], element: EditionElement | None) -> list[int]:
             if element is None:
                 return acc 
 
             if element.e is None:
                 return acc
             
-            parent: _Element = element.e.getparent()
+            parent: _Element = element._e._e.getparent()
 
             if parent is None:
                 return acc
@@ -602,7 +603,7 @@ class EditionElement(TeiElement, Showable):
                 return child
 
             _e = deepcopy(e)
-            children:list[_Element] = [deepcopy(child) for child in e.getchildren()]
+            children: list[_Element] = [deepcopy(child) for child in e.getchildren()]
             
             for child in _e.getchildren():
                 _e.remove(child)
@@ -664,9 +665,9 @@ class EditionElement(TeiElement, Showable):
 
             raise ValueError(f"Invalid _element.tag.name: {_element._e.tag.name}")
         
-        if self._e is None:
+        if self._e._e is None:
             raise TypeError("Underlying element is None.")
-        e = remove_internal_extraneous_whitespace(self._e)
+        e = remove_internal_extraneous_whitespace(self._e._e)
         return make_internal_token(e)
 
     @property
@@ -964,10 +965,10 @@ class EditionElement(TeiElement, Showable):
 
             return elem
         
-        if self._e is None:
+        if self._e._e is None:
             raise TypeError("Underlying element is None")
 
-        return _remove_whitespace(self._e)
+        return _remove_whitespace(self._e._e)
 
     @property
     def right_bound(self) -> bool:
@@ -984,14 +985,14 @@ class EditionElement(TeiElement, Showable):
             return False
 
         last_child = last(list(self.child_elems))
-        if last_child is not None and (last_child.tail == '' or last_child.tail is None):
-            if  last_child.localname == 'lb' and last_child.get_attrib('break') == 'no':
+        if last_child is not None and (last_child._e.tail == '' or last_child._e.tail is None):
+            if  last_child._e.localname == 'lb' and last_child._e.get_attrib('break') == 'no':
                 return False
 
-        if self.e is None:
+        if self._e._e is None:
             return False
         
-        return self._final_space == True or self.e.tail == ' '
+        return self._final_space == True or self._e.tail == ' '
 
     @property
     def roman_numeral_chars_only(self) -> bool:
@@ -1333,7 +1334,7 @@ class EditionElement(TeiElement, Showable):
         self.tokenize_initial_text_in_container()
 
         token_carriers = chain(*self._find_token_carrier_sequences())
-        token_carriers_sorted = sorted(token_carriers)
+        token_carriers_sorted = [EditionElement(e) for e in sorted([e_._e for e_ in token_carriers])]
         
         def _redfunc(acc: list[EditionElement], element: EditionElement) -> list[EditionElement]:
             

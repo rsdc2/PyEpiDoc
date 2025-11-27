@@ -1,25 +1,21 @@
 from lxml.etree import _Element
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
-from pyepidoc.epidoc.edition_elements.w import W
+from pyepidoc.epidoc.edition_elements.w import _W
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.epidoc.representable import RepresentableElement
 
 
-class Num(RepresentableElement):
+class Num(_W):
     """
     Provides services for abbreviation expansions 
     given in <num> elements.
     """
 
-    _w: W
-
-    def __init__(self, e: _Element):
+    def __init__(self, e: _Element | XmlElement | TeiElement):
         super().__init__(e)
 
-        if self._e.localname != 'name':
-            raise TypeError('Element should be <name>.')
-        self._w = W(e)
+        if self._e.localname != 'num':
+            raise TypeError(f'Element should be <num> not {self._e.localname}.')
 
     @property
     def leiden_form(self) -> str:
@@ -34,7 +30,7 @@ class Num(RepresentableElement):
             'g': G
         }
         
-        return leiden_str_from_children(self.e, element_classes, 'node')
+        return leiden_str_from_children(self._e._e, element_classes, 'node')
     
     @property
     def normalized_form(self) -> str:
@@ -49,7 +45,7 @@ class Num(RepresentableElement):
         }
         
         normalized_str = normalized_str_from_children(
-            self.e, 
+            self._e._e, 
             element_classes, 
             'node'
         )

@@ -8,7 +8,7 @@ def test_validate_relax_ng():
     """
     doc = EpiDoc('tests/xml/files/ISic000002.xml')
     # doc = EpiDoc('xml/files/ex.xml')
-    assert doc.validate_by_relaxng(doc._rng_path)[0] == True
+    assert doc._xmlroot.validate_by_relaxng(doc._rng_path)[0] == True
 
 
 # def test_validate_isoschematron():
@@ -35,5 +35,5 @@ def test_validate_does_not_change_file():
     doc2 = EpiDoc('tests/xml/files/ISic000001_with_xinclude.xml', 
                validate_on_load=True)
     
-    assert doc1.to_byte_str() == doc2.to_byte_str()
+    assert doc1._xmlroot.to_byte_str() == doc2._xmlroot.to_byte_str()
     

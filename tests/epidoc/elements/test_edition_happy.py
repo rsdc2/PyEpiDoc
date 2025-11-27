@@ -2,6 +2,7 @@ from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.xml.utils import abify, editionify
+from pyepidoc.xml.xml_element import XmlElement
 
 import pytest
 
@@ -41,7 +42,8 @@ def test_append_ab_to_edition():
 
     # Arrange
     doc = EpiDoc('templates/empty_template.xml')
-    ab = Ab.from_xml_str(abify('<w>hello</w>'))
+    ab_str = abify('<w>hello</w>')
+    ab = Ab(XmlElement.from_xml_str(ab_str))
 
     # Act
     doc.main_edition.append_ab(ab)
