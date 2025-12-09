@@ -188,9 +188,7 @@ class EpiDoc(TeiDoc):
         main edition is not present, and None is returned.
         """
         try:
-            return self.body.edition_by_subtype(subtype=None) or \
-                self.body.edition_by_subtype(subtype='PHI') or \
-                self.body.edition_by_subtype(subtype='EDR')
+            return self.body.main_edition
         except ValueError as e:
             raise ValueError(f"Encountered the following error in {self.id}:\n"
                              f"{e.args[0]}")
@@ -609,7 +607,7 @@ class EpiDoc(TeiDoc):
         """
 
         # Check there is a main edition
-        main_edition = self.edition_by_subtype(None)
+        main_edition = self.edition_main
         if main_edition is None:
             raise ValueError('No main edition could be found.')
 
