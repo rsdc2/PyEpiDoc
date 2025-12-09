@@ -133,7 +133,7 @@ class Body(EpiDocElement):
         new_edition = Edition(edition_elem)
 
         # Insert the new edition after the main edition
-        main_edition = self.edition_by_subtype(None)
+        main_edition = self.main_edition
         if main_edition is None:
             raise ValueError("No main edition present.")
         
@@ -186,6 +186,26 @@ class Body(EpiDocElement):
                 lambda ed: ed.subtype != 'transliteration', 
                 editions
             )
+        
+    @property
+    def main_edition(self) -> Edition | None:
+        
+        """
+        Return the main edition (i.e. not transliteration or
+        lemmatized edition).
+
+        If the @subtype attribute is set to 'unsupplied',
+        this is currently treated as though the 
+        main edition is not present, and None is returned.
+        """
+        try:
+            return self.edition_by_subtype(subtype=None) or \
+                self.edition_by_subtype(subtype='PHI') or \
+                self.edition_by_subtype(subtype='EDR') or \
+                self.edition_by_subtype(subtype='primary')
+        except ValueError as e:
+            raise ValueError(f"Could not obtain the main edition:\n"
+                             f"{e.args[0]}")
 
     def token_by_id_from_edition(
             self, 
