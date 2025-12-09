@@ -54,7 +54,7 @@ class Change(EpiDocElement):
     
     @staticmethod
     def from_dict(dict: dict[str, str]) -> Change:
-        return Change.from_details(dict['when'], dict['who'], dict['text'])
+        return Change.from_details(who=dict['who'], text=dict['text'], when=dict['when'])
 
     @property
     def when(self) -> str | None:
