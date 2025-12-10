@@ -15,8 +15,8 @@ class Orig(RepresentableElement):
     def __init__(self, e: _Element | XmlElement | TeiElement):
         super().__init__(e)
 
-        if self._e.localname != 'persName':
-            raise TypeError(f'Element should be <persName> not {self._e.localname}.')
+        if self._e.localname != 'orig':
+            raise TypeError(f'Element should be <orig> not {self._e.localname}.')
 
     def __repr__(self) -> str:
         return f'Orig("{self.leiden_form}")'

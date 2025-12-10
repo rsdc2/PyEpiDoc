@@ -14,8 +14,8 @@ class Reg(EditionElement):
     def __init__(self, e: _Element | XmlElement | TeiElement):
         super().__init__(e)
 
-        if self._e.localname != 'persName':
-            raise TypeError(f'Element should be <persName> not {self._e.localname}.')
+        if self._e.localname != 'reg':
+            raise TypeError(f'Element should be <reg> not {self._e.localname}.')
 
     @property
     def leiden_form(self) -> str:
