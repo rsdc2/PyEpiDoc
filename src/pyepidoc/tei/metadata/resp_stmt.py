@@ -8,7 +8,7 @@ from pyepidoc.shared.iterables import head
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.xml.xml_element import XmlElement
-
+from pyepidoc.tei.tei_element import TeiElement
 
 class RespStmt(EditionElement):
     """
@@ -38,11 +38,11 @@ class RespStmt(EditionElement):
         :ref: e.g. ORCID 
         """
 
-        resp_stmt_elem = RespStmt.create_resp_stmt()
+        resp_stmt_elem = XmlElement(RespStmt.create_resp_stmt())
         name_elem = RespStmt.create_name(name, initials, ref)
         resp_elem = RespStmt.create_resp(resp_text)
-        resp_stmt_elem.append(name_elem)
-        resp_stmt_elem.append(resp_elem)
+        resp_stmt_elem.append_node(name_elem)
+        resp_stmt_elem.append_node(resp_elem)
         resp_stmt = RespStmt(resp_stmt_elem)
         return resp_stmt
     
@@ -67,7 +67,7 @@ class RespStmt(EditionElement):
         return respStmt
 
     @staticmethod
-    def create_name(name: str, initials: str, ref: str) -> _Element:
+    def create_name(name: str, initials: str, ref: str) -> XmlElement:
         """
         Create a new <name> element
 
@@ -81,26 +81,26 @@ class RespStmt(EditionElement):
         epidoc_elem.set_attrib("id", initials, XMLNS)
         epidoc_elem.set_attrib("ref", ref)
         epidoc_elem.text = name
-        return epidoc_elem.e
+        return epidoc_elem._e
     
     @staticmethod
-    def create_resp(text: str) -> _Element:
+    def create_resp(text: str) -> XmlElement:
         """
         Create the <resp> element within the <respStmt/>
         """
         tag = ns.give_ns("resp", TEINS)
         elem: _Element = etree.Element(tag)
         elem.text = text
-        return elem
+        return XmlElement(elem)
 
     @staticmethod
-    def create_resp_stmt() -> _Element:
+    def create_resp_stmt() -> XmlElement:
         """
         Create the <respStmt> element
         """
         tag = ns.give_ns("respStmt", TEINS)
         elem: _Element = etree.Element(tag) 
-        return elem
+        return XmlElement(elem)
     
     @property
     def initials(self) -> str | None:
@@ -130,9 +130,9 @@ class RespStmt(EditionElement):
     def resp(self) -> str | None:
         if self.resp_elem is None:
             return None
-        return self.resp_elem.text
+        return self.resp_elem._e.text
 
     @property
-    def resp_elem(self) -> XmlElement | None:
+    def resp_elem(self) -> TeiElement | None:
         desc_elems = self.get_desc_tei_elems(['resp'])
         return head(desc_elems)

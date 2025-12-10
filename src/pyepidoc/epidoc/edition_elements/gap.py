@@ -3,6 +3,9 @@ from lxml.etree import _Element
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import XMLNS
+from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.epidoc.utils import localname
 
 
 class Gap(RepresentableElement):
@@ -11,14 +14,13 @@ class Gap(RepresentableElement):
     given in <gap> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+    def __init__(self, e: _Element | EditionElement | TeiElement | XmlElement):
 
-        self._e = e
+        super().__init__(e)
 
-        if self._e.localname != 'gap':
-            raise TypeError('Element should be <gap>.')
+        if localname(self._e._e) != 'gap':
+            raise TypeError(f'Element should be of type <gap>, '
+                            f'but is of type <{localname(self._e._e)}>.')
         
     def __repr__(self) -> str:
         return f'Gap("{self.leiden_form}")'

@@ -22,7 +22,7 @@ class TitleStmt(TeiElement):
         if resp_stmt.initials is None:
             raise TypeError('resp_stmt.initials cannot be None ')
         if not self.has_resp_initials(resp_stmt.initials):
-            self._e._e.append(resp_stmt.e)
+            self._e.append_node(resp_stmt._e)
         return self
 
     def append_new_resp_stmt(

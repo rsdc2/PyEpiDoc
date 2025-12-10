@@ -88,7 +88,7 @@ class _W(RepresentableElement):
             return
         
         inner_w.set_attrib('id', xml_id, XMLNS)
-        self.remove_attr('id', XMLNS, True)
+        self._e.remove_attr('id', XMLNS, True)
 
     @property
     def normalized_form(self) -> str:

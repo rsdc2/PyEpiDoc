@@ -19,12 +19,12 @@ def test_set_ids_in_epidoc(xml_str: str, xml_ids: list[str]):
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
     ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
-    names = [Name(token.e) for token in doc.tokens if token.localname == 'name']
-    nums =  [Num(token.e) for token in doc.tokens if token.localname == 'num']
+    names = [Name(token.e) for token in doc.tokens if token._e.localname == 'name']
+    nums =  [Num(token.e) for token in doc.tokens if token._e.localname == 'num']
 
     for xml_id in xml_ids:
         token = doc.main_edition.token_by_xml_id(xml_id)
-        assert token.localname in ['name', 'num']
+        assert token._e.localname in ['name', 'num']
 
     # Act
     for name in names:
@@ -35,4 +35,4 @@ def test_set_ids_in_epidoc(xml_str: str, xml_ids: list[str]):
     # Assert
     for xml_id in xml_ids:
         token = doc.main_edition.token_by_xml_id(xml_id)
-        assert token.localname == 'w'
+        assert token._e.localname == 'w'

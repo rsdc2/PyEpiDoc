@@ -1,6 +1,8 @@
 from lxml.etree import _Element
-from ..edition_element import EditionElement
-from ..utils import leiden_str_from_children
+from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.utils import leiden_str_from_children
 
 
 class Reg(EditionElement):
@@ -9,14 +11,11 @@ class Reg(EditionElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+    def __init__(self, e: _Element | XmlElement | TeiElement):
+        super().__init__(e)
 
-        self._e = e
-
-        if self._e.localname != 'reg':
-            raise TypeError('Element should be <reg>.')
+        if self._e.localname != 'persName':
+            raise TypeError(f'Element should be <persName> not {self._e.localname}.')
 
     @property
     def leiden_form(self) -> str:

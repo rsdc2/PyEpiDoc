@@ -147,7 +147,7 @@ class XmlElement(Showable):
             self._e.append(item._e)
 
         elif isinstance(item, _Element):
-            self._e._e.append(item)
+            self._e.append(item)
 
         else:
             raise TypeError(f'Expected: _Element or _ElementUnicodeResult; got {type(item)}')
@@ -778,14 +778,11 @@ class XmlElement(Showable):
             return Tag(match.groups()[1], match.groups()[2])
 
     @property
-    def tail(self) -> Optional[str]:
-        return self._e.tail if self._e is not None else ''
+    def tail(self) -> str | None:
+        return self._e.tail
 
     @tail.setter
     def tail(self, value: str):
-        if self._e is None:
-            return
-
         self._e.tail = value    # type: ignore
 
     @property

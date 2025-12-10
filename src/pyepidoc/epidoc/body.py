@@ -83,12 +83,11 @@ class Body(TeiBody):
                     for desc in ab._e.descendant_elements:
                         representable = Token(desc).representable_cls_inst
                         if desc.localname in StandoffEditionElements and representable is None:
-                            breakpoint()
                             raise ValueError(f'{desc} should have a representable instance.')
                         if desc.localname in StandoffEditionElements and representable is not None:
                             desc_copy_token = representable.simple_lemmatized_edition_element    
                             desc_copy_token._e.remove_attr('id', XMLNS)
-                            ab_copy._e.append(desc_copy_token.e)   
+                            ab_copy.append_node(desc_copy_token._e)   
 
         append_items(source, TeiElement(target))
         return target
@@ -133,7 +132,7 @@ class Body(TeiBody):
         if main_edition is None:
             raise ValueError("No main edition present.")
         
-        main_edition_idx = self._e._e.index(main_edition._e, None, None)
+        main_edition_idx = self._e._e.index(main_edition._e._e, None, None)
         self._e._e.insert(main_edition_idx + 1, edition_elem)
         return new_edition
 

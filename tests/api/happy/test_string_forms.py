@@ -120,7 +120,7 @@ def test_non_tokens_normalized_string_forms(
     ab = Ab(elem_from_str(abify(xml)))
 
     # Act
-    normalized_tokens = [RepresentableElement(child).normalized_form for child in ab.children]
+    normalized_tokens = [RepresentableElement(child).normalized_form for child in ab._e.children]
 
     # Assert
     assert normalized_tokens == expected_normalized_tokens
@@ -139,7 +139,7 @@ def test_non_tokens_leiden_string_forms(
     ab = Ab(elem_from_str(abify(xml)))
 
     # Act
-    leiden_tokens = [RepresentableElement(child).leiden_form for child in ab.children]
+    leiden_tokens = [RepresentableElement(child).leiden_form for child in ab._e.children]
 
     # Assert
     assert leiden_tokens == expected_leiden_tokens

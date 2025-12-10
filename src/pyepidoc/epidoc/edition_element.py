@@ -137,15 +137,15 @@ class EditionElement(TeiElement, Showable):
 
     def __init__(
         self, 
-        e: _Element | EditionElement | XmlElement,
+        e: _Element | EditionElement | XmlElement | TeiElement,
         final_space: bool = False
     ):
         
-        if not isinstance(e, (_Element, TeiElement, XmlElement)):
+        if not isinstance(e, (_Element, TeiElement, XmlElement, EditionElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
-        elif isinstance(e, TeiElement):
+        elif isinstance(e, (TeiElement, EditionElement)):
             self._e = e._e
         elif isinstance(e, XmlElement):
             self._e = e
@@ -174,11 +174,11 @@ class EditionElement(TeiElement, Showable):
         if other._e is None and self._e._e is None:
             return [self]
 
-        self_e = deepcopy(self._e._e)
-        other_e = deepcopy(other._e._e)
+        self_e = XmlElement(deepcopy(self._e._e))
+        other_e = XmlElement(deepcopy(other._e._e))
 
-        if self_e is None or other_e is None:
-            return []
+        # if self_e is None or other_e is None:
+        #     return []
 
         # Handle unlike tags
         if self._e._e.tag != other._e._e.tag:
@@ -188,13 +188,13 @@ class EditionElement(TeiElement, Showable):
                 return [self, other]
             
             if self._can_subsume(other):
-                self_e.append(other_e)
+                self_e.append_node(other_e)
                 return [EditionElement(self_e, other._final_space)]
 
             if self._is_subsumable_by(other):
-                self_e.tail = other.text    # type: ignore
-                other_e.text = ''   # type: ignore
-                other_e.insert(0, self_e)
+                self_e.tail = other.text   
+                other_e.text = ''  
+                other_e._e.insert(0, self_e)
                 
                 return [EditionElement(other_e)]
             
@@ -219,7 +219,7 @@ class EditionElement(TeiElement, Showable):
             # an element that can be subsumed by self;
             # if so, merge tags
             if (text is None or text == '') and first_child is not None:
-                if not self.right_bound or first_child.tag.name in AlwaysSubsumable:
+                if not self.right_bound or first_child._e.tag.name in AlwaysSubsumable:
                     if self._can_subsume(first_child):
 
                         for child in other_e._e.getchildren():
@@ -230,16 +230,16 @@ class EditionElement(TeiElement, Showable):
             # subsume it;
             # if so, merge tags
             if (tail is None or tail == '') and last_child is not None:
-                if not self.right_bound or last_child.tag.name in AlwaysSubsumable:
+                if not self.right_bound or last_child._e.tag.name in AlwaysSubsumable:
                     if other._can_subsume(last_child):
-                        for child in other_e._e.getchildren():
-                            self_e._e.append(child)
+                        for child in other_e.child_elements:
+                            self_e.append_node(child)
                         return [EditionElement(self_e, other._final_space)]
             
         return [EditionElement(self_e, self._final_space), EditionElement(other_e, other._final_space)]
 
     def __repr__(self):
-        tail = '' if self.tail is None else self.tail
+        tail = '' if self._e.tail is None else self._e.tail
         content = ''.join([
             "'",
             self._e.tag.name, 
@@ -276,8 +276,6 @@ class EditionElement(TeiElement, Showable):
         return [EditionElement(abbr) 
                 for abbr in self.get_desc_tei_elems('am')]
 
-
-
     def append_space(self) -> EditionElement:
         """
         Appends a space to the element in place.
@@ -290,7 +288,7 @@ class EditionElement(TeiElement, Showable):
             return self
 
         if self._e.tail is None:
-            self._e.tail = ' ' # type: ignore
+            self._e.tail = ' '
             return self
 
         if set(self._e.tail) == {' '}:
@@ -344,17 +342,12 @@ class EditionElement(TeiElement, Showable):
 
     @property
     def dict_desc(self) -> dict[str, str | dict]:
-        if self._e is None:
-            return {'name': self.localname, 
-                    'ns': self.tag.ns, 
-                    'attrs': dict()}
-
         return {'name': self._e.localname, 
                 'ns': self._e.tag.ns, 
                 'attrs': self._e._e.attrib}
 
     @property
-    def e(self) -> _Element:
+    def e(self) -> XmlElement:
         return self._e
 
     @property
@@ -465,13 +458,15 @@ class EditionElement(TeiElement, Showable):
     def is_abbreviated(self) -> bool:
         return self.has_abbr
 
-    def has_gap(self, reasons:list[str]=[]) -> bool:
+    def has_gap(self, reasons: list[str] | None = None) -> bool:
         """
         Returns True if the document contains a <gap> element with a reason
         contained in the "reasons" attribute.
         If "reasons" is set to an empty list, 
         returns True if there are any gaps regardless of reason.
         """
+        if reasons is None:
+            reasons = []
 
         if self.gaps == []:
             return False
@@ -519,12 +514,12 @@ class EditionElement(TeiElement, Showable):
             if element.e is None:
                 return acc
             
-            parent: _Element = element._e._e.getparent()
+            parent = element._e.parent
 
             if parent is None:
                 return acc
 
-            return _recfunc([parent.index(element.e, start=None, stop=None)] + acc, element.parent)
+            return _recfunc([parent._e.index(element.e, start=None, stop=None)] + acc, element.parent)
 
         return _recfunc([], self)
 
@@ -538,18 +533,18 @@ class EditionElement(TeiElement, Showable):
         if self._e is None:
             return ""
 
-        xpathres = self._e.xpath(
+        xpath_result = self._e.xpath(
             f'preceding::x:idno[@type="filename"]', 
             namespaces={"x": TEINS}
         ) 
         
-        if type(xpathres) is not list:
+        if type(xpath_result) is not list:
             raise TypeError("XPath result is not a list.")
 
-        if len(xpathres) > 0:
-            return cast(str, xpathres[0].text)
+        if len(xpath_result) > 0:
+            return cast(str, xpath_result[0].text)
 
-        return ""
+        return ''
 
     @property
     def _internal_prototokens(self) -> list[str]:

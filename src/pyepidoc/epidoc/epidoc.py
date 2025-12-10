@@ -927,10 +927,10 @@ class EpiDoc(TeiDoc):
         
         # Root element
         # Remove trailing text
-        self.root_elem._e.tail = ''
-        self.root_elem._e.text = '\n' + multiplier * space_unit + (self.root_elem._e.text or '').strip() \
+        self.root_elem.tail = ''
+        self.root_elem.text = '\n' + multiplier * space_unit + (self.root_elem.text or '').strip() \
             if len(self._xmlroot.desc_elems) > 0 \
-            else '\n' + space_unit * multiplier + (self.root_elem._e.text or '').strip()
+            else '\n' + space_unit * multiplier + (self.root_elem.text or '').strip()
         
         return epidoc
 

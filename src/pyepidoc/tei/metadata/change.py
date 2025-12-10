@@ -6,8 +6,7 @@ from pyepidoc.epidoc.edition_element import EditionElement
 
 class Change(EditionElement):
     """
-    The <respStmt> node, including collections of
-    <respStmt>
+    The <Change> node
     """
 
     def __eq__(self, other: object) -> bool:

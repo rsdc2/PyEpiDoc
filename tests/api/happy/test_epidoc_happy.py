@@ -182,7 +182,7 @@ def test_lines():
     assert l3.n == '1'
     
     second_token = doc_2.tokens_no_nested[1]
-    assert second_token.text_desc == 'ambulavit'
+    assert second_token._e.text_desc == 'ambulavit'
 
     l4 = line(second_token)
     assert l4 is not None
@@ -224,9 +224,9 @@ def test_reproduces_processing_instructions():
     doc_ = save_and_reload(doc, line_2_output_path, FILE_WRITE_MODE)
 
     # Assert
-    assert len(doc.processing_instructions) == len(doc_.processing_instructions)
-    assert all([str(instr) in list(map(str, doc.processing_instructions)) 
-                for instr in doc_.processing_instructions])
+    assert len(doc._xmlroot.processing_instructions) == len(doc_._xmlroot.processing_instructions)
+    assert all([str(instr) in list(map(str, doc._xmlroot.processing_instructions)) 
+                for instr in doc_._xmlroot.processing_instructions])
     
 
 def test_can_get_title_stmt():
