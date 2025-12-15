@@ -27,7 +27,7 @@ class RevisionDesc(TeiElement):
         """
         revision_desc = RevisionDesc(TeiElement.create('revisionDesc'))
         list_change = ListChange.create()
-        revision_desc._e.append_node(list_change)
+        revision_desc._e.append_node(list_change._e)
         return revision_desc
     
     def from_epidoc_element(element: TeiElement) -> RevisionDesc:

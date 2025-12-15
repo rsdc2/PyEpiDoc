@@ -20,7 +20,7 @@ def test_set_lemma():
 
     ws = doc.w_tokens
     w = ws[0]
-    assert w.text_desc == 'σώματος'
+    assert w._e.text_desc == 'σώματος'
 
     # Act
     w.lemma = 'σῶμα'

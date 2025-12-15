@@ -194,7 +194,7 @@ class EditionElement(TeiElement, Showable):
             if self._is_subsumable_by(other):
                 self_e.tail = other.text   
                 other_e.text = ''  
-                other_e._e.insert(0, self_e)
+                other_e._e.insert(0, self_e._e)
                 
                 return [EditionElement(other_e)]
             

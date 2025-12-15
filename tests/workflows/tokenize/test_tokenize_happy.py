@@ -143,7 +143,7 @@ def test_model_headers():
         tokenize_func = tokenize_epidoc
 
     tokenized_epidoc, tokenized_benchmark = tokenize_func(tokenize_type='xml_model_headers_1')
-    assert tokenized_epidoc.processing_instructions_str == tokenized_benchmark.processing_instructions_str
+    assert tokenized_epidoc._xmlroot.processing_instructions_str == tokenized_benchmark._xmlroot.processing_instructions_str
 
 named_entities_xml = [
     ('<lb n="1"/>Dis Manibus sacrum <name>Corneliae</name>',
@@ -172,7 +172,7 @@ def test_tokenize_and_insert_ws_inside_named_entities(xml_pair: tuple[str, str])
     edition.space_tokens()
 
     # Assert
-    assert edition.xml_str == expected_edition.xml_str
+    assert edition._e.xml_str == expected_edition._e.xml_str
 
 
 @pytest.mark.parametrize("tokenize_type", tests)
@@ -190,14 +190,14 @@ def test_tokenize_special_cases(tokenize_type: str):
     if [str(word) for word in tokenized_epidoc.tokens_no_nested] != [str(word) for word in tokenized_benchmark.tokens_no_nested]:
         assert False
     
-    if [word.xml_byte_str for word in tokenized_epidoc.tokens_no_nested] != [word.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]:
+    if [word._e.xml_byte_str for word in tokenized_epidoc.tokens_no_nested] != [word._e.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]:
         assert False
     
-    if [word.xml_byte_str for word in tokenized_epidoc.compound_words] != [word.xml_byte_str for word in tokenized_benchmark.compound_words]:
+    if [word._e.xml_byte_str for word in tokenized_epidoc.compound_words] != [word._e.xml_byte_str for word in tokenized_benchmark.compound_words]:
         assert False
 
     # breakpoint()
-    if [edition.xml_byte_str for edition in tokenized_epidoc.editions()] != [edition.xml_byte_str for edition in tokenized_benchmark.editions()]:
+    if [edition._e.xml_byte_str for edition in tokenized_epidoc.editions()] != [edition._e.xml_byte_str for edition in tokenized_benchmark.editions()]:
         assert False
 
 

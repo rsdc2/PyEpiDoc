@@ -4,6 +4,7 @@ from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
+from pyepidoc.xml.xml_element import XmlElement
 
 w_elements = [
     ('<persName><name type="cognomen"><w>Melant<supplied reason="undefined" '
@@ -23,7 +24,7 @@ def test_w_normalization(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, normalized_form = inpt
-    elem = EditionElement.from_xml_str(xml_str)
+    elem = XmlElement.from_xml_str(xml_str)
 
     # Act 
     try:
@@ -54,10 +55,10 @@ def test_token_normalization(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, normalized_form = inpt
-    elem = EditionElement.from_xml_str(xml_str)
+    elem = XmlElement.from_xml_str(xml_str)
     
     # Act
-    token = Token(elem.e)
+    token = Token(elem._e)
     
     # Assert
     assert token.normalized_form == normalized_form
@@ -70,14 +71,13 @@ representable_elements = [
 
 @pytest.mark.parametrize('inpt', representable_elements)
 def test_representable_normalization(inpt: tuple[str, str]):
-
     # Arrange
     xml_str, normalized_form = inpt
-    elem = EditionElement.from_xml_str(xml_str)
+    elem = XmlElement.from_xml_str(xml_str)
     
     # Act
-    representable = RepresentableElement(elem.e)
-    # breakpoint()
+    representable = RepresentableElement(elem._e)
+
     # Assert
     assert representable.normalized_form == normalized_form
 

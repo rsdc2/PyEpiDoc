@@ -112,7 +112,8 @@ class RespStmt(EditionElement):
 
     @property
     def name(self) -> str | None:
-        if self.name_elem is None: return None
+        if self.name_elem is None: 
+            return None
         return self.name_elem.text
     
     @property

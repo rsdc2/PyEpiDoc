@@ -85,17 +85,17 @@ def test_lemmatize_on_separate_edition(
     if len(lemmatized_ed.w_tokens) != 0:
         assert lemmatized_ed.w_tokens[0].lemma == 'lemma'
 
-    assert len(lemmatized_ed.descendant_elements_by_local_name('w')) \
+    assert len(lemmatized_ed._e.descendant_elements_by_local_name('w')) \
         == tag_counts.get('w', 0)
-    assert len(lemmatized_ed.descendant_elements_by_local_name('orig')) \
+    assert len(lemmatized_ed._e.descendant_elements_by_local_name('orig')) \
         ==  tag_counts.get('orig', 0)
-    assert len(lemmatized_ed.descendant_elements_by_local_name('gap')) \
+    assert len(lemmatized_ed._e.descendant_elements_by_local_name('gap')) \
         == tag_counts.get('gap', 0)
-    assert len(lemmatized_ed.descendant_elements_by_local_name('desc')) \
+    assert len(lemmatized_ed._e.descendant_elements_by_local_name('desc')) \
         == tag_counts.get('desc', 0)
     
     # Check that only those elements have been copied across
-    assert lemmatized_ed.descendant_element_name_set - \
+    assert lemmatized_ed._e.descendant_element_name_set - \
         set(StandoffEditionElements) == set()
 
 

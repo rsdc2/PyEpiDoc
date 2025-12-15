@@ -3,6 +3,8 @@ from lxml.etree import _Element
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import XMLNS
+from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.xml.xml_element import XmlElement
 
 class Space(RepresentableElement):
     """
@@ -10,14 +12,11 @@ class Space(RepresentableElement):
     given in <gap> elements.
     """
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
-
-        self._e = e
+    def __init__(self, e: _Element | TeiElement | XmlElement):
+        super().__init__(e)
 
         if self._e.localname != 'space':
-            raise TypeError('Element should be <space>.')
+            raise TypeError(f'Element should be <space> but is <{self.e.localname}>.')
         
     def __repr__(self) -> str:
         return f'Space("{self.leiden_form}")'

@@ -37,7 +37,7 @@ class TeiHeader(EditionElement):
         if self.revision_desc is not None:
             raise Exception('<revisionDesc> already exists on <teiHeader>')
         revision_desc = RevisionDesc.create()
-        self._e.append_node(revision_desc)
+        self._e.append_node(revision_desc._e)
         return self
     
     @staticmethod

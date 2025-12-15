@@ -8,7 +8,7 @@ class ListChange(TeiElement):
         """
         Append a <change> element to the <listChange>
         """
-        self._e.append_node(change)
+        self._e.append_node(change._e)
         return self
 
     @property

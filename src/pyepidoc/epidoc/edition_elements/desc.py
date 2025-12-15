@@ -1,15 +1,15 @@
 from lxml.etree import _Element
+from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.representable import RepresentableElement
 
 class Desc(RepresentableElement):
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
+    def __init__(self, e: _Element | TeiElement | XmlElement):
 
-        self._e = e
+        super().__init__(e)
 
         if self._e.localname != 'desc':
-            raise TypeError('Element should be <desc>.')
+            raise TypeError(f'Element should be <corr> not {self._e.localname}.')
         
     @property
     def leiden_form(self):

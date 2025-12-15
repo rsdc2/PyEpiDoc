@@ -23,7 +23,7 @@ class FileDesc(TeiElement):
             raise TypeError('The element to append is not a <titleStmt> element'
                             f'but a <{title_stmt._e.localname}> element')
         
-        self._e.append_node(title_stmt)
+        self._e.append_node(title_stmt._e)
 
         if self.title_stmt is None:
             raise Exception('Failed to append <titleStmt>')
@@ -39,7 +39,7 @@ class FileDesc(TeiElement):
                              'one present in the document')
         
         publication_stmt = TeiElement.create('publicationStmt')
-        self._e.append_node(publication_stmt)
+        self._e.append_node(publication_stmt._e)
         
         if self.publication_stmt is None:
             raise TypeError('Failed to add <publicationStmt> element')
@@ -62,7 +62,7 @@ class FileDesc(TeiElement):
         """
         if self.title_stmt is None:
             title_stmt = TitleStmt(TeiElement.create('titleStmt'))
-            return self.append_title_stmt(title_stmt)
+            return self.append_title_stmt(title_stmt._e)
 
         return self.title_stmt
 

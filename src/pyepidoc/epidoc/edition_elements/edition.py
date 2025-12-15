@@ -206,21 +206,11 @@ class Edition(EditionElement):
     Provides services for <div type="edition> elements.
     """
 
-    def __init__(self, e: Optional[_Element | TeiElement | XmlElement]=None):
-        if not isinstance(e, (_Element, TeiElement, XmlElement)) and \
-            e is not None:
-            
-            raise TypeError(f'Input element is of type {type(e)}. It should be _Element or Element type, or None.')
-
-        if type(e) is _Element:
-            self._e = XmlElement(e)
-        elif type(e) is TeiElement:
-            self._e = e._e
-        elif type(e) is XmlElement:
-            self._e = e
+    def __init__(self, e: _Element | TeiElement | XmlElement):
+        super().__init__(e)
 
         if self._e.tag.name != 'div':
-            raise TypeError('Element should be of type <div>.')
+            raise TypeError(f'Element should be of type <div> but is <{self._e.localname}>.')
 
         if self.get_attrib('type') != 'edition':
             raise TypeError('Element type attribute should be "edition".')
@@ -513,7 +503,7 @@ class Edition(EditionElement):
 
         element._e.remove_children()
 
-        element._e.append_node(w)
+        element._e.append_node(w._e)
         return element
 
     def insert_ws_inside_named_entities(
