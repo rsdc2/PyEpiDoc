@@ -64,7 +64,6 @@ class XmlElement(Showable):
     def __eq__(self, other) -> bool:
         if type(other) is not XmlElement \
             and not issubclass(type(other), XmlElement):
-
             return False
         
         return self.id_internal == other.id_internal
@@ -533,18 +532,18 @@ class XmlElement(Showable):
         Unique computed element id based on hierarchical position in the XML document. 
         """
         
-        def _recfunc(acc:list[int], element:Optional[XmlElement]) -> list[int]:
+        def _recfunc(acc: list[int], element: XmlElement | None) -> list[int]:
             if element is None:
                 return acc 
 
-            if element.e is None:
+            if element._e is None:
                 return acc
             
-            parent = element.e.getparent()
+            parent = element._e.getparent()
             if parent is None:
                 return acc
             
-            return _recfunc([parent.index(element.e)] + acc, element.parent)
+            return _recfunc([parent.index(element._e)] + acc, element.parent)
 
         return _recfunc([], self)
 
@@ -648,12 +647,12 @@ class XmlElement(Showable):
                 continue
 
             # Do not prettify if the next sibling is a comment
-            if isinstance(desc.e.getnext(), _Comment):
+            if isinstance(desc._e.getnext(), _Comment):
                 continue
             
             # Do not prettify a comment if its siblings are only 
             # comments
-            if isinstance(desc.e, _Comment) and \
+            if isinstance(desc._e, _Comment) and \
                 desc.parent is not None and \
                 len(desc.parent.child_comments) == len(desc.parent.child_nodes):
                 continue

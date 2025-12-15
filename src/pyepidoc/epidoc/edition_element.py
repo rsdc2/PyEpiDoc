@@ -238,6 +238,21 @@ class EditionElement(TeiElement, Showable):
             
         return [EditionElement(self_e, self._final_space), EditionElement(other_e, other._final_space)]
 
+    def __lt__(self, other: EditionElement) -> bool:
+        return self._e.__lt__(other._e)
+    
+    def __gt__(self, other: EditionElement) -> bool:
+        return self._e.__gt__(other._e)
+
+    def __hash__(self) -> int:
+        return self._e.__hash__()
+    
+    def __eq__(self, other) -> bool:
+        if not hasattr(other, '_e'):
+            return False
+        
+        return self._e.__eq__(other._e)
+
     def __repr__(self):
         tail = '' if self._e.tail is None else self._e.tail
         content = ''.join([
@@ -511,7 +526,7 @@ class EditionElement(TeiElement, Showable):
             if element is None:
                 return acc 
 
-            if element.e is None:
+            if element._e is None:
                 return acc
             
             parent = element._e.parent
@@ -519,7 +534,8 @@ class EditionElement(TeiElement, Showable):
             if parent is None:
                 return acc
 
-            return _recfunc([parent._e.index(element.e, start=None, stop=None)] + acc, element.parent)
+            new_list = [parent._e.index(element._e._e, start=None, stop=None)]
+            return _recfunc(new_list + acc, element.parent)
 
         return _recfunc([], self)
 
@@ -645,7 +661,7 @@ class EditionElement(TeiElement, Showable):
                 internal_tokenized = epidoc_elem.make_child_tokens_for_container()
                 epidoc_elem._e.remove_children()
                 for element in internal_tokenized:
-                    epidoc_elem._e.append_node(element)
+                    epidoc_elem._e.append_node(element._e)
 
                 return [epidoc_elem]
             
@@ -1316,7 +1332,7 @@ class EditionElement(TeiElement, Showable):
         # won't be able to find its siblings
         for token in reversed(ab_tokens):
             if self._e is not None and token._e is not None:
-                self._e.insert(0, token._e._e)
+                self._e._e.insert(0, token._e._e)
 
         # Remove the initial text element that has now been tokenized
         self.text = ''
@@ -1328,7 +1344,7 @@ class EditionElement(TeiElement, Showable):
         """
         self.tokenize_initial_text_in_container()
 
-        token_carriers = chain(*self._find_token_carrier_sequences())
+        token_carriers = list(chain(*self._find_token_carrier_sequences()))
         token_carriers_sorted = [EditionElement(elem) for elem 
                                  in sorted([token_carrier._e for token_carrier in token_carriers])]
         
