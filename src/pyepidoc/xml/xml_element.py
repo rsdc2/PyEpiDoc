@@ -223,9 +223,9 @@ class XmlElement(Showable):
     
     def _compare_equal_length_ids(
         self, 
-        id1:list[int], 
-        id2:list[int], 
-        op:Callable[[int, int], bool]
+        id1: list[int], 
+        id2: list[int], 
+        op: Callable[[int, int], bool]
     ) -> bool:
 
         equal_id1, equal_id2 = self._equalize_id_length(id1, id2)

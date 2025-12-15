@@ -57,6 +57,8 @@ class RespStmt(EditionElement):
 
     @staticmethod
     def from_element(elem: XmlElement) -> RespStmt:
+        assert isinstance(elem, XmlElement)
+
         if elem.localname != 'respStmt':
             raise ValueError(
                 'Expected element with local name "respStmt", '
@@ -114,10 +116,10 @@ class RespStmt(EditionElement):
     def name(self) -> str | None:
         if self.name_elem is None: 
             return None
-        return self.name_elem.text
+        return self.name_elem._e.text
     
     @property
-    def name_elem(self) -> XmlElement | None:
+    def name_elem(self) -> TeiElement | None:
         desc_elems = self.get_desc_tei_elems(['name'])
         return head(desc_elems)
     

@@ -408,16 +408,16 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
     if tokenized is None:
         return False
     
-    benchmark_strs = [etree.tostring(t.e)
+    benchmark_strs = [etree.tostring(t._e._e)
                       for t in tokenized_benchmark.tokens]
     
-    tokenized_strs = [etree.tostring(t.e) 
+    tokenized_strs = [etree.tostring(t._e._e) 
                       for t in tokenized.get_child_tokens()]
     
-    benchmark_bstr: bytes = etree.tostring(tokenized_benchmark.e)
+    benchmark_bstr: bytes = etree.tostring(tokenized_benchmark._e._e)
     benchmark_str = benchmark_bstr.decode()
 
-    tokenized_bstr: bytes = etree.tostring(tokenized.e)
+    tokenized_bstr: bytes = etree.tostring(tokenized._e._e)
     tokenized_str = tokenized_bstr.decode()
 
     result = tokenized_str == benchmark_str

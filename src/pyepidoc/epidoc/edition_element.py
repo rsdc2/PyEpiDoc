@@ -137,15 +137,15 @@ class EditionElement(TeiElement, Showable):
 
     def __init__(
         self, 
-        e: _Element | EditionElement | XmlElement | TeiElement,
+        e: _Element | XmlElement | TeiElement,
         final_space: bool = False
     ):
         
-        if not isinstance(e, (_Element, TeiElement, XmlElement, EditionElement)):
+        if not isinstance(e, (_Element, TeiElement, XmlElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
-        elif isinstance(e, (TeiElement, EditionElement)):
+        elif isinstance(e, TeiElement):
             self._e = e._e
         elif isinstance(e, XmlElement):
             self._e = e
@@ -1309,14 +1309,14 @@ class EditionElement(TeiElement, Showable):
 
         # Ensure that any final space is preserved
         if self.text and self.text[-1] == ' ' and len(ab_tokens) > 0:
-            ab_tokens[-1].tail = ' '
+            ab_tokens[-1]._e.tail = ' '
 
         # Insert the tokens from the initial <ab> text into the tree as tokens
         # This is necessary, since otherwise the tokenization algorithm
         # won't be able to find its siblings
         for token in reversed(ab_tokens):
-            if self.e is not None and token.e is not None:
-                self.e.insert(0, token.e)
+            if self._e is not None and token._e is not None:
+                self._e.insert(0, token._e._e)
 
         # Remove the initial text element that has now been tokenized
         self.text = ''
@@ -1329,7 +1329,8 @@ class EditionElement(TeiElement, Showable):
         self.tokenize_initial_text_in_container()
 
         token_carriers = chain(*self._find_token_carrier_sequences())
-        token_carriers_sorted = [EditionElement(e) for e in sorted([e_._e for e_ in token_carriers])]
+        token_carriers_sorted = [EditionElement(elem) for elem 
+                                 in sorted([token_carrier._e for token_carrier in token_carriers])]
         
         def _redfunc(acc: list[EditionElement], element: EditionElement) -> list[EditionElement]:
             
