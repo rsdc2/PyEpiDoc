@@ -152,7 +152,7 @@ class Token(RepresentableElement):
             if self._e.text_desc == self._e.text_desc.capitalize() and \
                 self._e.text_desc not in PUNCTUATION:
 
-                self._e.tag = ns.give_ns('name', TEINS)    # type: ignore
+                self._e._e.tag = ns.give_ns('name', TEINS)    # type: ignore
 
             return self
         

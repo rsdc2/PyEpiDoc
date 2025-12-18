@@ -744,7 +744,7 @@ class EditionElement(TeiElement, Showable):
         
         first_child = head(list(self.child_elems))
         if first_child is not None and (self.text == '' or self.text is None):
-            if  first_child.localname == 'lb' and first_child.get_attrib('break') == 'no':
+            if  first_child._e.localname == 'lb' and first_child.get_attrib('break') == 'no':
                 return False
             
         return True

@@ -59,13 +59,13 @@ def ancestor_edition(elem: EditionElement) -> Optional[Edition]:
     return edition
 
 
-def ancestor_ab(elem: EditionElement) -> Optional[Ab]:
+def ancestor_ab(elem: EditionElement) -> Ab | None:
     """
     Returns the Ab containing the element (if any)
     """
 
     abs = filter(
-        lambda elem: localname(elem.e) == 'ab', 
+        lambda elem: elem.localname == 'ab', 
         elem._e.ancestors_excl_self
     )
 
@@ -129,7 +129,7 @@ def last_in_ab(elem: EditionElement) -> bool:
     if ab is None:
         return False
     
-    return id(elem.e) == id(ab.tokens[-1].e)
+    return id(elem.e._e) == id(ab.tokens[-1].e._e)
 
 
 def line(elem: EditionElement) -> Optional[Lb]:
@@ -146,11 +146,8 @@ def line_ends_inside(elem: EditionElement) -> int:
     Count the number of <lb/> elements that are 
     descendants of the element
     """
-
-    lbs = filter(
-        lambda elem: localname(elem.e) == 'lb', 
-        elem._e.descendant_elements
-    )
+    lbs = [desc for desc in elem._e.descendant_elements
+            if desc.localname == 'lb']
 
     return len(list(lbs))
 

@@ -41,9 +41,9 @@ def test_tokenize_example():
     try:
         # breakpoint()
         assert [str(word) for word in tokenized_doc.tokens_no_nested] == [str(word) for word in tokenized_benchmark.tokens_no_nested]
-        assert [word.xml_byte_str for word in tokenized_doc.tokens_no_nested] == [word.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]
-        assert [word.xml_byte_str for word in tokenized_doc.compound_words] == [word.xml_byte_str for word in tokenized_benchmark.compound_words]
-        assert [edition.xml_byte_str for edition in tokenized_doc.editions()] == [edition.xml_byte_str for edition in tokenized_benchmark.editions()]
+        assert [word._e.xml_byte_str for word in tokenized_doc.tokens_no_nested] == [word._e.xml_byte_str for word in tokenized_benchmark.tokens_no_nested]
+        assert [word._e.xml_byte_str for word in tokenized_doc.compound_words] == [word._e.xml_byte_str for word in tokenized_benchmark.compound_words]
+        assert [edition._e.xml_byte_str for edition in tokenized_doc.editions()] == [edition._e.xml_byte_str for edition in tokenized_benchmark.editions()]
     except AssertionError as e:
         raise e
 
