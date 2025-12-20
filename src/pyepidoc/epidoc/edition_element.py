@@ -162,23 +162,11 @@ class EditionElement(TeiElement, Showable):
         if other is None:
             return [self]
 
-        if type(other) not in [EditionElement]:
+        if not isinstance(other, EditionElement):
             raise TypeError(f"Other element is of type {type(other)}.")
-
-        if self._e._e is None and other._e._e is not None:
-            return [other]
         
-        if other._e is None and self._e._e is not None:
-            return [self]
-
-        if other._e is None and self._e._e is None:
-            return [self]
-
         self_e = XmlElement(deepcopy(self._e._e))
         other_e = XmlElement(deepcopy(other._e._e))
-
-        # if self_e is None or other_e is None:
-        #     return []
 
         # Handle unlike tags
         if self._e._e.tag != other._e._e.tag:
@@ -222,7 +210,7 @@ class EditionElement(TeiElement, Showable):
                 if not self.right_bound or first_child._e.tag.name in AlwaysSubsumable:
                     if self._can_subsume(first_child):
 
-                        for child in other_e._e.getchildren():
+                        for child in other_e.children:
                             self_e.append_node(child)
                         return [EditionElement(self_e, other._final_space)]
 
