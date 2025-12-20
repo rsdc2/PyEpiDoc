@@ -814,7 +814,7 @@ class XmlElement(Showable):
     @property
     def text(self) -> str:
         """
-        Return the text contents of the element. Returns an empty string if there is no text
+        Return the text contents of the element. Returns an empty string if there is no text.
         """
         if self._e is None:
             return ''
