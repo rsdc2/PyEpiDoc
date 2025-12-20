@@ -194,7 +194,7 @@ class EditionElement(TeiElement, Showable):
             if self._is_subsumable_by(other):
                 self_e.tail = other.text   
                 other_e.text = ''  
-                other_e._e.insert(0, self_e._e)
+                other_e.insert(0, self_e)
                 
                 return [EditionElement(other_e)]
             
@@ -1332,7 +1332,7 @@ class EditionElement(TeiElement, Showable):
         # won't be able to find its siblings
         for token in reversed(ab_tokens):
             if self._e is not None and token._e is not None:
-                self._e._e.insert(0, token._e._e)
+                self._e.insert(0, token._e)
 
         # Remove the initial text element that has now been tokenized
         self.text = ''

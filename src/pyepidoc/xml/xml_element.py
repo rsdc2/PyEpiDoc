@@ -350,6 +350,21 @@ class XmlElement(Showable):
 
         raise ValueError()
     
+    def insert(self, index: int, element: XmlElement) -> XmlElement:
+        """
+        Insert a subelement at the position specified by 'index'
+        
+        :param self: Description
+        :param index: Description
+        :type index: int
+        :param element: Description
+        :type element: XmlElement
+        :return: Description
+        :rtype: XmlElement
+        """
+        self._e.insert(index, element._e)
+        return XmlElement(self._e)
+    
     def get_ancestors_incl_self(self) -> ExtendableSeq[XmlElement]:
 
         """
