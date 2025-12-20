@@ -350,6 +350,21 @@ class XmlElement(Showable):
 
         raise ValueError()
     
+    def index(self, child: XmlElement, start: int | None = None, stop: int | None = None) -> int:
+        """
+        Return the index of the child element. Raises ValueError if child is not child of the node.
+        
+        :param self: Description
+        :param child: The child element
+        :type child: XmlElement
+        :param start: Start position
+        :type start: int | None
+        :param stop: End position
+        :type stop: int | None
+        :rtype: int
+        """
+        return self._e.index(child._e, start, stop)
+    
     def insert(self, index: int, element: XmlElement) -> XmlElement:
         """
         Insert a subelement at the position specified by 'index'
@@ -550,15 +565,12 @@ class XmlElement(Showable):
         def _recfunc(acc: list[int], element: XmlElement | None) -> list[int]:
             if element is None:
                 return acc 
-
-            if element._e is None:
-                return acc
             
-            parent = element._e.getparent()
+            parent = element.parent
             if parent is None:
                 return acc
             
-            return _recfunc([parent.index(element._e)] + acc, element.parent)
+            return _recfunc([parent.index(element)] + acc, element.parent)
 
         return _recfunc([], self)
 

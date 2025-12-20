@@ -97,7 +97,7 @@ class TeiDoc:
         Insert a <teiHeader> element as the first child
         """
         tei_header_elem = TeiHeader.create()
-        self._xmlroot._e.insert(0, tei_header_elem._e._e)
+        self._xmlroot.xml_element.insert(0, tei_header_elem._e)
         return self
 
     def append_resp_stmt(self, resp_stmt: RespStmt) -> TeiDoc:

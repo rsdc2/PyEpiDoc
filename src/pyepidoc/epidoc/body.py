@@ -130,10 +130,10 @@ class Body(TeiBody):
         # Insert the new edition after the main edition
         main_edition = self.main_edition
         if main_edition is None:
-            raise ValueError("No main edition present.")
+            raise ValueError('No main edition present.')
         
-        main_edition_idx = self._e._e.index(main_edition._e._e, None, None)
-        self._e._e.insert(main_edition_idx + 1, edition_elem)
+        main_edition_idx = self._e.index(main_edition._e)
+        self._e.insert(main_edition_idx + 1, new_edition._e)
         return new_edition
 
     def edition_by_subtype(self, subtype: str | None) -> Edition | None:

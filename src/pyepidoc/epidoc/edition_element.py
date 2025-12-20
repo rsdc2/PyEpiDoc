@@ -534,7 +534,7 @@ class EditionElement(TeiElement, Showable):
             if parent is None:
                 return acc
 
-            new_list = [parent._e.index(element._e._e, start=None, stop=None)]
+            new_list = [parent.index(element._e)]
             return _recfunc(new_list + acc, element.parent)
 
         return _recfunc([], self)
