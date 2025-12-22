@@ -389,7 +389,7 @@ class EpiDoc(TeiDoc):
 
         terms = textclass_element.get_desc_tei_elems('term')
         terms_with_ana = [term for term in terms 
-                                if term._e.has_attrib('ana')]
+                                if term._e.has_attr('ana')]
 
         functions = []
         for term in terms_with_ana:
@@ -1142,7 +1142,7 @@ class EpiDoc(TeiDoc):
         """
 
         elem = maxone([desc for desc in self._xmlroot.desc_elems
-                if desc.localname == 'rs' and desc.get_attrib('type') == 'textType'],
+                if desc.localname == 'rs' and desc.get_attr('type') == 'textType'],
                 throw_if_more_than_one=False)
         
         if elem is None:

@@ -87,7 +87,7 @@ class _W(RepresentableElement):
         if inner_w is None:
             return
         
-        inner_w.set_attrib('id', xml_id, XMLNS)
+        inner_w.set_attr('id', xml_id, XMLNS)
         self._e.remove_attr('id', XMLNS, True)
 
     @property

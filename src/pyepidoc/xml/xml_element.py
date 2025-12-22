@@ -159,7 +159,7 @@ class XmlElement(Showable):
         Return the attributes of the element as a dictionary
         """
 
-        return {k: v for k, v in self.e.attrib}
+        return dict(self._e.attrib)
 
     def _clean_text(self, text: str):
 
@@ -321,7 +321,7 @@ class XmlElement(Showable):
         if self._e is None:
             return {'name': self.tag.name, 'ns': self.tag.ns, 'attrs': dict()}
 
-        return {'name': self.tag.name, 'ns': self.tag.ns, 'attrs': self._e.attrib}
+        return {'name': self.tag.name, 'ns': self.tag.ns, 'attrs': self.attrs}
 
     @property
     def e(self) -> _Element:
@@ -433,7 +433,7 @@ class XmlElement(Showable):
         
         return self.child_elements[-1]
 
-    def get_attrib(
+    def get_attr(
             self, 
             attribname: str, 
             namespace: Optional[str]=None
@@ -549,11 +549,8 @@ class XmlElement(Showable):
         ancestor_names = map(lambda elem: elem.localname, self.ancestors_excl_self)
         return setrelation(set(names), set(ancestor_names))
 
-    def has_attrib(self, attribname:str) -> bool:
-        if self._e is None:
-            return False
-
-        return attribname in self._e.attrib.keys()
+    def has_attr(self, attr_name: str) -> bool:
+        return attr_name in self._e.attrib.keys()
 
     @property
     def id_internal(self) -> list[int]:
@@ -730,7 +727,7 @@ class XmlElement(Showable):
         """
 
         name_with_ns = ns.give_ns(attr_name, namespace)
-        if not name_with_ns in self._e.attrib.keys():
+        if not name_with_ns in self.attrs.keys():
             if throw_if_not_found:
                 raise AttributeError(f'Attribute {name_with_ns} not found.')
             else:
@@ -763,15 +760,12 @@ class XmlElement(Showable):
 
         return root_e.getroottree()
 
-    def set_attrib(
+    def set_attr(
         self, 
         attribname: str, 
         value: str, 
         namespace: Optional[str] = None
         ) -> None:
-        
-        if self._e is None:
-            return
 
         self._e.attrib[ns.give_ns(attribname, namespace)] = value
 
@@ -858,14 +852,14 @@ class XmlElement(Showable):
         """
         Returns value of the xml:id attribute in the XML file.
         """
-        return self.get_attrib('id', namespace=XMLNS)
+        return self.get_attr('id', namespace=XMLNS)
 
     @xml_id.setter
     def xml_id(self, id_value:str) -> None:
         """
         Sets the value of the xml:id attribute in the XML file.
         """
-        self.set_attrib('id', id_value, namespace=XMLNS)
+        self.set_attr('id', id_value, namespace=XMLNS)
 
     @property
     def xmlspace_preserve(self) -> bool:
@@ -873,7 +867,7 @@ class XmlElement(Showable):
         Return true if @xml:space = "preserve"
         """
 
-        return self.get_attrib("space", XMLNS) == "preserve"
+        return self.get_attr("space", XMLNS) == "preserve"
 
     @property
     def xmlspace_preserve_in_ancestors(self) -> bool:

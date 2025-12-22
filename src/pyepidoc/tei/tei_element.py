@@ -91,7 +91,7 @@ class TeiElement:
             namespace: str | None=None
         ) -> str | None:
 
-        return self._e.get_attrib(attribname, namespace)
+        return self._e.get_attr(attribname, namespace)
     
     def get_descendant_tei_element(
             self, 

@@ -43,7 +43,7 @@ def test_remove_attr_with_xml_ns():
     string = f'<w>hello</w>'
     lxml_elem = elem_from_str(string)
     elem = XmlElement(lxml_elem)
-    elem.set_attrib('id', '2', XMLNS)
+    elem.set_attr('id', '2', XMLNS)
     assert elem.xml_str == '<w xml:id="2">hello</w>'
     elem.remove_attr('id', XMLNS)
     assert elem.xml_str == '<w>hello</w>'

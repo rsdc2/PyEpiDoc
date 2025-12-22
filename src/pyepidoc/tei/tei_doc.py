@@ -276,7 +276,7 @@ class TeiDoc:
 
         terms = textclass_element.get_desc_tei_elems('term')
         terms_with_ana = [term for term in terms 
-                                if term._e.has_attrib('ana')]
+                                if term._e.has_attr('ana')]
 
         functions = []
         for term in terms_with_ana:
@@ -356,7 +356,7 @@ class TeiDoc:
         if self.orig_date is None:
             return None
 
-        daterange_val = self.orig_date._e.get_attrib(attrib_name)
+        daterange_val = self.orig_date._e.get_attr(attrib_name)
 
         try:
             return int(daterange_val) if daterange_val is not None else None
@@ -376,7 +376,7 @@ class TeiDoc:
             return []
 
         languages = lang_usage.get_desc_tei_elems('language')
-        idents = [language._e.get_attrib('ident') for language in languages]
+        idents = [language._e.get_attr('ident') for language in languages]
         return [ident for ident in idents if ident is not None]
 
     @property
@@ -399,7 +399,7 @@ class TeiDoc:
     def mainlang(self) -> Optional[str]:
         if self.textlang is None:
             return None
-        return self.textlang._e.get_attrib('mainLang')
+        return self.textlang._e.get_attr('mainLang')
 
     @property
     def mean_date(self) -> int | None:
@@ -413,7 +413,7 @@ class TeiDoc:
         if material_e is None:
             return []
         
-        return remove_none([TeiElement(e)._e.get_attrib('ana') 
+        return remove_none([TeiElement(e)._e.get_attr('ana') 
                             for e in material_e])
 
     @property
@@ -447,7 +447,7 @@ class TeiDoc:
         if orig_date is None:
             return None
 
-        if orig_date._e._e.attrib == dict():
+        if orig_date._e.attrs == dict():
             orig_date = maxone(
                 TeiElement(orig_date)._e.get_desc('origDate'), 
                 throw_if_more_than_one=False
@@ -667,7 +667,7 @@ class TeiDoc:
         """
 
         elem = maxone([desc for desc in self._xmlroot.desc_elems
-                if desc.localname == 'rs' and desc.get_attrib('type') == 'textType'],
+                if desc.localname == 'rs' and desc.get_attr('type') == 'textType'],
                 throw_if_more_than_one=False)
         
         if elem is None:

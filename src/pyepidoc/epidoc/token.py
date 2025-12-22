@@ -99,7 +99,7 @@ class Token(RepresentableElement):
         If more than one are present, returns the first.
         """
         
-        langs = [parent.get_attrib('lang', XMLNS) 
+        langs = [parent.get_attr('lang', XMLNS) 
             for parent in self.ab_or_div_parents]
         
         filtered_langs = remove_none(langs)
@@ -180,7 +180,7 @@ class Token(RepresentableElement):
 
     @lemma.setter
     def lemma(self, value:str):
-        self.set_attrib('lemma', value)
+        self.set_attr('lemma', value)
 
     @property
     def number(self) -> Optional[str]:
@@ -218,7 +218,7 @@ class Token(RepresentableElement):
         Sets the part of speech (POS) attribute of the 
         token.
         """
-        self.set_attrib('pos', value)
+        self.set_attr('pos', value)
 
     @property
     def tokens(self) -> list[Token]:

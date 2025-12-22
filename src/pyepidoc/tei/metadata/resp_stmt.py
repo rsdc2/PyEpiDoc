@@ -80,8 +80,8 @@ class RespStmt(EditionElement):
         tag = ns.give_ns("name", TEINS)
         elem: _Element = etree.Element(tag)
         epidoc_elem = EditionElement(elem)
-        epidoc_elem.set_attrib("id", initials, XMLNS)
-        epidoc_elem.set_attrib("ref", ref)
+        epidoc_elem.set_attr("id", initials, XMLNS)
+        epidoc_elem.set_attr("ref", ref)
         epidoc_elem.text = name
         return epidoc_elem._e
     

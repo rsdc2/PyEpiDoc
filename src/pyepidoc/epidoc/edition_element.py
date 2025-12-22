@@ -347,7 +347,7 @@ class EditionElement(TeiElement, Showable):
     def dict_desc(self) -> dict[str, str | dict]:
         return {'name': self._e.localname, 
                 'ns': self._e.tag.ns, 
-                'attrs': self._e._e.attrib}
+                'attrs': self._e.attrs}
 
     @property
     def e(self) -> XmlElement:
@@ -768,7 +768,7 @@ class EditionElement(TeiElement, Showable):
                 if next_elem.e is None:
                     return False
                 if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
-                    if next_elem._e._e.attrib.get('break') == 'no':
+                    if next_elem._e.attrs.get('break') == 'no':
                         return True
                 if next_elem._e.tag.name == "Comment":
                     return True
@@ -833,7 +833,7 @@ class EditionElement(TeiElement, Showable):
     
     @local_id.setter
     def local_id(self, value: str) -> None:
-        self.set_attrib('n', value)
+        self.set_attr('n', value)
 
     @property
     def no_gaps(self) -> bool:
@@ -985,7 +985,7 @@ class EditionElement(TeiElement, Showable):
 
         last_child = last(list(self.child_elems))
         if last_child is not None and (last_child._e.tail == '' or last_child._e.tail is None):
-            if  last_child._e.localname == 'lb' and last_child._e.get_attrib('break') == 'no':
+            if  last_child._e.localname == 'lb' and last_child._e.get_attr('break') == 'no':
                 return False
 
         if self._e._e is None:
@@ -1014,17 +1014,14 @@ class EditionElement(TeiElement, Showable):
 
         return root_e.getroottree()
 
-    def set_attrib(
+    def set_attr(
         self, 
-        attribname:str, 
-        value:str, 
-        namespace:Optional[str]=None
+        attribname: str, 
+        value: str, 
+        namespace: Optional[str]=None
         ) -> None:
         
-        if self._e is None:
-            return
-
-        self._e._e.attrib[ns.give_ns(attribname, namespace)] = value
+        self._e.set_attr(attribname, value, namespace)
 
     def set_id(
             self, 
@@ -1561,6 +1558,6 @@ class EditionElement(TeiElement, Showable):
         """
         Sets the value of the xml:id attribute in the XML file.
         """
-        self.set_attrib('id', id_value, namespace=XMLNS)
+        self.set_attr('id', id_value, namespace=XMLNS)
 
 
