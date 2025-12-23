@@ -602,6 +602,13 @@ class XmlElement(Showable):
         return ns.remove_ns(self._e.tag)
 
     @property
+    def next_sibling(self) -> XmlElement | None:
+        next_element = self._e.getnext()
+        if next_element is None:
+            return None
+        return XmlElement(next_element)
+
+    @property
     def next_siblings(self) -> list[XmlElement]:
 
         """

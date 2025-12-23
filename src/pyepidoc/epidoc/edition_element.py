@@ -165,8 +165,8 @@ class EditionElement(TeiElement, Showable):
         if not isinstance(other, EditionElement):
             raise TypeError(f"Other element is of type {type(other)}.")
         
-        self_e = XmlElement(deepcopy(self._e._e))
-        other_e = XmlElement(deepcopy(other._e._e))
+        self_e = self._e.deepcopy()
+        other_e = other._e.deepcopy()
 
         # Handle unlike tags
         if self._e._e.tag != other._e._e.tag:
@@ -287,7 +287,7 @@ class EditionElement(TeiElement, Showable):
         if self._e is None:
             return self
 
-        if self._e._e.getnext() is None:
+        if self._e.next_sibling is None:
             return self
 
         if self._e.tail is None:
@@ -664,8 +664,6 @@ class EditionElement(TeiElement, Showable):
 
             raise ValueError(f"Invalid _element.tag.name: {_element._e.tag.name}")
         
-        if self._e._e is None:
-            raise TypeError("Underlying element is None.")
         e = remove_internal_extraneous_whitespace(self._e._e)
         return make_internal_token(e)
 
