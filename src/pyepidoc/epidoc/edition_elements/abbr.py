@@ -102,7 +102,7 @@ class Abbr(RepresentableElement):
     def leiden_form(self) -> str:
 
         return leiden_str_from_children(
-            self._e._e,
+            self._e,
             self._element_classes,
             'node'
         )

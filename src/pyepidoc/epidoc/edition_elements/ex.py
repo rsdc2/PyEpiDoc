@@ -15,9 +15,9 @@ class Ex(EditionElement):
 
         super().__init__(e)
 
-        if localname(self._e._e) != 'ex':
+        if self._e.localname != 'ex':
             raise TypeError(f'Element should be of type <ex>, '
-                            f'but is of type <{localname(self._e._e)}>.')
+                            f'but is of type <{self._e.localname}>.')
 
     @property
     def leiden_form(self) -> str:

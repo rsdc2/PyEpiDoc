@@ -35,7 +35,7 @@ class Hi(EditionElement):
             'surplus': Surplus
         }
         
-        return leiden_str_from_children(self._e._e, element_classes, 'node')
+        return leiden_str_from_children(self._e, element_classes, 'node')
     
     @property
     def normalized_form(self) -> str:

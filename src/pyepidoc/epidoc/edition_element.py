@@ -546,7 +546,7 @@ class EditionElement(TeiElement, Showable):
             raise TypeError("XPath result is not a list.")
 
         if len(xpath_result) > 0:
-            return cast(str, xpath_result[0].text)
+            return xpath_result[0].text
 
         return ''
 

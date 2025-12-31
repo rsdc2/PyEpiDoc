@@ -231,7 +231,7 @@ class Expan(EditionElement):
         """
 
         return leiden_str_from_children(
-            self._e._e, 
+            self._e, 
             self.element_classes, 
             'element'
         )

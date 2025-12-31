@@ -3,6 +3,7 @@ from __future__ import annotations
 from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
 from copy import deepcopy
+import re
 
 from pyepidoc.shared.constants import TEINS
 
@@ -15,6 +16,18 @@ def abify(xml_str: str):
     """
     return f'<ab xmlns="{TEINS}">{xml_str}</ab>'
 
+
+def descendant_text(elem: _Element | _ElementUnicodeResult) -> str:
+    """
+    Returns descendant text
+    """
+
+    if type(elem) is _ElementUnicodeResult:
+        s = str(elem)
+    else: 
+        s = ''.join(map(str, elem.xpath('.//text()'))) 
+
+    return re.sub(r'[\n\t]|\s+', '', s)
 
 def editionify(xml_str: str, wrap_in_ab: bool) -> str: 
     """

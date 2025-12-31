@@ -35,7 +35,7 @@ class Unclear(EditionElement):
         return ''.join([
             ''.join(map(
                 lambda char: char + '\u0323', 
-                leiden_str_from_children(self._e._e, element_classes, 'node'))
+                leiden_str_from_children(self._e, element_classes, 'node'))
             )
         ])
 

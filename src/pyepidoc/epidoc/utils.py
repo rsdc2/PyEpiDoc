@@ -5,7 +5,7 @@ import re
 
 from lxml.etree import _Element, _ElementUnicodeResult
 from lxml import etree
-from pyepidoc.xml.utils import localname
+from pyepidoc.xml.utils import localname, descendant_text
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.enums import (
     NonNormalized, 
@@ -54,19 +54,6 @@ def descendant_atomic_tokens(elem: EditionElement) -> list[EditionElement]:
     ]
 
 
-def descendant_text(elem: _Element | _ElementUnicodeResult) -> str:
-    """
-    Returns descendant text
-    """
-
-    if type(elem) is _ElementUnicodeResult:
-        s = str(elem)
-    else: 
-        s = ''.join(map(str, elem.xpath('.//text()'))) 
-
-    return re.sub(r'[\n\t]|\s+', '', s)
-
-
 def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[XmlElement]):
     """
     Returns the string representation of the element specified in 
@@ -87,7 +74,7 @@ def leiden_str(elem: _Element, classes: dict[str, type]) -> str:
 
 
 def leiden_str_from_children(
-        parent: _Element,
+        parent: XmlElement,
         classes: dict[str, type],
         child_type: Literal['element', 'node']) -> str:
 
@@ -97,6 +84,7 @@ def leiden_str_from_children(
     param:child_type sets whether or not the children are elements or
     nodes (where nodes include text content)
     """
+    assert isinstance(parent, XmlElement)
     
     non_ancestors = RegTextType.values()
     child_str = 'child::node()' if child_type == 'node' else 'child::*'
@@ -105,14 +93,12 @@ def leiden_str_from_children(
     
     xpath_str = f'{child_str}[{ancestors_str}]'
     
-    children: list[_Element | _ElementUnicodeResult] = \
-        [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
-
+    children = [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
 
     if len(children) == 0:
-        objs = [classes.get(localname(parent), lambda _: '')(parent)]
+        objs = [classes.get(parent.localname, lambda _: '')(parent)]
     else:
-        objs = [classes.get(localname(child), descendant_text)(child) 
+        objs = [classes.get(child.localname, lambda c: c.descendant_text)(child) 
                 for child in children]
         
     return ''.join([obj.leiden_form if hasattr(obj, 'leiden_form') else str(obj) for obj in objs])

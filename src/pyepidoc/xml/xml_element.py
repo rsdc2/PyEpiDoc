@@ -24,10 +24,11 @@ from lxml.etree import (
 from pyepidoc.shared.classes import Tag, Showable, ExtendableSeq, SetRelation
 
 from .namespace import Namespace as ns
-
+from .xml_text import XmlText
+from .xml_comment import XmlComment
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared import maxone
-from pyepidoc.xml.utils import localname
+from pyepidoc.xml.utils import localname, descendant_text
 
 
 class XmlElement(Showable):    
@@ -315,6 +316,11 @@ class XmlElement(Showable):
         """
         return [node for node in self.descendant_nodes
                 if not isinstance(node, _Comment)]
+
+    @property
+    def descendant_text(self) -> str:
+
+        return descendant_text(self._e)
 
     @property
     def dict_desc(self) -> dict:
@@ -612,7 +618,7 @@ class XmlElement(Showable):
     def next_siblings(self) -> list[XmlElement]:
 
         """
-        :return: next sibling |BaseElement|s, excluding text nodes
+        :return: next sibling |XmlElement|s, excluding text nodes
         """
         next_sibs = self.xpath('following-sibling::*')
 
@@ -902,21 +908,23 @@ class XmlElement(Showable):
             pretty_print=False # type: ignore
         )
     
+
+
     def xpath(
             self, 
             xpathstr: str, 
             namespaces: dict[str, str]={'ns': TEINS}
-            ) -> list[_Element | _ElementUnicodeResult]:
+            ) -> list[XmlNode]:
         """
         Apply XPath expression to the current element, in which 
         the prefix 'ns' corresponds to the namespace
         "http://www.tei-c.org/ns/1.0"
         """
-
         result = self._e.xpath(xpathstr, namespaces=namespaces)
 
         # NB the cast won't necessarily be correct for all test cases
-        return list[Union[_Element,_ElementUnicodeResult]](result)
+        result_list: list[XmlNode] = [to_xml_node(node) for node in result]
+        return result_list
     
     def xpath_bool(
             self, 
@@ -952,3 +960,15 @@ class XmlElement(Showable):
     
         return None
     
+XmlNode = XmlText | XmlElement | XmlComment
+
+def to_xml_node(node: _Element | _ElementUnicodeResult | _Comment) -> XmlNode:
+    if isinstance(node, _Element):
+        return XmlElement(node)
+    if isinstance(node, _ElementUnicodeResult):
+        return XmlText(node)
+    if isinstance(node, _Comment):
+        return XmlComment(node)
+    raise TypeError(f'Node {node} is node of valid type: '
+                    'expected _Element, _ElementUnicodeResult or _Comment, ' \
+                    'but is {type(node)}')

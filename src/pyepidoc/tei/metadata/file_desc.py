@@ -62,7 +62,7 @@ class FileDesc(TeiElement):
         """
         if self.title_stmt is None:
             title_stmt = TitleStmt(TeiElement.create('titleStmt'))
-            return self.append_title_stmt(title_stmt._e)
+            return self.append_title_stmt(title_stmt)
 
         return self.title_stmt
 

@@ -18,9 +18,9 @@ class Gap(RepresentableElement):
 
         super().__init__(e)
 
-        if localname(self._e._e) != 'gap':
+        if self._e.localname != 'gap':
             raise TypeError(f'Element should be of type <gap>, '
-                            f'but is of type <{localname(self._e._e)}>.')
+                            f'but is of type <{self._e.localname}>.')
         
     def __repr__(self) -> str:
         return f'Gap("{self.leiden_form}")'

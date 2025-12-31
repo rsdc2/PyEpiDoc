@@ -43,7 +43,7 @@ class RoleName(EditionElement):
         }
         
         return leiden_str_from_children(
-            self._e._e, 
+            self._e, 
             element_classes, 
             'node'
         )
