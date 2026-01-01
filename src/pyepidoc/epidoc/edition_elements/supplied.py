@@ -43,4 +43,4 @@ class Supplied(EditionElement):
     
     @property
     def normalized_form(self) -> str:
-        return normalized_str_from_children(self._e._e, dict(), 'node')
+        return normalized_str_from_children(self._e, dict(), 'node')

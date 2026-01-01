@@ -201,11 +201,11 @@ class XmlElement(Showable):
     @property
     def child_node_names(self) -> list[str]:
         children = self.child_nodes
-        return list(map(localname, children))
+        return [child.localname for child in children]
 
     @property
-    def child_nodes(self) -> list[_Element | _ElementUnicodeResult]:
-        return self.xpath('child::node()')
+    def child_nodes(self) -> list[XmlNode]:
+        return [child for child in self.xpath('child::node()')]
     
     @property
     def children(self) -> Sequence[XmlElement]:
@@ -319,7 +319,6 @@ class XmlElement(Showable):
 
     @property
     def descendant_text(self) -> str:
-
         return descendant_text(self._e)
 
     @property
@@ -963,6 +962,8 @@ class XmlElement(Showable):
 XmlNode = XmlText | XmlElement | XmlComment
 
 def to_xml_node(node: _Element | _ElementUnicodeResult | _Comment) -> XmlNode:
+    # if isinstance(node, XmlNode):
+    #     return node
     if isinstance(node, _Element):
         return XmlElement(node)
     if isinstance(node, _ElementUnicodeResult):

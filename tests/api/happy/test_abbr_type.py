@@ -6,7 +6,7 @@ from pyepidoc.shared.enums import AbbrType
 from pyepidoc.shared import contains
 from lxml import etree
 from pyepidoc.shared.constants import TEINS
-
+from pyepidoc.xml.xml_element import XmlElement
 
 multiplications = [
     f'<expan xmlns="{TEINS}"><hi rend="supraline"><abbr>d<am>d</am></abbr></hi><ex cert="low">ominis</ex></expan>',     # from ISic000501
@@ -40,7 +40,7 @@ non_contractions = [
 @pytest.mark.parametrize("xmlstr", multiplications)
 def test_multiplicative(xmlstr: str):
 
-    elem = etree.fromstring(xmlstr, None)
+    elem = XmlElement.from_xml_str(xmlstr)
     expan = Expan(elem)
     assert expan.is_multiplication
 

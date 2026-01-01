@@ -111,7 +111,7 @@ class Abbr(RepresentableElement):
     def normalized_form(self) -> str:
         
         normalized = normalized_str_from_children(
-            self._e._e,
+            self._e,
             self._element_classes,
             'node'
         )

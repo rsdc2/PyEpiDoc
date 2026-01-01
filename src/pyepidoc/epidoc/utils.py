@@ -101,11 +101,13 @@ def leiden_str_from_children(
         objs = [classes.get(child.localname, lambda c: c.descendant_text)(child) 
                 for child in children]
         
-    return ''.join([obj.leiden_form if hasattr(obj, 'leiden_form') else str(obj) for obj in objs])
+    return ''.join([obj.leiden_form 
+                    if hasattr(obj, 'leiden_form') 
+                    else str(obj) for obj in objs])
 
 
 def normalized_str_from_children(
-        parent: _Element,
+        parent: XmlElement,
         classes: dict[str, type],
         child_type: Literal['element', 'node']) -> str:
 
@@ -115,7 +117,7 @@ def normalized_str_from_children(
     param:child_type sets whether or not the children are elements or
     nodes (where nodes include text content)
     """
-    assert type(parent) is _Element
+    assert isinstance(parent, XmlElement)
     
     non_ancestors = NonNormalized.values()
     child_str = 'child::node()' if child_type == 'node' else 'child::*'
@@ -124,12 +126,10 @@ def normalized_str_from_children(
     
     xpath_str = f'{child_str}[{ancestors_str}]'
     
-    children: list[_Element | _ElementUnicodeResult] = \
-        [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
-    objs = cast(list[EditionElement], [classes.get(localname(child), descendant_text)(child) 
+    children = [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
+    objs = cast(list[EditionElement], [classes.get(child.localname, lambda c: c.descendant_text)(child) 
             for child in children])
     
-    # breakpoint()
     s = ''.join([obj.normalized_form 
                  if hasattr(obj, 'normalized_form') 
                  else str(obj) for obj in objs])
