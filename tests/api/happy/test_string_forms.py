@@ -95,8 +95,8 @@ def test_leiden_plus_forms(
     assert [token.leiden_form for token in ab.tokens] == leiden_forms
 
     test_leiden_plus_forms = [token.leiden_plus_form for token in ab.tokens]
-    if test_leiden_plus_forms != leiden_plus_forms:
-        breakpoint()
+    # if test_leiden_plus_forms != leiden_plus_forms:
+    #     breakpoint()
 
     assert [token.leiden_plus_form for token in ab.tokens] == leiden_plus_forms
 

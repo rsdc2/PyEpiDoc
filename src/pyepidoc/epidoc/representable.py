@@ -14,12 +14,13 @@ from lxml.etree import (
 )
 
 from pyepidoc.xml.utils import localname
+from pyepidoc.xml.xml_text import XmlText
+from pyepidoc.xml.xml_element import XmlElement, XmlNode, to_xml_node
 
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.enums import RegTextType
 from .edition_element import EditionElement
 
-Node = Union[_Element, _ElementUnicodeResult]
 
 
 class RepresentableElement(EditionElement):
@@ -58,8 +59,8 @@ class RepresentableElement(EditionElement):
         line breaks are indicated with vertical bar '|'
         """
 
-        def string_rep(n: Node) -> str:
-            ln = localname(n)
+        def string_rep(n: XmlNode) -> str:
+            ln = n.localname
 
             if ln in ['g', 'lb', 'gap']:
                 return self.elem_classes[ln](n).leiden_form
@@ -67,18 +68,18 @@ class RepresentableElement(EditionElement):
             return ''
 
         def get_next_non_text(
-                acc: list[Node],
-                node: Node
-            ) -> list[Node]:
+                acc: list[XmlNode],
+                node: XmlNode
+            ) -> list[XmlNode]:
 
             if acc != []:
                 last = acc[-1]
 
-                if type(last) is _ElementUnicodeResult:
+                if isinstance(last, XmlText):
                     if str(last).strip() not in ['', '·']:
                         return acc 
                 
-                if localname(last) in ['lb', 'w', 'name', 'persName', 'roleName', 'num']:
+                if last.localname in ['lb', 'w', 'name', 'persName', 'roleName', 'num']:
                     return acc
             
             return acc + [node]
@@ -86,15 +87,12 @@ class RepresentableElement(EditionElement):
         if type(self.representable_cls_inst) is type(self):
             raise TypeError(f'Class {type(self)} must implement property `leiden_plus_form`.')
         
-        preceding = reversed([e for e in self.preceding_nodes_in_ab])
-        following = [e for e in self.following_nodes_in_ab]
+        preceding = reversed(self.preceding_nodes_in_ab)
+        following = self.following_nodes_in_ab
 
-        preceding_upto_text: list[Node] = \
-            list(reversed(reduce(
-                get_next_non_text, # type: ignore 
-                preceding, 
-                list[Node]()))) # type: ignore
-        following_upto_text: list[Node] = reduce(get_next_non_text, following, [])
+        preceding_upto_text = reduce(get_next_non_text, preceding, list[XmlNode]())
+        preceding_upto_text = list(reversed(preceding_upto_text))
+        following_upto_text = reduce(get_next_non_text, following, list[XmlNode]())
         
         prec_text = ''.join(map(string_rep, preceding_upto_text))
         following_text = ''.join(map(string_rep, following_upto_text))

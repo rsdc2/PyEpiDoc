@@ -27,6 +27,7 @@ from lxml.etree import (
 )
 
 from pyepidoc.xml.namespace import Namespace as ns
+from pyepidoc.xml.xml_element import XmlNode, XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.constants import (
@@ -888,8 +889,7 @@ class EditionElement(TeiElement, Showable):
             raise TypeError('Parent is of incorrect type.')
 
     @property
-    def preceding_nodes_in_ab(
-        self) -> list[_Element | _ElementUnicodeResult]:
+    def preceding_nodes_in_ab(self) -> list[XmlNode]:
 
         """
         Returns any preceding |_Element| or 
@@ -903,7 +903,7 @@ class EditionElement(TeiElement, Showable):
 
     @property
     def preceding_nodes_in_edition(
-        self) -> list[_Element | _ElementUnicodeResult]:
+        self) -> list[XmlNode]:
 
         """
         Returns any preceding or ancestor |_Element| or 
@@ -916,7 +916,7 @@ class EditionElement(TeiElement, Showable):
         )
 
     @property
-    def preceding_or_ancestor_in_edition(self) -> list[_Element]:
+    def preceding_or_ancestor_in_edition(self) -> list[XmlNode]:
 
         """
         Returns any preceding or ancestor |_Element| whose
