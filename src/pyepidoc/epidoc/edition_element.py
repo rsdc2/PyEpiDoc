@@ -700,7 +700,7 @@ class EditionElement(TeiElement, Showable):
         last accessed 2023-04-20.
         """
 
-        def get_preceding_lb(elem: EditionElement) -> list[_Element]:
+        def get_preceding_lb(elem: EditionElement) -> list[XmlElement]:
             
             result = elem._e.xpath('preceding::*[descendant-or-self::ns:lb]')
 
@@ -711,7 +711,7 @@ class EditionElement(TeiElement, Showable):
                 return get_preceding_lb(elem.parent)
 
             return [item for item in result
-                    if isinstance(item, _Element)]
+                    if isinstance(item, XmlElement)]
 
         if self._e is None:
             return None

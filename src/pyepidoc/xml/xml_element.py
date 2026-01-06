@@ -124,7 +124,7 @@ class XmlElement(Showable):
 
     def append_node(
             self, 
-            item: _Element | _ElementUnicodeResult | str | XmlElement) -> XmlElement:
+            item: _Element | _ElementUnicodeResult | str | XmlElement | XmlText) -> XmlElement:
 
         """
         Append either element or text to an element
@@ -142,6 +142,9 @@ class XmlElement(Showable):
                     self.last_child.tail = item
                 else:
                     self.last_child.tail += item
+
+        elif isinstance(item, XmlText):
+            self.append_node(item._text)
 
         elif isinstance(item, XmlElement):
             self._e.append(item._e)
@@ -962,8 +965,6 @@ class XmlElement(Showable):
 XmlNode = XmlText | XmlElement | XmlComment
 
 def to_xml_node(node: _Element | _ElementUnicodeResult | _Comment) -> XmlNode:
-    # if isinstance(node, XmlNode):
-    #     return node
     if isinstance(node, _Element):
         return XmlElement(node)
     if isinstance(node, _ElementUnicodeResult):
