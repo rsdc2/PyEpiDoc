@@ -9,6 +9,8 @@ from lxml.etree import _Element, _ElementUnicodeResult
 from pyepidoc.shared.constants import *
 from pyepidoc.shared import maxone, head
 from pyepidoc.xml.utils import localname
+from pyepidoc.xml.xml_text import XmlText
+from pyepidoc.xml.xml_element import XmlNode, XmlElement
 
 from .epidoc import EpiDoc
 from .edition_element import EditionElement
@@ -149,7 +151,7 @@ def line_ends_inside(elem: EditionElement) -> int:
     lbs = [desc for desc in elem._e.descendant_elements
             if desc.localname == 'lb']
 
-    return len(list(lbs))
+    return len(lbs)
 
 
 def line_end_after(elem: EditionElement) -> bool:
@@ -158,37 +160,32 @@ def line_end_after(elem: EditionElement) -> bool:
     appears at a line end
     """
 
-    def _filter_nodes(node: _ElementUnicodeResult | _Element) -> bool:
+    def _filter_nodes(node: XmlNode) -> bool:
         """
         Filter out text nodes that contain line breaks and nothing else
         """
-        if type(node) is _Element:
+        if isinstance(node, XmlElement):
             return True
-        elif type(node) is _ElementUnicodeResult:
-            if '\n' in node and node.strip() == '':
+        elif isinstance(node, XmlText):
+            if '\n' in node._text and node._text.strip() == '':
                 return False
-            
             return True
-        
         return False
-
 
     if last_in_ab(elem):
         return True
 
     following = filter(_filter_nodes, elem.following_nodes_in_ab)
-    localnames = map(localname, following)
+    localnames = map(lambda e: e.localname, following)
     try:
         first = next(localnames)
         if first == 'lb':
             return True
         else:
-            return False
-            
+            return False        
     except StopIteration:
         return False
     
-
 def line_ends(elem: EditionElement) -> int:
     inside = line_ends_inside(elem)
     after = line_end_after(elem)

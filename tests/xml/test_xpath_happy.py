@@ -49,10 +49,16 @@ def test_xpath_count(triple: tuple[str, str, float]):
 
 @pytest.mark.parametrize("triple", xpathlist)
 def test_xpath(triple: tuple[str, str, list[_Element | _ElementUnicodeResult]]):
-    xml, xpath, result = triple
+    # Arrange
+    xml, xpath, expected_result = triple
     elem = etree.fromstring(xml, None)
-    baseelem = XmlElement(elem)
-    assert baseelem.xpath(xpath) == result
+    xml_element = XmlElement(elem)
+
+    # Act
+    result = [str(result) for result in xml_element.xpath(xpath)]
+    
+    # Assert
+    assert result == expected_result
 
 
 @pytest.mark.parametrize("pair", xpath_true)

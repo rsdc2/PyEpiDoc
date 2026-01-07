@@ -33,6 +33,8 @@ def test_line_end():
 
 @pytest.mark.parametrize('fp', list(relative_filepaths.values()))
 def test_count_line_ends(fp):
+
+    # Arrange
     doc = EpiDoc(fp)
     doc.tokenize()
 
@@ -42,7 +44,10 @@ def test_count_line_ends(fp):
     
     tokens = edition.tokens_incl_nested
     
+    # Act
     linecount = len(edition.lbs)
-    lineends = sum(map(line_ends, tokens))
+    lineend_groups = [line_ends(token) for token in tokens]
+    lineends = sum(lineend_groups)
 
+    # Assert
     assert linecount == lineends

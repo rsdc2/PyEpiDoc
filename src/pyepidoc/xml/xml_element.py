@@ -25,7 +25,6 @@ from pyepidoc.shared.classes import Tag, Showable, ExtendableSeq, SetRelation
 
 from .namespace import Namespace as ns
 from .xml_text import XmlText
-from .xml_comment import XmlComment
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared import maxone
 from pyepidoc.xml.utils import localname, descendant_text
@@ -258,11 +257,8 @@ class XmlElement(Showable):
             if type(parent.parent) is XmlElement])
 
     @property
-    def descendant_comments(self) -> Sequence[_Comment]:
-        if self.e is None:
-            return []
-        
-        return [item for item in self.e.iterdescendants(None)
+    def descendant_comments(self) -> Sequence[_Comment]:        
+        return [item for item in self._e.iterdescendants(None)
                  if isinstance(item, _Comment)]
 
     @property
@@ -271,13 +267,9 @@ class XmlElement(Showable):
         :return: a list of all descendant |Element|s.
         Does not return any text or comment nodes.
         """
-
-        if self._e is None:
-            return []
-        
-        return [XmlElement(item) 
-                for item in self.e.iterdescendants(tag=None)
-                 if isinstance(item, _Element)]
+        descendant_elements = [desc for desc in self._e.iterdescendants(tag=None)
+                 if type(desc) is _Element]
+        return [XmlElement(desc) for desc in descendant_elements]
 
     def descendant_elements_by_local_name(self, localname: str) -> list[XmlElement]:
         """
@@ -303,13 +295,14 @@ class XmlElement(Showable):
         return set(self.descendant_element_names)
 
     @property
-    def descendant_nodes(self) -> list[_Element | _ElementUnicodeResult | _Comment]:
+    def descendant_nodes(self) -> list[XmlNode]:
 
         """
         Return all descendant nodes of any kind including comments
         """
 
-        return self._e.xpath('.//node()')
+        nodes = self._e.xpath('.//node()')
+        return [to_xml_node(node) for node in nodes]
     
     @property
     def descendant_non_comments(self) -> list[_Element | _ElementUnicodeResult]:
@@ -671,11 +664,14 @@ class XmlElement(Showable):
         :param exclude: list of element names whose children 
             should not be prettified
         """
-        if exclude is None: exclude = []
+        if exclude is None: 
+            exclude = []
 
-        
+        elements_and_comments = [node for node in element.descendant_nodes
+                                 if isinstance(node, (XmlElement, XmlComment))]
+
         # Iterate through descendant elements (incl. comments)
-        for desc in [element] + list(element.descendant_elements): 
+        for desc in [element] + elements_and_comments: 
 
             # Don't do anything to descdendant nodes containing @xml:space = "preserve"
             if desc.xmlspace_preserve_in_ancestors:
@@ -825,9 +821,6 @@ class XmlElement(Showable):
         """
         Return the text contents of the element. Returns an empty string if there is no text.
         """
-        if self._e is None:
-            return ''
-
         if self._e.text is None:
             return ''
             
@@ -835,15 +828,10 @@ class XmlElement(Showable):
 
     @text.setter
     def text(self, value: str | None):
-        if self._e is None:
-            return
-
-        self._e.text = value    # type: ignore
+        self._e.text = value
 
     @property
     def text_desc(self) -> str:
-        if self._e is None: 
-            return ''
         return ''.join(self._e.xpath('.//text()'))
 
     @property
@@ -962,15 +950,30 @@ class XmlElement(Showable):
     
         return None
     
+class XmlComment(XmlElement):
+
+    _e: _Comment
+
+    def __init__(self, comment: _Comment):
+        self._e = comment
+
+    @property
+    def text(self) -> str:
+        return str(self._e)
+    
+    @property
+    def localname(self) -> str:
+        return "#comment"
+
 XmlNode = XmlText | XmlElement | XmlComment
 
 def to_xml_node(node: _Element | _ElementUnicodeResult | _Comment) -> XmlNode:
-    if isinstance(node, _Element):
-        return XmlElement(node)
-    if isinstance(node, _ElementUnicodeResult):
-        return XmlText(node)
     if isinstance(node, _Comment):
         return XmlComment(node)
+    if isinstance(node, _ElementUnicodeResult):
+        return XmlText(node)
+    if isinstance(node, _Element):
+        return XmlElement(node)
     raise TypeError(f'Node {node} is node of valid type: '
                     'expected _Element, _ElementUnicodeResult or _Comment, ' \
                     'but is {type(node)}')

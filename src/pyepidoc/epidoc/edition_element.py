@@ -411,7 +411,7 @@ class EditionElement(TeiElement, Showable):
         return internal_token_elements[0]
 
     @property
-    def following_nodes_in_ab(self) -> list[_Element | _ElementUnicodeResult]:
+    def following_nodes_in_ab(self) -> list[XmlNode]:
 
         """
         Returns any following |_Element| or |_ElementUnicodeResult| whose
@@ -424,7 +424,7 @@ class EditionElement(TeiElement, Showable):
         )
 
     @property
-    def following_nodes_in_edition(self) -> list[_Element]:
+    def following_nodes_in_edition(self) -> list[XmlNode]:
 
         """
         Returns any preceding or ancestor |_Element| whose
