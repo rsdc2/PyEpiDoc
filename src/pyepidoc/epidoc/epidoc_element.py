@@ -882,7 +882,7 @@ class EpiDocElement(XmlElement, Showable):
         return self.get_attrib('n')
     
     @local_id.setter
-    def local_id(self, value: str) -> None:
+    def local_id(self, value: str | None) -> None:
         self.set_attrib('n', value)
 
     @property
@@ -1068,10 +1068,9 @@ class EpiDocElement(XmlElement, Showable):
 
     def set_attrib(
         self, 
-        attribname:str, 
-        value:str, 
-        namespace:Optional[str]=None
-        ) -> None:
+        attribname: str, 
+        value: str | None, 
+        namespace: Optional[str]=None) -> None:
         
         if self._e is None:
             return
@@ -1608,7 +1607,7 @@ class EpiDocElement(XmlElement, Showable):
         return self.get_attrib('id', namespace=XMLNS)
 
     @xml_id.setter
-    def xml_id(self, id_value:str) -> None:
+    def xml_id(self, id_value: str | None) -> None:
         """
         Sets the value of the xml:id attribute in the XML file.
         """
