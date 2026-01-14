@@ -614,24 +614,30 @@ class Edition(EpiDocElement):
         )
         return self
     
-    def remove_full_ids(self) -> Edition:
+    def remove_full_ids(self, all_descendants: bool = False) -> Edition:
         """
-        remove @xml:id id attributes
+        Remove @xml:id id attributes
         """
-
-        for elem in self.xml_idable_elements:
-            elem.set_id(None)
+        if all_descendants:
+            for elem in self.descendant_elements:
+                EpiDocElement(elem).xml_id = None
+        else:
+            for elem in self.xml_idable_elements:
+                elem.xml_id = None
 
         return self
     
-    def remove_local_ids(self) -> Edition:
+    def remove_local_ids(self, all_descendants: bool = False) -> Edition:
         """
         Remove @n id attributes
         """
-
-        for i, element in enumerate(self.local_idable_elements, 1):
-            if element.has_local_id:
-                element.local_id = None
+        if all_descendants:
+            for elem in self.descendant_elements:
+                EpiDocElement(elem).local_id = None
+        else:
+            for elem in self.local_idable_elements:
+                if elem.has_local_id:
+                    elem.local_id = None
 
         return self
 
