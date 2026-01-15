@@ -772,13 +772,15 @@ class XmlElement(Showable):
         return root_e.getroottree()
 
     def set_attr(
-        self, 
-        attribname: str, 
-        value: str, 
-        namespace: Optional[str] = None
-        ) -> None:
-
-        self._e.attrib[ns.give_ns(attribname, namespace)] = value
+            self, 
+            attribname: str, 
+            value: str | None, 
+            namespace: Optional[str] = None) -> None:
+        
+        if value is None:
+            self.remove_attr(attribname, namespace)
+        else:
+            self._e.attrib[ns.give_ns(attribname, namespace)] = value
 
     @property
     def tag(self) -> Tag:

@@ -833,9 +833,9 @@ class EditionElement(TeiElement, Showable):
     @local_id.setter
     def local_id(self, value: str | None) -> None:
         if value is None:
-            self.remove_attr('n')
+            self._e.remove_attr('n')
         else:
-            self.set_attr('n', value)
+            self._e.set_attr('n', value)
 
     @property
     def no_gaps(self) -> bool:
@@ -1559,7 +1559,7 @@ class EditionElement(TeiElement, Showable):
         Sets the value of the xml:id attribute in the XML file.
         """
         if id_value is None:
-            self.remove_attr('id', namespace=XMLNS)
+            self._e.remove_attr('id', namespace=XMLNS)
         else:
             self.set_attr('id', id_value, namespace=XMLNS)
 

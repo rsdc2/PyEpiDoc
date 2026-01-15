@@ -607,11 +607,11 @@ class Edition(EditionElement):
         Remove @xml:id id attributes
         """
         if all_descendants:
-            for elem in self.descendant_elements:
-                EpiDocElement(elem).xml_id = None
-        else:
-            for elem in self.xml_idable_elements:
+            for elem in self._e.descendant_elements:
                 elem.xml_id = None
+        else:
+            for edition_elem in self.xml_idable_elements:
+                edition_elem._e.xml_id = None
 
         return self
     
@@ -620,12 +620,11 @@ class Edition(EditionElement):
         Remove @n id attributes
         """
         if all_descendants:
-            for elem in self.descendant_elements:
-                EpiDocElement(elem).local_id = None
+            for elem in self._e.descendant_elements:
+                EditionElement(elem).local_id = None
         else:
-            for elem in self.local_idable_elements:
-                if elem.has_local_id:
-                    elem.local_id = None
+            for edition_elem in self.local_idable_elements:
+                edition_elem.local_id = None
 
         return self
 
