@@ -963,7 +963,7 @@ class EpiDoc(TeiDoc):
         """
 
         return Path(inspect.getfile(pyepidoc))
-    
+
     @property
     def _rng_path(self) -> Path:
         """

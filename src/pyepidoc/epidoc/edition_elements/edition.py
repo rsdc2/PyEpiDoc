@@ -602,6 +602,33 @@ class Edition(EditionElement):
         )
         return self
     
+    def remove_full_ids(self, all_descendants: bool = False) -> Edition:
+        """
+        Remove @xml:id id attributes
+        """
+        if all_descendants:
+            for elem in self.descendant_elements:
+                EpiDocElement(elem).xml_id = None
+        else:
+            for elem in self.xml_idable_elements:
+                elem.xml_id = None
+
+        return self
+    
+    def remove_local_ids(self, all_descendants: bool = False) -> Edition:
+        """
+        Remove @n id attributes
+        """
+        if all_descendants:
+            for elem in self.descendant_elements:
+                EpiDocElement(elem).local_id = None
+        else:
+            for elem in self.local_idable_elements:
+                if elem.has_local_id:
+                    elem.local_id = None
+
+        return self
+
     @property
     def representable_no_subatomic(self) -> list[RepresentableElement]:
         """
@@ -645,6 +672,26 @@ class Edition(EditionElement):
                 compress=compress
             )
 
+    def set_local_ids(self, interval: int=5) -> Edition:
+
+        """
+        Put @n on certain elements in the edition.
+        Raises an AttributeError if any of the elements
+        already have an `@n` id.
+
+        :param interval: the interval between ids, e.g. 
+        with 5, it will be 5, 10, 15, 20 etc.
+        """
+
+        for i, element in enumerate(self.local_idable_elements, 1):
+            if element.has_local_id:
+                raise AttributeError(f'@n attribute already set '
+                                     f'on element {element}.')
+            val = i * interval
+            element.local_id = str(val)
+
+        return self
+
     def set_missing_local_ids(self, interval: int=5) -> Edition:
         """
         Find any elements that don't have an `@n` id and insert 
@@ -679,26 +726,6 @@ class Edition(EditionElement):
                                 element.local_id = str(int(this_id))
 
         assert len(list(set(self.local_ids))) == len(self.local_ids)
-        return self
-
-    def set_local_ids(self, interval: int=5) -> Edition:
-
-        """
-        Put @n on certain elements in the edition.
-        Raises an AttributeError if any of the elements
-        already have an `@n` id.
-
-        :param interval: the interval between ids, e.g. 
-        with 5, it will be 5, 10, 15, 20 etc.
-        """
-
-        for i, element in enumerate(self.local_idable_elements, 1):
-            if element.has_local_id:
-                raise AttributeError(f'@n attribute already set '
-                                     f'on element {element}.')
-            val = i * interval
-            element.local_id = str(val)
-
         return self
 
     @property
