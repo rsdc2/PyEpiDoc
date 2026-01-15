@@ -245,6 +245,15 @@ class XmlElement(Showable):
 
         return len(self.descendant_elements_by_local_name(localname=localname)) > 0
     
+    @staticmethod
+    def create(name: str, namespace: str, attrs: dict[str, str] | None = None) -> XmlElement:
+        
+        return etree.Element(
+            _tag = ns.give_ns(name, namespace),
+            attrib = attrs,
+            nsmap = None
+        )
+    
     def deepcopy(self) -> XmlElement:
 
         return XmlElement(deepcopy(self._e))
@@ -305,13 +314,13 @@ class XmlElement(Showable):
         return [to_xml_node(node) for node in nodes]
     
     @property
-    def descendant_non_comments(self) -> list[_Element | _ElementUnicodeResult]:
+    def descendant_non_comments(self) -> list[XmlNode]:
 
         """
         Return all descendant nodes excluding comments
         """
         return [node for node in self.descendant_nodes
-                if not isinstance(node, _Comment)]
+                if not isinstance(node, XmlComment)]
 
     @property
     def descendant_text(self) -> str:
@@ -573,7 +582,7 @@ class XmlElement(Showable):
         return _recfunc([], self)
 
     @property
-    def has_only_whitespace(self) -> bool:
+    def has_only_whitespace_and_comments(self) -> bool:
 
         """
         Return True if the element contains only comments 
@@ -582,12 +591,13 @@ class XmlElement(Showable):
 
         non_comment_nodes = self.descendant_non_comments
         element_nodes = [node for node in non_comment_nodes
-                            if isinstance(node, _Element)]
+                            if isinstance(node, XmlElement)]
         text_nodes = [node for node in non_comment_nodes
-                            if isinstance(node, _ElementUnicodeResult)]
+                            if isinstance(node, XmlText)]
         
         if len(element_nodes) == 0:
-            return ''.join(text_nodes).strip() == ''
+            text = ''.join([text_node.text for text_node in text_nodes]).strip()
+            return text == ''
         
         return False
 

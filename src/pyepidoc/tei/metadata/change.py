@@ -51,8 +51,8 @@ class Change(EditionElement):
 
     @property
     def when(self) -> str | None:
-        return self.get_attrib('when')
+        return self.get_attr('when')
     
     @property
     def who(self) -> str | None:
-        return self.get_attrib('who')
+        return self.get_attr('who')

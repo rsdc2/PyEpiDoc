@@ -77,8 +77,7 @@ class RespStmt(EditionElement):
         :param initials: The person's initials
         :param ref: A unique identifier, e.g. ORCID
         """
-        tag = ns.give_ns("name", TEINS)
-        elem: _Element = etree.Element(tag)
+        elem = XmlElement.create('name', TEINS)
         epidoc_elem = EditionElement(elem)
         epidoc_elem.set_attr("id", initials, XMLNS)
         epidoc_elem.set_attr("ref", ref)
@@ -90,19 +89,16 @@ class RespStmt(EditionElement):
         """
         Create the <resp> element within the <respStmt/>
         """
-        tag = ns.give_ns("resp", TEINS)
-        elem: _Element = etree.Element(tag)
+        elem = XmlElement.create('resp', TEINS, None)
         elem.text = text
-        return XmlElement(elem)
+        return elem
 
     @staticmethod
     def create_resp_stmt() -> XmlElement:
         """
         Create the <respStmt> element
         """
-        tag = ns.give_ns("respStmt", TEINS)
-        elem: _Element = etree.Element(tag) 
-        return XmlElement(elem)
+        return XmlElement.create('respStmt', TEINS)
     
     @property
     def initials(self) -> str | None:
@@ -110,7 +106,7 @@ class RespStmt(EditionElement):
         if name_elem is None:
             return None
         
-        return name_elem.get_attrib('id', XMLNS)
+        return name_elem.get_attr('id', XMLNS)
 
     @property
     def name(self) -> str | None:
@@ -127,7 +123,7 @@ class RespStmt(EditionElement):
     def ref(self) -> str | None:
         if self.name_elem is None:
             return None
-        return self.name_elem.get_attrib('ref')
+        return self.name_elem.get_attr('ref')
 
     @property
     def resp(self) -> str | None:

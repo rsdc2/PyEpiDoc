@@ -60,7 +60,7 @@ class _W(RepresentableElement):
         """
         Return the lemma of the <w> element.
         """
-        return self.get_attrib('lemma')
+        return self.get_attr('lemma')
     
     @lemma.setter
     def lemma(self, value: str) -> None:

@@ -32,7 +32,7 @@ class Lb(EditionElement):
     
     @property
     def break_value(self) -> Optional[str]:
-        return self.get_attrib('break')
+        return self.get_attr('break')
 
     @property
     def leiden_form(self) -> str:
@@ -52,7 +52,7 @@ class Lb(EditionElement):
         Returns the 'n' attribute of the <lb> element.
         """
 
-        return self.get_attrib('n')
+        return self.get_attr('n')
 
     @property
     def normalized_form(self) -> str:

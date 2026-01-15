@@ -7,13 +7,13 @@ class Namespace:
         pass
 
     @classmethod
-    def give_ns(cls, name:str, ns:Optional[str]) -> str:
+    def give_ns(cls, name: str, ns: Optional[str]) -> str:
         return cls.give_brace(ns) + name
 
     @staticmethod
     def give_brace(ns:Optional[str]) -> str:
         if ns is None:
-            return ""
+            return ''
 
         return "{" + ns + "}"
 

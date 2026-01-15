@@ -12,7 +12,7 @@ class Idno(EditionElement):
         """
         The value of the @type attribute
         """
-        return self.get_attrib('type')
+        return self.get_attr('type')
 
     @property
     def value(self) -> str:

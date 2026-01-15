@@ -176,7 +176,7 @@ class Token(RepresentableElement):
     
     @property
     def lemma(self) -> Optional[str]:
-        return self.get_attrib('lemma')
+        return self.get_attr('lemma')
 
     @lemma.setter
     def lemma(self, value:str):
@@ -210,7 +210,7 @@ class Token(RepresentableElement):
     def pos(self) -> Optional[str]:
         """Returns the content of the part of speech (POS) 
         attribute of the token."""
-        return self.get_attrib('pos')
+        return self.get_attr('pos')
 
     @pos.setter
     def pos(self, value:str):

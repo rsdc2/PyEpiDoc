@@ -76,4 +76,4 @@ class PersName(EditionElement):
     
     @property
     def pers_name_type(self) -> str:
-        return self.get_attrib("type") or ""
+        return self.get_attr("type") or ""

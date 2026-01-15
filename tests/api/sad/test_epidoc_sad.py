@@ -31,4 +31,5 @@ def test_doc_main_edition_is_empty(filename: str):
     path = Path(test_files_path + "single_files_untokenized") / Path(filename)
     doc = EpiDoc(path)
 
-    assert not doc.main_edition is None and not doc.main_edition._e.has_only_whitespace
+    assert not doc.main_edition is None 
+    assert not doc.main_edition._e.has_only_whitespace_and_comments

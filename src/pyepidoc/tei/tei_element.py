@@ -77,15 +77,10 @@ class TeiElement:
         `localname` and `attributes`
         """
 
-        tag = ns.give_ns(localname, TEINS)
-        elem = etree.Element(
-            tag, 
-            {k: v for k, v in attributes.items()}, 
-            None
-        )
+        elem = XmlElement.create(localname, TEINS, attributes)
         return TeiElement(elem)
     
-    def get_attrib(
+    def get_attr(
             self, 
             attribname: str, 
             namespace: str | None=None

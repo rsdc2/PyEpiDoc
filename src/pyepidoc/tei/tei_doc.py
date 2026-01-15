@@ -170,7 +170,7 @@ class TeiDoc:
         if self.orig_date is None:
             return None
             
-        date = self.orig_date.get_attrib('when-custom')
+        date = self.orig_date.get_attr('when-custom')
 
         try:
             return int(date) if date is not None else None
@@ -280,7 +280,7 @@ class TeiDoc:
 
         functions = []
         for term in terms_with_ana:
-            ana_term = term.get_attrib('ana')
+            ana_term = term.get_attr('ana')
 
             if ana_term is not None:
                 functions += ana_term.split()
@@ -478,7 +478,7 @@ class TeiDoc:
         if self.textlang is None:
             return []
         
-        otherlangs = self.textlang.get_attrib('otherLangs')
+        otherlangs = self.textlang.get_attr('otherLangs')
         
         if otherlangs is None:
             return []

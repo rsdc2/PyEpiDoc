@@ -27,7 +27,7 @@ class Gap(RepresentableElement):
     
     @property
     def extent(self) -> str | None:
-        return self.get_attrib('extent')
+        return self.get_attr('extent')
 
     @property
     def leiden_form(self) -> str:
@@ -64,12 +64,12 @@ class Gap(RepresentableElement):
 
     @cached_property
     def simple_lemmatized_edition_form(self) -> str:
-        if self.get_attrib('unit') == 'character' and self.get_attrib('quantity') == '1':
+        if self.get_attr('unit') == 'character' and self.get_attr('quantity') == '1':
             return "[.]"
         return "[-?-]"
     
     @property
     def unit(self) -> str | None:
-        return self.get_attrib('unit')
+        return self.get_attr('unit')
     
     

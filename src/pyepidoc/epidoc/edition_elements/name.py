@@ -32,7 +32,7 @@ class Name(_W):
         Returns the @type property on the <name> element
         if it exists, or the empty string.
         """
-        return self.get_attrib('type') or ""
+        return self.get_attr('type') or ""
     
     @property
     def nymref(self) -> str:
@@ -40,4 +40,4 @@ class Name(_W):
         Returns the @nymRef property on the <name> element
         if it exists, or the empty string.
         """
-        return self.get_attrib('nymRef') or ""
+        return self.get_attr('nymRef') or ""

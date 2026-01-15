@@ -64,4 +64,4 @@ class Num(_W):
     
     @property
     def value(self) -> str:
-        return self.get_attrib('value') or ''
+        return self.get_attr('value') or ''

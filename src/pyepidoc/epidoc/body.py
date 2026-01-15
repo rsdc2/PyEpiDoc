@@ -113,18 +113,14 @@ class Body(TeiBody):
                 initials = None
 
         # Create the edition element
-        edition_elem: _Element = etree.Element(
-            _tag = ns.give_ns('div', TEINS), 
-            attrib = dict_remove_none({
+        attrs = dict_remove_none({
                 'type': 'edition', 
                 'subtype': subtype,
                 ns.give_ns('space', XMLNS): xmlspace_preserve,
                 'lang': lang,
                 'resp': initials
-            }),
-            nsmap = None
-        )
-        
+            })
+        edition_elem = XmlElement.create('div', TEINS, attrs)
         new_edition = Edition(edition_elem)
 
         # Insert the new edition after the main edition

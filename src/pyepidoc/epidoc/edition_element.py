@@ -384,7 +384,7 @@ class EditionElement(TeiElement, Showable):
         if self._e.tail is None: 
             return False
         
-        if self._e.localname == 'lb' and self.get_attrib('break') == 'no':
+        if self._e.localname == 'lb' and self.get_attr('break') == 'no':
             return False
         
         if self._e.tail == '':
@@ -480,7 +480,7 @@ class EditionElement(TeiElement, Showable):
             return True
 
         for gap in self.gaps:
-            doc_gap_reasons = gap.get_attrib('reason')
+            doc_gap_reasons = gap.get_attr('reason')
             if doc_gap_reasons is None:
                 continue
             doc_gap_reasons_split = doc_gap_reasons.split()
@@ -675,7 +675,7 @@ class EditionElement(TeiElement, Showable):
         """
 
         return self._e.localname == 'div' \
-            and self.get_attrib('type') == 'edition'
+            and self.get_attr('type') == 'edition'
 
     @property
     def _join_to_next(self) -> bool:
@@ -726,12 +726,12 @@ class EditionElement(TeiElement, Showable):
         Used for element addition in __add__ method.
         """
 
-        if self._e.localname == 'lb' and self.get_attrib('break') == 'no':
+        if self._e.localname == 'lb' and self.get_attr('break') == 'no':
             return False
         
         first_child = head(list(self.child_elems))
         if first_child is not None and (self.text == '' or self.text is None):
-            if  first_child._e.localname == 'lb' and first_child.get_attrib('break') == 'no':
+            if  first_child._e.localname == 'lb' and first_child.get_attr('break') == 'no':
                 return False
             
         return True
@@ -828,7 +828,7 @@ class EditionElement(TeiElement, Showable):
         """
         Return `@n` id
         """
-        return self.get_attrib('n')
+        return self.get_attr('n')
     
     @local_id.setter
     def local_id(self, value: str | None) -> None:
@@ -978,7 +978,7 @@ class EditionElement(TeiElement, Showable):
         Used for element addition in __add__ method.
         """
 
-        if self._e.localname == 'lb' and self.get_attrib('break') == 'no':
+        if self._e.localname == 'lb' and self.get_attr('break') == 'no':
             return False
         
         if self._e.localname == "Commment":
@@ -1486,7 +1486,7 @@ class EditionElement(TeiElement, Showable):
                 e_without_tail.tail = None   # type: ignore
                 localname = ns.remove_ns(e.tag)
 
-                if localname == 'lb' and EditionElement(e).get_attrib('break') == 'no':
+                if localname == 'lb' and EditionElement(e).get_attr('break') == 'no':
                     lb = e_without_tail
                     lb_tail = e.tail
 
@@ -1551,7 +1551,7 @@ class EditionElement(TeiElement, Showable):
         """
         Returns value of the xml:id attribute in the XML file.
         """
-        return self.get_attrib('id', namespace=XMLNS)
+        return self.get_attr('id', namespace=XMLNS)
 
     @xml_id.setter
     def xml_id(self, id_value: str | None) -> None:

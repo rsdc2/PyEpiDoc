@@ -226,7 +226,7 @@ class EpiDoc(TeiDoc):
         establishing which subtypes exist on the corpus.
         """
 
-        return remove_none([edition.get_attrib('subtype') 
+        return remove_none([edition.get_attr('subtype') 
                 for edition in self.editions(include_transliterations=True)
                 ])
 
@@ -393,7 +393,7 @@ class EpiDoc(TeiDoc):
 
         functions = []
         for term in terms_with_ana:
-            ana_term = term.get_attrib('ana')
+            ana_term = term.get_attr('ana')
 
             if ana_term is not None:
                 functions += ana_term.split()
@@ -423,7 +423,7 @@ class EpiDoc(TeiDoc):
             return True
 
         for gap in self.gaps:
-            doc_gap_reasons = gap.get_attrib('reason')
+            doc_gap_reasons = gap.get_attr('reason')
             if doc_gap_reasons is None:
                 continue
             doc_gap_reasons_split = doc_gap_reasons.split()
@@ -532,7 +532,7 @@ class EpiDoc(TeiDoc):
         if self.orig_date is None:
             return None
 
-        daterange_val = self.orig_date.get_attrib(attrib_name)
+        daterange_val = self.orig_date.get_attr(attrib_name)
 
         try:
             return int(daterange_val) if daterange_val is not None else None
@@ -552,7 +552,7 @@ class EpiDoc(TeiDoc):
             return []
 
         languages = lang_usage.get_desc_tei_elems('language')
-        idents = [language.get_attrib('ident') for language in languages]
+        idents = [language.get_attr('ident') for language in languages]
         return [ident for ident in idents if ident is not None]
 
     @property
@@ -679,7 +679,7 @@ class EpiDoc(TeiDoc):
     def mainlang(self) -> Optional[str]:
         if self.textlang is None:
             return None
-        return self.textlang.get_attrib('mainLang')
+        return self.textlang.get_attr('mainLang')
 
     @property
     def mean_date(self) -> int | None:
@@ -700,7 +700,7 @@ class EpiDoc(TeiDoc):
         if material_e is None:
             return []
         
-        return remove_none([EditionElement(e).get_attrib('ana') 
+        return remove_none([EditionElement(e).get_attr('ana') 
                             for e in material_e])
 
     def names(self, 
@@ -795,7 +795,7 @@ class EpiDoc(TeiDoc):
         if self.textlang is None:
             return []
         
-        otherlangs = self.textlang.get_attrib('otherLangs')
+        otherlangs = self.textlang.get_attr('otherLangs')
         
         if otherlangs is None:
             return []

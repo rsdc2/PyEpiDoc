@@ -6,5 +6,5 @@ class TextPart(EditionElement):
 
     @property
     def lang(self):
-        return self.get_attrib('lang', XMLNS)
+        return self.get_attr('lang', XMLNS)
     

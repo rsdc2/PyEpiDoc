@@ -4,7 +4,6 @@ the document
 """
 from __future__ import annotations
 from typing import Optional, Sequence
-from lxml.etree import _Element, _ElementUnicodeResult
 
 from pyepidoc.shared.constants import *
 from pyepidoc.shared import maxone, head

@@ -9,8 +9,8 @@ class TeiW(TeiElement):
     
     @property
     def lemma(self) -> str | None:
-        return self.get_attrib('lemma')
+        return self.get_attr('lemma')
     
     @property
     def xmlid(self) -> str | None:
-        return self.get_attrib('id', XMLNS)
+        return self.get_attr('id', XMLNS)

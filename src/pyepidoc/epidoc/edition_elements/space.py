@@ -31,7 +31,7 @@ class Space(RepresentableElement):
     
     @property
     def quantity(self) -> str | None:
-        return self.get_attrib('quantity')
+        return self.get_attr('quantity')
     
     @cached_property
     def simple_lemmatized_edition_element(self) -> EditionElement:
@@ -42,6 +42,6 @@ class Space(RepresentableElement):
     
     @property
     def unit(self) -> str | None:
-        return self.get_attrib('unit')
+        return self.get_attr('unit')
     
     

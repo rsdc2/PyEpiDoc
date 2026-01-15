@@ -121,13 +121,13 @@ class Ab(RepresentableElement):
         
         def _get_lang(elem:EditionElement) -> Optional[str]:
             
-            lang = elem.get_attrib('lang', XMLNS)
+            lang = elem.get_attr('lang', XMLNS)
             
             if lang is None:
                 if elem.parent is None:
                     return None
                 
-                if elem._e.localname == 'div' and elem.get_attrib('type') == 'edition':
+                if elem._e.localname == 'div' and elem.get_attr('type') == 'edition':
                     return lang
 
                 return _get_lang(elem.parent)

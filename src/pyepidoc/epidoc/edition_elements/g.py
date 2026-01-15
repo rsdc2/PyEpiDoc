@@ -22,7 +22,7 @@ class G(EditionElement):
 
     @property
     def ref(self) -> str:
-        return self.get_attrib('ref') or ''    
+        return self.get_attr('ref') or ''    
 
     @property
     def leiden_form(self) -> str:

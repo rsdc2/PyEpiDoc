@@ -4,11 +4,10 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Optional, Sequence, Literal, Callable
+from typing import Optional, Sequence, Literal
 import re
 
-from lxml import etree
-from lxml.etree import _Element, _ElementUnicodeResult, _Comment
+from lxml.etree import _Element
 
 from pyepidoc.xml import XmlElement
 from pyepidoc.xml.utils import editionify
@@ -102,9 +101,7 @@ def prettify(
 
         return prevs
 
-    def get_parents_for_first_children(
-            elements: Sequence[XmlElement]
-            ) -> Sequence[XmlElement]:
+    def get_parents_for_first_children(elements: Sequence[XmlElement]) -> Sequence[XmlElement]:
 
         """
         Returns parent elements for all first children
@@ -212,7 +209,7 @@ class Edition(EditionElement):
         if self._e.tag.name != 'div':
             raise TypeError(f'Element should be of type <div> but is <{self._e.localname}>.')
 
-        if self.get_attrib('type') != 'edition':
+        if self.get_attr('type') != 'edition':
             raise TypeError('Element type attribute should be "edition".')
 
     @property
@@ -250,13 +247,8 @@ class Edition(EditionElement):
         # Create internal <ab> element: TEI requires this
         # and insert it into the Edition element
 
-        ab_elem = etree.Element(
-            _tag = ns.give_ns('ab', TEINS),
-            attrib = None,
-            nsmap = None
-        )
-
-        self._e._e.append(ab_elem)
+        ab_elem = XmlElement.create('ab', TEINS, None)
+        self._e.append_node(ab_elem)
         return Ab(ab_elem)
 
     @property
@@ -497,7 +489,7 @@ class Edition(EditionElement):
         w = EditionElement.create('w')
 
         for node in child_nodes:
-            if isinstance(node, _Element):
+            if isinstance(node, XmlElement):
                 EditionElement(node)._e.tail = ''
             w._e.append_node(node)
 
@@ -533,17 +525,17 @@ class Edition(EditionElement):
         not contain any non-comment nodes
         """
         
-        if self.get_attrib('supplied') == 'unsupplied':
+        if self.get_attr('supplied') == 'unsupplied':
             return True
 
-        if self._e.has_only_whitespace:
+        if self._e.has_only_whitespace_and_comments:
             return True
         
-        return all([ab._e.has_only_whitespace for ab in self.abs])
+        return all([ab._e.has_only_whitespace_and_comments for ab in self.abs])
 
     @property
     def lang(self):
-        return self.get_attrib('lang', XMLNS)
+        return self.get_attr('lang', XMLNS)
 
     @property
     def lbs(self) -> list[EditionElement]:
@@ -643,7 +635,7 @@ class Edition(EditionElement):
         """
         Return the @resp attribute value for the edition
         """
-        return self.get_attrib('resp')
+        return self.get_attr('resp')
 
     def set_ids(self, base: Base=52, compress: bool=True) -> None:
         """
@@ -729,7 +721,7 @@ class Edition(EditionElement):
 
     @property
     def subtype(self) -> Optional[str]:
-        return self.get_attrib('subtype')
+        return self.get_attr('subtype')
 
     @property
     def supplied(self) -> Sequence[XmlElement]:

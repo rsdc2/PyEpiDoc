@@ -88,7 +88,8 @@ def test_doc_main_edition_is_empty(filename: str):
     path = Path(test_files_path + "single_files_untokenized") / Path(filename)
     doc = EpiDoc(path)
 
-    assert doc.main_edition is not None and doc.main_edition.is_empty
+    assert doc.main_edition is not None 
+    assert doc.main_edition.is_empty
     
 
 test_is_after_inputs = [
