@@ -1,6 +1,5 @@
 import pytest
 
-from pyepidoc.epidoc.edition_elements.abbr import Abbr
 from pyepidoc.epidoc.edition_elements.expan import Expan
 from pyepidoc.shared.enums import AbbrType
 from pyepidoc.shared import contains
@@ -13,7 +12,6 @@ multiplications = [
     f'<expan xmlns="{TEINS}"><abbr>d<am>d</am></abbr><ex>ominis</ex></expan>',
     f'<expan xmlns="{TEINS}"><abbr><am>d</am>d</abbr><ex>ominis</ex></expan>',
     f'<expan xmlns="{TEINS}"><abbr>imp<am>p</am></abbr><ex>eratorum</ex></expan>',
-
 ]
 
 non_multiplications = [
