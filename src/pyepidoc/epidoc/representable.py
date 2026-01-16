@@ -7,12 +7,6 @@ from typing import (
 )
 from functools import cached_property, reduce
 
-from lxml.etree import (
-    _Element, 
-    _Comment, 
-    _ElementUnicodeResult
-)
-
 from pyepidoc.xml.utils import localname
 from pyepidoc.xml.xml_text import XmlText
 from pyepidoc.xml.xml_element import XmlElement, XmlNode, to_xml_node
@@ -20,7 +14,6 @@ from pyepidoc.xml.xml_element import XmlElement, XmlNode, to_xml_node
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.enums import RegTextType
 from .edition_element import EditionElement
-
 
 
 class RepresentableElement(EditionElement):

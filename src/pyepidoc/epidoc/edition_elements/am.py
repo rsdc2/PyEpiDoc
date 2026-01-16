@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from ..edition_element import EditionElement
-from pyepidoc.epidoc.utils import descendant_text
+from pyepidoc.epidoc.edition_element import EditionElement
 from typing import Optional
 
 class Am(EditionElement):    

@@ -128,15 +128,16 @@ def test_prettify_fragment(ugly: str, benchmark: str, _: str):
     """
 
     # Arrange
-    ugly_xml = XmlElement(etree.fromstring(ugly.strip()))
-    benchmark_xml = XmlElement(etree.fromstring(benchmark.strip()))
+    ugly_xml = XmlElement.from_xml_str(ugly.strip())
+    benchmark_xml = XmlElement.from_xml_str(benchmark.strip())
 
     # Act
     prettified = ugly_xml.prettify_element_with_pyepidoc(' ', 4, DoNotPrettifyChildren.values())
 
     # Assert
-    result = benchmark_xml.xml_byte_str.strip() == prettified.xml_byte_str.strip()
-    if not result:
+    actual = prettified.xml_byte_str.strip()
+    expected = benchmark_xml.xml_byte_str.strip()
+    if not actual == expected:
         # breakpoint()
         pass
-    assert result
+    assert actual == expected

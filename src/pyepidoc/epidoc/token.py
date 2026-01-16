@@ -8,12 +8,6 @@ from typing import (
 from functools import cached_property
 from copy import deepcopy
 
-from lxml.etree import (
-    _Element, 
-    _Comment, 
-    _ElementUnicodeResult
-)
-
 from pyepidoc.xml import Namespace as ns
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
@@ -42,9 +36,6 @@ from .edition_elements.supplied import Supplied
 from .edition_elements.surplus import Surplus
 from .edition_elements.unclear import Unclear
 from .edition_elements.w import W
-
-
-Node = Union[_Element, _ElementUnicodeResult]
 
 elem_classes: dict[str, type] = {
     'abbr': Abbr,

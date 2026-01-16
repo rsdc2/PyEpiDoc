@@ -1,8 +1,5 @@
 from __future__ import annotations
 import pytest
-from typing import cast, List, Union
-from lxml import etree
-from lxml.etree import _Element, _ElementUnicodeResult
 from pyepidoc.xml import XmlElement
 
 xpath_true = [
@@ -13,12 +10,10 @@ xpath_true = [
     
 ]
 
-
 xpath_false = [
     ('<expan xmlns="http://www.tei-c.org/ns/1.0">K<abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>',
      'descendant::text()[position()=1] = descendant::text()[ancestor::ns:abbr][position()=1]')
 ]
-
 
 xpath_count = [
     ('<expan xmlns="http://www.tei-c.org/ns/1.0">K<abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>',
@@ -32,30 +27,28 @@ xpath_count = [
 xpathlist = [
     ('<expan xmlns="http://www.tei-c.org/ns/1.0">K<abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>',
         'descendant::text()[ancestor::ns:abbr][position()=1]/preceding::text()[ancestor::ns:expan[position()=1]]',
-        cast(List[Union[_Element, _ElementUnicodeResult]], ['K'])),
+        ['K']),
     # ('<expan xmlns="http://www.tei-c.org/ns/1.0"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>',
     #     'descendant::text()[position()=1]/ancestor::*',
-    #     cast(List[Union[_Element, _ElementUnicodeResult]], ['K']))
+    #     ['K'])
 ]
 
 
 @pytest.mark.parametrize("triple", xpath_count)
 def test_xpath_count(triple: tuple[str, str, float]):
     xml, xpath, result = triple
-    elem = etree.fromstring(xml, None)
-    baseelem = XmlElement(elem)
-    assert baseelem.xpath_float(xpath) == result
+    elem = XmlElement.from_xml_str(xml)
+    assert elem.xpath_float(xpath) == result
 
 
 @pytest.mark.parametrize("triple", xpathlist)
-def test_xpath(triple: tuple[str, str, list[_Element | _ElementUnicodeResult]]):
+def test_xpath(triple: tuple[str, str, str]):
     # Arrange
     xml, xpath, expected_result = triple
-    elem = etree.fromstring(xml, None)
-    xml_element = XmlElement(elem)
+    elem = XmlElement.from_xml_str(xml)
 
     # Act
-    result = [str(result) for result in xml_element.xpath(xpath)]
+    result = [str(result) for result in elem.xpath(xpath)]
     
     # Assert
     assert result == expected_result
@@ -63,19 +56,14 @@ def test_xpath(triple: tuple[str, str, list[_Element | _ElementUnicodeResult]]):
 
 @pytest.mark.parametrize("pair", xpath_true)
 def test_xpath_bool_true(pair: tuple[str, str]):
-
     xml, xpath = pair
-    elem = etree.fromstring(xml, None)
-    baseelem = XmlElement(elem)
-
-    assert baseelem.xpath_bool(xpath)
+    elem = XmlElement.from_xml_str(xml)
+    assert elem.xpath_bool(xpath)
 
 
 @pytest.mark.parametrize("pair", xpath_false)
 def test_xpath_bool_false(pair: tuple[str, str]):
 
     xml, xpath = pair
-    elem = etree.fromstring(xml, None)
-    baseelem = XmlElement(elem)
-
-    assert not baseelem.xpath_bool(xpath)
+    elem = XmlElement.from_xml_str(xml, None)
+    assert not elem.xpath_bool(xpath)

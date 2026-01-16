@@ -64,15 +64,6 @@ def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[XmlElement]):
     return str(epidoc_elem)
 
 
-def leiden_str(elem: _Element, classes: dict[str, type]) -> str:
-    """
-    Returns a Leiden-formatted string representation
-    of the children of param:elem
-    """
-
-    return str(callable_from_localname(elem, classes))
-
-
 def leiden_str_from_children(
         parent: XmlElement,
         classes: dict[str, type],

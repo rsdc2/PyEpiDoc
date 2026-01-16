@@ -2,16 +2,10 @@ from __future__ import annotations
 
 from typing import Sequence, cast, overload
 
-from lxml import etree
 from lxml.etree import ( 
-    _Comment,
     _Element, 
-    _ElementTree, 
-    _ElementUnicodeResult,
-    _ProcessingInstruction,
     XMLSyntaxError, 
-    XMLSyntaxAssertionError,
-    DocumentInvalid
+    XMLSyntaxAssertionError
 )
 
 from pyepidoc.xml import XmlElement

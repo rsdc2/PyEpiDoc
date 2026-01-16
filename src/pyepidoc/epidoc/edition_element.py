@@ -414,8 +414,8 @@ class EditionElement(TeiElement, Showable):
     def following_nodes_in_ab(self) -> list[XmlNode]:
 
         """
-        Returns any following |_Element| or |_ElementUnicodeResult| whose
-        ancestor is an ab.
+        Returns any following Element or Text nodes whose
+        ancestor is an <ab>.
         """
 
         return self._e.xpath(
