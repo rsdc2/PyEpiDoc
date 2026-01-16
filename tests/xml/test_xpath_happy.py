@@ -65,5 +65,5 @@ def test_xpath_bool_true(pair: tuple[str, str]):
 def test_xpath_bool_false(pair: tuple[str, str]):
 
     xml, xpath = pair
-    elem = XmlElement.from_xml_str(xml, None)
+    elem = XmlElement.from_xml_str(xml)
     assert not elem.xpath_bool(xpath)
