@@ -1,5 +1,5 @@
 from functools import cached_property
-from lxml.etree import _Element
+
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.representable import RepresentableElement
@@ -12,7 +12,7 @@ class Orig(RepresentableElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element | XmlElement | TeiElement):
+    def __init__(self, e: XmlElement | TeiElement):
         super().__init__(e)
 
         if self._e.localname != 'orig':

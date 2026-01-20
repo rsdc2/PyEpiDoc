@@ -1,4 +1,4 @@
-from lxml.etree import _Element
+
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.tei.tei_element import TeiElement
@@ -21,7 +21,7 @@ class Unclear(EditionElement):
     given in <unclear> elements.
     """
 
-    def __init__(self, e: _Element | TeiElement | XmlElement):
+    def __init__(self, e: TeiElement | XmlElement):
 
         super().__init__(e)
 

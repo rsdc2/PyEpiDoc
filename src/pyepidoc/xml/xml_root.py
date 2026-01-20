@@ -161,59 +161,29 @@ class XmlRoot:
         return self._e
     
     @property
+    def element(self) -> XmlElement:
+        return XmlElement(self._e)
+    
+    @property
     def filename(self) -> str:
         return self._p.stem
 
     def get_desc(self, 
-        elemnames: Union[list[str], str], 
-        attribs: Optional[dict[str, str]]=None
-    ) -> list[_Element]:
+        elemnames: list[str] | str, 
+        attribs: dict[str, str] | None,
+        ns: str) -> list[XmlElement]:
 
-        if self.e is None: 
-            return []
-        if type(elemnames) is str:
-            _elemnames = [elemnames]
-        elif type(elemnames) is list:
-            _elemnames = elemnames
-        else:
-            raise TypeError("elemnames has incorrect type.")
+        return self.element.get_desc(elemnames, attribs, ns)
 
-        xpathstr = ' | '.join([f'.//ns:{elemname}' + \
-                               self._compile_attribs(attribs) 
-                               for elemname in _elemnames])
-
-        try:
-            xpathRes = (self
-                .e
-                .xpath(xpathstr, namespaces={'ns': TEINS})
-            )
-        except XMLSyntaxAssertionError as e:
-            print('XMLSyntaxAssertionError in get_desc')
-            print(e)
-            return []
-        except XMLSyntaxError as e:
-            print('XMLSyntaxError in get_desc')
-            handle_xmlsyntaxerror(e)
-            return []
-        except AssertionError as e:
-            print(f'AssertionError in get_desc while analysing {self._p}')
-            print(e)
-            return []
-
-        if type(xpathRes) is list:
-            return cast(list[_Element], xpathRes)
-
-        raise TypeError('XPath result is of the wrong type.')
-
-    def _load_e_from_file(self, inpt: Path | BytesIO) -> _Element:
+    def _load_e_from_file(self, inpt: Path | BytesIO) -> XmlElement:
 
         """
         Reads the root element from file and returns an
         _Element object representing the XML document
         """
-        return self._load_etree_from_file(inpt=inpt).getroot()
+        return self._load_etree_from_file(inpt=inpt).element
 
-    def _load_etree_from_file(self, inpt: Path | BytesIO) -> _ElementTree:
+    def _load_etree_from_file(self, inpt: Path | BytesIO) -> XmlRoot:
         """
         Reads the root element from file and returns an
         _ElementTree object representing the XML document
@@ -232,18 +202,45 @@ class XmlRoot:
                 parser=parser
             )
 
-            return self._roottree
+            return self
         
         except XMLSyntaxAssertionError as e:
             print('XMLSyntaxAssertionError in _e_from_file')
             print(e)
-            return _ElementTree()
+            return XmlRoot(_ElementTree())
         
         except XMLSyntaxError as e:
             print('XMLSyntaxError in _e_from_file')
-            handle_xmlsyntaxerror(e)
+            print(e)
             return _ElementTree()        
+        
+    def _prettify_with_lxml(self) -> XmlRoot:
 
+        """
+        Use the prettifier in `lxml` to prettify the 
+        xml file. Deepcopies the file.
+        """
+        
+        prettified_str: bytes = self.element.to_bytes(
+            xml_declaration=True, 
+            pretty_print=True)
+        
+        parser = etree.XMLParser(
+            load_dtd=False,
+            resolve_entities=False,
+            remove_blank_text=True,
+        )
+
+        root_elem: _Element = etree.fromstring(
+            text=prettified_str, 
+            parser=parser
+        )
+
+        tree = root_elem.getroottree()
+        prettified_doc = XmlRoot(tree)
+
+        return prettified_doc
+    
     @property
     def processing_instructions(self) -> list[_ProcessingInstruction]:
         """
@@ -293,13 +290,12 @@ class XmlRoot:
 
         return ''.join(xpath_res)
 
-    def to_byte_str(self, collapse_empty_elements: bool = False) -> bytes:
+    def to_bytes(self, collapse_empty_elements: bool = False) -> bytes:
         """
         Convert the XML to bytes including processing instructions
         """
 
-        declaration = \
-            '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
+        declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
         processing_instructions = \
             (self.processing_instructions_str + '\n').encode("utf-8")
 
@@ -414,11 +410,7 @@ class XmlRoot:
         """
         Return the element as a byte string
         """
-        return self.to_byte_str(collapse_empty_elements=True)
-    
-    @property
-    def xml_element(self) -> XmlElement:
-        return XmlElement(self._e)
+        return self.to_bytes(collapse_empty_elements=True)
 
     @property
     def xml_str(self) -> str:

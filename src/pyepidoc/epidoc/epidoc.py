@@ -8,17 +8,14 @@ from typing import (
 )
 from functools import cached_property
 
-from lxml import etree
-from lxml.etree import (
-    _Element, 
-    _ElementTree
-)
-
 from pathlib import Path
 from itertools import chain
 import inspect
 import io
 from io import BytesIO
+
+from pyepidoc.xml.xml_root import XmlRoot
+from pyepidoc.xml.xml_element import XmlElement
 
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.tei_doc import TeiDoc
@@ -35,12 +32,13 @@ from pyepidoc.shared.enums import (
     AbbrType,
     DoNotPrettifyChildren
 )
+
 from pyepidoc.shared.types import Base
 
 from .body import Body
 from .token import Token
 from .errors import EpiDocValidationError
-from .edition_element import EditionElement, XmlElement
+from .edition_element import EditionElement
 
 from .edition_elements.ab import Ab
 from .edition_elements.edition import Edition
@@ -65,7 +63,7 @@ class EpiDoc(TeiDoc):
     
     def __init__(
             self, 
-            inpt: Path | BytesIO | str | _ElementTree | XmlElement,
+            inpt: Path | BytesIO | str | XmlElement | XmlRoot,
             validate_on_load: bool=False,
             verbose: bool=True):
         
@@ -112,7 +110,7 @@ class EpiDoc(TeiDoc):
                             for edition in self.editions()]))
 
     @property
-    def apparatus(self) -> list[_Element]:
+    def apparatus(self) -> list[XmlElement]:
         return self._tei_element.get_div_descendants_by_type('apparatus')
         
     @override
@@ -128,7 +126,7 @@ class EpiDoc(TeiDoc):
         return Body(body)
 
     @property
-    def commentary(self) -> list[_Element]:
+    def commentary(self) -> list[XmlElement]:
         return self._tei_element.get_div_descendants_by_type('commentary')
 
     @property
@@ -371,9 +369,9 @@ class EpiDoc(TeiDoc):
         element.
         """
         try:
-            textclass_elems = self._xmlroot.get_desc('textClass')
+            textclass_elems = self.get_desc('textClass', None)
             textclass_e = maxone(
-                self._xmlroot.get_desc('textClass'), 
+                self.get_desc('textClass', None), 
                 throw_if_more_than_one=throw_if_more_than_one,
                 idx=len(textclass_elems) - 1)
             
@@ -545,7 +543,7 @@ class EpiDoc(TeiDoc):
         """Used by EDH to host language information."""
 
         language_elems = [EditionElement(language) 
-                          for language in self._xmlroot.get_desc('langUsage')]
+                          for language in self.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
         if lang_usage is None: 
@@ -695,7 +693,7 @@ class EpiDoc(TeiDoc):
     @property
     def materialclasses(self) -> list[str]:
 
-        material_e = self._xmlroot.get_desc('material')
+        material_e = self.get_desc('material')
         
         if material_e is None:
             return []
@@ -757,14 +755,14 @@ class EpiDoc(TeiDoc):
     def orig_date(self) -> Optional[EditionElement]:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
-            self._xmlroot.get_desc('origDate'),
+            self.get_desc('origDate'),
             defaultval=None,
             throw_if_more_than_one=False
         )
         if orig_date is None:
             return None
 
-        if orig_date.attrib == dict():
+        if orig_date.attrs == dict():
             orig_date = maxone(
                 EditionElement(orig_date)._e.get_desc('origDate'), 
                 throw_if_more_than_one=False
@@ -886,27 +884,8 @@ class EpiDoc(TeiDoc):
         Use the prettifier in `lxml` to prettify the 
         xml file. Deepcopies the file.
         """
-
-        prettified_str: bytes = etree.tostring(
-            element_or_tree=self._xmlroot._e,
-            xml_declaration=True, # type: ignore
-            pretty_print=True # type: ignore
-        )
-        
-        parser = etree.XMLParser(
-            load_dtd=False,
-            resolve_entities=False,
-            remove_blank_text=True,
-        )
-        root_elem: _Element = etree.fromstring(
-            text=prettified_str, 
-            parser=parser
-        )
-
-        tree = root_elem.getroottree()
-        prettified_doc = EpiDoc(tree)
-
-        return prettified_doc
+        prettified = self.xmlroot._prettify_with_lxml()
+        return EpiDoc(prettified)
     
     def _prettify_with_pyepidoc(
             self, 
@@ -948,7 +927,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def publication_stmt(self) -> Optional[EditionElement]:
-        publication_stmt = maxone(self._xmlroot.get_desc('publicationStmt'))
+        publication_stmt = maxone(self.get_desc('publicationStmt'))
         if publication_stmt is None:
             return None
         return EditionElement(publication_stmt)
@@ -1056,11 +1035,11 @@ class EpiDoc(TeiDoc):
         return list(chain(*[edition.supplied for edition in self.editions()]))
 
     @property
-    def tei(self) -> Optional[_Element]:
+    def tei(self) -> Optional[XmlElement]:
         """
         Return the `<TEI>` root element
         """
-        return maxone(self._xmlroot.get_desc('TEI'))
+        return maxone(self.get_desc('TEI'))
 
     @property
     def tei_header(self) -> Optional[TeiHeader]:
@@ -1127,7 +1106,7 @@ class EpiDoc(TeiDoc):
         """
 
         textlang = maxone([EditionElement(textlang) 
-            for textlang in self._xmlroot.get_desc('textLang')])
+            for textlang in self.get_desc('textLang')])
         
         if textlang is None: 
             return None
@@ -1213,14 +1192,14 @@ class EpiDoc(TeiDoc):
             mode = 'xb'
         
         with open(dst, mode=mode) as f:
-            f.write(self._xmlroot.to_byte_str(collapse_empty_elements))
+            f.write(self._xmlroot.to_bytes(collapse_empty_elements))
 
     def to_xml_file_object(self, collapse_empty_elements: bool = False) -> io.BytesIO:
         """
         Write the file to a file object in memory, rather than
         to a file on disk
         """
-        return io.BytesIO(self._xmlroot.to_byte_str(collapse_empty_elements))
+        return io.BytesIO(self._xmlroot.to_bytes(collapse_empty_elements))
 
     @property
     def token_count(self) -> int:

@@ -1,5 +1,4 @@
 from functools import cached_property
-from lxml.etree import _Element
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import XMLNS
@@ -12,7 +11,7 @@ class Space(RepresentableElement):
     given in <gap> elements.
     """
 
-    def __init__(self, e: _Element | TeiElement | XmlElement):
+    def __init__(self, e: TeiElement | XmlElement):
         super().__init__(e)
 
         if self._e.localname != 'space':

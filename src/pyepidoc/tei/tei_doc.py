@@ -6,10 +6,7 @@ from typing import (
 )
 
 from lxml import etree
-from lxml.etree import (
-    _Element, 
-    _ElementTree
-)
+from lxml.etree import _Element
 
 from pathlib import Path
 from itertools import chain
@@ -18,15 +15,10 @@ import io
 from io import BytesIO
 
 import pyepidoc
-from pyepidoc.xml.docroot import XmlRoot
-from pyepidoc.shared import (
-    maxone, 
-    listfilter, 
-    head,
-    remove_none
-)
+from pyepidoc.xml.xml_root import XmlRoot
+from pyepidoc.shared import maxone, head, remove_none
+from pyepidoc.shared.namespaces import TEINS
 
-from pyepidoc.shared.types import Base
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.enums import SpaceUnit, DoNotPrettifyChildren
 from pyepidoc.tei.tei_element import TeiElement
@@ -51,13 +43,12 @@ class TeiDoc:
     as well as that for accessing the editions present
     in the file.
     """
-
     _xmlroot: XmlRoot
     _tei_element: TeiElement
     
     def __init__(
             self, 
-            inpt: Path | BytesIO | str | _ElementTree | XmlElement):
+            inpt: Path | BytesIO | str | XmlElement | XmlRoot):
         
         """
         Initialize a TeiDoc object on a given input 
@@ -68,7 +59,11 @@ class TeiDoc:
         :param inpt: string (containing path to document), 
             Path or lxml _ElementTree
         """
-        self._xmlroot = XmlRoot(inpt)
+        if isinstance(inpt, XmlRoot):
+            self._xmlroot = inpt
+        else:
+            self._xmlroot = XmlRoot(inpt)
+
         self._tei_element = TeiElement(self._xmlroot._e)
         self.assert_has_tei_ns()
 
@@ -85,7 +80,7 @@ class TeiDoc:
         return hash(self.id)
 
     @property
-    def apparatus(self) -> list[_Element]:
+    def apparatus(self) -> list[XmlElement]:
         return self._tei_element.get_div_descendants_by_type('apparatus')
     
     def append_change(self, change: Change) -> TeiDoc:
@@ -97,7 +92,7 @@ class TeiDoc:
         Insert a <teiHeader> element as the first child
         """
         tei_header_elem = TeiHeader.create()
-        self._xmlroot.xml_element.insert(0, tei_header_elem._e)
+        self._xmlroot.element.insert(0, tei_header_elem._e)
         return self
 
     def append_resp_stmt(self, resp_stmt: RespStmt) -> TeiDoc:
@@ -157,12 +152,10 @@ class TeiDoc:
         Return the body element of the XML file
         as a `Body` object.
         """
-        
-        body = self.text.body        
-        return TeiBody(body)
+        return TeiBody(self.text.body)
 
     @property
-    def commentary(self) -> list[_Element]:
+    def commentary(self) -> list[XmlElement]:
         return self._tei_element.get_div_descendants_by_type('commentary')
     
     @property
@@ -244,7 +237,14 @@ class TeiDoc:
         if tei_header is None: 
             return None
         return tei_header.file_desc
+    
+    def get_desc(self, 
+        elemnames: list[str] | str, 
+        attribs: dict[str, str] | None = None,
+        ns: str = TEINS) -> list[XmlElement]:
 
+        return self.element.get_desc(elemnames, attribs, ns)
+    
     def get_textclasses(
             self, 
             throw_if_more_than_one: bool) -> list[str]:
@@ -396,7 +396,7 @@ class TeiDoc:
         return langs
     
     @property
-    def mainlang(self) -> Optional[str]:
+    def mainlang(self) -> str | None:
         if self.textlang is None:
             return None
         return self.textlang._e.get_attr('mainLang')
@@ -417,7 +417,7 @@ class TeiDoc:
                             for e in material_e])
 
     @property
-    def not_after(self) -> Optional[int]:
+    def not_after(self) -> int | None:
         """
         Return the value of the @notAfter or @notAfter-custom attribute,
         whichever is present
@@ -427,7 +427,7 @@ class TeiDoc:
         return not_after_custom or not_after
 
     @property
-    def not_before(self) -> Optional[int]:
+    def not_before(self) -> int | None:
         """
         Return the value of the @notBefore or @notBefore-custom attribute,
         whichever is present
@@ -437,30 +437,28 @@ class TeiDoc:
         return not_before_custom or not_before
 
     @property
-    def orig_date(self) -> Optional[TeiElement]:
+    def orig_date(self) -> TeiElement | None:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
             self._tei_element.get_desc_tei_elems('origDate'),
-            defaultval=None,
             throw_if_more_than_one=False
         )
+
         if orig_date is None:
             return None
 
         if orig_date._e.attrs == dict():
-            orig_date = maxone(
+            orig_date_ = maxone(
                 TeiElement(orig_date)._e.get_desc('origDate'), 
                 throw_if_more_than_one=False
-            )    
-
-        if orig_date is None:
-            return None        
+            )     
+            return None if orig_date_ is None else TeiElement(orig_date_)
 
         return TeiElement(orig_date)
  
     @property
     def orig_place(self) -> str:
-        xpath_results = self._xmlroot.xml_element.xpath('//ns:history/ns:origin/'
+        xpath_results = self._xmlroot.element.xpath('//ns:history/ns:origin/'
                                    'ns:origPlace/ns:placeName'
                                    '[@type="ancient"]/text()')
         result = head(
@@ -518,8 +516,7 @@ class TeiDoc:
             self._prettify_with_pyepidoc(SpaceUnit.Space.value, 4)
     
         else:
-            raise TypeError('Prettifier must either be '
-                            'lxml or pyepidoc.')
+            raise TypeError('Prettifier must either be lxml or pyepidoc.')
 
         return self
 
@@ -529,27 +526,8 @@ class TeiDoc:
         Use the prettifier in `lxml` to prettify the 
         xml file. Deepcopies the file.
         """
-
-        prettified_str: bytes = etree.tostring(
-            element_or_tree=self._tei_element._e._e,
-            xml_declaration=True, # type: ignore
-            pretty_print=True # type: ignore
-        )
-        
-        parser = etree.XMLParser(
-            load_dtd=False,
-            resolve_entities=False,
-            remove_blank_text=True,
-        )
-        root_elem: _Element = etree.fromstring(
-            text=prettified_str, 
-            parser=parser
-        )
-
-        tree = root_elem.getroottree()
-        prettified_doc = TeiDoc(tree)
-
-        return prettified_doc
+        prettified_doc = self.xmlroot._prettify_with_lxml()
+        return TeiDoc(prettified_doc)
     
     def _prettify_with_pyepidoc(
             self, 
@@ -561,7 +539,7 @@ class TeiDoc:
 
         epidoc = self
         epidoc._xmlroot.desc_elems
-        elem = epidoc.xml_element
+        elem = epidoc.element
         elem.prettify_element_with_pyepidoc(
             space_unit, 
             multiplier, 
@@ -585,7 +563,7 @@ class TeiDoc:
 
     @property
     def publication_stmt(self) -> Optional[TeiElement]:
-        publication_stmt = maxone(self._xmlroot.get_desc('publicationStmt'))
+        publication_stmt = maxone(self._xmlroot.get_desc('publicationStmt', None, TEINS))
         if publication_stmt is None:
             return None
         return TeiElement(publication_stmt)
@@ -610,15 +588,15 @@ class TeiDoc:
         return Path(self._pyepidoc_module_path).parent / Path('tei-epidoc.rng')
 
     @property
-    def tei(self) -> Optional[_Element]:
+    def tei(self) -> Optional[XmlElement]:
         """
         Return the `<TEI>` root element
         """
-        return maxone(self._xmlroot.get_desc('TEI'))
+        return maxone(self._xmlroot.get_desc('TEI', None, TEINS))
 
     @property
-    def tei_header(self) -> Optional[TeiHeader]:
-        root = TeiElement(self)
+    def tei_header(self) -> TeiHeader | None:
+        root = TeiElement(self.element)
         tei_header_elem = maxone(root.get_desc_tei_elems('teiHeader'))
         if tei_header_elem is None:
             return None
@@ -628,6 +606,8 @@ class TeiDoc:
     @property
     def text(self) -> Text:
         text = self._xmlroot.root_elem.child_element_by_local_name('text')
+        if text is None:
+            raise ValueError('Document has no <text> element.')
         return Text(text)
 
     @property
@@ -646,13 +626,13 @@ class TeiDoc:
         return self.get_textclasses(True)
 
     @property
-    def textlang(self) -> Optional[TeiElement]:
+    def textlang(self) -> TeiElement | None:
         """
         Used by I.Sicily to host language information.        
         """
 
         textlang = maxone([TeiElement(textlang) 
-            for textlang in self._xmlroot.get_desc('textLang')])
+            for textlang in self._xmlroot.get_desc('textLang', None, TEINS)])
         
         if textlang is None: 
             return None
@@ -738,14 +718,14 @@ class TeiDoc:
             mode = 'xb'
         
         with open(dst, mode=mode) as f:
-            f.write(self._xmlroot.to_byte_str(collapse_empty_elements))
+            f.write(self._xmlroot.to_bytes(collapse_empty_elements))
 
     def to_xml_file_object(self, collapse_empty_elements: bool = False) -> io.BytesIO:
         """
         Write the file to a file object in memory, rather than
         to a file on disk
         """
-        return io.BytesIO(self._xmlroot.to_byte_str(collapse_empty_elements))
+        return io.BytesIO(self._xmlroot.to_bytes(collapse_empty_elements))
 
     @property
     def translation_text(self) -> str:
@@ -769,8 +749,8 @@ class TeiDoc:
         return self._xmlroot.validate_by_relaxng(self._rng_path)
     
     @property
-    def xml_element(self) -> XmlElement:
-        return self._xmlroot.xml_element
+    def element(self) -> XmlElement:
+        return self._xmlroot.element
 
     @property
     def xmlroot(self) -> XmlRoot:

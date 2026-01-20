@@ -1,10 +1,7 @@
 from __future__ import annotations
-from typing import Optional, Sequence, cast
-
-from copy import deepcopy
+from typing import Optional, Sequence
 from functools import reduce
 from itertools import chain
-from lxml.etree import _Element 
 
 from ..edition_element import EditionElement
 from .textpart import TextPart
@@ -12,7 +9,6 @@ from ..token import Token
 from .expan import Expan
 from ...shared.enums import (
     IdCarrier,
-    TokenCarrier, 
     AtomicTokenType, 
     CompoundTokenType,
     NoSpaceBefore,
@@ -52,7 +48,7 @@ class Ab(RepresentableElement):
 
     """
 
-    def __init__(self, e: Optional[_Element | EditionElement | XmlElement]=None):
+    def __init__(self, e: EditionElement | XmlElement):
         super().__init__(e)
         
         if self._e.tag.name != 'ab':
@@ -216,7 +212,7 @@ class Ab(RepresentableElement):
         does not include the token.
         """
 
-        def parent_name_set(elem: _Element) -> set[str]:
+        def parent_name_set(elem: XmlElement) -> set[str]:
             parent_names = [parent.localname 
                             for parent in Token(elem)._e.get_ancestors_incl_self()]
             return set(parent_names)

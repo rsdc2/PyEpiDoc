@@ -1,9 +1,6 @@
 from __future__ import annotations
 from typing import Literal
 
-from lxml import etree
-from lxml.etree import _Element
-
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.metadata.resp_stmt import RespStmt
@@ -30,7 +27,7 @@ class Body(TeiBody):
 
     def __init__(
         self, 
-        e: _Element | TeiElement | XmlElement
+        e: TeiElement | XmlElement
     ) -> None:
         
         super().__init__(e)

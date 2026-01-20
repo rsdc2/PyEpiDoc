@@ -1,4 +1,3 @@
-from lxml.etree import _Element
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
@@ -14,7 +13,7 @@ class RoleName(EditionElement):
     given in <roleName> elements.
     """
 
-    def __init__(self, e: _Element | XmlElement | TeiElement | EditionElement):
+    def __init__(self, e: XmlElement | TeiElement):
         super().__init__(e)
 
         if self._e.localname != 'roleName':

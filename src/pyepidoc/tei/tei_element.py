@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from typing import Sequence, cast, overload
+from typing import Sequence, overload
 
-from lxml.etree import ( 
-    _Element, 
+from lxml.etree import (
     XMLSyntaxError, 
     XMLSyntaxAssertionError
 )
 
-from pyepidoc.xml import XmlElement
+from pyepidoc.xml.xml_element import XmlElement, XmlNode
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 
@@ -31,25 +30,16 @@ class TeiElement:
     def __init__(self, e: XmlElement):
         ...
 
-    @overload
-    def __init__(self, e: _Element):
-        """
-        :param e: lxml |_Element|; |_Comment| is subclass of |_Element|
-        """
-        ...
-
-    def __init__(self, e: _Element | XmlElement):
+    def __init__(self, e: XmlElement | TeiElement):
         error_msg = (f'Expected type is _Element or BaseElement '
                      f'type or None. Actual type is {type(e)}.')
         
-        if not isinstance(e, (_Element, XmlElement, TeiElement)):
+        if not isinstance(e, (XmlElement, TeiElement)):
             raise TypeError(error_msg)
         elif isinstance(e, XmlElement):
             self._e = e
         elif isinstance(e, TeiElement):
             self._e = e._e
-        elif isinstance(e, _Element):
-            self._e = XmlElement(e)
 
     def append(self, tei_element: TeiElement) -> TeiElement:
         element = self._e.append_node(tei_element._e)
@@ -122,49 +112,46 @@ class TeiElement:
             divtype: str, 
             level: str = '',
             lang: str | None = None
-        ) -> list[_Element]:
+        ) -> list[XmlElement]:
 
         if not lang:
             xpath_str = f".//ns:div{level}[@type='{divtype}']"
-            return cast(list[_Element], self._e.xpath(xpath_str, namespaces={'ns': TEINS}))
-
+            descendants = self._e.xpath(xpath_str, namespaces={'ns': TEINS})
         elif lang:
-            return cast(list[_Element], self._e.xpath(
-                f".//ns:div{level}[@type='{divtype} @xml:lang='{lang}']",
-                namespaces={'ns': TEINS, 'xml': XMLNS}) 
-            )
-        
-        return []
+            xml_str = f".//ns:div{level}[@type='{divtype} @xml:lang='{lang}']"
+            descendants = self._e.xpath(xml_str, namespaces={'ns': TEINS, 'xml': XMLNS})
+
+        return [desc for desc in descendants 
+                if isinstance(desc, XmlElement)]
 
     def get_div_descendants_by_type(
         self, 
         divtype: str, 
         lang: str | None = None
-    ) -> list[_Element]:
+    ) -> list[XmlElement]:
 
         """
         :param divtype: the value of the @type attribute of 
-        the <div/>, e.g. "edition" or "translation"
-        :param lang: the value of the @xml:lang attibute
-        of the <div/> element. If None, treated as not specified.
-        :return: a list of descendant elements where the
-        @type attribute matches divtype.
-        """
+        the `<div/>`, e.g. "edition" or "translation"
 
+        :param lang: the value of the @xml:lang attibute
+        of the `<div/>` element. If None, treated as not specified.
+        
+        :return: a list of descendant elements where the
+        `@type` attribute matches `divtype`.
+        """
         try:
             if lang is None:
-                return cast(
-                    list[_Element], 
-                    self._e.xpath(
-                        f".//ns:div[@type='{divtype}']", 
-                        namespaces={'ns': TEINS}) 
-                    )
-            
+                descendants = self._e.xpath(f".//ns:div[@type='{divtype}']", 
+                        namespaces={'ns': TEINS})
+
             elif lang is not None:
-                return cast(list[_Element], self._e.xpath(
+                descendants = self._e.xpath(
                     f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
-                    namespaces={'ns': TEINS, 'xml': XMLNS}) 
-                )
+                    namespaces={'ns': TEINS, 'xml': XMLNS})
+            
+            return [node for node in descendants 
+                if isinstance(node, XmlElement)]
             
         except XMLSyntaxAssertionError as e:
             print('XMLSyntaxAssertionError in getdivdescendants')

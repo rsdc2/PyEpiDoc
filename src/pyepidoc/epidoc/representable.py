@@ -1,15 +1,8 @@
 from __future__ import annotations
 
-from typing import (
-    Optional, 
-    Sequence, 
-    Union
-)
 from functools import cached_property, reduce
-
-from pyepidoc.xml.utils import localname
 from pyepidoc.xml.xml_text import XmlText
-from pyepidoc.xml.xml_element import XmlElement, XmlNode, to_xml_node
+from pyepidoc.xml.xml_element import XmlElement, XmlNode, XmlComment, to_xml_node
 
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.enums import RegTextType
@@ -54,6 +47,12 @@ class RepresentableElement(EditionElement):
 
         def string_rep(n: XmlNode) -> str:
             ln = n.localname
+
+            if isinstance(n, XmlText):
+                return n.text
+            
+            if isinstance(n, XmlComment):
+                return ''
 
             if ln in ['g', 'lb', 'gap']:
                 return self.elem_classes[ln](n).leiden_form

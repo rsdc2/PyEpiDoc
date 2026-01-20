@@ -1,4 +1,3 @@
-from lxml.etree import _Element
 from pyepidoc.epidoc.edition_element import EditionElement
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.tei.tei_element import TeiElement
@@ -21,7 +20,7 @@ class Surplus(EditionElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element | XmlElement | TeiElement | EditionElement):
+    def __init__(self, e: XmlElement | TeiElement):
         super().__init__(e)
 
         if self._e.localname != 'surplus':

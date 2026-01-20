@@ -1,4 +1,3 @@
-from lxml.etree import _Element
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.epidoc.edition_elements.w import _W
 from pyepidoc.xml.xml_element import XmlElement
@@ -11,7 +10,7 @@ class Num(_W):
     given in <num> elements.
     """
 
-    def __init__(self, e: _Element | XmlElement | TeiElement):
+    def __init__(self, e: XmlElement | TeiElement):
         super().__init__(e)
 
         if self._e.localname != 'num':

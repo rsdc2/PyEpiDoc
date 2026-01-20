@@ -123,7 +123,7 @@ class EditionElement(TeiElement, Showable):
     @overload
     def __init__(
         self, 
-        e: XmlElement,
+        e: TeiElement,
         final_space: bool = False
     ):
         ...
@@ -131,27 +131,28 @@ class EditionElement(TeiElement, Showable):
     @overload
     def __init__(
         self, 
-        e: _Element,
+        e: XmlElement,
         final_space: bool = False
     ):
         ...
 
     def __init__(
         self, 
-        e: _Element | XmlElement | TeiElement,
+        e: XmlElement | TeiElement | EditionElement,
         final_space: bool = False
     ):
         
-        if not isinstance(e, (_Element, TeiElement, XmlElement)):
+        if not isinstance(e, (TeiElement, XmlElement, EditionElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
+        elif isinstance(e, EditionElement):
+            self._e = e._e
         elif isinstance(e, TeiElement):
             self._e = e._e
         elif isinstance(e, XmlElement):
             self._e = e
-        elif isinstance(e, _Element):
-            self._e = XmlElement(e)
+
 
         self._final_space = final_space
 

@@ -18,16 +18,18 @@ from lxml.etree import (
     _Element,
     _ElementTree, 
     _Comment,
-    _ElementUnicodeResult
+    _ElementUnicodeResult,
+    XMLSyntaxError,
+    XMLSyntaxAssertionError
 )
 
 from pyepidoc.shared.classes import Tag, Showable, ExtendableSeq, SetRelation
+from pyepidoc.shared.namespaces import TEINS, XMLNS
+from pyepidoc.shared import maxone
+from pyepidoc.xml.utils import descendant_text
 
 from .namespace import Namespace as ns
 from .xml_text import XmlText
-from pyepidoc.shared.namespaces import TEINS, XMLNS
-from pyepidoc.shared import maxone
-from pyepidoc.xml.utils import localname, descendant_text
 
 
 class XmlElement(Showable):    
@@ -460,8 +462,8 @@ class XmlElement(Showable):
             elem_names: Union[list[str], str], 
             attribs: Optional[dict[str, str]]=None,
             ns_prefix: str='ns:',
-            namespace: str=TEINS
-        ) -> list[_Element]:
+            namespace: str=''
+        ) -> list[XmlElement]:
 
         """
         Return all descendant elements with the names 
@@ -486,13 +488,9 @@ class XmlElement(Showable):
                                for elemname in _elemnames])
 
         # TODO: should 'ns' here be actually the ns variable?
-        xpathRes = self.e.xpath(xpathstr, namespaces={'ns': namespace})
+        xpath_result = self.xpath(xpathstr, namespaces={'ns': namespace})
+        return [res for res in xpath_result if isinstance(res, XmlElement)]
 
-        if type(xpathRes) is list:
-            return cast(list[_Element], xpathRes)
-
-        raise TypeError('XPath result is of the wrong type.')
-    
     def get_first_parent_by_name(
             self, 
             parent_tag_names:list[str]) -> Optional[XmlElement]:
@@ -850,6 +848,13 @@ class XmlElement(Showable):
     def text_desc_compressed_whitespace(self) -> str:
         pattern = r'[\t\s\n]+'
         return re.sub(pattern, ' ', self.text_desc)
+    
+    def to_bytes(self, xml_declaration: bool, pretty_print: bool) -> bytes:
+        return etree.tostring(
+            element_or_tree=self._e,
+            xml_declaration=xml_declaration,
+            pretty_print=pretty_print
+        )
 
     @property
     def xml_byte_str(self) -> bytes:
@@ -910,22 +915,27 @@ class XmlElement(Showable):
             pretty_print=False # type: ignore
         )
     
-
-
     def xpath(
             self, 
             xpathstr: str, 
-            namespaces: dict[str, str]={'ns': TEINS}
-            ) -> list[XmlNode]:
+            namespaces: dict[str, str]={'ns': TEINS}) -> list[XmlNode]:
         """
         Apply XPath expression to the current element, in which 
         the prefix 'ns' corresponds to the namespace
         "http://www.tei-c.org/ns/1.0"
         """
-        result = self._e.xpath(xpathstr, namespaces=namespaces)
+        try:
+            result = self._e.xpath(xpathstr, namespaces=namespaces)
+        except XMLSyntaxAssertionError as e:
+            print('XMLSyntaxAssertionError in xpath')
+            print(e)
+            return []
+        except XMLSyntaxError as e:
+            print('XMLSyntaxError in xpath')
+            print(e)
+            return []
 
-        # NB the cast won't necessarily be correct for all test cases
-        result_list: list[XmlNode] = [to_xml_node(node) for node in result]
+        result_list = [to_xml_node(node) for node in result]
         return result_list
     
     def xpath_bool(

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from lxml.etree import _Element
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.iterables import maxone
@@ -13,7 +12,7 @@ class _W(RepresentableElement):
     Provides services for string representation of <w> elements.
     """
 
-    def __init__(self, e: _Element | XmlElement | TeiElement):
+    def __init__(self, e: XmlElement | TeiElement):
         super().__init__(e)
         
     def __str__(self) -> str:
@@ -118,7 +117,7 @@ class _W(RepresentableElement):
         )
     
 class W(_W):
-    def __init__(self, e: _Element | XmlElement | TeiElement):
+    def __init__(self, e: XmlElement | TeiElement):
         super().__init__(e)
 
         if self._e.localname != 'w':
