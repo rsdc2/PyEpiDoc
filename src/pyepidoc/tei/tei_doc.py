@@ -137,7 +137,7 @@ class TeiDoc:
 
         elem = maxone(self
             .publication_stmt
-            .get_desc_tei_elems('authority'), 
+            .get_desc('authority'), 
         )
 
         if elem is None:
@@ -217,7 +217,7 @@ class TeiDoc:
 
         elem = maxone(self
             .publication_stmt
-            .get_desc_tei_elems('distributor'), 
+            .get_desc('distributor'), 
         )
 
         if elem is None:
@@ -243,7 +243,7 @@ class TeiDoc:
         attribs: dict[str, str] | None = None,
         ns: str = TEINS) -> list[XmlElement]:
 
-        return self.element.get_desc(elemnames, attribs, ns)
+        return self.element.get_desc(elemnames, attribs=attribs, namespace=ns)
     
     def get_textclasses(
             self, 
@@ -258,7 +258,7 @@ class TeiDoc:
         element.
         """
         try:
-            textclass_elems = self._tei_element.get_desc_tei_elems('textClass')
+            textclass_elems = self._tei_element.get_desc('textClass')
             textclass_e = maxone(
                 self._tei_element._e.get_desc('textClass'), 
                 throw_if_more_than_one=throw_if_more_than_one,
@@ -274,7 +274,7 @@ class TeiDoc:
 
         textclass_element = TeiElement(textclass_e)
 
-        terms = textclass_element.get_desc_tei_elems('term')
+        terms = textclass_element.get_desc('term')
         terms_with_ana = [term for term in terms 
                                 if term._e.has_attr('ana')]
 
@@ -298,7 +298,7 @@ class TeiDoc:
             if self.publication_stmt is None:
                 return []
 
-            return self.publication_stmt.get_desc_tei_elems('idno', {'type': s})            
+            return self.publication_stmt.get_desc('idno', {'type': s})            
 
         id_sources = {
             'Epigraphische Datenbank Heidelberg': 'localID',
@@ -369,13 +369,13 @@ class TeiDoc:
         """Used by EDH to host language information."""
 
         language_elems = [TeiElement(language) 
-                          for language in self._tei_element.get_desc_tei_elems('langUsage')]
+                          for language in self._tei_element.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
         if lang_usage is None: 
             return []
 
-        languages = lang_usage.get_desc_tei_elems('language')
+        languages = lang_usage.get_desc('language')
         idents = [language._e.get_attr('ident') for language in languages]
         return [ident for ident in idents if ident is not None]
 
@@ -408,7 +408,7 @@ class TeiDoc:
     @property
     def materialclasses(self) -> list[str]:
 
-        material_e = self._tei_element.get_desc_tei_elems('material')
+        material_e = self._tei_element.get_desc('material')
         
         if material_e is None:
             return []
@@ -440,7 +440,7 @@ class TeiDoc:
     def orig_date(self) -> TeiElement | None:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
-            self._tei_element.get_desc_tei_elems('origDate'),
+            self._tei_element.get_desc('origDate'),
             throw_if_more_than_one=False
         )
 
@@ -597,7 +597,7 @@ class TeiDoc:
     @property
     def tei_header(self) -> TeiHeader | None:
         root = TeiElement(self.element)
-        tei_header_elem = maxone(root.get_desc_tei_elems('teiHeader'))
+        tei_header_elem = maxone(root.get_desc('teiHeader'))
         if tei_header_elem is None:
             return None
         

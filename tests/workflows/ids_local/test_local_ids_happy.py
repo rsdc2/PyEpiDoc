@@ -47,7 +47,7 @@ test_has_local_ids = [
 def test_has_local_ids(xml_str: str, expected_has_local_ids: bool):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    ab = Ab(XmlElement.from_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
 
     # Act
@@ -65,7 +65,7 @@ test_get_local_ids_on_main_edition_cases = [
 def test_get_local_ids_on_main_edition(xml_str: str, expected_local_ids: list[str]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    ab = Ab(XmlElement.from_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
 
     # Act
@@ -88,7 +88,7 @@ test_local_id_elements_main = [
 def test_set_missing_local_ids_on_main_edition(xml_str: str, expected_local_ids: list[str]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    ab = Ab(XmlElement.from_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
 
     # Act
@@ -108,7 +108,7 @@ test_local_id_elements_main_and_simple_lemmatized = [
 def test_set_missing_local_ids_on_main_edition_and_lemmatized_edition(xml_str: str):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    ab = Ab(XmlElement.from_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
     doc.lemmatize(lambda _: 'lemma', where='separate')
 

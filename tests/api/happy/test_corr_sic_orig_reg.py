@@ -4,8 +4,8 @@ correct Leiden plus text
 """
 
 import pytest
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.token import Token
-from pyepidoc.xml.utils import elem_from_str
 from pyepidoc.shared.constants import TEINS
 
 tests = [
@@ -17,7 +17,7 @@ tests = [
 @pytest.mark.parametrize(['xml', 'sic', 'corr'], tests)
 def test_corr(xml: str, sic: str, corr: str):
 
-    elem = elem_from_str(xml)
+    elem = XmlElement.from_str(xml)
     w = Token(elem)
     assert w.normalized_form == corr
 
@@ -25,5 +25,5 @@ def test_corr(xml: str, sic: str, corr: str):
 @pytest.mark.parametrize(['xml', 'sic', 'corr'], tests)
 def test_sic(xml: str, sic: str, corr: str):
 
-    w = Token(elem_from_str(xml))
+    w = Token(XmlElement.from_str(xml))
     assert w.leiden_plus_form == sic

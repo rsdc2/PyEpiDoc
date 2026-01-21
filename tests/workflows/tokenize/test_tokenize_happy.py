@@ -5,13 +5,12 @@ from lxml import etree
 from tests.config import FILE_WRITE_MODE
 
 from pyepidoc.shared.file import remove_file
-from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
-from pyepidoc.shared.enums import NamedEntities
 from pyepidoc.epidoc.scripts import tokenize, tokenize_to_file_object
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.edition_elements.ab import Ab
-from pyepidoc.xml.utils import abify, editionify, xml_to_str
+from pyepidoc.xml.utils import abify
+from pyepidoc.xml.xml_element import XmlElement
 
 
 input_path = Path('tests/workflows/tokenize/files/untokenized')
@@ -398,8 +397,8 @@ def test_tokenize_epidoc_fragments(xml_pair: tuple[str, str]):
     xml_pair_abs = tuple(map(abify, xml_pair))
 
     xml, tokenized_xml = xml_pair_abs
-    untokenized = Ab(etree.fromstring(xml, None))
-    tokenized_benchmark = Ab(etree.fromstring(tokenized_xml, None))
+    untokenized = Ab(XmlElement.from_str(xml))
+    tokenized_benchmark = Ab(XmlElement.from_str(tokenized_xml))
 
     # Act
 

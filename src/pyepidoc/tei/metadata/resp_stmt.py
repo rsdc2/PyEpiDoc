@@ -116,7 +116,7 @@ class RespStmt(EditionElement):
     
     @property
     def name_elem(self) -> TeiElement | None:
-        desc_elems = self.get_desc_tei_elems(['name'])
+        desc_elems = self.get_desc(['name'])
         return head(desc_elems)
     
     @property
@@ -133,5 +133,5 @@ class RespStmt(EditionElement):
 
     @property
     def resp_elem(self) -> TeiElement | None:
-        desc_elems = self.get_desc_tei_elems(['resp'])
+        desc_elems = self.get_desc(['resp'])
         return head(desc_elems)

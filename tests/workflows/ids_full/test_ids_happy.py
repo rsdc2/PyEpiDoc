@@ -113,7 +113,7 @@ test_has_xml_ids = [
 def test_has_xml_ids(xml_str: str, expected_has_xml_ids: bool):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    ab = Ab(XmlElement.from_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
 
     # Act

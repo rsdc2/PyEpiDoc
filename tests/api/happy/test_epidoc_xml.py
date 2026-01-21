@@ -7,7 +7,7 @@ def test_get_descendant_text():
     # from ISic000481
     xmlstr = "<expan><abbr>A<am>A</am>u</abbr></expan>"
 
-    elem = etree.fromstring(xmlstr, None)
+    elem = XmlElement.from_str(xmlstr)
 
     assert descendant_text(elem) == "AAu"
 

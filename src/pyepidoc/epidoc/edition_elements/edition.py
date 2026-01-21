@@ -167,7 +167,7 @@ def prettify(
             
     # Do the pretty-printing
     for tag in newlinetags:
-        desc_elems = edition.get_desc_tei_elems(elem_names=[tag])
+        desc_elems = edition.get_desc(elem_names=[tag])
 
         if tag in ['ab', 'lg']:
             for ab in desc_elems:
@@ -190,7 +190,7 @@ def prettify(
             else:
                 prettify_first_child(parent)
 
-        desc_tei_elems = edition.get_desc_tei_elems(['ab', 'l', 'lg' 'lb', 'div'])
+        desc_tei_elems = edition.get_desc(['ab', 'l', 'lg' 'lb', 'div'])
         xml_elems = [elem._e for elem in desc_tei_elems]
         prettify_closing_tags(xml_elems)
         
@@ -221,7 +221,7 @@ class Edition(EditionElement):
         """
 
         return [Ab(element._e) 
-            for element in self.get_desc_tei_elems(['ab'])]
+            for element in self.get_desc(['ab'])]
 
     def append_ab(self, ab: Ab) -> Ab:
         """
@@ -262,10 +262,7 @@ class Edition(EditionElement):
     @property
     def compound_tokens(self) -> list[EditionElement]:
         return [EditionElement(item) for item 
-            in self._e.get_desc(
-                CompoundTokenType.values() 
-            )
-        ]
+            in self.get_desc(CompoundTokenType.values())]
 
     def convert_ids(self, oldbase: Base, newbase: Base) -> None:
         """
@@ -284,7 +281,7 @@ class Edition(EditionElement):
 
     @property
     def divs(self) -> list[TeiElement]:
-        return TeiElement(self._e).get_desc_tei_elems(['div'])
+        return TeiElement(self._e).get_desc(['div'])
 
     @property
     def edition_text(self) -> str:
@@ -327,12 +324,11 @@ class Edition(EditionElement):
         :param wrap_with_ab: Wraps the content in an `<ab>` element
         """
         
-        return Edition(XmlElement.from_xml_str(editionify(xml_str, wrap_in_ab=wrap_in_ab)))
+        return Edition(XmlElement.from_str(editionify(xml_str, wrap_in_ab=wrap_in_ab)))
 
     @property
     def gaps(self) -> list[EditionElement]:
-        return [EditionElement(gap) 
-                for gap in self._e.get_desc('gap')]
+        return [EditionElement(gap) for gap in self.get_desc('gap')]
 
     def _get_desc_representable_elements(
             self, 
@@ -347,7 +343,7 @@ class Edition(EditionElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EditionElement, self._e.get_desc(RepresentableElements))
+        desc = map(EditionElement, self.get_desc(RepresentableElements))
 
         if items_with_atomic_ancestors:
             return list(desc)
@@ -368,7 +364,7 @@ class Edition(EditionElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EditionElement, self._e.get_desc(AtomicNonTokenType.values()))
+        desc = map(EditionElement, self.get_desc(AtomicNonTokenType.values()))
 
         if items_with_token_ancestors:
             return list(desc)
@@ -387,7 +383,7 @@ class Edition(EditionElement):
         :return: the descendant tokens
         """
 
-        desc = map(Token, self._e.get_desc(AtomicTokenType.values()))
+        desc = map(Token, self.get_desc(AtomicTokenType.values()))
 
         if include_nested:
             return list(desc)
@@ -398,7 +394,7 @@ class Edition(EditionElement):
                     SetRelation.intersection
                 )
             
-            desc = map(Token, self._e.get_desc(AtomicTokenType.values()))
+            desc = map(Token, self.get_desc(AtomicTokenType.values()))
             
             return list(filter(has_not_token_ancestor, desc))        
 
@@ -463,7 +459,7 @@ class Edition(EditionElement):
         receive an `@n` id.
         """
 
-        elems = self.get_desc_tei_elems(ElementsWithLocalIds.values())
+        elems = self.get_desc(ElementsWithLocalIds.values())
         return list(map(EditionElement, elems))
     
     @property
@@ -474,7 +470,7 @@ class Edition(EditionElement):
         receive an `@xml:id` id.
         """
 
-        elems = self.get_desc_tei_elems(ElementsWithXmlIds.values())
+        elems = self.get_desc(ElementsWithXmlIds.values())
         return list(map(EditionElement, elems))
 
     @staticmethod
@@ -561,7 +557,7 @@ class Edition(EditionElement):
         """
 
         return [Lg(element._e) 
-            for element in self.get_desc_tei_elems(['lg'])]
+            for element in self.get_desc(['lg'])]
 
     @property
     def local_ids(self) -> list[str | None]:
@@ -576,7 +572,7 @@ class Edition(EditionElement):
         """
 
         return [L(element._e) 
-            for element in self.get_desc_tei_elems(['l'])]
+            for element in self.get_desc(['l'])]
 
     def prettify(
             self, 
@@ -773,7 +769,7 @@ class Edition(EditionElement):
     @property
     def token_g_dividers(self) -> list[EditionElement]:
         return [EditionElement(boundary) for boundary 
-            in self._e.get_desc('g')
+            in self.get_desc('g')
         ]
 
     @property
@@ -828,7 +824,7 @@ class Edition(EditionElement):
 
     @property
     def w_tokens(self) -> list[Token]:
-        return [Token(word) for word in self._e.get_desc(['w'])]
+        return [Token(word) for word in self.get_desc(['w'])]
     
     @property
     def xml_ids(self) -> list[str | None]:

@@ -43,7 +43,7 @@ def test_append_ab_to_edition():
     # Arrange
     doc = EpiDoc('templates/empty_template.xml')
     ab_str = abify('<w>hello</w>')
-    ab = Ab(XmlElement.from_xml_str(ab_str))
+    ab = Ab(XmlElement.from_str(ab_str))
 
     # Act
     doc.main_edition.append_ab(ab)

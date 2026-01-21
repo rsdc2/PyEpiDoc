@@ -38,7 +38,7 @@ non_contractions = [
 @pytest.mark.parametrize("xmlstr", multiplications)
 def test_multiplicative(xmlstr: str):
 
-    elem = XmlElement.from_xml_str(xmlstr)
+    elem = XmlElement.from_str(xmlstr)
     expan = Expan(elem)
     assert expan.is_multiplication
 
@@ -46,7 +46,7 @@ def test_multiplicative(xmlstr: str):
 @pytest.mark.parametrize("xmlstr", non_multiplications)
 def test_non_multiplicative(xmlstr: str):
 
-    elem = etree.fromstring(xmlstr, None)
+    elem = XmlElement.from_str(xmlstr)
     expan = Expan(elem)
     assert not expan.is_multiplication
 
@@ -54,7 +54,7 @@ def test_non_multiplicative(xmlstr: str):
 @pytest.mark.parametrize("xmlstr", suspensions)
 def test_suspensions(xmlstr: str):
 
-    elem = etree.fromstring(xmlstr, None)
+    elem = XmlElement.from_str(xmlstr)
     expan = Expan(elem)
     assert contains(expan.abbr_types, AbbrType.suspension)
 
@@ -62,7 +62,7 @@ def test_suspensions(xmlstr: str):
 @pytest.mark.parametrize("xmlstr", contractions)
 def test_contractions(xmlstr: str):
 
-    elem = etree.fromstring(xmlstr, None)
+    elem = XmlElement.from_str(xmlstr)
     expan = Expan(elem)
     assert expan.is_contraction
 
@@ -70,7 +70,7 @@ def test_contractions(xmlstr: str):
 @pytest.mark.parametrize("xmlstr", non_contractions)
 def test_non_contractions(xmlstr: str):
 
-    elem = etree.fromstring(xmlstr, None)
+    elem = XmlElement.from_str(xmlstr)
     expan = Expan(elem)
     assert not expan.is_contraction
 
@@ -78,13 +78,13 @@ def test_non_contractions(xmlstr: str):
 @pytest.mark.parametrize("xmlstr", contractions_with_suspension)
 def test_contraction_with_suspension(xmlstr: str):
 
-    elem = etree.fromstring(xmlstr, None)
+    elem = XmlElement.from_str(xmlstr)
     expan = Expan(elem)
     assert expan.is_contraction_with_suspension
 
 
 def test_first_desc_node_is_desc_of_abbr():
     xml = f'<expan xmlns="{TEINS}"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
-    elem = etree.fromstring(xml, None)
+    elem = XmlElement.from_str(xml)
     expan = Expan(elem)
     assert expan._desc_textnode_is_desc_of('1', 'abbr') == True

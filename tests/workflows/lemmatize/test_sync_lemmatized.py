@@ -49,8 +49,8 @@ update_lemmatized_test_data = [
 def test_update_lemmatized(main_xml: str, lemmatized_xml: str, expected_ids: list[int]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    main_ab = Ab(XmlElement.from_xml_str(abify(main_xml)))
-    lemmatized_ab = Ab(XmlElement.from_xml_str(abify(lemmatized_xml)))
+    main_ab = Ab(XmlElement.from_str(abify(main_xml)))
+    lemmatized_ab = Ab(XmlElement.from_str(abify(lemmatized_xml)))
 
     if doc.main_edition is None: 
         raise TypeError()
@@ -76,8 +76,8 @@ does_not_delete_xml_id_test_data = [
 def test_does_not_delete_xml_id(main_xml: str, lemmatized_xml: str, expected_ids: list[str]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    main_ab = Ab(XmlElement.from_xml_str(abify(main_xml)))
-    lemmatized_ab = Ab(XmlElement.from_xml_str(abify(lemmatized_xml)))
+    main_ab = Ab(XmlElement.from_str(abify(main_xml)))
+    lemmatized_ab = Ab(XmlElement.from_str(abify(lemmatized_xml)))
 
     if doc.main_edition is None: 
         raise TypeError()
@@ -106,8 +106,8 @@ lemmatized_does_not_have_xml_id_data = [
 def test_lemmatized_does_not_have_xml_id(main_xml: str, lemmatized_xml: str, expected_ids: list[str]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    main_ab = Ab(XmlElement.from_xml_str(abify(main_xml)))
-    lemmatized_ab = Ab(XmlElement.from_xml_str(abify(lemmatized_xml)))
+    main_ab = Ab(XmlElement.from_str(abify(main_xml)))
+    lemmatized_ab = Ab(XmlElement.from_str(abify(lemmatized_xml)))
 
     if doc.main_edition is None: 
         raise TypeError()
@@ -131,8 +131,8 @@ update_lemmatized_test_data = [('<w n="5">hello</w> <w n="10">world</w> <w n="15
 def test_sync_lemmatized_texts(main_xml: str, lemmatized_xml: str, expected_tokens: list[str]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    main_ab = Ab(XmlElement.from_xml_str(abify(main_xml)))
-    lemmatized_ab = Ab(XmlElement.from_xml_str(abify(lemmatized_xml)))
+    main_ab = Ab(XmlElement.from_str(abify(main_xml)))
+    lemmatized_ab = Ab(XmlElement.from_str(abify(lemmatized_xml)))
 
     if doc.main_edition is None: raise TypeError()
     doc.main_edition.append_ab(main_ab)

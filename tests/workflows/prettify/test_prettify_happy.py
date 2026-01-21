@@ -128,8 +128,8 @@ def test_prettify_fragment(ugly: str, benchmark: str, _: str):
     """
 
     # Arrange
-    ugly_xml = XmlElement.from_xml_str(ugly.strip())
-    benchmark_xml = XmlElement.from_xml_str(benchmark.strip())
+    ugly_xml = XmlElement.from_str(ugly.strip())
+    benchmark_xml = XmlElement.from_str(benchmark.strip())
 
     # Act
     prettified = ugly_xml.prettify_element_with_pyepidoc(' ', 4, DoNotPrettifyChildren.values())

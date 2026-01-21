@@ -30,7 +30,7 @@ def test_set_ids_in_epidoc(isic_id: str, xml_str: str, expected: list[str]):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
     doc.file_desc.publication_stmt.set_idno_by_type('filename', isic_id)
-    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    ab = Ab(XmlElement.from_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
 
     # Act

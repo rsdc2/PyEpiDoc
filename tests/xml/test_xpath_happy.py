@@ -37,7 +37,7 @@ xpathlist = [
 @pytest.mark.parametrize("triple", xpath_count)
 def test_xpath_count(triple: tuple[str, str, float]):
     xml, xpath, result = triple
-    elem = XmlElement.from_xml_str(xml)
+    elem = XmlElement.from_str(xml)
     assert elem.xpath_float(xpath) == result
 
 
@@ -45,7 +45,7 @@ def test_xpath_count(triple: tuple[str, str, float]):
 def test_xpath(triple: tuple[str, str, str]):
     # Arrange
     xml, xpath, expected_result = triple
-    elem = XmlElement.from_xml_str(xml)
+    elem = XmlElement.from_str(xml)
 
     # Act
     result = [str(result) for result in elem.xpath(xpath)]
@@ -57,7 +57,7 @@ def test_xpath(triple: tuple[str, str, str]):
 @pytest.mark.parametrize("pair", xpath_true)
 def test_xpath_bool_true(pair: tuple[str, str]):
     xml, xpath = pair
-    elem = XmlElement.from_xml_str(xml)
+    elem = XmlElement.from_str(xml)
     assert elem.xpath_bool(xpath)
 
 
@@ -65,5 +65,5 @@ def test_xpath_bool_true(pair: tuple[str, str]):
 def test_xpath_bool_false(pair: tuple[str, str]):
 
     xml, xpath = pair
-    elem = XmlElement.from_xml_str(xml)
+    elem = XmlElement.from_str(xml)
     assert not elem.xpath_bool(xpath)

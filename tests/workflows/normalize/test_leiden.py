@@ -24,7 +24,7 @@ def test_token_leiden_form(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, expected_leiden_form = inpt
-    elem = XmlElement.from_xml_str(xml_str)
+    elem = XmlElement.from_str(xml_str)
     token = Token(elem.e)
     
     # Act
@@ -51,7 +51,7 @@ token_elements = [
 def test_token_leiden_plus_form(inpt: tuple[str, str]):
 
     xml_str, leiden_plus_form = inpt
-    elem = XmlElement.from_xml_str(xml_str)
+    elem = XmlElement.from_str(xml_str)
     token = Token(elem.e)
     assert token.leiden_plus_form == leiden_plus_form
 

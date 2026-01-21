@@ -13,7 +13,7 @@ previous_sibling_cases = [
 @pytest.mark.parametrize(('xml_str', 'next_id', 'expected_previous_id'), previous_sibling_cases)
 def test_previous_sibling(xml_str: str, next_id: str, expected_previous_id: str | None):
     # Arrange
-    ab = XmlElement.from_xml_str(abify(xml_str))
+    ab = XmlElement.from_str(abify(xml_str))
     next_elem = list(filter(lambda e: e.get_attr('n') == next_id, ab.descendant_elements))[0]
 
     # Act

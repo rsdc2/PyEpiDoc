@@ -44,7 +44,7 @@ def callable_from_localname(
 
 
 def descendant_atomic_tokens(elem: EditionElement) -> list[EditionElement]:
-    desc_tokens = map(EditionElement, elem._e.get_desc(AtomicTokenType.values()))
+    desc_tokens = map(EditionElement, elem.get_desc(AtomicTokenType.values()))
 
     return [token for token 
         in desc_tokens
@@ -59,7 +59,7 @@ def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[XmlElement]):
     Returns the string representation of the element specified in 
     "epidoc_elem_type"
     """
-    elem = etree.fromstring(xml, None)
+    elem = XmlElement.from_str(xml)
     epidoc_elem = epidoc_elem_type(elem)
     return str(epidoc_elem)
 

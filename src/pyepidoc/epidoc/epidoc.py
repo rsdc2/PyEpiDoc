@@ -90,7 +90,7 @@ class EpiDoc(TeiDoc):
                 raise EpiDocValidationError(msg)
             
             if verbose:
-                print(f'{self._xmlroot._p} is a valid EpiDoc file')
+                print(f'{self._xmlroot._path} is a valid EpiDoc file')
 
     def __repr__(self) -> str:
         return f'EpiDoc(id="{self.id}")'
@@ -385,7 +385,7 @@ class EpiDoc(TeiDoc):
 
         textclass_element = EditionElement(textclass_e)
 
-        terms = textclass_element.get_desc_tei_elems('term')
+        terms = textclass_element.get_desc('term')
         terms_with_ana = [term for term in terms 
                                 if term._e.has_attr('ana')]
 
@@ -447,7 +447,7 @@ class EpiDoc(TeiDoc):
             if self.publication_stmt is None:
                 return []
 
-            return self.publication_stmt.get_desc_tei_elems('idno', {'type': s})            
+            return self.publication_stmt.get_desc('idno', {'type': s})            
 
         id_sources = {
             'Epigraphische Datenbank Heidelberg': 'localID',
@@ -549,7 +549,7 @@ class EpiDoc(TeiDoc):
         if lang_usage is None: 
             return []
 
-        languages = lang_usage.get_desc_tei_elems('language')
+        languages = lang_usage.get_desc('language')
         idents = [language.get_attr('ident') for language in languages]
         return [ident for ident in idents if ident is not None]
 
@@ -813,7 +813,7 @@ class EpiDoc(TeiDoc):
         
         pers_name_elems = (self
             .editions()[0]
-            .get_desc_tei_elems('persName')
+            .get_desc('persName')
         )
         
         pers_names = map(
@@ -964,7 +964,7 @@ class EpiDoc(TeiDoc):
         
         role_name_elems = (self
             .editions()[0]
-            .get_desc_tei_elems('roleName')
+            .get_desc('roleName')
         )
         
         role_names = map(
@@ -1043,7 +1043,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def tei_header(self) -> Optional[TeiHeader]:
-        tei_header_elem = maxone(TeiElement(self.root_elem).get_desc_tei_elems('teiHeader'))
+        tei_header_elem = maxone(TeiElement(self.root_elem).get_desc('teiHeader'))
         if tei_header_elem is None:
             return None
         

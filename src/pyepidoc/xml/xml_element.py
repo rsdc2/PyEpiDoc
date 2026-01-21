@@ -257,7 +257,6 @@ class XmlElement(Showable):
         )
     
     def deepcopy(self) -> XmlElement:
-
         return XmlElement(deepcopy(self._e))
     
     @property
@@ -419,7 +418,7 @@ class XmlElement(Showable):
         return self.child_elements[0]
 
     @classmethod
-    def from_xml_str(cls, xml_str: str) -> XmlElement:
+    def from_str(cls, xml_str: str) -> XmlElement:
         """
         Return an element from an XML string
         """
@@ -627,6 +626,10 @@ class XmlElement(Showable):
 
         return [XmlElement(sib) for sib in next_sibs
                 if type(sib) is _Element]
+    
+    @property
+    def nsmap(self) -> dict[str, str]:
+        return dict(self._e.nsmap)
 
     @property
     def parent(self) -> Optional[XmlElement]:
@@ -849,12 +852,13 @@ class XmlElement(Showable):
         pattern = r'[\t\s\n]+'
         return re.sub(pattern, ' ', self.text_desc)
     
-    def to_bytes(self, xml_declaration: bool, pretty_print: bool) -> bytes:
-        return etree.tostring(
+    def to_bytes(self, xml_declaration: bool = False, pretty_print: bool=False) -> bytes:
+        bstr: bytes = etree.tostring(
             element_or_tree=self._e,
             xml_declaration=xml_declaration,
             pretty_print=pretty_print
         )
+        return bstr
 
     @property
     def xml_byte_str(self) -> bytes:

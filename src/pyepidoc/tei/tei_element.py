@@ -85,12 +85,12 @@ class TeiElement:
         """
 
         return maxone(
-            lst=self.get_desc_tei_elems([elem_name], attribs=attribs),
+            lst=self.get_desc([elem_name], attribs=attribs),
             defaultval=None,
             throw_if_more_than_one=throw_if_more_than_one
         )
 
-    def get_desc_tei_elems(
+    def get_desc(
             self, 
             elem_names: list[str] | str, 
             attribs: dict[str, str] | None = None
@@ -105,7 +105,7 @@ class TeiElement:
         """
 
         return [TeiElement(desc) 
-            for desc in self._e.get_desc(elem_names=elem_names, attribs=attribs)]
+            for desc in self._e.get_desc(elem_names=elem_names, attribs=attribs, namespace=TEINS)]
     
     def get_div_descendants(
             self, 

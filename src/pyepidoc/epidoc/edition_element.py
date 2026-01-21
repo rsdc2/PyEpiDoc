@@ -62,7 +62,6 @@ def tokenize_subatomic_tags(subelement: _Element) -> EditionElement:
     atomic_token_set = AtomicTokenType.value_set()
     atomic_non_token_set = AtomicNonTokenType.value_set()
     epidoc_elem = EditionElement(subelement)
-    # atomic_descs = epidoc_elem.get_desc_elems_by_name(list(atomic_token_set))
     all_descs = epidoc_elem._e.descendant_elements
     all_name_set = epidoc_elem._e.descendant_element_name_set
 
@@ -268,7 +267,7 @@ class EditionElement(TeiElement, Showable):
         """
 
         return [EditionElement(abbr) 
-                for abbr in self.get_desc_tei_elems('abbr')]
+                for abbr in self.get_desc('abbr')]
         
     @property
     def am_elems(self) -> Sequence[EditionElement]:
@@ -279,7 +278,7 @@ class EditionElement(TeiElement, Showable):
         """
 
         return [EditionElement(abbr) 
-                for abbr in self.get_desc_tei_elems('am')]
+                for abbr in self.get_desc('am')]
 
     def append_space(self) -> EditionElement:
         """
@@ -363,7 +362,7 @@ class EditionElement(TeiElement, Showable):
         """
 
         return [EditionElement(ex) 
-                for ex in self.get_desc_tei_elems('ex')]
+                for ex in self.get_desc('ex')]
 
     @property
     def expan_elems(self) -> Sequence[EditionElement]:
@@ -373,7 +372,7 @@ class EditionElement(TeiElement, Showable):
         """
 
         return [EditionElement(expan) 
-                for expan in self.get_desc_tei_elems('expan')]
+                for expan in self.get_desc('expan')]
 
     @property
     def has_whitepace_tail(self) -> bool:
@@ -448,7 +447,7 @@ class EditionElement(TeiElement, Showable):
 
     @property
     def gaps(self) -> list[EditionElement]:
-        return [EditionElement(gap) for gap in self._e.get_desc('gap')]
+        return [EditionElement(gap) for gap in self.get_desc('gap')]
     
     @property
     def has_abbr(self) -> bool:
@@ -579,7 +578,7 @@ class EditionElement(TeiElement, Showable):
 
     def get_internal_token_elements(self) -> list[EditionElement]:
 
-        def remove_internal_extraneous_whitespace(e: _Element) -> _Element:
+        def remove_internal_extraneous_whitespace(e: XmlElement) -> XmlElement:
             """
             Removes extra whitespace from the tails of the elements children:
             means that correct formatting is applied when reformatted. 
@@ -587,7 +586,7 @@ class EditionElement(TeiElement, Showable):
             TODO: apply to all descendants
             """
 
-            def remove_newlines_from_tail(child: _Element) -> _Element:
+            def remove_newlines_from_tail(child: XmlElement) -> XmlElement:
                 if child.tail is None:
                     return child
 
@@ -595,7 +594,7 @@ class EditionElement(TeiElement, Showable):
                 child.tail = re.sub(r'[\n\s\t]+', ' ', tail)    # type: ignore
                 return child
 
-            def remove_newlines_from_text(child: _Element) -> _Element:
+            def remove_newlines_from_text(child: XmlElement) -> XmlElement:
                 if child.text is None:
                     return child
 
@@ -603,38 +602,35 @@ class EditionElement(TeiElement, Showable):
                 child.text = re.sub(r'[\n\s\t]+', ' ', text) # type: ignore
                 return child
 
-            _e = deepcopy(e)
-            children: list[_Element] = [deepcopy(child) for child in e.getchildren()]
+            e_copy = deepcopy(e)
+            children = [child.deepcopy() for child in e.child_elements]
             
-            for child in _e.getchildren():
-                _e.remove(child)
+            e_copy.remove_children()
 
             children_with_new_tails = map(remove_newlines_from_tail, children)    
             children_with_new_text = map(remove_newlines_from_text, children_with_new_tails)
 
             for child in children_with_new_text:
-                _e.append(child)
+                e_copy.append_node(child)
 
-            return _e      
+            return e_copy      
             
-        def make_internal_token(e: _Element) -> list[EditionElement]:
+        def make_internal_token(e: XmlElement) -> list[EditionElement]:
 
             """TODO merge with w_factory"""
 
-            _e = deepcopy(e)
-            _e.tail = self.tail_completer   # type: ignore
-            _element = EditionElement(_e)
-            if _element.e is None:
-                return []
+            e_copy = e.deepcopy()
+            e_copy.tail = self.tail_completer
+            edition_element = EditionElement(e_copy)
 
-            if _element._e.tag.name in AtomicNonTokenType.values():
-                internalprotowords = _element._internal_prototokens
+            if edition_element._e.tag.name in AtomicNonTokenType.values():
+                internalprotowords = edition_element._internal_prototokens
                 if internalprotowords == []:
-                    return [EditionElement(_e, final_space=True)]
+                    return [EditionElement(e_copy, final_space=True)]
 
                 if len(internalprotowords) == 1:
-                    _e.tail = ''    # type: ignore
-                    elems = EditionElement(_e) + EditionElement.w_factory(internalprotowords[0])
+                    e_copy.tail = ''
+                    elems = EditionElement(e_copy) + EditionElement.w_factory(internalprotowords[0])
 
                     # Make sure there is a bound to the right if there are multiple tokens in the tail
                     if len(self.create_tail_token_elements()) > 0:
@@ -643,11 +639,11 @@ class EditionElement(TeiElement, Showable):
                 
                 raise ValueError("More than 1 protoword.")
 
-            elif _element._e.tag.name in AtomicTokenType.values():            
-                return [_element] # i.e. do nothing because already a token
+            elif edition_element._e.tag.name in AtomicTokenType.values():            
+                return [edition_element] # i.e. do nothing because already a token
 
-            elif _element._e.tag.name in CompoundTokenType.values():
-                epidoc_elem = EditionElement(_element)
+            elif edition_element._e.tag.name in CompoundTokenType.values():
+                epidoc_elem = EditionElement(edition_element)
                 internal_tokenized = epidoc_elem.make_child_tokens_for_container()
                 epidoc_elem._e.remove_children()
                 for element in internal_tokenized:
@@ -655,18 +651,18 @@ class EditionElement(TeiElement, Showable):
 
                 return [epidoc_elem]
             
-            elif _element._e.tag.name in SubatomicTagType.values():
-                return [tokenize_subatomic_tags(subelement=_e)]
+            elif edition_element._e.tag.name in SubatomicTagType.values():
+                return [tokenize_subatomic_tags(subelement=e_copy)]
 
-            elif _element._e.tag.name == "Comment":
-                comment = deepcopy(_element.e)
+            elif edition_element._e.tag.name == "Comment":
+                comment = deepcopy(edition_element.e)
                 comment.tail = ""   # type: ignore
 
                 return [EditionElement(comment)]
 
-            raise ValueError(f"Invalid _element.tag.name: {_element._e.tag.name}")
+            raise ValueError(f"Invalid _element.tag.name: {edition_element._e.tag.name}")
         
-        e = remove_internal_extraneous_whitespace(self._e._e)
+        e = remove_internal_extraneous_whitespace(self._e)
         return make_internal_token(e)
 
     @property
@@ -746,7 +742,7 @@ class EditionElement(TeiElement, Showable):
         """
 
         return [EditionElement(expan) 
-                for expan in self.get_desc_tei_elems([
+                for expan in self.get_desc([
                     'abbr',
                     'ex',
                     # 'expan',
@@ -790,37 +786,13 @@ class EditionElement(TeiElement, Showable):
 
         return next_no_spaces([], self)
 
-    def find_next_sibling(self) -> Optional[EditionElement]:
+    def find_next_sibling(self) -> EditionElement | None:
 
         """
         Finds the next non-comment sibling |EpiDocElement|.
         """
-
-        # TODO: put into base element layer; 
-        # previously tried to do this but caused recursion error
-
-        def _get_next(e: _Element | None) -> Optional[_Element]:
-            if e is None:
-                return None
-
-            _next_sib = e.getnext()
-
-            if isinstance(_next_sib, _Element):
-                return _next_sib
-            
-            e.getroottree()
-
-            return None
-
-        if self._e is None:
-            return None
-
-        _next = _get_next(self._e._e)
-        
-        if isinstance(_next, _Element):
-            return EditionElement(_next)
-        elif _next is None:
-            return None
+        if isinstance(self._e.next_sibling, XmlElement):
+            return EditionElement(self._e.next_sibling)
 
         return None
 
@@ -877,20 +849,15 @@ class EditionElement(TeiElement, Showable):
         :return: |Element|s that should not be separated by spaces.
         """
         return [EditionElement(item) for item 
-            in self._e.get_desc(NoSpaceBefore.values())
-        ]
+                in self.get_desc(NoSpaceBefore.values())]
 
     @property
-    def parent(self) -> Optional[EditionElement]:
-        if self._e is None:
-            return None
-        _parent = self._e._e.getparent()
-        if type(_parent) is _Element:    
+    def parent(self) -> EditionElement | None:
+        _parent = self._e.parent
+        if _parent is not None:
             return EditionElement(_parent)
         elif _parent is None:
             return None
-        else:
-            raise TypeError('Parent is of incorrect type.')
 
     @property
     def preceding_nodes_in_ab(self) -> list[XmlNode]:
@@ -1084,7 +1051,7 @@ class EditionElement(TeiElement, Showable):
         have any spaces inserted between them.
         """
         elems = [item
-                 for item in map(EditionElement, self._e.get_desc(SpaceSeparated.values()))
+                 for item in map(EditionElement, self.get_desc(SpaceSeparated.values()))
                  if not item._e.has_ancestors_by_names(AtomicTokenType.values())]
         
         return [elem for elem in elems 
@@ -1142,7 +1109,7 @@ class EditionElement(TeiElement, Showable):
         return self._e.tail
 
     def get_supplied(self) -> list[EditionElement]:
-        return [EditionElement(supplied) for supplied in self._e.get_desc('supplied')]
+        return [EditionElement(supplied) for supplied in self.get_desc('supplied')]
 
     @property
     def _tail_prototokens(self) -> list[str]:
@@ -1260,8 +1227,8 @@ class EditionElement(TeiElement, Showable):
 
             new_acc = acc + [element._find_next_no_spaces()]
 
-            next_no_spaces_desc = [element_._e.descendant_elements 
-                                   for element_ in element._find_next_no_spaces()] + [element._find_next_no_spaces()]
+            next_no_spaces_desc = [e._e.descendant_elements 
+                                   for e in element._find_next_no_spaces()] + [[e._e for e in element._find_next_no_spaces()]]
             next_no_spaces_desc_flat = [EditionElement(item) 
                                         for item in chain(*next_no_spaces_desc)]
             
@@ -1426,16 +1393,16 @@ class EditionElement(TeiElement, Showable):
 
     @staticmethod
     def w_factory(
-        prototoken: Optional[str]=None, 
-        subelements: list[_Element]=[],
-        parent: Optional[_Element]=None
+        prototoken: str | None = None, 
+        subelements: list[XmlElement] = [],
+        parent: XmlElement | None = None
     ) -> EditionElement:
 
         """
         TODO merge w_factory and make_word functions.
         """
 
-        def append_tail_or_text(_tail: Optional[str], _parent:_Element) -> _Element:
+        def append_tail_or_text(_tail: str | None, _parent: XmlElement) -> XmlElement:
 
             if _tail is not None:
                 tailword_strs = _tail.split()
@@ -1443,112 +1410,102 @@ class EditionElement(TeiElement, Showable):
                     for tailtoken_str in tailword_strs]
                 for tailtoken in tailtokens:
                     if tailtoken.e is not None:
-                        _parent.append(tailtoken.e)
+                        _parent.append_node(tailtoken._e)
 
             return _parent           
 
-        new_w: _Element
-        new_g: _Element
-
         # Handle interpuncts
         if prototoken is not None and prototoken.strip() in ['·', '·', '❦', '∙']:
-            tagname = ns.give_ns('g', ns=TEINS)
-            new_g = etree.Element(tagname, nsmap=None, attrib=None)
+            g = XmlElement.create('g', TEINS)
 
             if prototoken: 
-                new_g.text = prototoken # type: ignore
-                new_g.set('ref', '#interpunct')
+                g.text = prototoken
+                g.set_attr('ref', '#interpunct')
 
-            for e in subelements:
-                new_g.append(e)
+            for child in subelements:
+                g.append_node(child)
 
-            # Final space because result of a split operation
-            g_elem = EditionElement(new_g, final_space=True) 
+            # Set final_space to true because result of a split operation
+            g_element = EditionElement(g, final_space=True) 
 
-            return g_elem
+            return g_element
 
         elif prototoken is None and parent is not None:
-            children: list[_Element] = [deepcopy(e) 
-                                       for e in parent.getchildren()] 
-            new_parent: _Element = deepcopy(parent)
+            children = [e.deepcopy() for e in parent.child_elements] 
+            parent_copy = parent.deepcopy()
             
-            # Remove text and children from new_parent
-            for child in new_parent.getchildren():
-                new_parent.remove(child)
-
-            new_parent.text = None  # type: ignore
+            # Remove text and children from parent_copy
+            parent_copy.remove_children()
+            parent_copy.text = None  # type: ignore
         
             # Handle the text content of new_parent
-            new_parent = append_tail_or_text(parent.text, new_parent)
+            parent_copy = append_tail_or_text(parent.text, parent_copy)
 
             # Handle children of new_parent
-            for e in children:
-                e_without_tail = deepcopy(e)
+            for child in children:
+                e_without_tail = child.deepcopy()
                 e_without_tail.tail = None   # type: ignore
-                localname = ns.remove_ns(e.tag)
+                localname = child.localname
 
-                if localname == 'lb' and EditionElement(e).get_attr('break') == 'no':
+                if localname == 'lb' and EditionElement(child).get_attr('break') == 'no':
                     lb = e_without_tail
-                    lb_tail = e.tail
+                    lb_tail = child.tail
 
-                    if new_parent.getchildren() == []:
-                        new_parent.append(lb)
-                        new_parent = append_tail_or_text(lb_tail, new_parent)    
+                    if parent_copy.child_elements == []:
+                        parent_copy.append_node(lb)
+                        parent_copy = append_tail_or_text(lb_tail, parent_copy)    
                     else:
                         
-                        last_child = new_parent.getchildren()[-1]
-                        last_child.append(lb)
+                        last_child = parent_copy.child_elements[-1]
+                        last_child.append_node(lb)
                         if lb_tail is not None:
                             lb_tail_strs = lb_tail.split()
-                            lb.tail = lb_tail_strs[0] # type: ignore
+                            lb.tail = lb_tail_strs[0] 
 
-                            new_parent = append_tail_or_text(' '.join(lb_tail_strs[1:]), new_parent)
+                            parent_copy = append_tail_or_text(' '.join(lb_tail_strs[1:]), parent_copy)
 
                 elif localname in AtomicTokenType.values() + AtomicNonTokenType.values():
-                    new_parent.append(e_without_tail)
-                    new_parent = append_tail_or_text(e.tail, new_parent)                    
+                    parent_copy.append_node(e_without_tail)
+                    parent_copy = append_tail_or_text(child.tail, parent_copy)                    
 
                 elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>, <hi>
                     if localname in CompoundTokenType.values(): # this is intended for <hi>, which is also a compound token
                         tokenized = tokenize_subatomic_tags(e_without_tail)
-                        if EditionElement(new_parent)._e.children == []:
-                            new_parent.append(tokenized.e)
+                        if EditionElement(parent_copy)._e.children == []:
+                            parent_copy.append_node(tokenized._e)
 
                         elif tokenized._e.last_child is None:
-                            new_parent.append(tokenized.e)
+                            parent_copy.append_node(tokenized._e)
                         else:
                             new_e = tokenized._e.last_child.e 
-                            first_w = cast(_Element, new_parent._e.getchildren()[0])
-                            first_w._e.append_node(new_e)
-                            first_w._e.getchildren()[-1].tail = e.tail        
-
+                            first_w = parent_copy.child_elements[0]
+                            first_w.append_node(new_e)
+                            first_w.child_elements[-1].tail = child.tail        
                     else:
                         new_w = tokenize_subatomic_tags(e_without_tail).e
-                        new_parent._append_node(new_w)
-                        new_parent = append_tail_or_text(e.tail, new_parent)              
+                        parent_copy.append_node(new_w)
+                        parent_copy = append_tail_or_text(child.tail, parent_copy)              
                     
                 elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>, <roleName>
                     new_w_elem = EditionElement.w_factory(parent=e_without_tail)
-                    if new_w_elem.e is not None:
-                        new_parent.append(new_w_elem.e)
-                        new_parent = append_tail_or_text(e.tail, new_parent)
+                    parent_copy.append_node(new_w_elem._e)
+                    parent_copy = append_tail_or_text(child.tail, parent_copy)
 
-            return EditionElement(new_parent, final_space=True)
+            return EditionElement(parent_copy, final_space=True)
         else:
             if prototoken: 
-                tagname = ns.give_ns('w', ns=TEINS)
-                new_w = etree.Element(tagname, None, None)
-                new_w.text = prototoken # type: ignore
+                new_w = XmlElement.create('w', TEINS)
+                new_w.text = prototoken
             else:
-                new_w = etree.Element(ns.give_ns('w', ns=TEINS), None, None)
+                new_w = XmlElement.create('w', TEINS)
  
             for child in subelements:
-                new_w.append(child)
+                new_w.append_node(child)
 
         return EditionElement(new_w, final_space=True)
     
     @property
-    def xml_id(self) -> Optional[str]:
+    def xml_id(self) -> str | None:
         """
         Returns value of the xml:id attribute in the XML file.
         """

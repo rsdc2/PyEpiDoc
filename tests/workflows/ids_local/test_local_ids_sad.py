@@ -22,7 +22,7 @@ test_local_id_elements = [
 def test_set_missing_local_ids(xml_str: str):
     # Arrange
     doc = EpiDoc(EMPTY_TEMPLATE_PATH)
-    ab = Ab(XmlElement.from_xml_str(abify(xml_str)))
+    ab = Ab(XmlElement.from_str(abify(xml_str)))
     doc.main_edition.append_ab(ab)
 
     # Act

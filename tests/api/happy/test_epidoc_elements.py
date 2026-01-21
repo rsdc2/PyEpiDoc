@@ -82,7 +82,7 @@ def test_am_4():
     # from ISic000481
     xmlstr = "<expan><abbr>A<am>A</am>u</abbr></expan>"
 
-    elem = etree.fromstring(xmlstr, None)
+    elem = XmlElement.from_str(xmlstr)
 
     epidoc_elem = XmlElement(elem)
     text_nodes = epidoc_elem.xpath("descendant::text()")
@@ -115,7 +115,7 @@ def test_expans_1():
 def test_expans_2():
     # Arrange
     xml = f'<expan xmlns="{TEINS}">Kal<abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
-    elem = etree.fromstring(xml, None)
+    elem = XmlElement.from_str(xml)
     expan = Expan(elem)
     
     # Assert
@@ -124,21 +124,21 @@ def test_expans_2():
 
 def test_expans_3():
     xml = f'<expan xmlns="{TEINS}">Kal<abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
-    elem = etree.fromstring(xml, None)
+    elem = XmlElement.from_str(xml)
     expan = Expan(elem)
     assert not expan._desc_textnode_is_desc_of('1', 'abbr')
 
 
 def test_expans_4():
     xml = f'<expan xmlns="{TEINS}"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr></expan>'
-    elem = etree.fromstring(xml, None)
+    elem = XmlElement.from_str(xml)
     expan = Expan(elem)
     assert expan._desc_textnode_is_desc_of('last()', 'abbr')    
 
 
 def test_expans_5():
     xml = f'<expan xmlns="{TEINS}"><abbr>Kal</abbr><ex>enda</ex><abbr>s</abbr>s</expan>'
-    elem = etree.fromstring(xml, None)
+    elem = XmlElement.from_str(xml)
     expan = Expan(elem)
     assert not expan._desc_textnode_is_desc_of('last()', 'abbr')    
 

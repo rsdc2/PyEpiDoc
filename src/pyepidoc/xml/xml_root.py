@@ -31,7 +31,7 @@ from .errors import handle_xmlsyntaxerror
 class XmlRoot:  
     _roottree: _ElementTree  
     _e: _Element
-    _p: Path
+    _path: Path
     _valid: Optional[bool] = None
 
     @overload
@@ -74,7 +74,7 @@ class XmlRoot:
     def __init__(self, inpt: Path | BytesIO | str | _ElementTree | _Element | XmlElement):
 
         if isinstance(inpt, Path):
-            self._p = inpt
+            self._path = inpt
             if not inpt.exists():
                 raise FileExistsError(f'File {inpt.absolute()} does not exist')
             self._e = self._load_e_from_file(inpt)
@@ -97,10 +97,10 @@ class XmlRoot:
             return
         
         elif isinstance(inpt, str):
-            self._p = p = Path(inpt)
-            if not p.exists():
-                raise FileExistsError(f'File {p.absolute()} does not exist')
-            self._e = self._load_e_from_file(p)
+            self._path = path = Path(inpt)
+            if not path.exists():
+                raise FileExistsError(f'File {path.absolute()} does not exist')
+            self._e = self._load_e_from_file(path)
             return
         
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
@@ -166,7 +166,7 @@ class XmlRoot:
     
     @property
     def filename(self) -> str:
-        return self._p.stem
+        return self._path.stem
 
     def get_desc(self, 
         elemnames: list[str] | str, 
@@ -201,6 +201,7 @@ class XmlRoot:
                 source=inpt, 
                 parser=parser
             )
+            self._e = self._roottree.getroot()
 
             return self
         
@@ -357,9 +358,9 @@ class XmlRoot:
         attempt
         """
         if self.valid == True:
-            return f'{self._p} is valid'
+            return f'{self._path} is valid'
         elif self.valid == False:
-            return f'{self._p} is not valid'
+            return f'{self._path} is not valid'
         else:
             return 'No validation has been carried out'
 
@@ -394,7 +395,7 @@ class XmlRoot:
             roottree_ = deepcopy(self.root_tree)
             roottree_.xinclude()
             relaxng.assertValid(roottree_)
-            msg = (f'{self._p} is valid EpiDoc according to the '
+            msg = (f'{self._path} is valid EpiDoc according to the '
                     'RelaxNG schema')
             self._valid = True
 

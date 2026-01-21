@@ -1,10 +1,9 @@
 import pytest
 from pathlib import Path
-from lxml import etree
 
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import abify
-
+from pyepidoc.xml.xml_element import XmlElement
 
 input_path = Path('tests/workflows/tokenize/files/untokenized')
 output_path = Path('tests/workflows/tokenize/files/tokenized_output')
@@ -83,8 +82,8 @@ def test_tokenize_epidoc_fragments_with_spaces(xml_pair: tuple[str, str]):
     xml_pair_abs = tuple(map(abify, xml_pair))
 
     xml, tokenized_xml = xml_pair_abs
-    untokenized = Ab(etree.fromstring(xml, None))
-    tokenized_benchmark = Ab(etree.fromstring(tokenized_xml, None))
+    untokenized = Ab(XmlElement.from_str(xml))
+    tokenized_benchmark = Ab(XmlElement.from_str(tokenized_xml))
 
     # Act
     tokenized = untokenized.tokenize()
@@ -93,16 +92,16 @@ def test_tokenize_epidoc_fragments_with_spaces(xml_pair: tuple[str, str]):
         return False
 
     tokenized.space_tokens()    
-    benchmark_strs = [etree.tostring(t._e._e)
+    benchmark_strs = [t._e.to_bytes()
                       for t in tokenized_benchmark.tokens]
     
-    tokenized_strs = [etree.tostring(t._e._e) 
+    tokenized_strs = [t._e.to_bytes() 
                       for t in tokenized.get_child_tokens()]
     
-    benchmark_bstr: bytes = etree.tostring(tokenized_benchmark._e._e)
+    benchmark_bstr = tokenized_benchmark._e.to_bytes()
     benchmark_str = benchmark_bstr.decode()
 
-    tokenized_bstr: bytes = etree.tostring(tokenized._e._e)
+    tokenized_bstr = tokenized._e.to_bytes()
     tokenized_str = tokenized_bstr.decode()
 
     result = tokenized_str == benchmark_str

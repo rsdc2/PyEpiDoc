@@ -24,7 +24,7 @@ def test_w_normalization(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, normalized_form = inpt
-    elem = XmlElement.from_xml_str(xml_str)
+    elem = XmlElement.from_str(xml_str)
 
     # Act 
     try:
@@ -55,7 +55,7 @@ def test_token_normalization(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, normalized_form = inpt
-    elem = XmlElement.from_xml_str(xml_str)
+    elem = XmlElement.from_str(xml_str)
     
     # Act
     token = Token(elem._e)
@@ -73,7 +73,7 @@ representable_elements = [
 def test_representable_normalization(inpt: tuple[str, str]):
     # Arrange
     xml_str, normalized_form = inpt
-    elem = XmlElement.from_xml_str(xml_str)
+    elem = XmlElement.from_str(xml_str)
     
     # Act
     representable = RepresentableElement(elem._e)

@@ -3,11 +3,11 @@ from typing import Optional, Sequence
 from functools import reduce
 from itertools import chain
 
-from ..edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import EditionElement
 from .textpart import TextPart
-from ..token import Token
+from pyepidoc.epidoc.token import Token
 from .expan import Expan
-from ...shared.enums import (
+from pyepidoc.shared.enums import (
     IdCarrier,
     AtomicTokenType, 
     CompoundTokenType,
@@ -15,14 +15,12 @@ from ...shared.enums import (
     NonNormalized
 )
 
-from pyepidoc.shared.classes import SetRelation
 from pyepidoc.xml import XmlElement
-from pyepidoc.shared import update_set_inplace, head
-from pyepidoc.shared.namespaces import XMLNS
+from pyepidoc.shared import head
+from pyepidoc.shared.namespaces import XMLNS, TEINS
 from pyepidoc.shared.types import Base
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.epidoc.utils import descendant_atomic_tokens
-from pyepidoc.tei.tei_element import TeiElement
 
 class Ab(RepresentableElement):
 
@@ -88,8 +86,7 @@ class Ab(RepresentableElement):
     @property
     def g_dividers(self) -> list[EditionElement]:
         return [EditionElement(boundary) for boundary 
-            in self._e.get_desc('g')
-        ]
+                in self.get_desc('g')]
 
     @property
     def gaps(self):
@@ -135,7 +132,7 @@ class Ab(RepresentableElement):
     @property
     def lbs(self) -> Sequence[EditionElement]:
         return [EditionElement(lb) 
-                for lb in self.get_desc_tei_elems(['lb'])]
+                for lb in self.get_desc(['lb'])]
 
     @property
     def no_space_before(self) -> list[EditionElement]:
@@ -144,10 +141,7 @@ class Ab(RepresentableElement):
         """
 
         return [EditionElement(item) for item 
-            in self._e.get_desc(
-                NoSpaceBefore.values() 
-            )
-        ]
+                in self.get_desc(NoSpaceBefore.values())]
 
     @property
     def _proto_word_strs(self) -> list[str]:

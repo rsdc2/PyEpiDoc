@@ -1,6 +1,6 @@
 from pyepidoc.shared.constants import TEINS
-from lxml import etree
 from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.xml.xml_element import XmlElement
 import pytest
 
 xmls =[
@@ -15,16 +15,20 @@ xmls =[
 
 @pytest.mark.parametrize("xml_pair", xmls)
 def test_w_hi(xml_pair: tuple[str, str, str]):
-    xml1, xml2, result = xml_pair
-    result_ = result.encode()
 
-    e1 = etree.fromstring(xml1, None)
-    e2 = etree.fromstring(xml2, None)
+    # Arrange
+    xml1, xml2, result = xml_pair
+    bytes_result = result.encode()
+
+    e1 = XmlElement.from_str(xml1)
+    e2 = XmlElement.from_str(xml2)
 
     elem1 = EditionElement(e1)
     elem2 = EditionElement(e2)
 
+    # Act
     elem = elem1 + elem2
 
-    assert etree.tostring(elem[0]._e._e) == result_
+    # Assert
+    assert elem[0]._e.to_bytes() == bytes_result
 
