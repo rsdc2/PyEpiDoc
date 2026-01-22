@@ -252,20 +252,20 @@ class XmlRoot:
         """
 
         def _processing_instructions(
-            acc:list[_ProcessingInstruction], 
-            e:_Element | _ProcessingInstruction) -> list[_ProcessingInstruction]:
+            acc: list[_ProcessingInstruction], 
+            e: XmlElement | _ProcessingInstruction) -> list[_ProcessingInstruction]:
 
-            previous = e.getprevious()
+            previous = e.previous_sibling
 
             if previous is None:
                 return list(reversed(acc))
             
-            if type(previous) is not _ProcessingInstruction:
+            if not isinstance(previous, _ProcessingInstruction):
                 raise TypeError('_ProcessingInstruction expected.')
             
             return _processing_instructions(acc + [previous], previous)
 
-        return _processing_instructions([], self.e)
+        return _processing_instructions([], self.element)
     
     @property
     def processing_instructions_str(self) -> str:

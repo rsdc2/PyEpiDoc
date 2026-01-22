@@ -17,15 +17,6 @@ from copy import deepcopy
 from functools import reduce, cached_property
 import re
 
-from lxml import etree 
-from lxml.etree import ( 
-    _Element,
-    _ElementTree, 
-    _Comment as C,
-    _Comment,
-    _ElementUnicodeResult
-)
-
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.xml.xml_element import XmlNode, XmlElement
 from pyepidoc.tei.tei_element import TeiElement
@@ -53,7 +44,7 @@ from pyepidoc.shared import maxoneT, head, last
 
 # sys.setrecursionlimit(10000)
 
-def tokenize_subatomic_tags(subelement: _Element) -> EditionElement:
+def tokenize_subatomic_tags(subelement: XmlElement) -> EditionElement:
     """
     Check that subelement does not contain atomic tags
     If it does, tokenizer does not surround in an atomic tag
@@ -680,7 +671,7 @@ class EditionElement(TeiElement, Showable):
 
     @property
     def _join_to_prev(self) -> bool:
-        prev_sibling = self._e.previous_sibling
+        prev_sibling = self._e.previous_element
         
         if prev_sibling is None:
             return False
@@ -688,7 +679,7 @@ class EditionElement(TeiElement, Showable):
         return EditionElement(prev_sibling)._join_to_next
 
     @property
-    def has_lb_in_preceding_or_ancestor(self) -> Optional[_Element]:
+    def has_lb_in_preceding_or_ancestor(self) -> XmlElement | None:
 
         """
         Returns any preceding or |_Element| containing an
@@ -709,10 +700,7 @@ class EditionElement(TeiElement, Showable):
 
             return [item for item in result
                     if isinstance(item, XmlElement)]
-
-        if self._e is None:
-            return None
-
+        
         return last(get_preceding_lb(self))
 
     @property
@@ -909,34 +897,28 @@ class EditionElement(TeiElement, Showable):
     def _prototokens(self) -> list[str]:
         return self._internal_prototokens + self._tail_prototokens
 
-    def remove_element_internal_whitespace(self) -> _Element:
+    def remove_element_internal_whitespace(self) -> XmlElement:
         
         """
         Remove all internal whitespace from word element, in place, 
         except for comments.
         """
 
-        def _remove_whitespace(elem: _Element) -> _Element:
+        def _remove_whitespace(elem: XmlElement) -> XmlElement:
 
-            for child in elem.getchildren():
-                if not isinstance(child, _Comment):
-                    if child.text is not None:
-                        child.text = child.text.strip()
-                    if child.tail is not None:
-                        child.tail = child.tail.strip()
+            for child in elem.child_elements:
+                if child.text is not None:
+                    child.text = child.text.strip()
+                if child.tail is not None:
+                    child.tail = child.tail.strip()
 
-                if len(child.getchildren()) > 0:
+                if len(child.child_elements) > 0:
                     child = _remove_whitespace(child) 
 
-            if isinstance(elem.text, str): 
-                elem.text = elem.text.strip() # type: ignore
-
+            elem.text = elem.text.strip()
             return elem
-        
-        if self._e._e is None:
-            raise TypeError("Underlying element is None")
 
-        return _remove_whitespace(self._e._e)
+        return _remove_whitespace(self._e)
 
     @property
     def right_bound(self) -> bool:
@@ -974,14 +956,6 @@ class EditionElement(TeiElement, Showable):
     @property
     def root(self) -> XmlElement:
         return self._e.get_ancestors_incl_self()[-1]
-
-    @property
-    def roottree(self) -> Optional[_ElementTree]:
-        root_e = self.root.e
-        if root_e is None:
-            return None
-
-        return root_e.getroottree()
 
     def set_attr(
         self, 
@@ -1365,10 +1339,10 @@ class EditionElement(TeiElement, Showable):
         # Get the tokenized elements
         # TODO write tests for this
         if not inplace:
-            _e = deepcopy(self._e)
+            _e = self._e.deepcopy()
 
             for element in self.get_child_tokens():
-                tokenized_elements += [deepcopy(element)]
+                tokenized_elements += [element.deepcopy()]
 
         else:
             _e = self._e
@@ -1377,17 +1351,15 @@ class EditionElement(TeiElement, Showable):
             tokenized_elements = self.get_child_tokens()
 
         # Remove existing children of <ab>
-        for child in _e._e.getchildren():
-            _e._e.remove(child)
+        _e.remove_children()
 
         # Remove any text content of the <ab> node
         _e.text = ""    # type: ignore
 
         # Append the new tokenized children
         for element in tokenized_elements:
-            if element._e is not None:
-                element._e = element.remove_element_internal_whitespace()
-                _e._e.append(element._e)
+            element._e = element.remove_element_internal_whitespace()
+            _e.append_node(element._e)
 
         return self.__class__(_e)
 

@@ -31,7 +31,7 @@ def owner_doc(elem: EditionElement) -> Optional[EpiDoc]:
     """
     Returns the |EpiDoc| document owning an element.
     """
-    roottree = elem.roottree
+    roottree = elem._e.roottree
 
     if roottree is None: 
         return None
@@ -80,7 +80,7 @@ def doc_id(elem: EditionElement) -> Optional[str]:
     """
     Finds the document id containing a given element.
     """
-    roottree = elem.roottree
+    roottree = elem._e.roottree
 
     if roottree is None: 
         return None

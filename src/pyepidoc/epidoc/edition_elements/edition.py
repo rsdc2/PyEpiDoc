@@ -96,8 +96,8 @@ def prettify(
         prevs: list[XmlElement] = []
 
         for element in elements:
-            if element.previous_sibling is not None:
-                prevs += [element.previous_sibling]
+            if element.previous_element is not None:
+                prevs += [element.previous_element]
 
         return prevs
 

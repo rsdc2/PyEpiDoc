@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from functools import cached_property, reduce
 from pyepidoc.xml.xml_text import XmlText
-from pyepidoc.xml.xml_element import XmlElement, XmlNode, XmlComment, to_xml_node
+from pyepidoc.xml.xml_element import (
+    XmlElement, 
+    XmlNode, 
+    XmlComment, 
+    XmlNode, 
+    ProcessingInstruction
+)
 
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.enums import RegTextType
@@ -52,6 +58,9 @@ class RepresentableElement(EditionElement):
                 return n.text
             
             if isinstance(n, XmlComment):
+                return ''
+            
+            if isinstance(n, ProcessingInstruction):
                 return ''
 
             if ln in ['g', 'lb', 'gap']:

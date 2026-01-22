@@ -19,6 +19,7 @@ from lxml.etree import (
     _ElementTree, 
     _Comment,
     _ElementUnicodeResult,
+    _ProcessingInstruction,
     XMLSyntaxError,
     XMLSyntaxAssertionError
 )
@@ -30,7 +31,7 @@ from pyepidoc.xml.utils import descendant_text
 
 from .namespace import Namespace as ns
 from .xml_text import XmlText
-
+from .processing_instruction import ProcessingInstruction
 
 class XmlElement(Showable):    
 
@@ -312,7 +313,7 @@ class XmlElement(Showable):
         """
 
         nodes = self._e.xpath('.//node()')
-        return [to_xml_node(node) for node in nodes]
+        return [xml_node(node) for node in nodes]
     
     @property
     def descendant_non_comments(self) -> list[XmlNode]:
@@ -448,7 +449,7 @@ class XmlElement(Showable):
             self, 
             attribname: str, 
             namespace: Optional[str]=None
-        ) -> Optional[str]:
+        ) -> str | None:
 
         """
         Returns the value of the named attribute.
@@ -531,7 +532,7 @@ class XmlElement(Showable):
             self,
             previous_sibling_names: list[str]) -> Sequence[XmlElement]:
         
-        return [previous for previous in self.previous_siblings
+        return [previous for previous in self.previous_elements
                 if previous.localname in previous_sibling_names]
 
     def has_ancestor_by_name(self, localname: str) -> bool:
@@ -644,25 +645,41 @@ class XmlElement(Showable):
             raise TypeError('Parent is of incorrect type.')
 
     @property
-    def previous_sibling(self) -> Optional[XmlElement]:
+    def previous_element(self) -> XmlElement | None:
+        previous_elements = self.previous_elements
+        if len(previous_elements) == 0:
+            return None
+        return self.previous_elements[0]
+
+    @property
+    def previous_elements(self) -> list[XmlElement]:
+        sibs = [xml_node(sib) for sib in self.previous_siblings]
+        return [sib for sib in sibs if isinstance(sib, XmlElement)]
+
+    @property
+    def previous_sibling(self) -> XmlNode | None:
+        """
+        Return the previous sibling node.
+        """
         _prev = self._e.getprevious()
+        if isinstance(_prev, _Comment):
+            return XmlComment(_prev)
         if isinstance(_prev, _Element):
             return XmlElement(_prev)
-        elif _prev is None:
+        if isinstance(_prev, _ProcessingInstruction):
+            return ProcessingInstruction(_prev)
+        if _prev is None:
             return None
 
         raise TypeError(f"Previous element is of type {type(_prev)}.")
 
     @property 
-    def previous_siblings(self) -> List[XmlElement]:
+    def previous_siblings(self) -> List[XmlNode]:
         """
         Returns previous sibling non-text elements
         """
-
         prev_sibs = self.xpath('preceding-sibling::*')
-
-        return [XmlElement(sib) for sib in prev_sibs 
-                if type(sib) is _Element]
+        return [xml_node(sib) for sib in prev_sibs]
     
     def prettify_element_with_pyepidoc(
             element: XmlElement,
@@ -939,7 +956,7 @@ class XmlElement(Showable):
             print(e)
             return []
 
-        result_list = [to_xml_node(node) for node in result]
+        result_list = [xml_node(node) for node in result]
         return result_list
     
     def xpath_bool(
@@ -991,15 +1008,17 @@ class XmlComment(XmlElement):
     def localname(self) -> str:
         return "#comment"
 
-XmlNode = XmlText | XmlElement | XmlComment
+XmlNode = XmlText | XmlElement | XmlComment | ProcessingInstruction
 
-def to_xml_node(node: _Element | _ElementUnicodeResult | _Comment) -> XmlNode:
+def xml_node(node: _Element | _ElementUnicodeResult | _Comment | _ProcessingInstruction) -> XmlNode:
     if isinstance(node, _Comment):
         return XmlComment(node)
     if isinstance(node, _ElementUnicodeResult):
         return XmlText(node)
     if isinstance(node, _Element):
         return XmlElement(node)
+    if isinstance(node, _ProcessingInstruction):
+        return ProcessingInstruction(node)
     raise TypeError(f'Node {node} is node of valid type: '
-                    'expected _Element, _ElementUnicodeResult or _Comment, ' \
+                    'expected _Element, _ElementUnicodeResult, _Comment or _ProcessingInstruction ' \
                     'but is {type(node)}')
