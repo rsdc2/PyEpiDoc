@@ -1,10 +1,8 @@
 from __future__ import annotations
 from typing import (
     Optional, 
-    Union, 
     cast, 
-    overload, 
-    Sequence
+    overload
 )
 from pathlib import Path
 from copy import deepcopy
@@ -22,15 +20,13 @@ from lxml.etree import (
     DocumentInvalid
 )
 
-from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.xml.xml_element import XmlElement
-from .xml_element import XmlElement
+from .xml_element import XmlElement, XmlNode, XmlText
+from .processing_instruction import ProcessingInstruction
 from .errors import handle_xmlsyntaxerror
 
-
 class XmlRoot:  
-    _roottree: _ElementTree  
-    _e: _Element
+    _tree: _ElementTree
     _path: Path
     _valid: Optional[bool] = None
 
@@ -77,30 +73,30 @@ class XmlRoot:
             self._path = inpt
             if not inpt.exists():
                 raise FileExistsError(f'File {inpt.absolute()} does not exist')
-            self._e = self._load_e_from_file(inpt)
+            self._tree = self._load_etree_from_file(inpt)
             return
         
         elif isinstance(inpt, BytesIO):
-            self._e = self._load_e_from_file(inpt)
+            self._tree = self._load_etree_from_file(inpt)
             return
             
         elif isinstance(inpt, _ElementTree):
-            self._e = inpt.getroot()
+            self._tree = inpt
             return
 
         elif isinstance(inpt, _Element):
-            self._e = inpt
+            self._tree = inpt.getroottree()
             return
 
         elif isinstance(inpt, XmlElement):
-            self._e = inpt._e
+            self._tree = inpt.roottree
             return
         
         elif isinstance(inpt, str):
             self._path = path = Path(inpt)
             if not path.exists():
                 raise FileExistsError(f'File {path.absolute()} does not exist')
-            self._e = self._load_e_from_file(path)
+            self._tree = self._load_etree_from_file(path)
             return
         
         raise TypeError(f'input is of type {type(inpt)}, but should be either '
@@ -118,9 +114,9 @@ class XmlRoot:
         Turn a <tag></tag> to <tag/>
         """
 
-        for elem in self.desc_elems:
+        for elem in self.root.descendant_elements:
             if elem.text == '':
-                elem.e.text = None
+                elem.text = None 
 
         return self
 
@@ -133,57 +129,13 @@ class XmlRoot:
     @property
     def depth(self) -> int:
         return 0
-
-    @property
-    def desc_comments(self) -> Sequence[XmlElement]:
-        return [XmlElement(item) 
-                for item in self._desc_comments]
-
-    @property
-    def _desc_comments(self) -> Sequence[_Comment]:
-        if self.e is None:
-            return []
-        
-        return [item for item in self.e.iterdescendants(tag=None)
-                 if isinstance(item, _Comment)]
-
-    @property
-    def desc_elems(self) -> Sequence[XmlElement]:
-        if self.e is None:
-            return []
-        
-        return [XmlElement(item) 
-                for item in self.e.iterdescendants(tag=None)
-                 if isinstance(item, _Element)]
-
-    @property
-    def e(self) -> _Element:
-        return self._e
-    
-    @property
-    def element(self) -> XmlElement:
-        return XmlElement(self._e)
     
     @property
     def filename(self) -> str:
         return self._path.stem
 
-    def get_desc(self, 
-        elemnames: list[str] | str, 
-        attribs: dict[str, str] | None,
-        ns: str) -> list[XmlElement]:
-
-        return self.element.get_desc(elemnames, attribs, ns)
-
-    def _load_e_from_file(self, inpt: Path | BytesIO) -> XmlElement:
-
-        """
-        Reads the root element from file and returns an
-        _Element object representing the XML document
-        """
-        return self._load_etree_from_file(inpt=inpt).element
-
-    def _load_etree_from_file(self, inpt: Path | BytesIO) -> XmlRoot:
+    @staticmethod
+    def _load_etree_from_file(inpt: Path | BytesIO) -> _ElementTree:
         """
         Reads the root element from file and returns an
         _ElementTree object representing the XML document
@@ -197,13 +149,11 @@ class XmlRoot:
                 load_dtd=False,
                 resolve_entities=False
             )
-            self._roottree: _ElementTree = etree.parse(
+            tree = etree.parse(
                 source=inpt, 
                 parser=parser
             )
-            self._e = self._roottree.getroot()
-
-            return self
+            return tree
         
         except XMLSyntaxAssertionError as e:
             print('XMLSyntaxAssertionError in _e_from_file')
@@ -222,7 +172,7 @@ class XmlRoot:
         xml file. Deepcopies the file.
         """
         
-        prettified_str: bytes = self.element.to_bytes(
+        prettified_str: bytes = self.root.to_bytes(
             xml_declaration=True, 
             pretty_print=True)
         
@@ -243,7 +193,7 @@ class XmlRoot:
         return prettified_doc
     
     @property
-    def processing_instructions(self) -> list[_ProcessingInstruction]:
+    def processing_instructions(self) -> list[ProcessingInstruction]:
         """
         Returns the processing instructions in the document.
         cf. https://lxml.de/api/lxml.etree._Element-class.html
@@ -252,44 +202,41 @@ class XmlRoot:
         """
 
         def _processing_instructions(
-            acc: list[_ProcessingInstruction], 
-            e: XmlElement | _ProcessingInstruction) -> list[_ProcessingInstruction]:
+            acc: list[ProcessingInstruction], 
+            e: XmlElement | ProcessingInstruction) -> list[ProcessingInstruction]:
 
             previous = e.previous_sibling
 
             if previous is None:
                 return list(reversed(acc))
             
-            if not isinstance(previous, _ProcessingInstruction):
-                raise TypeError('_ProcessingInstruction expected.')
+            if not isinstance(previous, ProcessingInstruction):
+                raise TypeError('ProcessingInstruction expected.')
             
             return _processing_instructions(acc + [previous], previous)
 
-        return _processing_instructions([], self.element)
+        return _processing_instructions([], self.root)
     
     @property
     def processing_instructions_str(self) -> str:
         return '\n'.join([str(x) for x in self.processing_instructions])
-
+    
     @property
-    def root_elem(self) -> XmlElement:
-        return XmlElement(self.e)
+    def root(self) -> XmlElement:
+        return XmlElement(self._tree.getroot())
 
     @property
     def root_tree(self) -> _ElementTree:
-        return self.e.getroottree()
+        return self.root._e.getroottree
 
     @property
     def text_desc(self) -> str:
         """
         Return the inner text of all the descendant nodes
         """
-        if self.e is None: 
-            return ''
         
-        xpath_res = cast(list[str], self.e.xpath('.//text()'))
-
-        return ''.join(xpath_res)
+        xpath_result: list[XmlText] = cast(list[XmlText], self.root.xpath('.//text()'))
+        return ''.join([text.text for text in xpath_result])
 
     def to_bytes(self, collapse_empty_elements: bool = False) -> bytes:
         """
@@ -305,7 +252,7 @@ class XmlRoot:
 
         try:
             b_str = etree.tostring( 
-                self.e, 
+                self.root._e, 
                 encoding='utf-8',   # type: ignore
                 pretty_print=False,      # type: ignore
                 xml_declaration=False   # type: ignore
@@ -331,7 +278,7 @@ class XmlRoot:
 
         try:
             s = etree.tostring( 
-                self.e, 
+                self.root._e, 
                 pretty_print=False,      # type: ignore
                 encoding='unicode',       # type: ignore
                 xml_declaration=False   # type: ignore
@@ -421,20 +368,5 @@ class XmlRoot:
         """
         return self.to_str(collapse_empty_elements=True)
     
-    def xpath(self, xpathstr: str) -> list[_Element | _ElementUnicodeResult]:
-        if self.e is None: 
-            return []
-        try:
-        # NB the cast won't necessarily be correct for all test cases
-            return cast(
-                list[Union[_Element,_ElementUnicodeResult]], 
-                self.e.xpath(xpathstr, namespaces={'ns': TEINS})
-            )
-        except XMLSyntaxAssertionError as e:
-            print('XMLSyntaxAssertionError in xpath')
-            print(e)
-            return []
-        except XMLSyntaxError as e:
-            print('XMLSyntaxError in xpath')
-            handle_xmlsyntaxerror(e)
-            return []
+    def xpath(self, xpathstr: str) -> list[XmlNode]:
+        return self.root.xpath(xpathstr)

@@ -225,9 +225,9 @@ def test_reproduces_processing_instructions():
     doc_ = save_and_reload(doc, line_2_output_path, FILE_WRITE_MODE)
 
     # Assert
-    assert len(doc._xmlroot.processing_instructions) == len(doc_._xmlroot.processing_instructions)
-    assert all([str(instr) in list(map(str, doc._xmlroot.processing_instructions)) 
-                for instr in doc_._xmlroot.processing_instructions])
+    assert len(doc._root.processing_instructions) == len(doc_._root.processing_instructions)
+    assert all([str(instr) in list(map(str, doc._root.processing_instructions)) 
+                for instr in doc_._root.processing_instructions])
     
 
 def test_can_get_title_stmt():

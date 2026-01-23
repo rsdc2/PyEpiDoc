@@ -3,7 +3,6 @@ from pyepidoc.epidoc.dom import line_end_after, line_ends
 import pytest
 
 
-
 relative_filepaths = {
     'ISic000001': 'tests/api/files/single_files_untokenized/ISic000001.xml',
     'ISic000552': 'tests/api/files/single_files_tokenized/ISic000552.xml',
@@ -18,7 +17,6 @@ relative_filepaths = {
     'leiden': 'tests/api/files/leiden.xml',
     'abbr': 'tests/api/files/abbr.xml'
 }
-
 
 
 def test_line_end():

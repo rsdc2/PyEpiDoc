@@ -251,11 +251,13 @@ class XmlElement(Showable):
     @staticmethod
     def create(name: str, namespace: str, attrs: dict[str, str] | None = None) -> XmlElement:
         
-        return etree.Element(
+        element = etree.Element(
             _tag = ns.give_ns(name, namespace),
             attrib = attrs,
             nsmap = None
         )
+
+        return XmlElement(element)
     
     def deepcopy(self) -> XmlElement:
         return XmlElement(deepcopy(self._e))
@@ -311,9 +313,7 @@ class XmlElement(Showable):
         """
         Return all descendant nodes of any kind including comments
         """
-
-        nodes = self._e.xpath('.//node()')
-        return [xml_node(node) for node in nodes]
+        return self.xpath('.//node()')
     
     @property
     def descendant_non_comments(self) -> list[XmlNode]:
@@ -653,8 +653,7 @@ class XmlElement(Showable):
 
     @property
     def previous_elements(self) -> list[XmlElement]:
-        sibs = [xml_node(sib) for sib in self.previous_siblings]
-        return [sib for sib in sibs if isinstance(sib, XmlElement)]
+        return [sib for sib in self.previous_siblings if isinstance(sib, XmlElement)]
 
     @property
     def previous_sibling(self) -> XmlNode | None:
@@ -664,10 +663,10 @@ class XmlElement(Showable):
         _prev = self._e.getprevious()
         if isinstance(_prev, _Comment):
             return XmlComment(_prev)
-        if isinstance(_prev, _Element):
-            return XmlElement(_prev)
         if isinstance(_prev, _ProcessingInstruction):
             return ProcessingInstruction(_prev)
+        if isinstance(_prev, _Element):
+            return XmlElement(_prev)
         if _prev is None:
             return None
 
@@ -678,8 +677,7 @@ class XmlElement(Showable):
         """
         Returns previous sibling non-text elements
         """
-        prev_sibs = self.xpath('preceding-sibling::*')
-        return [xml_node(sib) for sib in prev_sibs]
+        return self.xpath('preceding-sibling::*')
     
     def prettify_element_with_pyepidoc(
             element: XmlElement,

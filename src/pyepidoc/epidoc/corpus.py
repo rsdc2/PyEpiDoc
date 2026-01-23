@@ -258,7 +258,7 @@ class EpiDocCorpus:
             print(e)
             return []
         except Exception as e:
-            print(f'Error processing {_docs[-1]._xmlroot.filename}. This may be to do with retrieving the ID. Original error message: ')
+            print(f'Error processing {_docs[-1]._root.filename}. This may be to do with retrieving the ID. Original error message: ')
             print(e)
             return []
         

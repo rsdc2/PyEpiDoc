@@ -90,7 +90,7 @@ class EpiDoc(TeiDoc):
                 raise EpiDocValidationError(msg)
             
             if verbose:
-                print(f'{self._xmlroot._path} is a valid EpiDoc file')
+                print(f'{self._root._path} is a valid EpiDoc file')
 
     def __repr__(self) -> str:
         return f'EpiDoc(id="{self.id}")'
@@ -775,7 +775,7 @@ class EpiDoc(TeiDoc):
  
     @property
     def orig_place(self) -> str:
-        xpath_results = self._xmlroot.xpath('//ns:history/ns:origin/'
+        xpath_results = self._root.xpath('//ns:history/ns:origin/'
                                    'ns:origPlace/ns:placeName'
                                    '[@type="ancient"]/text()')
         result = head(
@@ -896,8 +896,7 @@ class EpiDoc(TeiDoc):
         """
 
         epidoc = self
-        epidoc._xmlroot.desc_elems
-        elem = XmlElement(epidoc._xmlroot._e)
+        elem = XmlElement(epidoc._root.root)
         elem.prettify_element_with_pyepidoc(
             space_unit, 
             multiplier, 
@@ -908,7 +907,7 @@ class EpiDoc(TeiDoc):
         # Remove trailing text
         self.root_elem.tail = ''
         self.root_elem.text = '\n' + multiplier * space_unit + (self.root_elem.text or '').strip() \
-            if len(self._xmlroot.desc_elems) > 0 \
+            if len(self._root.root.descendant_elements) > 0 \
             else '\n' + space_unit * multiplier + (self.root_elem.text or '').strip()
         
         return epidoc
@@ -976,7 +975,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def root_elem(self) -> XmlElement:
-        return self._xmlroot._e
+        return self._root.root
 
     def set_ids(self, base: Base=100) -> None:
         
@@ -1120,7 +1119,7 @@ class EpiDoc(TeiDoc):
         information
         """
 
-        elem = maxone([desc for desc in self._xmlroot.desc_elems
+        elem = maxone([desc for desc in self._root.root.descendant_elements
                 if desc.localname == 'rs' and desc.get_attr('type') == 'textType'],
                 throw_if_more_than_one=False)
         
@@ -1192,14 +1191,14 @@ class EpiDoc(TeiDoc):
             mode = 'xb'
         
         with open(dst, mode=mode) as f:
-            f.write(self._xmlroot.to_bytes(collapse_empty_elements))
+            f.write(self._root.to_bytes(collapse_empty_elements))
 
     def to_xml_file_object(self, collapse_empty_elements: bool = False) -> io.BytesIO:
         """
         Write the file to a file object in memory, rather than
         to a file on disk
         """
-        return io.BytesIO(self._xmlroot.to_bytes(collapse_empty_elements))
+        return io.BytesIO(self._root.to_bytes(collapse_empty_elements))
 
     @property
     def token_count(self) -> int:
@@ -1337,7 +1336,7 @@ class EpiDoc(TeiDoc):
         message, either an error if it has failed, or a string 
         confirming that the file is valid.
         """
-        return self._xmlroot.validate_by_relaxng(self._rng_path)
+        return self._root.validate_by_relaxng(self._rng_path)
     
     @property
     def w_tokens(self) -> list[Token]:

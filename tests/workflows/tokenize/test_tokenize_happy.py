@@ -142,7 +142,7 @@ def test_model_headers():
         tokenize_func = tokenize_epidoc
 
     tokenized_epidoc, tokenized_benchmark = tokenize_func(tokenize_type='xml_model_headers_1')
-    assert tokenized_epidoc._xmlroot.processing_instructions_str == tokenized_benchmark._xmlroot.processing_instructions_str
+    assert tokenized_epidoc._root.processing_instructions_str == tokenized_benchmark._root.processing_instructions_str
 
 named_entities_xml = [
     ('<lb n="1"/>Dis Manibus sacrum <name>Corneliae</name>',
