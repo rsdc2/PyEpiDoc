@@ -326,7 +326,7 @@ class EditionElement(TeiElement, Showable):
         self.xml_id = ids.convert(current_id, oldbase, newbase)
     
     def deepcopy(self) -> EditionElement:
-        return EditionElement(deepcopy(self._e))
+        return EditionElement(self._e.deepcopy())
 
     @property
     def depth(self) -> int:
@@ -816,7 +816,7 @@ class EditionElement(TeiElement, Showable):
             return None
 
         if self._e.tag.name in AtomicNonTokenType.values():
-            _e = deepcopy(self._e)
+            _e = self._e.deepcopy()
             _e.tail = None  # type: ignore
             return EditionElement(_e)
         

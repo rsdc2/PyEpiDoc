@@ -1,4 +1,4 @@
-from pyepidoc.xml.utils import elem_from_str, abify
+from pyepidoc.xml.utils import abify
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.namespaces import XMLNS
@@ -19,8 +19,8 @@ def test_child_node_names(
     """
     Tests names of child nodes, esp. of text nodes
     """
-
-    ab = Ab(elem_from_str(abify(xml)))
+    element = XmlElement.from_str(abify(xml))
+    ab = Ab(element)
     assert ab._e.child_node_names == child_node_names
 
 
@@ -30,7 +30,7 @@ def test_remove_attr():
     Test that can remove atribute
     """
 
-    elem = XmlElement(elem_from_str('<w n="2">hello</w>'))
+    elem = XmlElement.from_str('<w n="2">hello</w>')
     elem.remove_attr('n', None)
     assert elem.xml_str == '<w>hello</w>'
 
@@ -41,8 +41,7 @@ def test_remove_attr_with_xml_ns():
     Test that can remove attribute with xml namespace
     """
     string = f'<w>hello</w>'
-    lxml_elem = elem_from_str(string)
-    elem = XmlElement(lxml_elem)
+    elem = XmlElement.from_str(string)
     elem.set_attr('id', '2', XMLNS)
     assert elem.xml_str == '<w xml:id="2">hello</w>'
     elem.remove_attr('id', XMLNS)

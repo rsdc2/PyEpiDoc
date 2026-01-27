@@ -3,8 +3,6 @@ from __future__ import annotations
 from functools import cached_property, reduce
 from pyepidoc.xml.xml_text import XmlText
 from pyepidoc.xml.xml_element import (
-    XmlElement, 
-    XmlNode, 
     XmlComment, 
     XmlNode, 
     ProcessingInstruction
@@ -106,7 +104,7 @@ class RepresentableElement(EditionElement):
         Element for use in simple-lemmatized edition
         """
         t = type(self)
-        elem = t(self.deepcopy().e)
+        elem = t(self.deepcopy()._e)
         elem._e.remove_children()
         elem._e.remove_attr('id', XMLNS)
         elem.text = self.simple_lemmatized_edition_form

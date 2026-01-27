@@ -147,7 +147,7 @@ class Token(RepresentableElement):
 
             return self
         
-        token_copy = Token(deepcopy(self._e))
+        token_copy = Token(self._e.deepcopy())
         return token_copy.convert_to_name(True)
 
     @property

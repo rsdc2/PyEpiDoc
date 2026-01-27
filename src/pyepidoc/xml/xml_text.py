@@ -21,3 +21,6 @@ class XmlText:
     
     def __str__(self) -> str:
         return self.text
+    
+    def __repr__(self) -> str:
+        return f'XmlText("{str(self)}")'

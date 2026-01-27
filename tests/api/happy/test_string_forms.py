@@ -4,7 +4,8 @@ or sequences of tokens, are as expected.
 """
 
 from pyepidoc.epidoc.edition_elements.ab import Ab
-from pyepidoc.xml.utils import elem_from_str, abify
+from pyepidoc.xml.utils import abify
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.representable import RepresentableElement
 
 import pytest
@@ -42,12 +43,7 @@ leiden_and_normalized_tests = [
      ['merenti'], [r'merent{t}i'])
 ]
 
-leiden_plus_tests = [
-    ('<w>ἐτῶν</w>\n<lb n="7"/>',
-     ['ἐτῶν'], [r'ἐτῶν|']),
-    ('<lb n="7"/><num value="37">λζ</num>  ',
-     ['λζ'], [r'|λζ'])  
-]
+
 
 
 @pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'leiden_tokens'], leiden_and_normalized_tests)
@@ -60,7 +56,7 @@ def test_normalized_string_forms(
     """
 
     # Arrange
-    ab = Ab(elem_from_str(abify(xml)))
+    ab = Ab(XmlElement.from_str(abify(xml)))
 
     # Act
     normalized_tokens = ab.tokens_list_normalized_str
@@ -78,10 +74,15 @@ def test_leiden_string_forms(
     Tests token strings correct
     """
 
-    ab = Ab(elem_from_str(abify(xml)))
+    ab = Ab(XmlElement.from_str(abify(xml)))
     assert ab.tokens_list_leiden_str == leiden_tokens
 
-
+leiden_plus_tests = [
+    ('<w>ἐτῶν</w>\n<lb n="7"/>',
+     ['ἐτῶν'], [r'ἐτῶν|']),
+    ('<lb n="7"/><num value="37">λζ</num>  ',
+     ['λζ'], [r'|λζ'])  
+]
 @pytest.mark.parametrize(['xml', 'leiden_forms', 'leiden_plus_forms'], leiden_plus_tests)
 def test_leiden_plus_forms(
     xml: str, 
@@ -90,8 +91,8 @@ def test_leiden_plus_forms(
     """
     Tests token strings correct
     """
-
-    ab = Ab(elem_from_str(abify(xml)))
+    element = XmlElement.from_str(abify(xml))
+    ab = Ab(element)
     assert [token.leiden_form for token in ab.tokens] == leiden_forms
 
     test_leiden_plus_forms = [token.leiden_plus_form for token in ab.tokens]
@@ -117,7 +118,7 @@ def test_non_tokens_normalized_string_forms(
     """
 
     # Arrange
-    ab = Ab(elem_from_str(abify(xml)))
+    ab = Ab(XmlElement.from_str(abify(xml)))
 
     # Act
     normalized_tokens = [RepresentableElement(child).normalized_form for child in ab._e.children]
@@ -136,7 +137,7 @@ def test_non_tokens_leiden_string_forms(
     """
 
     # Arrange
-    ab = Ab(elem_from_str(abify(xml)))
+    ab = Ab(XmlElement.from_str(abify(xml)))
 
     # Act
     leiden_tokens = [RepresentableElement(child).leiden_form for child in ab._e.children]

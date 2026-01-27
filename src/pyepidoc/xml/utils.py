@@ -43,13 +43,6 @@ def editionify(xml_str: str, wrap_in_ab: bool) -> str:
     return f'<div type="edition" xmlns="{TEINS}">{xml_str}</div>'
 
 
-def elem_from_str(xml: str) -> _Element:
-    """
-    Return an lxml _Element from a string
-    """
-    return etree.fromstring(xml, None)
-
-
 def localname(node: _Element | _ElementUnicodeResult) -> str:
     """
     Return the local name of a node.
