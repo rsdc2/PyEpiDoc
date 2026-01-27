@@ -32,8 +32,7 @@ def test_validate_does_not_change_file():
     change the EpiDoc file
     """
     doc1 = EpiDoc('tests/xml/files/ISic000001_with_xinclude.xml')
-    doc2 = EpiDoc('tests/xml/files/ISic000001_with_xinclude.xml', 
-               validate_on_load=True)
+    doc2 = EpiDoc('tests/xml/files/ISic000001_with_xinclude.xml', validate_on_load=True)
     
     assert doc1._root.to_bytes() == doc2._root.to_bytes()
     

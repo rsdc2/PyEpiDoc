@@ -1,5 +1,6 @@
 from __future__  import annotations
 from lxml.etree import _ProcessingInstruction
+from lxml import etree
 
 class ProcessingInstruction:
     _e: _ProcessingInstruction
@@ -27,3 +28,6 @@ class ProcessingInstruction:
     @property
     def text(self) -> str:
         raise NotImplementedError()
+    
+    def __str__(self) -> str:
+        return str(self._e)

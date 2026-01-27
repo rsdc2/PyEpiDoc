@@ -31,7 +31,7 @@ class TeiElement:
         ...
 
     def __init__(self, e: XmlElement | TeiElement):
-        error_msg = (f'Expected type is _Element or BaseElement '
+        error_msg = (f'Expected type is XmlElement or TeiElement '
                      f'type or None. Actual type is {type(e)}.')
         
         if not isinstance(e, (XmlElement, TeiElement)):

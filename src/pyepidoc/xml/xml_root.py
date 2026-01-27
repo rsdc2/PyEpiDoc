@@ -223,11 +223,14 @@ class XmlRoot:
     
     @property
     def root(self) -> XmlElement:
-        return XmlElement(self._tree.getroot())
+        root = self._tree.getroot()
+        if root is None:
+            raise TypeError('Root should not be none.')
+        return XmlElement(root)
 
     @property
     def root_tree(self) -> _ElementTree:
-        return self.root._e.getroottree
+        return self.root._e.getroottree()
 
     @property
     def text_desc(self) -> str:
@@ -243,9 +246,9 @@ class XmlRoot:
         Convert the XML to bytes including processing instructions
         """
 
-        declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'.encode("utf-8")
+        declaration = '<?xml version="1.0" encoding="UTF-8"?>\n'.encode('utf-8')
         processing_instructions = \
-            (self.processing_instructions_str + '\n').encode("utf-8")
+            (self.processing_instructions_str + '\n').encode('utf-8')
 
         if collapse_empty_elements:
             self._collapse_empty_elements()
@@ -261,7 +264,8 @@ class XmlRoot:
             print(e)
             return b''
 
-        return declaration + processing_instructions + b_str
+        byte_str = declaration + processing_instructions + b_str
+        return byte_str
     
     def to_str(self, collapse_empty_elements: bool = False) -> str:
         """
@@ -339,9 +343,9 @@ class XmlRoot:
         relaxng = etree.RelaxNG(relax_ng_doc)
         
         try:
-            roottree_ = deepcopy(self.root_tree)
-            roottree_.xinclude()
-            relaxng.assertValid(roottree_)
+            roottree_copy = deepcopy(self.root_tree)
+            roottree_copy.xinclude()
+            relaxng.assertValid(roottree_copy)
             msg = (f'{self._path} is valid EpiDoc according to the '
                     'RelaxNG schema')
             self._valid = True
