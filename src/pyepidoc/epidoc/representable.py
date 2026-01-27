@@ -50,15 +50,13 @@ class RepresentableElement(EditionElement):
         """
 
         def string_rep(n: XmlNode) -> str:
+            """
+            Get the string representation of the node, if it is 'g', 'lb', 'gap',
+            otherwise return empty string.
+            """
             ln = n.localname
 
-            if isinstance(n, XmlText):
-                return n.text
-            
-            if isinstance(n, XmlComment):
-                return ''
-            
-            if isinstance(n, ProcessingInstruction):
+            if isinstance(n, (XmlText, XmlComment, ProcessingInstruction)):
                 return ''
 
             if ln in ['g', 'lb', 'gap']:
