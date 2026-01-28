@@ -158,7 +158,7 @@ def has_line_end_after(elem: EditionElement) -> bool:
 
     def not_whitespace(node: XmlNode) -> bool:
         """
-        Filter out text nodes that contain line breaks and nothing else
+        Filter out text nodes that contain whitespace and nothing else
         """
         if isinstance(node, XmlElement):
             return True
