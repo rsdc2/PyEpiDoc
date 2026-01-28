@@ -768,9 +768,8 @@ class Edition(EditionElement):
 
     @property
     def token_g_dividers(self) -> list[EditionElement]:
-        return [EditionElement(boundary) for boundary 
-            in self.get_desc('g')
-        ]
+        return [EditionElement(boundary) 
+                for boundary in self.get_desc('g')]
 
     @property
     def tokens_no_nested(self) -> list[Token]:

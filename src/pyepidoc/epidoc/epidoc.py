@@ -111,7 +111,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def apparatus(self) -> list[XmlElement]:
-        return self._tei_element.get_div_descendants_by_type('apparatus')
+        return self._e.get_div_descendants_by_type('apparatus')
         
     @override
     @property
@@ -127,7 +127,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def commentary(self) -> list[XmlElement]:
-        return self._tei_element.get_div_descendants_by_type('commentary')
+        return self._e.get_div_descendants_by_type('commentary')
 
     @property
     def compound_words(self) -> list[EditionElement]:
@@ -1323,7 +1323,7 @@ class EpiDoc(TeiDoc):
         :return: the text for all translations, if present
         """
         
-        translation_divs = self._tei_element.get_div_descendants_by_type('translation')
+        translation_divs = self._e.get_div_descendants_by_type('translation')
 
         return '\n'.join([EditionElement(div)._e.text_desc_compressed_whitespace 
                        for div in translation_divs])

@@ -44,7 +44,7 @@ class TeiDoc:
     in the file.
     """
     _root: XmlRoot
-    _tei_element: TeiElement
+    _e: TeiElement
     
     def __init__(
             self, 
@@ -64,7 +64,7 @@ class TeiDoc:
         else:
             self._root = XmlRoot(inpt)
 
-        self._tei_element = TeiElement(self._root.root)
+        self._e = TeiElement(self._root.root)
         self.assert_has_tei_ns()
 
     def __repr__(self) -> str:
@@ -81,7 +81,7 @@ class TeiDoc:
 
     @property
     def apparatus(self) -> list[XmlElement]:
-        return self._tei_element.get_div_descendants_by_type('apparatus')
+        return self._e.get_div_descendants_by_type('apparatus')
     
     def append_change(self, change: Change) -> TeiDoc:
         self.ensure_tei_header().ensure_revision_desc().append_change(change)
@@ -156,7 +156,7 @@ class TeiDoc:
 
     @property
     def commentary(self) -> list[XmlElement]:
-        return self._tei_element.get_div_descendants_by_type('commentary')
+        return self._e.get_div_descendants_by_type('commentary')
     
     @property
     def date(self) -> Optional[int]:
@@ -258,9 +258,9 @@ class TeiDoc:
         element.
         """
         try:
-            textclass_elems = self._tei_element.get_desc('textClass')
+            textclass_elems = self._e.get_desc('textClass')
             textclass_e = maxone(
-                self._tei_element._e.get_desc('textClass'), 
+                self._e._e.get_desc('textClass'), 
                 throw_if_more_than_one=throw_if_more_than_one,
                 idx=len(textclass_elems) - 1)
             
@@ -369,7 +369,7 @@ class TeiDoc:
         """Used by EDH to host language information."""
 
         language_elems = [TeiElement(language) 
-                          for language in self._tei_element.get_desc('langUsage')]
+                          for language in self._e.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
         if lang_usage is None: 
@@ -408,7 +408,7 @@ class TeiDoc:
     @property
     def materialclasses(self) -> list[str]:
 
-        material_e = self._tei_element.get_desc('material')
+        material_e = self._e.get_desc('material')
         
         if material_e is None:
             return []
@@ -440,7 +440,7 @@ class TeiDoc:
     def orig_date(self) -> TeiElement | None:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
-            self._tei_element.get_desc('origDate'),
+            self._e.get_desc('origDate'),
             throw_if_more_than_one=False
         )
 
@@ -732,7 +732,7 @@ class TeiDoc:
         :return: the text for all translations, if present
         """
         
-        translation_divs = self._tei_element.get_div_descendants_by_type('translation')
+        translation_divs = self._e.get_div_descendants_by_type('translation')
 
         return '\n'.join([TeiElement(div)._e.text_desc_compressed_whitespace 
                        for div in translation_divs])

@@ -1,5 +1,5 @@
 from pyepidoc import EpiDoc
-from pyepidoc.epidoc.dom import line_end_after, line_ends 
+from pyepidoc.epidoc.dom import has_line_end_after, contains_line_end_or_has_line_end_after 
 import pytest
 
 
@@ -26,7 +26,7 @@ def test_line_end():
 
     manibus = tokens[1]
 
-    assert line_end_after(manibus) == True
+    assert has_line_end_after(manibus) == True
 
 
 @pytest.mark.parametrize('fp', list(relative_filepaths.values()))
@@ -44,7 +44,7 @@ def test_count_line_ends(fp):
     
     # Act
     linecount = len(edition.lbs)
-    lineend_groups = [line_ends(token) for token in tokens]
+    lineend_groups = [contains_line_end_or_has_line_end_after(token) for token in tokens]
     lineends = sum(lineend_groups)
 
     # Assert

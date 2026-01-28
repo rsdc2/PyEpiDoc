@@ -55,9 +55,7 @@ class Ab(RepresentableElement):
     @property
     def compound_tokens(self) -> list[EditionElement]:
         return [EditionElement(item) for item 
-            in self._e.get_desc(
-                CompoundTokenType.values() 
-            )
+            in self.get_desc(CompoundTokenType.values())
         ]
 
     def convert_ids(self, oldbase: Base, newbase: Base) -> None:
@@ -212,9 +210,9 @@ class Ab(RepresentableElement):
             return set(parent_names)
         
         return [Token(token_elem) for token_elem 
-            in self._e.get_desc(AtomicTokenType.values())
+            in self.get_desc(AtomicTokenType.values())
             if Token(token_elem).form_normalized != '' and \
-                parent_name_set(token_elem).intersection(NonNormalized.value_set()) == set()
+                parent_name_set(token_elem._e).intersection(NonNormalized.value_set()) == set()
         ]
     
     @property
@@ -224,5 +222,5 @@ class Ab(RepresentableElement):
     @property
     def w_tokens(self) -> list[Token]:
         return [Token(word) for word 
-            in self._e.get_desc(['w'])
+            in self.get_desc(['w'])
         ]

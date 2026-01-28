@@ -406,12 +406,12 @@ class EditionElement(TeiElement, Showable):
 
         """
         Returns any following Element or Text nodes whose
-        ancestor is an <ab>.
+        ancestor is an `<ab>`.
         """
 
         return self._e.xpath(
             'following::node()[ancestor::x:ab]', 
-            namespaces={"x": TEINS}
+            namespaces={'x': TEINS}
         )
 
     @property

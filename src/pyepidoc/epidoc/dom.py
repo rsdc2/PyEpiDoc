@@ -142,31 +142,28 @@ def line(elem: EditionElement) -> Optional[Lb]:
     return Lb(lb)
 
 
-def line_ends_inside(elem: EditionElement) -> int:
+def contains_line_end(elem: EditionElement) -> int:
     """
-    Count the number of <lb/> elements that are 
-    descendants of the element
+    Count the number of <lb/> elements that are descendants of the element
     """
-    lbs = [desc for desc in elem._e.descendant_elements
-            if desc.localname == 'lb']
-
+    lbs = elem.get_desc('lb')
     return len(lbs)
 
 
-def line_end_after(elem: EditionElement) -> bool:
+def has_line_end_after(elem: EditionElement) -> bool:
     """
     Returns True if the token or part of the token
     appears at a line end
     """
 
-    def _filter_nodes(node: XmlNode) -> bool:
+    def not_whitespace(node: XmlNode) -> bool:
         """
         Filter out text nodes that contain line breaks and nothing else
         """
         if isinstance(node, XmlElement):
             return True
         elif isinstance(node, XmlText):
-            if '\n' in node._text and node._text.strip() == '':
+            if node.text.strip() == '':
                 return False
             return True
         return False
@@ -174,25 +171,25 @@ def line_end_after(elem: EditionElement) -> bool:
     if last_in_ab(elem):
         return True
 
-    following = filter(_filter_nodes, elem.following_nodes_in_ab)
-    localnames = map(lambda e: e.localname, following)
+    following = [node for node in elem.following_nodes_in_ab
+                 if not_whitespace(node)]
+    localnames = (node.localname for node in following)
     try:
-        first = next(localnames)
-        if first == 'lb':
+        next_element_name = next(localnames)
+        if next_element_name == 'lb':
             return True
-        else:
-            return False        
+        return False        
     except StopIteration:
         return False
     
-def line_ends(elem: EditionElement) -> int:
-    inside = line_ends_inside(elem)
-    after = line_end_after(elem)
+def contains_line_end_or_has_line_end_after(elem: EditionElement) -> int:
+    line_ends_contained = contains_line_end(elem)
+    line_end_is_after = has_line_end_after(elem)
 
-    if after:
-        return inside + 1
+    if line_end_is_after:
+        return line_ends_contained + 1
     else:
-        return inside
+        return line_ends_contained
 
 def materialclasses(elem: EditionElement) -> list[str]:
     """
