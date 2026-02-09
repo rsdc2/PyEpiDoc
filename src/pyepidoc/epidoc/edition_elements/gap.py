@@ -1,6 +1,6 @@
 from functools import cached_property
 from lxml.etree import _Element
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.tei.tei_element import TeiElement
@@ -14,7 +14,7 @@ class Gap(RepresentableElement):
     given in <gap> elements.
     """
 
-    def __init__(self, e: _Element | EditionElement | TeiElement | XmlElement):
+    def __init__(self, e: _Element | TokenizableElement | TeiElement | XmlElement):
 
         super().__init__(e)
 
@@ -50,14 +50,14 @@ class Gap(RepresentableElement):
         return f' [-{self.extent}-] '
     
     @cached_property
-    def simple_lemmatized_edition_element(self) -> EditionElement:
+    def simple_lemmatized_edition_element(self) -> TokenizableElement:
         """
         Element for use in simple-lemmatized edition
         """
         elem = self.deepcopy()
         elem._e.remove_children()
         elem._e.remove_attr('id', XMLNS)
-        desc_elem = EditionElement.create('desc')
+        desc_elem = TokenizableElement.create('desc')
         desc_elem._e.text = self.simple_lemmatized_edition_form
         elem._e.append_node(desc_elem._e)
         return elem

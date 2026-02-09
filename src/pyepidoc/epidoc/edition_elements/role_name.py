@@ -1,4 +1,4 @@
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.epidoc.utils import (
@@ -7,7 +7,7 @@ from pyepidoc.epidoc.utils import (
 )
 
 
-class RoleName(EditionElement):
+class RoleName(TokenizableElement):
     """
     Provides services for abbreviation expansions 
     given in <roleName> elements.

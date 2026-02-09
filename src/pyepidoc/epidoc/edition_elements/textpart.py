@@ -1,8 +1,8 @@
 from pyepidoc.shared.namespaces import XMLNS
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 
 
-class TextPart(EditionElement):
+class TextPart(TokenizableElement):
 
     @property
     def lang(self):

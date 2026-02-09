@@ -6,11 +6,11 @@ from lxml.etree import _Element
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.iterables import head
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 
-class RespStmt(EditionElement):
+class RespStmt(TokenizableElement):
     """
     The <respStmt> node, including collections of
     <respStmt>
@@ -78,7 +78,7 @@ class RespStmt(EditionElement):
         :param ref: A unique identifier, e.g. ORCID
         """
         elem = XmlElement.create('name', TEINS)
-        epidoc_elem = EditionElement(elem)
+        epidoc_elem = TokenizableElement(elem)
         epidoc_elem.set_attr("id", initials, XMLNS)
         epidoc_elem.set_attr("ref", ref)
         epidoc_elem.text = name

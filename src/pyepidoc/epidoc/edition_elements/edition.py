@@ -25,7 +25,7 @@ from pyepidoc.xml.namespace import Namespace as ns
 
 
 from .. import ids
-from ..edition_element import EditionElement
+from ..edition_element import TokenizableElement
 from .ab import Ab
 from .expan import Expan
 from .l import L
@@ -197,7 +197,7 @@ def prettify(
     return edition
 
 
-class Edition(EditionElement):
+class Edition(TokenizableElement):
 
     """
     Provides services for <div type="edition> elements.
@@ -252,7 +252,7 @@ class Edition(EditionElement):
         return Ab(ab_elem)
 
     @property
-    def atomic_non_tokens(self) -> list[EditionElement]:
+    def atomic_non_tokens(self) -> list[TokenizableElement]:
         """
         Atomic elements that are not analyzable as 'words' 
         i.e. cannot be lemmatized
@@ -260,8 +260,8 @@ class Edition(EditionElement):
         return self._get_desc_atomic_non_tokens()
 
     @property
-    def compound_tokens(self) -> list[EditionElement]:
-        return [EditionElement(item) for item 
+    def compound_tokens(self) -> list[TokenizableElement]:
+        return [TokenizableElement(item) for item 
             in self.get_desc(CompoundTokenType.values())]
 
     def convert_ids(self, oldbase: Base, newbase: Base) -> None:
@@ -327,12 +327,12 @@ class Edition(EditionElement):
         return Edition(XmlElement.from_str(editionify(xml_str, wrap_in_ab=wrap_in_ab)))
 
     @property
-    def gaps(self) -> list[EditionElement]:
-        return [EditionElement(gap) for gap in self.get_desc('gap')]
+    def gaps(self) -> list[TokenizableElement]:
+        return [TokenizableElement(gap) for gap in self.get_desc('gap')]
 
     def _get_desc_representable_elements(
             self, 
-            items_with_atomic_ancestors: bool = False) -> list[EditionElement]:
+            items_with_atomic_ancestors: bool = False) -> list[TokenizableElement]:
 
         """
         Get the elements that should be represented in a text edition
@@ -343,7 +343,7 @@ class Edition(EditionElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EditionElement, self.get_desc(RepresentableElements))
+        desc = map(TokenizableElement, self.get_desc(RepresentableElements))
 
         if items_with_atomic_ancestors:
             return list(desc)
@@ -353,7 +353,7 @@ class Edition(EditionElement):
 
     def _get_desc_atomic_non_tokens(
             self, 
-            items_with_token_ancestors: bool = False) -> list[EditionElement]:
+            items_with_token_ancestors: bool = False) -> list[TokenizableElement]:
 
         """
         Get the atomic non-token descendants e.g. `<orig>`.  
@@ -364,7 +364,7 @@ class Edition(EditionElement):
         :return: a list of EpiDocElement
         """
 
-        desc = map(EditionElement, self.get_desc(AtomicNonTokenType.values()))
+        desc = map(TokenizableElement, self.get_desc(AtomicNonTokenType.values()))
 
         if items_with_token_ancestors:
             return list(desc)
@@ -452,7 +452,7 @@ class Edition(EditionElement):
         return False
 
     @property
-    def local_idable_elements(self) -> list[EditionElement]:
+    def local_idable_elements(self) -> list[TokenizableElement]:
         
         """
         Get all the tokens in the edition that should 
@@ -460,10 +460,10 @@ class Edition(EditionElement):
         """
 
         elems = self.get_desc(ElementsWithLocalIds.values())
-        return list(map(EditionElement, elems))
+        return list(map(TokenizableElement, elems))
     
     @property
-    def xml_idable_elements(self) -> list[EditionElement]:
+    def xml_idable_elements(self) -> list[TokenizableElement]:
         
         """
         Get all the tokens in the edition that should 
@@ -471,10 +471,10 @@ class Edition(EditionElement):
         """
 
         elems = self.get_desc(ElementsWithXmlIds.values())
-        return list(map(EditionElement, elems))
+        return list(map(TokenizableElement, elems))
 
     @staticmethod
-    def _insert_w_inside_tag(element: EditionElement) -> EditionElement:
+    def _insert_w_inside_tag(element: TokenizableElement) -> TokenizableElement:
 
         """
         Enclose contents of `element` in <w> element. If already contains
@@ -482,11 +482,11 @@ class Edition(EditionElement):
         """
 
         child_nodes = element._e.child_nodes
-        w = EditionElement.create('w')
+        w = TokenizableElement.create('w')
 
         for node in child_nodes:
             if isinstance(node, XmlElement):
-                EditionElement(node)._e.tail = ''
+                TokenizableElement(node)._e.tail = ''
             w._e.append_node(node)
 
         element._e.remove_children()
@@ -509,7 +509,7 @@ class Edition(EditionElement):
                 if name.contains('w') and ignore_if_contains_ws:
                     return self
                 else:
-                    self._insert_w_inside_tag(EditionElement(name))
+                    self._insert_w_inside_tag(TokenizableElement(name))
 
         return self
 
@@ -534,7 +534,7 @@ class Edition(EditionElement):
         return self.get_attr('lang', XMLNS)
 
     @property
-    def lbs(self) -> list[EditionElement]:
+    def lbs(self) -> list[TokenizableElement]:
         return list(chain(*[ab.lbs for ab in self.abs]))
 
     @property
@@ -609,7 +609,7 @@ class Edition(EditionElement):
         """
         if all_descendants:
             for elem in self._e.descendant_elements:
-                EditionElement(elem).local_id = None
+                TokenizableElement(elem).local_id = None
         else:
             for edition_elem in self.local_idable_elements:
                 edition_elem.local_id = None
@@ -767,8 +767,8 @@ class Edition(EditionElement):
                 for word in self._get_desc_tokens(include_nested=True)]        
 
     @property
-    def token_g_dividers(self) -> list[EditionElement]:
-        return [EditionElement(boundary) 
+    def token_g_dividers(self) -> list[TokenizableElement]:
+        return [TokenizableElement(boundary) 
                 for boundary in self.get_desc('g')]
 
     @property

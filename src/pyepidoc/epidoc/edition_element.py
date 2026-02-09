@@ -44,7 +44,7 @@ from pyepidoc.shared import maxoneT, head, last
 
 # sys.setrecursionlimit(10000)
 
-def tokenize_subatomic_tags(subelement: XmlElement) -> EditionElement:
+def tokenize_subatomic_tags(subelement: XmlElement) -> TokenizableElement:
     """
     Check that subelement does not contain atomic tags
     If it does, tokenizer does not surround in an atomic tag
@@ -52,7 +52,7 @@ def tokenize_subatomic_tags(subelement: XmlElement) -> EditionElement:
 
     atomic_token_set = AtomicTokenType.value_set()
     atomic_non_token_set = AtomicNonTokenType.value_set()
-    epidoc_elem = EditionElement(subelement)
+    epidoc_elem = TokenizableElement(subelement)
     all_descs = epidoc_elem._e.descendant_elements
     all_name_set = epidoc_elem._e.descendant_element_name_set
 
@@ -63,13 +63,13 @@ def tokenize_subatomic_tags(subelement: XmlElement) -> EditionElement:
     elif epidoc_elem._e.localname == 'choice' and all_name_set.issubset({*atomic_token_set, 'orig', 'reg', 'sic', 'corr'}) \
         and len(all_descs) != 0 and not {'orig', 'reg', 'sic', 'corr'}.issuperset(all_name_set):
         # i.e. descendant elements are all in <choice> and at least one descendant has been tokenized
-        w = EditionElement(subelement)  
+        w = TokenizableElement(subelement)  
 
     elif atomic_token_set.intersection(all_name_set) == {'num'}:
         # i.e. there is at least one subtoken that is an atomic token
         # and that element is a <num/> element
         # in which case surround with <w> token
-        w = EditionElement.w_factory(subelements=[subelement])
+        w = TokenizableElement.w_factory(subelements=[subelement])
 
     elif atomic_token_set.intersection(all_name_set) != set():
         # i.e. there is at least one subtoken that is an atomic token
@@ -85,7 +85,7 @@ def tokenize_subatomic_tags(subelement: XmlElement) -> EditionElement:
 
     else:
         # Surround in Atomic token tag
-        w = EditionElement.w_factory(subelements=[subelement])
+        w = TokenizableElement.w_factory(subelements=[subelement])
 
     if subelement.tail is not None and subelement.tail != '' and subelement.tail[-1] in ' ':
         w._final_space = True
@@ -94,7 +94,7 @@ def tokenize_subatomic_tags(subelement: XmlElement) -> EditionElement:
 
 
 
-class EditionElement(TeiElement, Showable):    
+class TokenizableElement(TeiElement, Showable):    
     """
     Provides services for EpiDoc edition elements, 
     i.e. elements that would be represented in a text edition.
@@ -105,7 +105,7 @@ class EditionElement(TeiElement, Showable):
     @overload
     def __init__(
         self, 
-        e: EditionElement,
+        e: TokenizableElement,
         final_space: bool = False
     ):
         ...
@@ -128,15 +128,15 @@ class EditionElement(TeiElement, Showable):
 
     def __init__(
         self, 
-        e: XmlElement | TeiElement | EditionElement,
+        e: XmlElement | TeiElement | TokenizableElement,
         final_space: bool = False
     ):
         
-        if not isinstance(e, (TeiElement, XmlElement, EditionElement)):
+        if not isinstance(e, (TeiElement, XmlElement, TokenizableElement)):
             error_msg = f'e should be _Element or Element type or None. Type is {type(e)}.'
             raise TypeError(error_msg)
 
-        elif isinstance(e, EditionElement):
+        elif isinstance(e, TokenizableElement):
             self._e = e._e
         elif isinstance(e, TeiElement):
             self._e = e._e
@@ -146,7 +146,7 @@ class EditionElement(TeiElement, Showable):
 
         self._final_space = final_space
 
-    def __add__(self, other: Optional[EditionElement]) -> list[EditionElement]:
+    def __add__(self, other: Optional[TokenizableElement]) -> list[TokenizableElement]:
         """
         Handles appending |Element|s.
         """
@@ -154,7 +154,7 @@ class EditionElement(TeiElement, Showable):
         if other is None:
             return [self]
 
-        if not isinstance(other, EditionElement):
+        if not isinstance(other, TokenizableElement):
             raise TypeError(f"Other element is of type {type(other)}.")
         
         self_e = self._e.deepcopy()
@@ -169,14 +169,14 @@ class EditionElement(TeiElement, Showable):
             
             if self._can_subsume(other):
                 self_e.append_node(other_e)
-                return [EditionElement(self_e, other._final_space)]
+                return [TokenizableElement(self_e, other._final_space)]
 
             if self._is_subsumable_by(other):
                 self_e.tail = other.text   
                 other_e.text = ''  
                 other_e.insert(0, self_e)
                 
-                return [EditionElement(other_e)]
+                return [TokenizableElement(other_e)]
             
             return [self, other]
 
@@ -204,7 +204,7 @@ class EditionElement(TeiElement, Showable):
 
                         for child in other_e.children:
                             self_e.append_node(child)
-                        return [EditionElement(self_e, other._final_space)]
+                        return [TokenizableElement(self_e, other._final_space)]
 
             # Look inside self to see if other tag can 
             # subsume it;
@@ -214,14 +214,14 @@ class EditionElement(TeiElement, Showable):
                     if other._can_subsume(last_child):
                         for child in other_e.child_elements:
                             self_e.append_node(child)
-                        return [EditionElement(self_e, other._final_space)]
+                        return [TokenizableElement(self_e, other._final_space)]
             
-        return [EditionElement(self_e, self._final_space), EditionElement(other_e, other._final_space)]
+        return [TokenizableElement(self_e, self._final_space), TokenizableElement(other_e, other._final_space)]
 
-    def __lt__(self, other: EditionElement) -> bool:
+    def __lt__(self, other: TokenizableElement) -> bool:
         return self._e.__lt__(other._e)
     
-    def __gt__(self, other: EditionElement) -> bool:
+    def __gt__(self, other: TokenizableElement) -> bool:
         return self._e.__gt__(other._e)
 
     def __hash__(self) -> int:
@@ -252,26 +252,26 @@ class EditionElement(TeiElement, Showable):
         return self._e.text_desc_compressed_whitespace
 
     @property
-    def abbr_elems(self) -> Sequence[EditionElement]:
+    def abbr_elems(self) -> Sequence[TokenizableElement]:
         """
         Return all abbreviation elements as a |list| of |Element|.
         """
 
-        return [EditionElement(abbr) 
+        return [TokenizableElement(abbr) 
                 for abbr in self.get_desc('abbr')]
         
     @property
-    def am_elems(self) -> Sequence[EditionElement]:
+    def am_elems(self) -> Sequence[TokenizableElement]:
         """
         Returns a |list| of abbreviation marker elements <am>.
         See https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-am.html,
         last accessed 2023-04-13.
         """
 
-        return [EditionElement(abbr) 
+        return [TokenizableElement(abbr) 
                 for abbr in self.get_desc('am')]
 
-    def append_space(self) -> EditionElement:
+    def append_space(self) -> TokenizableElement:
         """
         Appends a space to the element in place.
         """
@@ -293,8 +293,8 @@ class EditionElement(TeiElement, Showable):
         self._e.tail = self._e.tail + ' '   # type: ignore
         return self
 
-    def _can_subsume(self, other: EditionElement) -> bool:
-        if type(other) is not EditionElement: 
+    def _can_subsume(self, other: TokenizableElement) -> bool:
+        if type(other) is not TokenizableElement: 
             return False
         
         matches = list(filter(
@@ -311,8 +311,8 @@ class EditionElement(TeiElement, Showable):
     
     @override
     @property
-    def child_elems(self) -> Sequence[EditionElement]:
-        return [EditionElement(child) for child in self._e.child_elements]
+    def child_elems(self) -> Sequence[TokenizableElement]:
+        return [TokenizableElement(child) for child in self._e.child_elements]
 
     def convert_id(self, oldbase: Base, newbase: Base) -> None:
         """
@@ -325,15 +325,15 @@ class EditionElement(TeiElement, Showable):
         
         self.xml_id = ids.convert(current_id, oldbase, newbase)
     
-    def deepcopy(self) -> EditionElement:
-        return EditionElement(self._e.deepcopy())
+    def deepcopy(self) -> TokenizableElement:
+        return TokenizableElement(self._e.deepcopy())
 
     @property
     def depth(self) -> int:
         """Returns the number of parents to the root node, where root is 0."""
 
         return len([parent for parent in self._e.get_ancestors_incl_self()
-            if type(parent.parent) is EditionElement])
+            if type(parent.parent) is TokenizableElement])
 
     @property
     def dict_desc(self) -> dict[str, str | dict]:
@@ -346,23 +346,23 @@ class EditionElement(TeiElement, Showable):
         return self._e
 
     @property
-    def ex_elems(self) -> Sequence[EditionElement]:
+    def ex_elems(self) -> Sequence[TokenizableElement]:
         """
         Return all abbreviation expansions (minus abbreviation) 
         as a |list| of |Element|.
         """
 
-        return [EditionElement(ex) 
+        return [TokenizableElement(ex) 
                 for ex in self.get_desc('ex')]
 
     @property
-    def expan_elems(self) -> Sequence[EditionElement]:
+    def expan_elems(self) -> Sequence[TokenizableElement]:
         """
         Return all abbreviation expansions (i.e. abbreviation + expansion) 
         as a |list| of |Element|.
         """
 
-        return [EditionElement(expan) 
+        return [TokenizableElement(expan) 
                 for expan in self.get_desc('expan')]
 
     @property
@@ -393,7 +393,7 @@ class EditionElement(TeiElement, Showable):
         return self._internal_prototokens[0]
 
     @property
-    def first_internal_word_element(self) -> Optional[EditionElement]:
+    def first_internal_word_element(self) -> Optional[TokenizableElement]:
 
         internal_token_elements = self.get_internal_token_elements()
         if internal_token_elements == []:
@@ -437,8 +437,8 @@ class EditionElement(TeiElement, Showable):
         return self._e._clean_text(self._e.text_desc)
 
     @property
-    def gaps(self) -> list[EditionElement]:
-        return [EditionElement(gap) for gap in self.get_desc('gap')]
+    def gaps(self) -> list[TokenizableElement]:
+        return [TokenizableElement(gap) for gap in self.get_desc('gap')]
     
     @property
     def has_abbr(self) -> bool:
@@ -502,7 +502,7 @@ class EditionElement(TeiElement, Showable):
         Unique computed element id based on hierarchical position in the XML document. 
         """
         
-        def _recfunc(acc: list[int], element: EditionElement | None) -> list[int]:
+        def _recfunc(acc: list[int], element: TokenizableElement | None) -> list[int]:
             if element is None:
                 return acc 
 
@@ -567,7 +567,7 @@ class EditionElement(TeiElement, Showable):
 
         return self._e.text_desc.split()
 
-    def get_internal_token_elements(self) -> list[EditionElement]:
+    def get_internal_token_elements(self) -> list[TokenizableElement]:
 
         def remove_internal_extraneous_whitespace(e: XmlElement) -> XmlElement:
             """
@@ -606,22 +606,22 @@ class EditionElement(TeiElement, Showable):
 
             return e_copy      
             
-        def make_internal_token(e: XmlElement) -> list[EditionElement]:
+        def make_internal_token(e: XmlElement) -> list[TokenizableElement]:
 
             """TODO merge with w_factory"""
 
             e_copy = e.deepcopy()
             e_copy.tail = self.tail_completer
-            edition_element = EditionElement(e_copy)
+            edition_element = TokenizableElement(e_copy)
 
             if edition_element._e.tag.name in AtomicNonTokenType.values():
                 internalprotowords = edition_element._internal_prototokens
                 if internalprotowords == []:
-                    return [EditionElement(e_copy, final_space=True)]
+                    return [TokenizableElement(e_copy, final_space=True)]
 
                 if len(internalprotowords) == 1:
                     e_copy.tail = ''
-                    elems = EditionElement(e_copy) + EditionElement.w_factory(internalprotowords[0])
+                    elems = TokenizableElement(e_copy) + TokenizableElement.w_factory(internalprotowords[0])
 
                     # Make sure there is a bound to the right if there are multiple tokens in the tail
                     if len(self.create_tail_token_elements()) > 0:
@@ -634,7 +634,7 @@ class EditionElement(TeiElement, Showable):
                 return [edition_element] # i.e. do nothing because already a token
 
             elif edition_element._e.tag.name in CompoundTokenType.values():
-                epidoc_elem = EditionElement(edition_element)
+                epidoc_elem = TokenizableElement(edition_element)
                 internal_tokenized = epidoc_elem.make_child_tokens_for_container()
                 epidoc_elem._e.remove_children()
                 for element in internal_tokenized:
@@ -649,7 +649,7 @@ class EditionElement(TeiElement, Showable):
                 comment = deepcopy(edition_element.e)
                 comment.tail = ""   # type: ignore
 
-                return [EditionElement(comment)]
+                return [TokenizableElement(comment)]
 
             raise ValueError(f"Invalid _element.tag.name: {edition_element._e.tag.name}")
         
@@ -676,7 +676,7 @@ class EditionElement(TeiElement, Showable):
         if prev_sibling is None:
             return False
         
-        return EditionElement(prev_sibling)._join_to_next
+        return TokenizableElement(prev_sibling)._join_to_next
 
     @property
     def has_lb_in_preceding_or_ancestor(self) -> XmlElement | None:
@@ -688,7 +688,7 @@ class EditionElement(TeiElement, Showable):
         last accessed 2023-04-20.
         """
 
-        def get_preceding_lb(elem: EditionElement) -> list[XmlElement]:
+        def get_preceding_lb(elem: TokenizableElement) -> list[XmlElement]:
             
             result = elem._e.xpath('preceding::*[descendant-or-self::ns:lb]')
 
@@ -722,14 +722,14 @@ class EditionElement(TeiElement, Showable):
         return True
     
     @property
-    def leiden_elems(self) -> Sequence[EditionElement]:
+    def leiden_elems(self) -> Sequence[TokenizableElement]:
         """
         Return all abbreviation expansions 
         (i.e. abbreviation, expansion, supplied, gap) 
         as a |list| of |Element|.
         """
 
-        return [EditionElement(expan) 
+        return [TokenizableElement(expan) 
                 for expan in self.get_desc([
                     'abbr',
                     'ex',
@@ -739,16 +739,16 @@ class EditionElement(TeiElement, Showable):
                     'g'
                 ])]
 
-    def _find_next_no_spaces(self) -> list[EditionElement]:
+    def _find_next_no_spaces(self) -> list[TokenizableElement]:
 
         """Returns a list of the next |Element|s not 
         separated by whitespace."""
 
-        def no_break_next(element: EditionElement) -> bool:
+        def no_break_next(element: TokenizableElement) -> bool:
             """Keep going if element is a linebreak with no word break"""
             next_elem = element.find_next_sibling()
 
-            if isinstance(next_elem, EditionElement):
+            if isinstance(next_elem, TokenizableElement):
                 if next_elem.e is None:
                     return False
                 if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
@@ -759,9 +759,9 @@ class EditionElement(TeiElement, Showable):
 
             return False
                 
-        def next_no_spaces(acc: list[EditionElement], element: Optional[EditionElement]):
+        def next_no_spaces(acc: list[TokenizableElement], element: Optional[TokenizableElement]):
             
-            if not isinstance(element, EditionElement): 
+            if not isinstance(element, TokenizableElement): 
                 return acc
 
             if no_break_next(element):
@@ -774,13 +774,13 @@ class EditionElement(TeiElement, Showable):
 
         return next_no_spaces([], self)
 
-    def find_next_sibling(self) -> EditionElement | None:
+    def find_next_sibling(self) -> TokenizableElement | None:
 
         """
         Finds the next non-comment sibling |EpiDocElement|.
         """
         if isinstance(self._e.next_sibling, XmlElement):
-            return EditionElement(self._e.next_sibling)
+            return TokenizableElement(self._e.next_sibling)
 
         return None
 
@@ -811,39 +811,39 @@ class EditionElement(TeiElement, Showable):
         return self._tail_prototokens == [] and not self.has_whitepace_tail
 
     @property
-    def nonword_element(self) -> Optional[EditionElement]:
+    def nonword_element(self) -> Optional[TokenizableElement]:
         if self._e is None:
             return None
 
         if self._e.tag.name in AtomicNonTokenType.values():
             _e = self._e.deepcopy()
             _e.tail = None  # type: ignore
-            return EditionElement(_e)
+            return TokenizableElement(_e)
         
         return None
 
     @property
-    def nonword_elements(self) -> list[EditionElement]:
+    def nonword_elements(self) -> list[TokenizableElement]:
         if self.nonword_element is None:
             return []
-        elif type(self.nonword_element) is EditionElement:
+        elif type(self.nonword_element) is TokenizableElement:
             return [self.nonword_element]
 
         return []
     
     @property
-    def no_space_before(self) -> list[EditionElement]:
+    def no_space_before(self) -> list[TokenizableElement]:
         """
         :return: |Element|s that should not be separated by spaces.
         """
-        return [EditionElement(item) for item 
+        return [TokenizableElement(item) for item 
                 in self.get_desc(NoSpaceBefore.values())]
 
     @property
-    def parent(self) -> EditionElement | None:
+    def parent(self) -> TokenizableElement | None:
         _parent = self._e.parent
         if _parent is not None:
-            return EditionElement(_parent)
+            return TokenizableElement(_parent)
         elif _parent is None:
             return None
 
@@ -1018,21 +1018,21 @@ class EditionElement(TeiElement, Showable):
             elem.append_space()
 
     @property
-    def space_separated_elements(self) -> list[EditionElement]:
+    def space_separated_elements(self) -> list[TokenizableElement]:
         """
         :return: |Element|s that should be separated by spaces. Elements
         contained in an AtomicTokenType element, such as `<w>` will not 
         have any spaces inserted between them.
         """
         elems = [item
-                 for item in map(EditionElement, self.get_desc(SpaceSeparated.values()))
+                 for item in map(TokenizableElement, self.get_desc(SpaceSeparated.values()))
                  if not item._e.has_ancestors_by_names(AtomicTokenType.values())]
         
         return [elem for elem in elems 
                 if elem.find_next_sibling() not in self.no_space_before]
 
-    def _is_subsumable_by(self, other:EditionElement) -> bool:
-        if type(other) is not EditionElement: 
+    def _is_subsumable_by(self, other:TokenizableElement) -> bool:
+        if type(other) is not TokenizableElement: 
             return False
 
         matches = list(filter(self._subsume_filterfunc(head=other, dep=self), SubsumableRels))
@@ -1040,7 +1040,7 @@ class EditionElement(TeiElement, Showable):
         return len(matches) > 0
 
     @staticmethod
-    def _subsume_filterfunc(head: EditionElement, dep: EditionElement):
+    def _subsume_filterfunc(head: TokenizableElement, dep: TokenizableElement):
 
         def _filterfunc(item) -> bool:
             if item['head'] != head.dict_desc:
@@ -1082,8 +1082,8 @@ class EditionElement(TeiElement, Showable):
 
         return self._e.tail
 
-    def get_supplied(self) -> list[EditionElement]:
-        return [EditionElement(supplied) for supplied in self.get_desc('supplied')]
+    def get_supplied(self) -> list[TokenizableElement]:
+        return [TokenizableElement(supplied) for supplied in self.get_desc('supplied')]
 
     @property
     def _tail_prototokens(self) -> list[str]:
@@ -1113,10 +1113,10 @@ class EditionElement(TeiElement, Showable):
         else:
             return []
     
-    def create_tail_token_elements(self) -> list[EditionElement]:
+    def create_tail_token_elements(self) -> list[TokenizableElement]:
 
-        def make_words(protoword: Optional[str]) -> EditionElement:
-            w = EditionElement.w_factory(protoword)
+        def make_words(protoword: Optional[str]) -> TokenizableElement:
+            w = TokenizableElement.w_factory(protoword)
             
             if protoword is not None and protoword[-1] in whitespace:
                 w._final_space = True
@@ -1156,16 +1156,16 @@ class EditionElement(TeiElement, Showable):
         self._e.text = value    # type: ignore
 
     @property
-    def tokenized_children(self) -> list[EditionElement]:
+    def tokenized_children(self) -> list[TokenizableElement]:
         """
         Returns children that are already tokenized, including Comment nodes
         """
 
-        return [EditionElement(child) for child in self.child_elems
+        return [TokenizableElement(child) for child in self.child_elems
             if child._e.localname in AtomicTokenType.values() or \
                 child._e.tag.name == "Comment"]
 
-    def find_token_carriers(self) -> list[EditionElement]:
+    def find_token_carriers(self) -> list[TokenizableElement]:
 
         """
         WordCarriers are XML elements that carry text fragments
@@ -1174,11 +1174,11 @@ class EditionElement(TeiElement, Showable):
         acc = []
         for element in self._e.descendant_elements:
             if element.tag.name in TokenCarrier:
-                epidoc_element = EditionElement(element)
+                epidoc_element = TokenizableElement(element)
                 acc.append(epidoc_element)
         return acc
 
-    def _find_token_carrier_sequences(self) -> list[list[EditionElement]]:
+    def _find_token_carrier_sequences(self) -> list[list[TokenizableElement]]:
 
         """
         Returns maximal sequences of word_carriers between whitespace.
@@ -1186,10 +1186,10 @@ class EditionElement(TeiElement, Showable):
         """
         
         def get_word_carrier_sequences(
-            acc: list[list[EditionElement]], 
-            acc_desc: set[EditionElement], 
-            tokenables: list[EditionElement]
-        ) -> list[list[EditionElement]]:
+            acc: list[list[TokenizableElement]], 
+            acc_desc: set[TokenizableElement], 
+            tokenables: list[TokenizableElement]
+        ) -> list[list[TokenizableElement]]:
 
             if tokenables == []:
                 return acc
@@ -1203,7 +1203,7 @@ class EditionElement(TeiElement, Showable):
 
             next_no_spaces_desc = [e._e.descendant_elements 
                                    for e in element._find_next_no_spaces()] + [[e._e for e in element._find_next_no_spaces()]]
-            next_no_spaces_desc_flat = [EditionElement(item) 
+            next_no_spaces_desc_flat = [TokenizableElement(item) 
                                         for item in chain(*next_no_spaces_desc)]
             
             # NB this doesn't work if use 'update_set_copy'
@@ -1220,9 +1220,9 @@ class EditionElement(TeiElement, Showable):
             )
 
         def remove_subsets(
-            acc: list[list[EditionElement]], 
-            sequence: list[EditionElement]
-        ) -> list[list[EditionElement]]:
+            acc: list[list[TokenizableElement]], 
+            sequence: list[TokenizableElement]
+        ) -> list[list[TokenizableElement]]:
             
             if any([SetRelation.propersubset(set(sequence), set(acc_item))
                 for acc_item in tokencarrier_sequences]):
@@ -1248,7 +1248,7 @@ class EditionElement(TeiElement, Showable):
         ab_prototokens = (self.text or '').split()  # split the string into tokens
 
         # Create token elements from the split string elements
-        ab_tokens = [EditionElement.w_factory(word) for word in ab_prototokens]     
+        ab_tokens = [TokenizableElement.w_factory(word) for word in ab_prototokens]     
 
         # Ensure that any final space is preserved
         if self.text and self.text[-1] == ' ' and len(ab_tokens) > 0:
@@ -1264,7 +1264,7 @@ class EditionElement(TeiElement, Showable):
         # Remove the initial text element that has now been tokenized
         self.text = ''
 
-    def make_child_tokens_for_container(self) -> list[EditionElement]:
+    def make_child_tokens_for_container(self) -> list[TokenizableElement]:
         """
         Return the child tokens for the container. To do this
         it first tokenizes the initial text of the container in place.
@@ -1272,10 +1272,10 @@ class EditionElement(TeiElement, Showable):
         self.tokenize_initial_text_in_container()
 
         token_carriers = list(chain(*self._find_token_carrier_sequences()))
-        token_carriers_sorted = [EditionElement(elem) for elem 
+        token_carriers_sorted = [TokenizableElement(elem) for elem 
                                  in sorted([token_carrier._e for token_carrier in token_carriers])]
         
-        def _redfunc(acc: list[EditionElement], element: EditionElement) -> list[EditionElement]:
+        def _redfunc(acc: list[TokenizableElement], element: TokenizableElement) -> list[TokenizableElement]:
             
             if element._join_to_next:
                 if acc == []:
@@ -1285,8 +1285,8 @@ class EditionElement(TeiElement, Showable):
                     return acc
             
                 def sumfunc(
-                    acc: list[EditionElement], 
-                    elem: EditionElement) -> list[EditionElement]:
+                    acc: list[TokenizableElement], 
+                    elem: TokenizableElement) -> list[TokenizableElement]:
 
                     if acc == []:
                         return [elem]
@@ -1301,35 +1301,38 @@ class EditionElement(TeiElement, Showable):
                 return reduce(
                     sumfunc, 
                     reversed(element.get_child_tokens() + acc[:1]), 
-                    cast(list[EditionElement], [])) + acc[1:]
+                    cast(list[TokenizableElement], [])) + acc[1:]
 
             return element.get_child_tokens() + acc
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
 
-    def get_child_tokens(self) -> list[EditionElement]:
+    def get_child_tokens(self) -> list[TokenizableElement]:
         """
         Returns all potential child tokens.
         For use in tokenization.
         """
 
-        if self._e.localname in ['ab']:
+        if self._e.localname == 'ab':
             return self.make_child_tokens_for_container()
 
-        token_elems = self.get_internal_token_elements() + self.create_tail_token_elements()
+        internal_token_elements = self.get_internal_token_elements()
+        tail_token_elements = self.create_tail_token_elements()
+
+        token_elements = internal_token_elements + tail_token_elements
         
-        if token_elems != []:
+        if token_elements != []:
             if self.e is not None:
                 if self.e.tail != '' and self.e.tail is not None:
                     if self.e.tail[-1] in ['\n', ' ']:
-                        token_elems[-1]._final_space = True
-                        return token_elems
+                        token_elements[-1]._final_space = True
+                        return token_elements
                     
-            token_elems[-1]._final_space = False
+            token_elements[-1]._final_space = False
 
-        return token_elems
+        return token_elements
 
-    def tokenize(self, inplace=True) -> EditionElement:
+    def tokenize(self, inplace=True) -> TokenizableElement:
         """
         Tokenizes the current node. 
         """
@@ -1368,7 +1371,7 @@ class EditionElement(TeiElement, Showable):
         prototoken: str | None = None, 
         subelements: list[XmlElement] = [],
         parent: XmlElement | None = None
-    ) -> EditionElement:
+    ) -> TokenizableElement:
 
         """
         TODO merge w_factory and make_word functions.
@@ -1378,7 +1381,7 @@ class EditionElement(TeiElement, Showable):
 
             if _tail is not None:
                 tailword_strs = _tail.split()
-                tailtokens = [EditionElement.w_factory(prototoken=tailtoken_str) 
+                tailtokens = [TokenizableElement.w_factory(prototoken=tailtoken_str) 
                     for tailtoken_str in tailword_strs]
                 for tailtoken in tailtokens:
                     if tailtoken.e is not None:
@@ -1398,7 +1401,7 @@ class EditionElement(TeiElement, Showable):
                 g.append_node(child)
 
             # Set final_space to true because result of a split operation
-            g_element = EditionElement(g, final_space=True) 
+            g_element = TokenizableElement(g, final_space=True) 
 
             return g_element
 
@@ -1419,7 +1422,7 @@ class EditionElement(TeiElement, Showable):
                 e_without_tail.tail = None   # type: ignore
                 localname = child.localname
 
-                if localname == 'lb' and EditionElement(child).get_attr('break') == 'no':
+                if localname == 'lb' and TokenizableElement(child).get_attr('break') == 'no':
                     lb = e_without_tail
                     lb_tail = child.tail
 
@@ -1443,7 +1446,7 @@ class EditionElement(TeiElement, Showable):
                 elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>, <hi>
                     if localname in CompoundTokenType.values(): # this is intended for <hi>, which is also a compound token
                         tokenized = tokenize_subatomic_tags(e_without_tail)
-                        if EditionElement(parent_copy)._e.children == []:
+                        if TokenizableElement(parent_copy)._e.children == []:
                             parent_copy.append_node(tokenized._e)
 
                         elif tokenized._e.last_child is None:
@@ -1459,11 +1462,11 @@ class EditionElement(TeiElement, Showable):
                         parent_copy = append_tail_or_text(child.tail, parent_copy)              
                     
                 elif localname in CompoundTokenType.values(): # e.g. <persName>, <orgName>, <roleName>
-                    new_w_elem = EditionElement.w_factory(parent=e_without_tail)
+                    new_w_elem = TokenizableElement.w_factory(parent=e_without_tail)
                     parent_copy.append_node(new_w_elem._e)
                     parent_copy = append_tail_or_text(child.tail, parent_copy)
 
-            return EditionElement(parent_copy, final_space=True)
+            return TokenizableElement(parent_copy, final_space=True)
         else:
             if prototoken: 
                 new_w = XmlElement.create('w', TEINS)
@@ -1474,7 +1477,7 @@ class EditionElement(TeiElement, Showable):
             for child in subelements:
                 new_w.append_node(child)
 
-        return EditionElement(new_w, final_space=True)
+        return TokenizableElement(new_w, final_space=True)
     
     @property
     def xml_id(self) -> str | None:

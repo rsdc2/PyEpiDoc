@@ -2,7 +2,7 @@ import pytest
 from pyepidoc.epidoc.edition_elements.w import W
 from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.representable import RepresentableElement
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.xml.xml_element import XmlElement
 

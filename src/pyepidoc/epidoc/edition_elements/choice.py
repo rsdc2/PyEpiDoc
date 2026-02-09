@@ -1,5 +1,5 @@
 from lxml.etree import _Element
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 
 from pyepidoc.xml.xml_element import XmlElement
@@ -11,7 +11,7 @@ from .sic import Sic
 from .corr import Corr
 
 
-class Choice(EditionElement):
+class Choice(TokenizableElement):
     """
     Provides services for abbreviation expansions 
     given in <choice> elements.

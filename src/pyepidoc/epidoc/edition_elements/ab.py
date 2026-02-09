@@ -3,7 +3,7 @@ from typing import Optional, Sequence
 from functools import reduce
 from itertools import chain
 
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from .textpart import TextPart
 from pyepidoc.epidoc.token import Token
 from .expan import Expan
@@ -46,15 +46,15 @@ class Ab(RepresentableElement):
 
     """
 
-    def __init__(self, e: EditionElement | XmlElement):
+    def __init__(self, e: TokenizableElement | XmlElement):
         super().__init__(e)
         
         if self._e.tag.name != 'ab':
             raise TypeError('Element should be of type <ab>.')
 
     @property
-    def compound_tokens(self) -> list[EditionElement]:
-        return [EditionElement(item) for item 
+    def compound_tokens(self) -> list[TokenizableElement]:
+        return [TokenizableElement(item) for item 
             in self.get_desc(CompoundTokenType.values())
         ]
 
@@ -82,22 +82,22 @@ class Ab(RepresentableElement):
         return head(self.tokens)
 
     @property
-    def g_dividers(self) -> list[EditionElement]:
-        return [EditionElement(boundary) for boundary 
+    def g_dividers(self) -> list[TokenizableElement]:
+        return [TokenizableElement(boundary) for boundary 
                 in self.get_desc('g')]
 
     @property
     def gaps(self):
-        return [EditionElement(gap) for gap in self.get_desc('gap')]
+        return [TokenizableElement(gap) for gap in self.get_desc('gap')]
 
     @property
-    def id_carriers(self) -> list[EditionElement]:
+    def id_carriers(self) -> list[TokenizableElement]:
 
         """
         id_carriers are XML elements that carry an 
         @xml:id attribute
         """
-        return [EditionElement(element) 
+        return [TokenizableElement(element) 
                 for element in self._e.descendant_elements
                 if element.tag.name in IdCarrier]
 
@@ -110,7 +110,7 @@ class Ab(RepresentableElement):
         node, at which point returns the <div> @lang attribute, if any.
         """
         
-        def _get_lang(elem:EditionElement) -> Optional[str]:
+        def _get_lang(elem:TokenizableElement) -> Optional[str]:
             
             lang = elem.get_attr('lang', XMLNS)
             
@@ -128,17 +128,17 @@ class Ab(RepresentableElement):
         return _get_lang(self)
 
     @property
-    def lbs(self) -> Sequence[EditionElement]:
-        return [EditionElement(lb) 
+    def lbs(self) -> Sequence[TokenizableElement]:
+        return [TokenizableElement(lb) 
                 for lb in self.get_desc(['lb'])]
 
     @property
-    def no_space_before(self) -> list[EditionElement]:
+    def no_space_before(self) -> list[TokenizableElement]:
         """
         :return: a |list| of |Element|s that should not be separated by spaces.
         """
 
-        return [EditionElement(item) for item 
+        return [TokenizableElement(item) for item 
                 in self.get_desc(NoSpaceBefore.values())]
 
     @property
@@ -152,7 +152,7 @@ class Ab(RepresentableElement):
         token_carriers = chain(*self._find_token_carrier_sequences())
         token_carriers_sorted = sorted(token_carriers)
 
-        def _redfunc(acc:list[str], element:EditionElement) -> list[str]:
+        def _redfunc(acc:list[str], element:TokenizableElement) -> list[str]:
             if element.text is None and \
                 element.tail_completer is None and \
                     element._tail_prototokens == []:

@@ -1,5 +1,5 @@
 from pyepidoc.shared.constants import TEINS
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
 import pytest
 
@@ -23,8 +23,8 @@ def test_w_hi(xml_pair: tuple[str, str, str]):
     e1 = XmlElement.from_str(xml1)
     e2 = XmlElement.from_str(xml2)
 
-    elem1 = EditionElement(e1)
-    elem2 = EditionElement(e2)
+    elem1 = TokenizableElement(e1)
+    elem2 = TokenizableElement(e2)
 
     # Act
     elem = elem1 + elem2

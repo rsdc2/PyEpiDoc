@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from typing import Optional
 
-class Am(EditionElement):    
+class Am(TokenizableElement):    
 
     """
     Provides services for <am> ('abbreviation marker') elements.

@@ -1,10 +1,10 @@
 from lxml.etree import _Element
-from ..edition_element import EditionElement
+from ..edition_element import TokenizableElement
 from pyepidoc.shared.enums import AtomicTokenType
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 
-class G(EditionElement):
+class G(TokenizableElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.

@@ -10,10 +10,10 @@ from pyepidoc.xml.xml_element import (
 
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.enums import RegTextType
-from .edition_element import EditionElement
+from .edition_element import TokenizableElement
 
 
-class RepresentableElement(EditionElement):
+class RepresentableElement(TokenizableElement):
 
     @property
     def elem_classes(self) -> dict[str, type[RepresentableElement]]:
@@ -97,7 +97,7 @@ class RepresentableElement(EditionElement):
         return prec_text + self.leiden_form + following_text        
 
     @cached_property
-    def simple_lemmatized_edition_element(self) -> EditionElement:
+    def simple_lemmatized_edition_element(self) -> TokenizableElement:
         """
         Element for use in simple-lemmatized edition
         """

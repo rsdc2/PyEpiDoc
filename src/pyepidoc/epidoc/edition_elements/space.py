@@ -1,5 +1,5 @@
 from functools import cached_property
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.tei.tei_element import TeiElement
@@ -33,7 +33,7 @@ class Space(RepresentableElement):
         return self.get_attr('quantity')
     
     @cached_property
-    def simple_lemmatized_edition_element(self) -> EditionElement:
+    def simple_lemmatized_edition_element(self) -> TokenizableElement:
         """
         Element for use in simple-lemmatized edition
         """

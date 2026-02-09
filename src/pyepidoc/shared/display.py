@@ -1,7 +1,7 @@
 # Provides functions for showing elements
 from typing import Iterable
 from ..epidoc.dom import doc_id, lang
-from ..epidoc.edition_element import EditionElement
+from ..epidoc.edition_element import TokenizableElement
 
 
 def show_items(
@@ -32,7 +32,7 @@ def print_items(
 
 
 def show_elems(
-    elems: Iterable[EditionElement],
+    elems: Iterable[TokenizableElement],
     sep: str='\n', 
     prefix: str='- ',
     include_source_doc_ids: bool=True,

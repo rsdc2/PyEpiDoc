@@ -13,7 +13,7 @@ from pyepidoc.shared.enums import (
     AtomicTokenType
 )
 from pyepidoc.shared.constants import TEINS
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 
 
 def callable_from_localname(
@@ -43,8 +43,8 @@ def callable_from_localname(
     return elem_cls(elem)
 
 
-def descendant_atomic_tokens(elem: EditionElement) -> list[EditionElement]:
-    desc_tokens = map(EditionElement, elem.get_desc(AtomicTokenType.values()))
+def descendant_atomic_tokens(elem: TokenizableElement) -> list[TokenizableElement]:
+    desc_tokens = map(TokenizableElement, elem.get_desc(AtomicTokenType.values()))
 
     return [token for token 
         in desc_tokens
@@ -118,7 +118,7 @@ def normalized_str_from_children(
     xpath_str = f'{child_str}[{ancestors_str}]'
     
     children = [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
-    objs = cast(list[EditionElement], [classes.get(child.localname, lambda c: c.descendant_text)(child) 
+    objs = cast(list[TokenizableElement], [classes.get(child.localname, lambda c: c.descendant_text)(child) 
             for child in children])
     
     s = ''.join([obj.normalized_form 

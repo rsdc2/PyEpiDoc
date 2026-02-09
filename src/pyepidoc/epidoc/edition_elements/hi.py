@@ -1,17 +1,17 @@
 from lxml.etree import _Element
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.epidoc.utils import localname
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 
-class Hi(EditionElement):
+class Hi(TokenizableElement):
     """
     Provides services for abbreviation expansions 
     given in <hi> elements.
     """
 
-    def __init__(self, e: _Element | XmlElement | TeiElement | EditionElement):
+    def __init__(self, e: _Element | XmlElement | TeiElement | TokenizableElement):
         super().__init__(e)
 
         if self._e.localname != 'hi':

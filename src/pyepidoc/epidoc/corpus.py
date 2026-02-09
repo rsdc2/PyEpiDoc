@@ -25,7 +25,7 @@ from pyepidoc.shared.enums import TextClass
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
-from .edition_element import EditionElement
+from .edition_element import TokenizableElement
 from .token import Token
 from .edition_elements.expan import Expan
 from .edition_elements.name import Name
@@ -697,7 +697,7 @@ class EpiDocCorpus:
         self._docs = docs
 
     @property
-    def id_carriers(self) -> list[EditionElement]:
+    def id_carriers(self) -> list[TokenizableElement]:
         return list(chain(*[doc.id_carriers for doc in self.docs]))
 
     @cached_property

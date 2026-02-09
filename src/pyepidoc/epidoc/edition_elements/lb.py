@@ -1,23 +1,23 @@
 from __future__ import annotations
 
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
 from typing import Optional, Union
 from lxml.etree import _Element 
 
 
-class Lb(EditionElement):    
+class Lb(TokenizableElement):    
 
     """
     Provides services for <lb> ('line break') elements.
     """
 
-    def __init__(self, e: _Element | EditionElement | XmlElement):
+    def __init__(self, e: _Element | TokenizableElement | XmlElement):
 
         super().__init__(e)
 
         if self._e.localname != 'lb':
-            node_name_err_msg = f'Element must be <lb>. Element is {EditionElement(e)._e.localname}.'
+            node_name_err_msg = f'Element must be <lb>. Element is {TokenizableElement(e)._e.localname}.'
             raise TypeError(node_name_err_msg)
 
     def __repr__(self):

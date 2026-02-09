@@ -1,8 +1,8 @@
 from __future__ import annotations
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 
 
-class Idno(EditionElement):
+class Idno(TokenizableElement):
     """
     The <idno> element
     """

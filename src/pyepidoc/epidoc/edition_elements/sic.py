@@ -1,10 +1,10 @@
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 
 
-class Sic(EditionElement):
+class Sic(TokenizableElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.

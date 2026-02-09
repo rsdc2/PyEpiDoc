@@ -1,10 +1,10 @@
 from __future__ import annotations
 from datetime import datetime
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 
 
-class Change(EditionElement):
+class Change(TokenizableElement):
     """
     The <Change> node
     """

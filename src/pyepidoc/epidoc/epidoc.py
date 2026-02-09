@@ -38,7 +38,7 @@ from pyepidoc.shared.types import Base
 from .body import Body
 from .token import Token
 from .errors import EpiDocValidationError
-from .edition_element import EditionElement
+from .edition_element import TokenizableElement
 
 from .edition_elements.ab import Ab
 from .edition_elements.edition import Edition
@@ -130,7 +130,7 @@ class EpiDoc(TeiDoc):
         return self._e.get_div_descendants_by_type('commentary')
 
     @property
-    def compound_words(self) -> list[EditionElement]:
+    def compound_words(self) -> list[TokenizableElement]:
         return [item for edition in self.editions() 
             for item in edition.compound_tokens]
 
@@ -339,7 +339,7 @@ class EpiDoc(TeiDoc):
         return list(gs)
 
     @property
-    def gaps(self) -> list[EditionElement]:
+    def gaps(self) -> list[TokenizableElement]:
         items = [edition.gaps for edition in self.editions()]
         return [item for item in list(chain(*items))]
 
@@ -383,7 +383,7 @@ class EpiDoc(TeiDoc):
         if textclass_e is None:
             return []
 
-        textclass_element = EditionElement(textclass_e)
+        textclass_element = TokenizableElement(textclass_e)
 
         terms = textclass_element.get_desc('term')
         terms_with_ana = [term for term in terms 
@@ -474,7 +474,7 @@ class EpiDoc(TeiDoc):
         return idno_elem._e.text or ''
 
     @property
-    def id_carriers(self) -> list[EditionElement]:
+    def id_carriers(self) -> list[TokenizableElement]:
         return list(chain(*[edition.local_idable_elements 
                             for edition in self.editions()]))
 
@@ -542,7 +542,7 @@ class EpiDoc(TeiDoc):
 
         """Used by EDH to host language information."""
 
-        language_elems = [EditionElement(language) 
+        language_elems = [TokenizableElement(language) 
                           for language in self.get_desc('langUsage')]
         lang_usage = maxone(language_elems, None)
 
@@ -652,7 +652,7 @@ class EpiDoc(TeiDoc):
         return self
     
     @property
-    def local_idable_elements(self) -> list[EditionElement]:
+    def local_idable_elements(self) -> list[TokenizableElement]:
 
         """
         Get all the tokens in the main edition that should 
@@ -698,7 +698,7 @@ class EpiDoc(TeiDoc):
         if material_e is None:
             return []
         
-        return remove_none([EditionElement(e).get_attr('ana') 
+        return remove_none([TokenizableElement(e).get_attr('ana') 
                             for e in material_e])
 
     def names(self, 
@@ -752,7 +752,7 @@ class EpiDoc(TeiDoc):
         return not_before_custom or not_before
 
     @property
-    def orig_date(self) -> Optional[EditionElement]:
+    def orig_date(self) -> Optional[TokenizableElement]:
         # TODO consider all orig_dates: at the moment only does the first        
         orig_date = maxone(
             self.get_desc('origDate'),
@@ -764,14 +764,14 @@ class EpiDoc(TeiDoc):
 
         if orig_date.attrs == dict():
             orig_date = maxone(
-                EditionElement(orig_date)._e.get_desc('origDate'), 
+                TokenizableElement(orig_date)._e.get_desc('origDate'), 
                 throw_if_more_than_one=False
             )    
 
         if orig_date is None:
             return None        
 
-        return EditionElement(orig_date)
+        return TokenizableElement(orig_date)
  
     @property
     def orig_place(self) -> str:
@@ -925,11 +925,11 @@ class EpiDoc(TeiDoc):
         print(self.translation_text)
 
     @property
-    def publication_stmt(self) -> Optional[EditionElement]:
+    def publication_stmt(self) -> Optional[TokenizableElement]:
         publication_stmt = maxone(self.get_desc('publicationStmt'))
         if publication_stmt is None:
             return None
-        return EditionElement(publication_stmt)
+        return TokenizableElement(publication_stmt)
     
     @property
     def _pyepidoc_module_path(self) -> Path:
@@ -1049,13 +1049,13 @@ class EpiDoc(TeiDoc):
         return TeiHeader(tei_header_elem)
 
     @property
-    def text_elems(self) -> list[EditionElement]:
+    def text_elems(self) -> list[TokenizableElement]:
         """
         All elements in the document responsible for carrying
         text information as part of the edition
         """
         elems = chain(*[ab._e.descendant_elements for ab in self.abs])
-        return list(map(EditionElement, elems))
+        return list(map(TokenizableElement, elems))
 
     @cached_property
     def text_leiden(self) -> str:
@@ -1099,12 +1099,12 @@ class EpiDoc(TeiDoc):
         return self.get_textclasses(True)
 
     @property
-    def textlang(self) -> Optional[EditionElement]:
+    def textlang(self) -> Optional[TokenizableElement]:
         """
         Used by I.Sicily to host language information.        
         """
 
-        textlang = maxone([EditionElement(textlang) 
+        textlang = maxone([TokenizableElement(textlang) 
             for textlang in self.get_desc('textLang')])
         
         if textlang is None: 
@@ -1126,7 +1126,7 @@ class EpiDoc(TeiDoc):
         if elem is None:
             return None
         else:
-            return EditionElement(elem).text
+            return TokenizableElement(elem).text
         
     @property
     def title_stmt(self) -> TitleStmt | None:
@@ -1325,7 +1325,7 @@ class EpiDoc(TeiDoc):
         
         translation_divs = self._e.get_div_descendants_by_type('translation')
 
-        return '\n'.join([EditionElement(div)._e.text_desc_compressed_whitespace 
+        return '\n'.join([TokenizableElement(div)._e.text_desc_compressed_whitespace 
                        for div in translation_divs])
     
     def validate(self) -> tuple[bool, str]:

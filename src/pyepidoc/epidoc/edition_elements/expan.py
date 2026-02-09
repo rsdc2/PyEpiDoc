@@ -9,7 +9,7 @@ from pyepidoc.shared import head
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 
-from pyepidoc.epidoc.edition_element import EditionElement
+from pyepidoc.epidoc.edition_element import TokenizableElement
 
 from .ex import Ex
 from .abbr import Abbr
@@ -23,15 +23,15 @@ from ..utils import (leiden_str_from_children,
                      normalized_str_from_children)
 
 
-class Expan(EditionElement):
+class Expan(TokenizableElement):
 
     """
     Provides services for <expan> elements in EpiDoc XML.
     Will normally contain <abbr> and <ex> elements.
     """
 
-    def __init__(self, e: _Element | EditionElement | XmlElement | TeiElement):
-        if not isinstance(e, (_Element, TeiElement, XmlElement, EditionElement)):
+    def __init__(self, e: _Element | TokenizableElement | XmlElement | TeiElement):
+        if not isinstance(e, (_Element, TeiElement, XmlElement, TokenizableElement)):
             raise TypeError('e should be _Element or EpiDocElement type. '
                             f'not {type(e)}.')
 
@@ -94,8 +94,8 @@ class Expan(EditionElement):
         return len(self.am_elems)
     
     @property
-    def as_element(self) -> EditionElement:
-        return EditionElement(self.e)
+    def as_element(self) -> TokenizableElement:
+        return TokenizableElement(self.e)
     
     def contains_g(self, with_ref: str | None = None) -> bool:
         """
