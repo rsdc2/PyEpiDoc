@@ -25,7 +25,7 @@ from pyepidoc.xml.namespace import Namespace as ns
 
 
 from .. import ids
-from ..edition_element import TokenizableElement
+from ..tokenizable_element import TokenizableElement
 from .ab import Ab
 from .expan import Expan
 from .l import L

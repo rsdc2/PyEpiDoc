@@ -10,7 +10,7 @@ from pyepidoc.xml.xml_element import (
 
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.enums import RegTextType
-from .edition_element import TokenizableElement
+from .tokenizable_element import TokenizableElement
 
 
 class RepresentableElement(TokenizableElement):

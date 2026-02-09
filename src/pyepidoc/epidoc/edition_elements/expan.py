@@ -9,7 +9,7 @@ from pyepidoc.shared import head
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 
 from .ex import Ex
 from .abbr import Abbr

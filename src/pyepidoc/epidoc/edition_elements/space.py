@@ -1,5 +1,5 @@
 from functools import cached_property
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.tei.tei_element import TeiElement

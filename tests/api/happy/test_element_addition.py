@@ -1,5 +1,5 @@
 from pyepidoc.shared.constants import TEINS
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
 import pytest
 

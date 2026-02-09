@@ -3,7 +3,7 @@ from typing import Optional
 
 from lxml.etree import _Element 
 
-from ..edition_element import TokenizableElement
+from ..tokenizable_element import TokenizableElement
 
 from pyepidoc.xml import XmlElement
 from pyepidoc.shared.namespaces import XMLNS

@@ -12,7 +12,7 @@ from pyepidoc.xml.xml_text import XmlText
 from pyepidoc.xml.xml_element import XmlNode, XmlElement
 
 from .epidoc import EpiDoc
-from .edition_element import TokenizableElement
+from .tokenizable_element import TokenizableElement
 from .edition_elements.ab import Ab
 from .edition_elements.edition import Edition
 from .edition_elements.lb import Lb

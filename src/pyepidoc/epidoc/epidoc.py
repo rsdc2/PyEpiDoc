@@ -38,7 +38,7 @@ from pyepidoc.shared.types import Base
 from .body import Body
 from .token import Token
 from .errors import EpiDocValidationError
-from .edition_element import TokenizableElement
+from .tokenizable_element import TokenizableElement
 
 from .edition_elements.ab import Ab
 from .edition_elements.edition import Edition

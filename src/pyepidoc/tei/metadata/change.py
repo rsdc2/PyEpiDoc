@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import datetime
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 
 
 class Change(TokenizableElement):

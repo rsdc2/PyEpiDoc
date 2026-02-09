@@ -1,5 +1,5 @@
 from lxml.etree import _Element
-from ..edition_element import TokenizableElement
+from ..tokenizable_element import TokenizableElement
 from ..utils import leiden_str_from_children, normalized_str_from_children
 
 from .expan import Expan

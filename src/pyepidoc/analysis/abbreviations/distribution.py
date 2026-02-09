@@ -4,7 +4,7 @@ an EpiDoc corpus
 """
 from typing import Iterable, Callable
 from pyepidoc import EpiDocCorpus
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.edition_elements.expan import Expan
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.epidoc.dom import lang

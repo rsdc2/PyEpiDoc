@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from typing import Optional
 
 class Am(TokenizableElement):    

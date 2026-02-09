@@ -1,5 +1,5 @@
 from pyepidoc.shared.namespaces import XMLNS
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 
 
 class TextPart(TokenizableElement):

@@ -772,17 +772,18 @@ class XmlElement(Showable):
         self._e.attrib.pop(name_with_ns)
         return self
 
+    def remove_child_elements(self) -> XmlElement:
+        for child in self.child_elements:
+            self._e.remove(child._e)        
+        return self
+
     def remove_children(self) -> XmlElement:
         """
         Remove all children, including text, 
         but keep all other properties the same
         """
-
-        for child in self.child_elements:
-            self._e.remove(child._e)
-        
-        self.text = ""
-
+        self.remove_child_elements()
+        self.text = None
         return self
 
     @property
@@ -841,17 +842,14 @@ class XmlElement(Showable):
         return self._e.tail
 
     @tail.setter
-    def tail(self, value: str):
+    def tail(self, value: str | None):
         self._e.tail = value    # type: ignore
 
     @property
-    def text(self) -> str:
+    def text(self) -> str | None:
         """
-        Return the text contents of the element. Returns an empty string if there is no text.
-        """
-        if self._e.text is None:
-            return ''
-            
+        Return the text contents of the element. Returns None if there is no text.
+        """ 
         return self._e.text
 
     @text.setter
@@ -1004,7 +1002,7 @@ class XmlComment(XmlElement):
     
     @property
     def localname(self) -> str:
-        return "#comment"
+        return 'Comment'
 
 XmlNode = XmlText | XmlElement | XmlComment | ProcessingInstruction
 

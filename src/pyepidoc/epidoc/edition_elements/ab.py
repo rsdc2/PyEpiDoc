@@ -3,7 +3,7 @@ from typing import Optional, Sequence
 from functools import reduce
 from itertools import chain
 
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from .textpart import TextPart
 from pyepidoc.epidoc.token import Token
 from .expan import Expan

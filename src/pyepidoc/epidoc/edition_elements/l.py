@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional
 
 from lxml.etree import _Element 
-from ..edition_element import TokenizableElement
+from ..tokenizable_element import TokenizableElement
 from ...xml import XmlElement
 from .ab import Ab
 

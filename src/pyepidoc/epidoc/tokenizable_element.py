@@ -10,7 +10,7 @@ from itertools import chain
 
 from pyepidoc.shared.classes import Showable, SetRelation
 from pyepidoc.shared import update_set_inplace
-from pyepidoc.shared.string import to_lower, to_upper
+from pyepidoc.shared.string import to_lower
 from pyepidoc.xml.xml_element import XmlElement
 
 from copy import deepcopy
@@ -287,10 +287,10 @@ class TokenizableElement(TeiElement, Showable):
             return self
 
         if set(self._e.tail) == {' '}:
-            self._e.tail = ' '  # type: ignore
+            self._e.tail = ' '
             return self
         
-        self._e.tail = self._e.tail + ' '   # type: ignore
+        self._e.tail = self._e.tail + ' '
         return self
 
     def _can_subsume(self, other: TokenizableElement) -> bool:
@@ -502,7 +502,7 @@ class TokenizableElement(TeiElement, Showable):
         Unique computed element id based on hierarchical position in the XML document. 
         """
         
-        def _recfunc(acc: list[int], element: TokenizableElement | None) -> list[int]:
+        def _id_internal(acc: list[int], element: TokenizableElement | None) -> list[int]:
             if element is None:
                 return acc 
 
@@ -515,9 +515,9 @@ class TokenizableElement(TeiElement, Showable):
                 return acc
 
             new_list = [parent.index(element._e)]
-            return _recfunc(new_list + acc, element.parent)
+            return _id_internal(new_list + acc, element.parent)
 
-        return _recfunc([], self)
+        return _id_internal([], self)
 
     @cached_property
     def isic_document_id(self) -> str:
@@ -538,7 +538,7 @@ class TokenizableElement(TeiElement, Showable):
             raise TypeError("XPath result is not a list.")
 
         if len(xpath_result) > 0:
-            return xpath_result[0].text
+            return xpath_result[0].text or ''
 
         return ''
 
@@ -581,25 +581,25 @@ class TokenizableElement(TeiElement, Showable):
                 if child.tail is None:
                     return child
 
-                tail:str = child.tail
-                child.tail = re.sub(r'[\n\s\t]+', ' ', tail)    # type: ignore
+                tail = child.tail
+                child.tail = re.sub(r'[\n\s\t]+', ' ', tail)    
                 return child
 
             def remove_newlines_from_text(child: XmlElement) -> XmlElement:
                 if child.text is None:
                     return child
 
-                text:str = child.text
-                child.text = re.sub(r'[\n\s\t]+', ' ', text) # type: ignore
+                text = child.text
+                child.text = re.sub(r'[\n\s\t]+', ' ', text) 
                 return child
 
             e_copy = deepcopy(e)
             children = [child.deepcopy() for child in e.child_elements]
             
-            e_copy.remove_children()
+            e_copy.remove_child_elements()
 
-            children_with_new_tails = map(remove_newlines_from_tail, children)    
-            children_with_new_text = map(remove_newlines_from_text, children_with_new_tails)
+            children_with_new_tails = [remove_newlines_from_tail(child) for child in children]    
+            children_with_new_text = [remove_newlines_from_text(child) for child in  children_with_new_tails]
 
             for child in children_with_new_text:
                 e_copy.append_node(child)
@@ -645,9 +645,9 @@ class TokenizableElement(TeiElement, Showable):
             elif edition_element._e.tag.name in SubatomicTagType.values():
                 return [tokenize_subatomic_tags(subelement=e_copy)]
 
-            elif edition_element._e.tag.name == "Comment":
+            elif edition_element._e.tag.name == 'Comment':
                 comment = deepcopy(edition_element.e)
-                comment.tail = ""   # type: ignore
+                comment.tail = '' 
 
                 return [TokenizableElement(comment)]
 
@@ -754,7 +754,7 @@ class TokenizableElement(TeiElement, Showable):
                 if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
                     if next_elem._e.attrs.get('break') == 'no':
                         return True
-                if next_elem._e.tag.name == "Comment":
+                if next_elem._e.tag.name == 'Comment':
                     return True
 
             return False
@@ -817,7 +817,7 @@ class TokenizableElement(TeiElement, Showable):
 
         if self._e.tag.name in AtomicNonTokenType.values():
             _e = self._e.deepcopy()
-            _e.tail = None  # type: ignore
+            _e.tail = None
             return TokenizableElement(_e)
         
         return None
@@ -857,7 +857,7 @@ class TokenizableElement(TeiElement, Showable):
 
         return self._e.xpath(
             'preceding::node()[ancestor::x:ab]', 
-            namespaces={"x": TEINS}
+            namespaces={'x': TEINS}
         )
 
     @property
@@ -871,7 +871,7 @@ class TokenizableElement(TeiElement, Showable):
 
         return self._e.xpath(
             'preceding::node()[ancestor::x:div[@type="edition"]]', 
-            namespaces={"x": TEINS}
+            namespaces={'x': TEINS}
         )
 
     @property
@@ -887,10 +887,10 @@ class TokenizableElement(TeiElement, Showable):
 
         return self._e.xpath(
             'preceding::*[ancestor::x:div[@type="edition"]]', 
-            namespaces={"x": TEINS}
+            namespaces={'x': TEINS}
         ) + self._e.xpath(
             'ancestor::*[ancestor::x:div[@type="edition"]]', 
-            namespaces={"x": TEINS}
+            namespaces={'x': TEINS}
         ) 
 
     @property
@@ -914,7 +914,9 @@ class TokenizableElement(TeiElement, Showable):
 
                 if len(child.child_elements) > 0:
                     child = _remove_whitespace(child) 
-
+            
+            if elem.text is None:
+                return elem
             elem.text = elem.text.strip()
             return elem
 
@@ -931,7 +933,7 @@ class TokenizableElement(TeiElement, Showable):
         if self._e.localname == 'lb' and self.get_attr('break') == 'no':
             return False
         
-        if self._e.localname == "Commment":
+        if self._e.localname == 'Comment':
             return False
 
         last_child = last(list(self.child_elems))

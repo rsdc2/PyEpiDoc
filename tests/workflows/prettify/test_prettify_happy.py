@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pyepidoc.shared.enums import DoNotPrettifyChildren
 from pyepidoc.epidoc.epidoc import EpiDoc
-from pyepidoc.epidoc.edition_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.edition_elements.edition import Ab
 from pyepidoc.xml.xml_element import XmlElement
