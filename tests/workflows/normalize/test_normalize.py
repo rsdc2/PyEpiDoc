@@ -28,9 +28,9 @@ def test_w_normalization(inpt: tuple[str, str]):
 
     # Act 
     try:
-        w = W(elem.descendant_elements_by_local_name('w')[0].e)
+        w = W(elem.descendant_elements_by_local_name('w')[0])
     except IndexError:
-        w = W(elem.e)
+        w = W(elem)
 
     # Assert
     assert w.normalized_form == normalized_form
@@ -58,7 +58,7 @@ def test_token_normalization(inpt: tuple[str, str]):
     elem = XmlElement.from_str(xml_str)
     
     # Act
-    token = Token(elem._e)
+    token = Token(elem)
     
     # Assert
     assert token.normalized_form == normalized_form
@@ -76,7 +76,7 @@ def test_representable_normalization(inpt: tuple[str, str]):
     elem = XmlElement.from_str(xml_str)
     
     # Act
-    representable = RepresentableElement(elem._e)
+    representable = RepresentableElement(elem)
 
     # Assert
     assert representable.normalized_form == normalized_form
