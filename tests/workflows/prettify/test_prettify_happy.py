@@ -135,8 +135,8 @@ def test_prettify_fragment(ugly: str, benchmark: str, _: str):
     prettified = ugly_xml.prettify_element_with_pyepidoc(' ', 4, DoNotPrettifyChildren.values())
 
     # Assert
-    actual = prettified.xml_byte_str.strip()
-    expected = benchmark_xml.xml_byte_str.strip()
+    actual = prettified.to_bytes().strip()
+    expected = benchmark_xml.to_bytes().strip()
     if not actual == expected:
         # breakpoint()
         pass

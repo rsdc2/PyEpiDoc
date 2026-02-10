@@ -202,7 +202,7 @@ class TokenizableElement(TeiElement, Showable):
                 if not self.right_bound or first_child._e.tag.name in AlwaysSubsumable:
                     if self._can_subsume(first_child):
 
-                        for child in other_e.children:
+                        for child in other_e.child_elements:
                             self_e.append_node(child)
                         return [TokenizableElement(self_e, other._final_space)]
 
@@ -276,10 +276,7 @@ class TokenizableElement(TeiElement, Showable):
         Appends a space to the element in place.
         """
 
-        if self._e is None:
-            return self
-
-        if self._e.next_sibling is None:
+        if self._e.next_element is None:
             return self
 
         if self._e.tail is None:
@@ -779,8 +776,9 @@ class TokenizableElement(TeiElement, Showable):
         """
         Finds the next non-comment sibling |EpiDocElement|.
         """
-        if isinstance(self._e.next_sibling, XmlElement):
-            return TokenizableElement(self._e.next_sibling)
+        next_sibling_element = self._e.next_element
+        if isinstance(next_sibling_element, XmlElement):
+            return TokenizableElement(next_sibling_element)
 
         return None
 
@@ -1448,7 +1446,7 @@ class TokenizableElement(TeiElement, Showable):
                 elif localname in SubatomicTagType.values(): # e.g. <expan>, <choice>, <hi>
                     if localname in CompoundTokenType.values(): # this is intended for <hi>, which is also a compound token
                         tokenized = tokenize_subatomic_tags(e_without_tail)
-                        if TokenizableElement(parent_copy)._e.children == []:
+                        if TokenizableElement(parent_copy)._e.child_elements == []:
                             parent_copy.append_node(tokenized._e)
 
                         elif tokenized._e.last_child is None:

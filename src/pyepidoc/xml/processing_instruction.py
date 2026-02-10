@@ -24,6 +24,10 @@ class ProcessingInstruction:
             return None
 
         raise TypeError(f"Previous element is of type {type(_prev)}.")
+    
+    # @property
+    # def previous_node(self) -> XmlNode | None:
+    #     return xml_node()
 
     @property
     def text(self) -> str:

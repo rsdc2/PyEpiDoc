@@ -211,10 +211,6 @@ class XmlElement(Showable):
     @property
     def child_nodes(self) -> list[XmlNode]:
         return [child for child in self.xpath('child::node()')]
-    
-    @property
-    def children(self) -> Sequence[XmlElement]:
-        return self.child_elements
 
     @staticmethod
     def _compile_attribs(attribs: Optional[dict[str, str]]) -> str:
@@ -611,14 +607,21 @@ class XmlElement(Showable):
         return ns.remove_ns(self._e.tag)
 
     @property
-    def next_sibling(self) -> XmlElement | None:
+    def next_node(self) -> XmlNode | None:
+        next_element = self._e.getnext()
+        if next_element is None:
+            return None
+        return xml_node(next_element)
+    
+    @property
+    def next_element(self) -> XmlElement | None:
         next_element = self._e.getnext()
         if next_element is None:
             return None
         return XmlElement(next_element)
 
     @property
-    def next_siblings(self) -> list[XmlElement]:
+    def next_elements(self) -> list[XmlElement]:
 
         """
         :return: next sibling |XmlElement|s, excluding text nodes
@@ -653,10 +656,10 @@ class XmlElement(Showable):
 
     @property
     def previous_elements(self) -> list[XmlElement]:
-        return [sib for sib in self.previous_siblings if isinstance(sib, XmlElement)]
+        return [sib for sib in self.previous_nodes if isinstance(sib, XmlElement)]
 
     @property
-    def previous_sibling(self) -> XmlNode | None:
+    def previous_node(self) -> XmlNode | None:
         """
         Return the previous sibling node.
         """
@@ -673,7 +676,7 @@ class XmlElement(Showable):
         raise TypeError(f"Previous element is of type {type(_prev)}.")
 
     @property 
-    def previous_siblings(self) -> List[XmlNode]:
+    def previous_nodes(self) -> List[XmlNode]:
         """
         Returns previous sibling non-text elements
         """
@@ -693,11 +696,13 @@ class XmlElement(Showable):
         if exclude is None: 
             exclude = []
 
-        elements_and_comments = [node for node in element.descendant_nodes
-                                 if isinstance(node, (XmlElement, XmlComment))]
+        descendants = [node for node in element.descendant_nodes
+                        if type(node) is XmlComment or type(node) is XmlElement]
+
+        descendants_incl_self = [element] + descendants
 
         # Iterate through descendant elements (incl. comments)
-        for desc in [element] + elements_and_comments: 
+        for desc in descendants_incl_self: 
 
             # Don't do anything to descdendant nodes containing @xml:space = "preserve"
             if desc.xmlspace_preserve_in_ancestors:
@@ -708,21 +713,27 @@ class XmlElement(Showable):
                 continue
 
             # Do not prettify if the next sibling is a comment
-            if isinstance(desc._e.getnext(), _Comment):
+            if type(desc.next_node) is XmlComment:
+                continue
+
+            if type(desc) is XmlComment and desc.next_node is None:
                 continue
             
-            # Do not prettify a comment if its siblings are only 
-            # comments
-            if isinstance(desc._e, _Comment) and \
+            # Do not prettify a comment if its siblings are only comments
+            if type(desc) is XmlComment and \
                 desc.parent is not None and \
                 len(desc.parent.child_comments) == len(desc.parent.child_nodes):
+                continue
+
+            # Do not prettify if descendant nodes of the node are only comments
+            if all([type(n) is XmlComment for n in desc.descendant_nodes]) and len(desc.descendant_nodes) > 0:
                 continue
 
             # Only insert a new line and tab as first child if there are 
             # child elements and the first child is not a comment
             if len(desc.child_elements) > 0 and \
                 desc.localname not in exclude and \
-                type(desc.children[0].e) is not _Comment:
+                type(desc.child_nodes[0]) is not XmlComment:
                 
                 desc.text = '\n' + \
                     (desc.ancestor_count + 1) * multiplier * space_unit + \
@@ -865,7 +876,7 @@ class XmlElement(Showable):
         pattern = r'[\t\s\n]+'
         return re.sub(pattern, ' ', self.text_desc)
     
-    def to_bytes(self, xml_declaration: bool = False, pretty_print: bool=False) -> bytes:
+    def to_bytes(self, xml_declaration: bool=False, pretty_print: bool=False) -> bytes:
         bstr: bytes = etree.tostring(
             element_or_tree=self._e,
             xml_declaration=xml_declaration,
@@ -876,12 +887,12 @@ class XmlElement(Showable):
     @property
     def xml_byte_str(self) -> bytes:
         """
-        Return the element as a byte string
+        Return the element as a prettified byte string
         """
         return etree.tostring(
             self._e, 
-            method='xml', # type: ignore
-            pretty_print=True # type: ignore
+            method='xml',
+            pretty_print=True
         ) 
     
     @property
