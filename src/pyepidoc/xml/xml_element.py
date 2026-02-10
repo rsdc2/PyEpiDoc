@@ -31,7 +31,44 @@ from pyepidoc.xml.utils import descendant_text
 
 from .namespace import Namespace as ns
 from .xml_text import XmlText
-from .processing_instruction import ProcessingInstruction
+
+
+class ProcessingInstruction:
+    _e: _ProcessingInstruction
+
+    def __init__(self, processing_instruction: _ProcessingInstruction):
+        self._e = processing_instruction
+
+    @property
+    def localname(self) -> str:
+        raise NotImplementedError()
+    
+    @property
+    def previous_sibling(self) -> ProcessingInstruction | None:
+        """
+        Return the previous sibling node.
+        """
+        _prev = self._e.getprevious()
+        if isinstance(_prev, _ProcessingInstruction):
+            return ProcessingInstruction(_prev)
+        if _prev is None:
+            return None
+
+        raise TypeError(f"Previous element is of type {type(_prev)}.")
+    
+    @property
+    def previous_node(self) -> XmlNode | None:
+        if self._e.getprevious() is None:
+            return None
+        return xml_node(self._e.getprevious())
+
+    @property
+    def text(self) -> str:
+        raise NotImplementedError()
+    
+    def __str__(self) -> str:
+        return str(self._e)
+
 
 class XmlElement(Showable):    
 
@@ -664,11 +701,11 @@ class XmlElement(Showable):
         Return the previous sibling node.
         """
         _prev = self._e.getprevious()
-        if isinstance(_prev, _Comment):
+        if type(_prev) is XmlComment:
             return XmlComment(_prev)
-        if isinstance(_prev, _ProcessingInstruction):
+        if type(_prev) is _ProcessingInstruction:
             return ProcessingInstruction(_prev)
-        if isinstance(_prev, _Element):
+        if type(_prev) is _Element:
             return XmlElement(_prev)
         if _prev is None:
             return None
@@ -716,6 +753,7 @@ class XmlElement(Showable):
             if type(desc.next_node) is XmlComment:
                 continue
 
+            # Do not prettify if the element is a comment and there is no subsequent element 
             if type(desc) is XmlComment and desc.next_node is None:
                 continue
             
@@ -1015,16 +1053,17 @@ class XmlComment(XmlElement):
     def localname(self) -> str:
         return 'Comment'
 
+
 XmlNode = XmlText | XmlElement | XmlComment | ProcessingInstruction
 
 def xml_node(node: _Element | _ElementUnicodeResult | _Comment | _ProcessingInstruction) -> XmlNode:
-    if isinstance(node, _Comment):
+    if type(node) is _Comment:
         return XmlComment(node)
-    if isinstance(node, _ElementUnicodeResult):
+    if type(node) is _ElementUnicodeResult:
         return XmlText(node)
-    if isinstance(node, _Element):
+    if type(node) is _Element:
         return XmlElement(node)
-    if isinstance(node, _ProcessingInstruction):
+    if type(node) is _ProcessingInstruction:
         return ProcessingInstruction(node)
     raise TypeError(f'Node {node} is node of valid type: '
                     'expected _Element, _ElementUnicodeResult, _Comment or _ProcessingInstruction ' \

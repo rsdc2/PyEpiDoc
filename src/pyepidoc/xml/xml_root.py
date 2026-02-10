@@ -21,8 +21,7 @@ from lxml.etree import (
 )
 
 from pyepidoc.xml.xml_element import XmlElement
-from .xml_element import XmlElement, XmlNode, XmlText
-from .processing_instruction import ProcessingInstruction
+from .xml_element import XmlElement, XmlNode, XmlText, ProcessingInstruction
 from .errors import handle_xmlsyntaxerror
 
 class XmlRoot:  
