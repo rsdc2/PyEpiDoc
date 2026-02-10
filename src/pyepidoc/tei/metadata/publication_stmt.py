@@ -1,10 +1,10 @@
 from __future__ import annotations
-from pyepidoc.epidoc.tokenizable_element import TokenizableElement
+from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.shared.iterables import maxone
 from .idno import Idno
 
 
-class PublicationStmt(TokenizableElement):
+class PublicationStmt(TeiElement):
     """
     The <publicationStmt> node, including collections of
     <publicationStmt>
@@ -27,7 +27,7 @@ class PublicationStmt(TokenizableElement):
     def set_idno_by_type(self, idno_type: str, value: str) -> None:
         idno = self.get_idno_by_type(idno_type)
         if idno is None:
-            idno_element = TokenizableElement.create('idno', {'type': idno_type})
+            idno_element = TeiElement.create('idno', {'type': idno_type})
             self.append_idno(Idno(idno_element))
             return
         idno.value = value
