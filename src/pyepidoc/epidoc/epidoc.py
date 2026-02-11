@@ -440,7 +440,8 @@ class EpiDoc(TeiDoc):
     def id(self) -> str:
 
         """
-        The document ID, e.g. ISic000001
+        The document ID, e.g. ISic000001. 
+        If `<authority/>` is not set, this will return 'None'.
         """
 
         def get_idno_elems(s: str) -> list[TeiElement]:
@@ -923,13 +924,6 @@ class EpiDoc(TeiDoc):
         Print translation text to stdout
         """
         print(self.translation_text)
-
-    @property
-    def publication_stmt(self) -> Optional[TokenizableElement]:
-        publication_stmt = maxone(self.get_desc('publicationStmt'))
-        if publication_stmt is None:
-            return None
-        return TokenizableElement(publication_stmt)
     
     @property
     def _pyepidoc_module_path(self) -> Path:

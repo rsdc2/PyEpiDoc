@@ -1,26 +1,19 @@
 from __future__ import annotations
-from typing import (
-    Optional, 
-    Literal, 
-    overload
-)
-
-from lxml import etree
-from lxml.etree import _Element
+from typing import Optional, Literal, overload
 
 from pathlib import Path
-from itertools import chain
 import inspect
 import io
 from io import BytesIO
 
 import pyepidoc
-from pyepidoc.xml.xml_root import XmlRoot
+
 from pyepidoc.shared import maxone, head, remove_none
 from pyepidoc.shared.namespaces import TEINS
-
-from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.enums import SpaceUnit, DoNotPrettifyChildren
+
+from pyepidoc.xml.xml_root import XmlRoot
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.tei_text import Text
 
@@ -31,6 +24,7 @@ from .metadata.resp_stmt import RespStmt
 from .metadata.file_desc import FileDesc
 from .metadata.tei_header import TeiHeader
 from .metadata.change import Change
+from .metadata.publication_stmt import PublicationStmt
 
 
 class TeiDoc:
@@ -131,19 +125,10 @@ class TeiDoc:
         return True
 
     @property
-    def authority(self) -> Optional[str]:
+    def authority(self) -> str | None:
         if self.publication_stmt is None:
             return None
-
-        elem = maxone(self
-            .publication_stmt
-            .get_desc('authority'), 
-        )
-
-        if elem is None:
-            return None
-        
-        return elem._e.text
+        return self.publication_stmt.authority
 
     @property
     def body(self) -> TeiBody:
@@ -561,11 +546,11 @@ class TeiDoc:
         print(self.translation_text)
 
     @property
-    def publication_stmt(self) -> Optional[TeiElement]:
-        publication_stmt = maxone(self._root.root.get_desc('publicationStmt', None, TEINS))
+    def publication_stmt(self) -> PublicationStmt | None:
+        publication_stmt = maxone(self._root.root.get_desc('publicationStmt', namespace=TEINS))
         if publication_stmt is None:
             return None
-        return TeiElement(publication_stmt)
+        return PublicationStmt(publication_stmt)
     
     @property
     def _pyepidoc_module_path(self) -> Path:

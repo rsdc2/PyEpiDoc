@@ -248,6 +248,7 @@ def test_set_document_id():
 
     # Act
     doc.tei_header.file_desc.publication_stmt.set_idno_by_type('filename', 'ISic000001')
+    doc.tei_header.file_desc.publication_stmt.authority = 'I.Sicily'
 
     # Assert
     assert doc.id == 'ISic000001'
