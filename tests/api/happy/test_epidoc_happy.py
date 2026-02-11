@@ -245,10 +245,11 @@ def test_can_get_title_stmt():
 def test_set_document_id():
     # Arrange
     doc = EpiDoc('templates/empty_template.xml')
+    # We have to set the authority value to get the id value out
+    doc.tei_header.file_desc.publication_stmt.authority = 'I.Sicily'
 
     # Act
     doc.tei_header.file_desc.publication_stmt.set_idno_by_type('filename', 'ISic000001')
-    doc.tei_header.file_desc.publication_stmt.authority = 'I.Sicily'
 
     # Assert
     assert doc.id == 'ISic000001'
