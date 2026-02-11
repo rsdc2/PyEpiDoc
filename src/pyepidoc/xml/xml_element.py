@@ -241,13 +241,16 @@ class XmlElement(Showable):
                 if elem.tag.name == localname]
 
     @property
+    def child_nodes(self) -> list[XmlNode]:
+        return [child for child in self.xpath('child::node()')]
+
+    @property
     def child_node_names(self) -> list[str]:
         children = self.child_nodes
         return [child.localname for child in children]
 
-    @property
-    def child_nodes(self) -> list[XmlNode]:
-        return [child for child in self.xpath('child::node()')]
+    def child_nodes_by_type(self, types: list[type]) -> list[XmlNode]:
+        return [child for child in self.child_nodes if type(child) in types]
 
     @staticmethod
     def _compile_attribs(attribs: Optional[dict[str, str]]) -> str:
@@ -760,7 +763,7 @@ class XmlElement(Showable):
             # Do not prettify a comment if its siblings are only comments
             if type(desc) is XmlComment and \
                 desc.parent is not None and \
-                len(desc.parent.child_comments) == len(desc.parent.child_nodes):
+                len(desc.parent.child_comments) == len(desc.parent.child_nodes_by_type([XmlElement, XmlComment])):
                 continue
 
             # Do not prettify if descendant nodes of the node are only comments
@@ -771,7 +774,7 @@ class XmlElement(Showable):
             # child elements and the first child is not a comment
             if len(desc.child_elements) > 0 and \
                 desc.localname not in exclude and \
-                type(desc.child_nodes[0]) is not XmlComment:
+                type(desc.child_nodes_by_type([XmlElement, XmlComment])[0]) is not XmlComment:
                 
                 desc.text = '\n' + \
                     (desc.ancestor_count + 1) * multiplier * space_unit + \
