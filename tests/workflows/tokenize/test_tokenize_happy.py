@@ -176,16 +176,16 @@ def test_tokenize_and_insert_ws_inside_named_entities(xml_pair: tuple[str, str])
 
 @pytest.mark.parametrize("tokenize_type", tests)
 def test_tokenize_special_cases(tokenize_type: str):
+    # Arrange
     if FILE_WRITE_MODE == 'file_object':
         tokenize_func = tokenize_epidoc_using_file_object
     else:
         tokenize_func = tokenize_epidoc
 
-    # Tokenize the files
-    tokenized_epidoc, tokenized_benchmark = \
-        tokenize_func(tokenize_type=tokenize_type)
+    # Act
+    tokenized_epidoc, tokenized_benchmark = tokenize_func(tokenize_type)
 
-    # Do the tests    
+    # Assert
     if [str(word) for word in tokenized_epidoc.tokens_no_nested] != [str(word) for word in tokenized_benchmark.tokens_no_nested]:
         assert False
     

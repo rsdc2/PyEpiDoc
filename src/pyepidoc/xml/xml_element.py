@@ -138,7 +138,6 @@ class XmlElement(Showable):
         return self.id_internal[-1] < other.id_internal[-1]
 
     def __repr__(self) -> str:
-        
         return f"XmlElement({self.tag}: '{self.text_desc_compressed_whitespace.strip()}{self.tail.strip() if self.tail is not None else ''}')"
 
     def __str__(self) -> str:
@@ -327,7 +326,16 @@ class XmlElement(Showable):
         Does not incude the element itself.
         """
         return [elem for elem in self.descendant_elements
-                if elem.tag.name == localname]
+                if elem.localname == localname]
+
+    def descendant_elements_by_local_names(self, localnames: list[str]) -> list[XmlElement]:
+        """
+        Return a list of all the descendant elements
+        with the localname matching `localname`.
+        Does not incude the element itself.
+        """
+        return [elem for elem in self.descendant_elements
+                if elem.localname in localnames]
 
     @property
     def descendant_element_names(self) -> list[str]:
@@ -494,12 +502,12 @@ class XmlElement(Showable):
         return self._e.attrib.get(ns().give_ns(attribname, namespace), None)
 
     def get_desc(
-            self, 
-            elem_names: Union[list[str], str], 
-            attribs: Optional[dict[str, str]]=None,
-            ns_prefix: str='ns:',
-            namespace: str=''
-        ) -> list[XmlElement]:
+                self, 
+                elem_names: Union[list[str], str], 
+                attribs: Optional[dict[str, str]]=None,
+                ns_prefix: str='ns:',
+                namespace: str=''
+            ) -> list[XmlElement]:
 
         """
         Return all descendant elements with the names 
@@ -701,10 +709,10 @@ class XmlElement(Showable):
     @property
     def previous_node(self) -> XmlNode | None:
         """
-        Return the previous sibling node.
+        Return the previous sibling node (not text)
         """
         _prev = self._e.getprevious()
-        if type(_prev) is XmlComment:
+        if type(_prev) is _Comment:
             return XmlComment(_prev)
         if type(_prev) is _ProcessingInstruction:
             return ProcessingInstruction(_prev)
@@ -895,7 +903,7 @@ class XmlElement(Showable):
 
     @tail.setter
     def tail(self, value: str | None):
-        self._e.tail = value    # type: ignore
+        self._e.tail = value
 
     @property
     def text(self) -> str | None:

@@ -168,3 +168,9 @@ class TeiElement:
             return []
         
         return []
+    
+    def __repr__(self) -> str:
+        return f"TeiElement({self._e.tag}: '{self._e.text_desc_compressed_whitespace.strip()}{self._e.tail.strip() if self._e.tail is not None else ''}')"
+
+    def __str__(self) -> str:
+        return self.__repr__()
