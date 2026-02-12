@@ -697,10 +697,10 @@ class XmlElement(Showable):
 
     @property
     def previous_element(self) -> XmlElement | None:
-        previous_elements = self.previous_elements
-        if len(previous_elements) == 0:
+        prev = self._e.getprevious()
+        if prev is None:
             return None
-        return self.previous_elements[0]
+        return XmlElement(prev)
 
     @property
     def previous_elements(self) -> list[XmlElement]:

@@ -120,16 +120,15 @@ def prettify(
         text_with_whitespace = ''.join([text_without_whitespace, '\n', spaceunit * number * (element.depth + 1)])
         element.text = text_with_whitespace
 
-    def prettify_lb(lb: XmlElement) -> None:
-        first_parent = lb.get_first_parent_by_name(['lg', 'ab', 'div'])
+    def prettify_lb(previous: XmlElement) -> None:
 
-        if first_parent is None:
+        if previous is None:
             return
 
-        lb.tail = ''.join([
-            default_str(lb.tail).strip(),
+        previous.tail = ''.join([
+            default_str(previous.tail).strip(),
             '\n',
-            (spaceunit * number) * (first_parent.depth + 1)
+            (spaceunit * number) * (previous.depth + 1)
         ])
 
     def prettify_prev(element: XmlElement) -> None:
@@ -163,8 +162,9 @@ def prettify(
             
     # Do the pretty-printing
     for tag in newlinetags:
-        desc_elems = edition.get_desc(elem_names=[tag])
-
+        desc_elems = [TeiElement(elem) for elem in edition._e.descendant_elements_by_local_name(tag)]
+        if tag == 'lb':
+            pass
         if tag in ['ab', 'lg']:
             for ab in desc_elems:
                 prettify_first_child(ab._e)
@@ -187,7 +187,8 @@ def prettify(
                 prettify_first_child(parent)
 
         desc_tei_elems = edition.get_desc(['ab', 'l', 'lg' 'lb', 'div'])
-        xml_elems = [elem._e for elem in desc_tei_elems]
+        lbs = [TeiElement(elem) for elem in edition._e.descendant_elements_by_local_name('lb')]
+        xml_elems = [elem._e for elem in desc_tei_elems + lbs]
         prettify_closing_tags(xml_elems)
         
     return edition
