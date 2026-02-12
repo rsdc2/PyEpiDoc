@@ -52,10 +52,10 @@ from pyepidoc.shared.enums import (
 
 
 def prettify(
-    spaceunit: str, 
-    number: int, 
-    edition: Edition
-) -> Edition:
+        spaceunit: str, 
+        number: int, 
+        edition: Edition
+    ) -> Edition:
 
     """
     <div type="edition"> elements generally set xml:space="preserve".
@@ -85,8 +85,7 @@ def prettify(
             return element.depth + 1
         raise ValueError("Cannot find multiplier for this element.")
 
-    def _get_previous_siblings(
-            elements: Sequence[XmlElement]) -> Sequence[XmlElement]:
+    def _get_previous_siblings(elements: Sequence[XmlElement]) -> Sequence[XmlElement]:
         
         """
         Returns a list containing each element that precedes another 
@@ -117,12 +116,9 @@ def prettify(
         return parents
 
     def prettify_first_child(element: XmlElement) -> None:
-        element.text = ''.join([
-            default_str(element.text).strip(),
-            "\n",
-            spaceunit * number * (element.depth + 1)
-        ]
-    )
+        text_without_whitespace = default_str(element.text).strip()
+        text_with_whitespace = ''.join([text_without_whitespace, '\n', spaceunit * number * (element.depth + 1)])
+        element.text = text_with_whitespace
 
     def prettify_lb(lb: XmlElement) -> None:
         first_parent = lb.get_first_parent_by_name(['lg', 'ab', 'div'])
@@ -132,14 +128,14 @@ def prettify(
 
         lb.tail = ''.join([
             default_str(lb.tail).strip(),
-            "\n",
+            '\n',
             (spaceunit * number) * (first_parent.depth + 1)
         ])
 
     def prettify_prev(element: XmlElement) -> None:
         element.tail = ''.join([
             default_str(element.tail).strip(),
-            "\n",
+            '\n',
             (spaceunit * number) * element.depth
         ])
 
@@ -150,7 +146,7 @@ def prettify(
 
         element.text = ''.join([
             default_str(element.text).strip(),
-            "\n",
+            '\n',
             (spaceunit * number) * (first_parent.depth + 1)
         ])
 
@@ -161,7 +157,7 @@ def prettify(
             lastchild = element.child_elements[-1]
             lastchild.tail = ''.join([
                 default_str(lastchild.tail).strip(),
-                "\n",
+                '\n',
                 spaceunit * number * (_get_multiplier(element) - 1)
             ])
             
