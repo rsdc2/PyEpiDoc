@@ -53,7 +53,7 @@ from pyepidoc.shared.enums import (
 
 def prettify(
         spaceunit: str, 
-        number: int, 
+        number_of_spaceunits: int, 
         edition: Edition
     ) -> Edition:
 
@@ -117,25 +117,27 @@ def prettify(
 
     def prettify_first_child(element: XmlElement) -> None:
         text_without_whitespace = default_str(element.text).strip()
-        text_with_whitespace = ''.join([text_without_whitespace, '\n', spaceunit * number * (element.depth + 1)])
+        text_with_whitespace = ''.join([text_without_whitespace, '\n', spaceunit * number_of_spaceunits * (element.depth + 1)])
         element.text = text_with_whitespace
 
-    def prettify_lb(previous: XmlElement) -> None:
+    def prettify_lb(previous_element: XmlElement) -> None:
 
-        if previous is None:
+        if previous_element is None:
             return
 
-        previous.tail = ''.join([
-            default_str(previous.tail).strip(),
+        ab = previous_element.get_first_parent_by_name(['ab'])
+        depth_multiplier = 1 if ab is None else ab.depth + 1
+        previous_element.tail = ''.join([
+            default_str(previous_element.tail).strip(),
             '\n',
-            (spaceunit * number) * (previous.depth + 1)
+            spaceunit * number_of_spaceunits * depth_multiplier
         ])
 
     def prettify_prev(element: XmlElement) -> None:
         element.tail = ''.join([
             default_str(element.tail).strip(),
             '\n',
-            (spaceunit * number) * element.depth
+            (spaceunit * number_of_spaceunits) * element.depth
         ])
 
     def prettify_parent_of_lb(element: XmlElement) -> None:
@@ -146,7 +148,7 @@ def prettify(
         element.text = ''.join([
             default_str(element.text).strip(),
             '\n',
-            (spaceunit * number) * (first_parent.depth + 1)
+            (spaceunit * number_of_spaceunits) * (first_parent.depth + 1)
         ])
 
     def prettify_closing_tags(elements: Sequence[XmlElement]) -> None:
@@ -157,7 +159,7 @@ def prettify(
             lastchild.tail = ''.join([
                 default_str(lastchild.tail).strip(),
                 '\n',
-                spaceunit * number * (_get_multiplier(element) - 1)
+                spaceunit * number_of_spaceunits * (_get_multiplier(element) - 1)
             ])
             
     # Do the pretty-printing
@@ -173,7 +175,7 @@ def prettify(
 
         for prev in prevs:
             if tag == 'lb':
-                # I.e. prettify the element immediately before the <lb>
+                # I.e. modify the tail of the element immediately before the <lb>
                 prettify_lb(prev) 
             else:
                 prettify_prev(prev)
@@ -582,7 +584,7 @@ class Edition(TokenizableElement):
         """
         prettify(
             spaceunit=spaceunit, 
-            number=number, 
+            number_of_spaceunits=number, 
             edition=self
         )
         return self

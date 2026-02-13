@@ -1016,6 +1016,21 @@ class TokenizableElement(TeiElement, Showable):
 
         for elem in self.space_separated_elements:            
             elem.append_space()
+        self.space_comments()
+
+    def space_comments(self) -> None:
+        for comment in self._e.descendant_comments:
+            previous_element = comment.previous_element
+            if previous_element is None:
+                if comment.parent.text is None:
+                    comment.parent.text = ' '
+                else:
+                    comment.parent.text += ' '
+            if previous_element is not None:
+                if previous_element.tail is None:
+                    previous_element.tail = ' '
+                else:
+                    previous_element.tail += ' '
 
     @property
     def space_separated_elements(self) -> list[TokenizableElement]:
@@ -1031,7 +1046,7 @@ class TokenizableElement(TeiElement, Showable):
         return [elem for elem in elems 
                 if elem.find_next_sibling() not in self.no_space_before]
 
-    def _is_subsumable_by(self, other:TokenizableElement) -> bool:
+    def _is_subsumable_by(self, other: TokenizableElement) -> bool:
         if type(other) is not TokenizableElement: 
             return False
 

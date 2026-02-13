@@ -305,8 +305,8 @@ class XmlElement(Showable):
             if type(parent.parent) is XmlElement])
 
     @property
-    def descendant_comments(self) -> Sequence[_Comment]:        
-        return [item for item in self._e.iterdescendants(None)
+    def descendant_comments(self) -> Sequence[XmlComment]:        
+        return [XmlComment(item) for item in self._e.iterdescendants(None)
                  if isinstance(item, _Comment)]
 
     @property
@@ -561,7 +561,7 @@ class XmlElement(Showable):
             ancestor_names:list[str]) -> Sequence[XmlElement]:
         
         return [ancestor for ancestor in self.get_ancestors_incl_self()
-            if ancestor.tag.name in ancestor_names]
+            if ancestor.localname in ancestor_names]
     
     def get_previous_sibling_by_name(
             self,
