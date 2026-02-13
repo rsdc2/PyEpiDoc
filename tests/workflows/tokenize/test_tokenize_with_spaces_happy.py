@@ -91,7 +91,7 @@ def test_tokenize_epidoc_fragments_with_spaces(xml_pair: tuple[str, str]):
     if tokenized is None:
         return False
 
-    tokenized.space_tokens()    
+    tokenized.space_tokens_and_comments()    
     benchmark_strs = [t._e.to_bytes()
                       for t in tokenized_benchmark.tokens]
     

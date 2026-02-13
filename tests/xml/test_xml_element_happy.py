@@ -17,7 +17,7 @@ def test_previous_sibling(xml_str: str, next_id: str, expected_previous_id: str 
     next_elem = list(filter(lambda e: e.get_attr('n') == next_id, ab.descendant_elements))[0]
 
     # Act
-    previous_elem = next_elem.previous_node
+    previous_elem = next_elem.previous_non_text_node
 
     # Assert
     if previous_elem is None:

@@ -57,7 +57,7 @@ class ProcessingInstruction:
         raise TypeError(f"Previous element is of type {type(_prev)}.")
     
     @property
-    def previous_node(self) -> XmlNode | None:
+    def previous_non_text_node(self) -> XmlNode | None:
         if self._e.getprevious() is None:
             return None
         return xml_node(self._e.getprevious())
@@ -704,10 +704,10 @@ class XmlElement(Showable):
 
     @property
     def previous_elements(self) -> list[XmlElement]:
-        return [sib for sib in self.previous_nodes if isinstance(sib, XmlElement)]
+        return [sib for sib in self.previous_non_text_nodes if isinstance(sib, XmlElement)]
 
     @property
-    def previous_node(self) -> XmlNode | None:
+    def previous_non_text_node(self) -> XmlNode | None:
         """
         Return the previous sibling node (not text)
         """
@@ -724,19 +724,21 @@ class XmlElement(Showable):
         raise TypeError(f"Previous element is of type {type(_prev)}.")
 
     @property 
-    def previous_nodes(self) -> List[XmlNode]:
+    def previous_non_text_nodes(self) -> List[XmlNode]:
         """
         Returns previous sibling non-text elements
         """
         return self.xpath('preceding-sibling::*')
     
     def prettify_element_with_pyepidoc(
-            element: XmlElement,
+            self,
             space_unit: str,
             multiplier: int = 4,
             exclude: list[str] | None = None) -> XmlElement:
         """
-        Prettify a BaseElement and all descendant elements
+        Prettify this and all descendant elements. 
+        This method will not prettify any element contained 
+        in an element with `@xml:space=preserve`
 
         :param exclude: list of element names whose children 
             should not be prettified
@@ -744,10 +746,10 @@ class XmlElement(Showable):
         if exclude is None: 
             exclude = []
 
-        descendants = [node for node in element.descendant_nodes
+        descendants = [node for node in self.descendant_nodes
                         if type(node) is XmlComment or type(node) is XmlElement]
 
-        descendants_incl_self = [element] + descendants
+        descendants_incl_self = [self] + descendants
 
         # Iterate through descendant elements (incl. comments)
         for desc in descendants_incl_self: 
@@ -808,7 +810,7 @@ class XmlElement(Showable):
                 else:
                     desc.tail = desc.tail.strip() + tail_to_append
 
-        return element
+        return self
 
     def remove_attr(
             self, 

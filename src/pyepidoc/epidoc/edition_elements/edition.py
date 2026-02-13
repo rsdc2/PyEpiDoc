@@ -109,7 +109,7 @@ def prettify(
         parents: list[XmlElement] = [] 
 
         for element in elements:
-            if element.previous_node is None: # Explain why only gives parents if previous sibling is None
+            if element.previous_non_text_node is None: # Explain why only gives parents if previous sibling is None
                 if element.parent is not None:
                     parents.append(element.parent)
         

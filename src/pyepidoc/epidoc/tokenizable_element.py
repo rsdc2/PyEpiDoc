@@ -1004,9 +1004,8 @@ class TokenizableElement(TeiElement, Showable):
                 self.xml_id = ids.compress(id, base)
             else:
                 self.xml_id = id
-
     
-    def space_tokens(self) -> None:
+    def space_tokens_and_comments(self) -> None:
 
         """
         Separates tokens by spaces, as long as they should be separated by spaces
@@ -1022,10 +1021,11 @@ class TokenizableElement(TeiElement, Showable):
         for comment in self._e.descendant_comments:
             previous_element = comment.previous_element
             if previous_element is None:
-                if comment.parent.text is None:
-                    comment.parent.text = ' '
-                else:
-                    comment.parent.text += ' '
+                if comment.parent is not None:
+                    if comment.parent.text is None:
+                        comment.parent.text = ' '
+                    else:
+                        comment.parent.text += ' '
             if previous_element is not None:
                 if previous_element.tail is None:
                     previous_element.tail = ' '

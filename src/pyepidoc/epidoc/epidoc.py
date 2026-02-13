@@ -1019,9 +1019,9 @@ class EpiDoc(TeiDoc):
 
         return self.body.edition_by_subtype('simple-lemmatized')
 
-    def space_tokens(self) -> None:
+    def space_tokens_and_edition_comments(self) -> None:
         for edition in self.editions():
-            edition.space_tokens()
+            edition.space_tokens_and_comments()
 
     @property
     def supplied(self) -> list[XmlElement]:
@@ -1241,7 +1241,7 @@ class EpiDoc(TeiDoc):
             print(f'Did not tokenize {self.id} because already contains <w> elements.')
 
         if add_space_between_words:
-            self.space_tokens()
+            self.space_tokens_and_edition_comments()
         
         if convert_ws_to_names:
             self.convert_ws_to_names()

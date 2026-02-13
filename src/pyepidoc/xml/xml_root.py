@@ -204,7 +204,7 @@ class XmlRoot:
             acc: list[ProcessingInstruction], 
             e: XmlElement | ProcessingInstruction) -> list[ProcessingInstruction]:
 
-            previous = e.previous_node
+            previous = e.previous_non_text_node
 
             if previous is None:
                 return list(reversed(acc))

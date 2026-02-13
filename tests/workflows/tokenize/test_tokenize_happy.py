@@ -168,7 +168,7 @@ def test_tokenize_and_insert_ws_inside_named_entities(xml_pair: tuple[str, str])
     # Act
     edition.tokenize()
     edition.insert_ws_inside_named_entities()
-    edition.space_tokens()
+    edition.space_tokens_and_comments()
 
     # Assert
     assert edition._e.xml_str == expected_edition._e.xml_str
