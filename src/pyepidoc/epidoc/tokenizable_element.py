@@ -1010,7 +1010,7 @@ class TokenizableElement(TeiElement, Showable):
         """
         Separates tokens by spaces, as long as they should be separated by spaces
         and the following token is not among the tokens that should be separated
-        from previous by a space. Also puts a space before any comments in the edition text
+        from previous by a space. Also puts a space before any comments in the edition text.
         """
 
         for elem in self.space_separated_elements:            
