@@ -1,14 +1,10 @@
 from __future__ import annotations
-
-from lxml import etree
-from lxml.etree import _Element
-
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.iterables import head
-from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
+
 
 class RespStmt(TokenizableElement):
     """

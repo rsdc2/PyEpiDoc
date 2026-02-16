@@ -1,5 +1,3 @@
-from lxml.etree import _Element
-from pyepidoc import EpiDoc
 from pyepidoc.tei.metadata.resp_stmt import RespStmt
 
 

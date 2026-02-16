@@ -546,15 +546,14 @@ class Edition(TokenizableElement):
         return Division(lemmatizable, total)
 
     @property
-    def lgs(self) -> list[Ab]:
+    def lgs(self) -> list[Lg]:
         
         """
         Returns all the <ab> elements in an edition 
         as a |list| of |Lg|.
         """
 
-        return [Lg(element._e) 
-            for element in self.get_desc(['lg'])]
+        return [Lg(element._e) for element in self.get_desc(['lg'])]
 
     @property
     def local_ids(self) -> list[str | None]:

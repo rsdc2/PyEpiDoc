@@ -36,6 +36,7 @@ from .edition_elements.pers_name import PersName
 
 T = TypeVar('T')
 
+
 class EpiDocCorpus:
 
     """

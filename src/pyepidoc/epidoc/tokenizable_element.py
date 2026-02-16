@@ -93,7 +93,6 @@ def tokenize_subatomic_tags(subelement: XmlElement) -> TokenizableElement:
     return w
 
 
-
 class TokenizableElement(TeiElement, Showable):    
     """
     Provides services for EpiDoc edition elements, 

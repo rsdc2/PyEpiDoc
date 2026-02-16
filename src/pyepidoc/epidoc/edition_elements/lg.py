@@ -2,18 +2,19 @@ from __future__ import annotations
 
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.xml import XmlElement
-from .ab import Ab
+from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.epidoc.token_container import TokenContainer
 
 
-class Lg(Ab):
+class Lg(TokenContainer):
 
     """
     <lg> = line group (for poetic texts)
     """
 
-    def __init__(self, e: TokenizableElement | XmlElement):
+    def __init__(self, e: TeiElement | XmlElement):
 
-        if type(e) not in [TokenizableElement, XmlElement]:
+        if type(e) not in [TeiElement, XmlElement]:
             raise TypeError('e should be of type TokenizableElement or XmlElement.')
 
         if type(e) is TokenizableElement:

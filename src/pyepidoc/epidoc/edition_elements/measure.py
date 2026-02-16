@@ -1,14 +1,12 @@
-from lxml.etree import _Element
-
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
 from .w import W
+
 
 class Measure(W):
 
-    def __init__(self, e: _Element):
-        if not isinstance(e, _Element):
-            raise TypeError('e should be an instance of type _Element.')
-
-        self._e = e
+    def __init__(self, e: XmlElement | TeiElement):
+        super().__init__(e)
 
         if self._e.localname != 'measure':
-            raise TypeError('Element should be <measure>.')
+            raise TypeError(f'Element should be <w> not {self._e.localname}.')
