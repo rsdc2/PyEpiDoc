@@ -13,7 +13,7 @@ class L(Ab):
     <l> = line (for poetic(?) texts)
     """
 
-    def __init__(self, e:Optional[_Element | TokenizableElement | XmlElement]=None):
+    def __init__(self, e: Optional[_Element | TokenizableElement | XmlElement]=None):
 
         if type(e) not in [_Element, TokenizableElement, XmlElement] and e is not None:
             raise TypeError('e should be _Element or Element type, or None.')

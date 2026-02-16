@@ -4,8 +4,7 @@ from typing import Literal, cast
 import re
 
 from lxml.etree import _Element, _ElementUnicodeResult
-from lxml import etree
-from pyepidoc.xml.utils import localname, descendant_text
+from pyepidoc.xml.utils import localname
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.enums import (
     NonNormalized, 

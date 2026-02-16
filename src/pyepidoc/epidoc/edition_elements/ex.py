@@ -1,8 +1,6 @@
-from lxml.etree import _Element
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
-from pyepidoc.epidoc.utils import localname
 
 
 class Ex(TokenizableElement):
@@ -11,7 +9,7 @@ class Ex(TokenizableElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element | TokenizableElement | TeiElement | XmlElement):
+    def __init__(self, e: TokenizableElement | TeiElement | XmlElement):
 
         super().__init__(e)
 

@@ -1,8 +1,8 @@
-from lxml.etree import _Element
-from ..tokenizable_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.shared.enums import AtomicTokenType
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
+
 
 class G(TokenizableElement):
     """
@@ -10,7 +10,7 @@ class G(TokenizableElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element | TeiElement | XmlElement):
+    def __init__(self, e: TeiElement | XmlElement):
 
         super().__init__(e)
 

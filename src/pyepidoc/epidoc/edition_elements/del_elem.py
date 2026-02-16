@@ -1,7 +1,7 @@
-from lxml.etree import _Element
-from ..tokenizable_element import TokenizableElement
-from ..utils import leiden_str_from_children, normalized_str_from_children
-
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
+from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.tei.tei_element import TeiElement
 from .expan import Expan
 
 element_classes: dict[str, type] = {
@@ -14,15 +14,12 @@ class Del(TokenizableElement):
     Provides services for abbreviation expansions 
     given in <ex> elements.
     """
+    def __init__(self, e: XmlElement | TeiElement):
 
-    def __init__(self, e: _Element):
-        if type(e) is not _Element:
-            raise TypeError('e should be of type _Element.')
-
-        self._e = e
+        super().__init__(e)
 
         if self._e.localname != 'del':
-            raise TypeError('Element should be <supplied>.')
+            raise TypeError(f'Element should be <del> not {self._e.localname}.')
 
     @property
     def leiden_form(self) -> str:

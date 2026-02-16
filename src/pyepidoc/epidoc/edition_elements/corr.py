@@ -1,6 +1,5 @@
-from lxml.etree import _Element
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
-from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_str_from_children
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 
@@ -11,7 +10,7 @@ class Corr(TokenizableElement):
     given in <ex> elements.
     """
 
-    def __init__(self, e: _Element | TeiElement | XmlElement):
+    def __init__(self, e: TeiElement | XmlElement):
 
         super().__init__(e)
 

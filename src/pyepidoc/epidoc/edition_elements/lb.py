@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
-from typing import Optional, Union
-from lxml.etree import _Element 
+from typing import Optional
 
 
 class Lb(TokenizableElement):    
@@ -12,7 +11,7 @@ class Lb(TokenizableElement):
     Provides services for <lb> ('line break') elements.
     """
 
-    def __init__(self, e: _Element | TokenizableElement | XmlElement):
+    def __init__(self, e: TokenizableElement | XmlElement):
 
         super().__init__(e)
 

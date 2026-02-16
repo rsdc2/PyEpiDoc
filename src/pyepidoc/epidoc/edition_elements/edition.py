@@ -7,8 +7,6 @@ from itertools import chain
 from typing import Optional, Sequence, Literal
 import re
 
-from lxml.etree import _Element
-
 from pyepidoc.xml import XmlElement
 from pyepidoc.xml.utils import editionify
 from pyepidoc.shared.enums import NamedEntities
@@ -202,7 +200,7 @@ class Edition(TokenizableElement):
     Provides services for <div type="edition> elements.
     """
 
-    def __init__(self, e: _Element | TeiElement | XmlElement):
+    def __init__(self, e: TeiElement | XmlElement):
         super().__init__(e)
 
         if self._e.tag.name != 'div':

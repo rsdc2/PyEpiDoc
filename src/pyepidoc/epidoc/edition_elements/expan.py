@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Literal, cast
+from typing import Optional, cast
 from itertools import chain
 
 from lxml.etree import _Element
@@ -16,11 +16,8 @@ from .abbr import Abbr
 from .am import Am
 from .g import G
 
-from ...shared.enums import AbbrType
-from ..utils import (leiden_str_from_children, 
-                     callable_from_localname, 
-                     localname,
-                     normalized_str_from_children)
+from pyepidoc.shared.enums import AbbrType
+from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 
 
 class Expan(TokenizableElement):
@@ -30,10 +27,7 @@ class Expan(TokenizableElement):
     Will normally contain <abbr> and <ex> elements.
     """
 
-    def __init__(self, e: _Element | TokenizableElement | XmlElement | TeiElement):
-        if not isinstance(e, (_Element, TeiElement, XmlElement, TokenizableElement)):
-            raise TypeError('e should be _Element or EpiDocElement type. '
-                            f'not {type(e)}.')
+    def __init__(self, e: TokenizableElement | XmlElement | TeiElement):
 
         super().__init__(e)
 

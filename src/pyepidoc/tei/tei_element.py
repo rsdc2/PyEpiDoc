@@ -7,8 +7,7 @@ from lxml.etree import (
     XMLSyntaxAssertionError
 )
 
-from pyepidoc.xml.xml_element import XmlElement, XmlNode
-from pyepidoc.xml.namespace import Namespace as ns
+from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 
 from pyepidoc.shared.iterables import maxone

@@ -1,15 +1,15 @@
 from __future__ import annotations
-from lxml.etree import _Element
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from .w import _W
+
 
 class Name(_W):
     """
     Provides services for string representation of <w> elements.
     """
 
-    def __init__(self, e: _Element | XmlElement | TeiElement):
+    def __init__(self, e: XmlElement | TeiElement):
         super().__init__(e)
 
         if self._e.localname != 'name':

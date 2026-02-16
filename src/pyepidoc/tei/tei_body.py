@@ -1,5 +1,4 @@
 from __future__ import annotations
-from lxml.etree import _Element
 
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.xml.xml_element import XmlElement
@@ -14,7 +13,7 @@ class TeiBody(TeiElement):
     Provides services for the <body> element of the EpiDoc file
     """
 
-    def __init__(self, e: _Element | TeiElement | XmlElement) -> None:
+    def __init__(self, e: TeiElement | XmlElement) -> None:
         
         super().__init__(e)
         body_tag = ns.give_ns('body', TEINS)

@@ -1,4 +1,3 @@
-from lxml.etree import _Element
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
 
@@ -17,7 +16,7 @@ class Choice(TokenizableElement):
     given in <choice> elements.
     """
 
-    def __init__(self, e: _Element | XmlElement | TeiElement):
+    def __init__(self, e: XmlElement | TeiElement):
 
         super().__init__(e)
 

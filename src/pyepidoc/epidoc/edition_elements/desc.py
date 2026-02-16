@@ -1,10 +1,10 @@
-from lxml.etree import _Element
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.representable import RepresentableElement
 
+
 class Desc(RepresentableElement):
-    def __init__(self, e: _Element | TeiElement | XmlElement):
+    def __init__(self, e: TeiElement | XmlElement):
 
         super().__init__(e)
 
