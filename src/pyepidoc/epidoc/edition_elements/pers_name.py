@@ -1,3 +1,4 @@
+import re
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
@@ -5,7 +6,6 @@ from pyepidoc.epidoc.utils import (
     leiden_str_from_children, 
     normalized_str_from_children
 )
-
 
 class PersName(TokenizableElement):
     """
@@ -42,11 +42,14 @@ class PersName(TokenizableElement):
             'w': W
         }
         
-        return leiden_str_from_children(
+        leiden = leiden_str_from_children(
             self._e, 
             element_classes, 
             'node'
         )
+
+        with_normalized_spaces = re.sub('\s+', ' ', leiden).strip()  
+        return with_normalized_spaces
     
     @property
     def normalized_form(self) -> str:
@@ -75,4 +78,4 @@ class PersName(TokenizableElement):
     
     @property
     def pers_name_type(self) -> str:
-        return self.get_attr("type") or ""
+        return self.get_attr('type') or ''

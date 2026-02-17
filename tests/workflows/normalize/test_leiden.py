@@ -11,6 +11,7 @@ token_elements = [
      '<supplied reason="lost" evidence="previouseditor"><g ref="#interpunct">·</g></supplied>'
      '<lb n="5" break="no"/><g ref="#interpunct">·</g> n</w></name></persName>', 
      'Melant[hi] [·]|· n'),
+    ('<persName><name><w>Joe</w></name><name><w>Bloggs</w></name></persName>', 'Joe Bloggs'),
     ('<w><choice><orig>decebris</orig><reg>decembres</reg></choice></w>',
      'decebris'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',

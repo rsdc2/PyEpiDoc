@@ -48,7 +48,7 @@ class _W(RepresentableElement):
             self._e, 
             element_classes, 
             'node'
-        )
+        ) + ' '
     
     @property
     def leiden_str(self) -> str:
