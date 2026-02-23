@@ -100,12 +100,7 @@ class Abbr(RepresentableElement):
 
     @property
     def leiden_form(self) -> str:
-
-        return leiden_str_from_children(
-            self._e,
-            self._element_classes,
-            'node'
-        )
+        return leiden_str_from_children(self._e, self._element_classes)
 
     @property
     def normalized_form(self) -> str:

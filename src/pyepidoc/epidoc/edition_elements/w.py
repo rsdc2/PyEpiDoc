@@ -46,9 +46,8 @@ class _W(RepresentableElement):
         
         return leiden_str_from_children(
             self._e, 
-            element_classes, 
-            'node'
-        ) + ' '
+            element_classes
+        )
     
     @property
     def leiden_str(self) -> str:

@@ -29,7 +29,7 @@ class Num(_W):
             'g': G
         }
         
-        return leiden_str_from_children(self._e, element_classes, 'node')
+        return leiden_str_from_children(self._e, element_classes)
     
     @property
     def normalized_form(self) -> str:

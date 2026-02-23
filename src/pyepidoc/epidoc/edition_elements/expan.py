@@ -48,7 +48,7 @@ class Expan(TokenizableElement):
         return f"Expan({content})"
 
     def __str__(self) -> str:
-        return self.leiden_str
+        return self.leiden_form
 
     @property
     def abbrs(self) -> list[Abbr]:
@@ -217,18 +217,14 @@ class Expan(TokenizableElement):
         return self._e.xpath_float(first_desc_of_abbr_xpath) == 0.0
 
     @property
-    def leiden_str(self) -> str:
+    def leiden_form(self) -> str:
         
         """
         Returns a Leiden-formatted string representation
         of the <expan> element
         """
 
-        return leiden_str_from_children(
-            self._e, 
-            self.element_classes, 
-            'element'
-        )
+        return leiden_str_from_children(self._e, self.element_classes)
     
     @property
     def normalized_form(self) -> str:

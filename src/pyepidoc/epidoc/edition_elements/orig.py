@@ -29,7 +29,7 @@ class Orig(RepresentableElement):
         element_classes: dict[str, type] = {
             'expan': Expan
         }
-        leiden_str = leiden_str_from_children(self._e, element_classes, 'node')
+        leiden_str = leiden_str_from_children(self._e, element_classes)
         
         if self._e.has_ancestor_by_name('choice'):
             return leiden_str

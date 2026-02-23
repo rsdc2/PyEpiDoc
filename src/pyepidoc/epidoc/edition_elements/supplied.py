@@ -36,7 +36,7 @@ class Supplied(TokenizableElement):
         
         return ''.join([
             '[',
-            leiden_str_from_children(self._e, element_classes, 'node'),
+            leiden_str_from_children(self._e, element_classes),
             ']'
         ])
     

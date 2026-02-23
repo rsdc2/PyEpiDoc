@@ -44,8 +44,7 @@ class PersName(TokenizableElement):
         
         leiden = leiden_str_from_children(
             self._e, 
-            element_classes, 
-            'node'
+            element_classes
         )
 
         with_normalized_spaces = re.sub('\s+', ' ', leiden).strip()  
