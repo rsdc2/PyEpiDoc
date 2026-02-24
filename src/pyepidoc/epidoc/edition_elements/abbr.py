@@ -30,6 +30,7 @@ class Abbr(RepresentableElement):
         from .lb import Lb
         from .unclear import Unclear
         from .num import Num
+        from .supplied import Supplied
 
         element_classes: dict[str, type] = {
             'am': Am,
@@ -38,7 +39,8 @@ class Abbr(RepresentableElement):
             'hi': Hi,
             'lb': Lb,
             'num': Num,
-            'unclear': Unclear
+            'unclear': Unclear,
+            'supplied': Supplied
         }
 
         return element_classes

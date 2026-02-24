@@ -31,6 +31,7 @@ class RoleName(TokenizableElement):
         from .num import Num
         from .surplus import Surplus
         from .w import W
+        from .g import G
 
         element_classes: dict[str, type] = {
             'expan': Expan,
@@ -38,7 +39,8 @@ class RoleName(TokenizableElement):
             'name': Name,
             'num': Num,
             'surplus': Surplus,
-            'w': W
+            'w': W,
+            'g': G
         }
         
         return leiden_form_from_children(

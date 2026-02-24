@@ -26,6 +26,9 @@ class Supplied(TokenizableElement):
         from .expan import Expan
         from .role_name import RoleName
         from .g import G
+        from .name import Name
+        from .w import W
+        from .num import Num
 
         element_classes: dict[str, type] = {
             'abbr': Abbr,
@@ -33,7 +36,10 @@ class Supplied(TokenizableElement):
             'ex': Ex,
             'expan': Expan,
             'roleName': RoleName,
-            'g': G
+            'g': G,
+            'name': Name,
+            'w': W,
+            'num': Num
         }
         
         return ''.join([

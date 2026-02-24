@@ -64,9 +64,12 @@ def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[XmlElement]):
     return str(epidoc_elem)
 
 
-def get_leiden_str(obj: TeiElement | XmlText) -> str:
+def get_leiden_str(obj: TeiElement | XmlText | str) -> str:
     if isinstance(obj, XmlText):
         return obj.text
+    
+    if isinstance(obj, str):
+        return obj
     
     if obj._e.localname in RegTextType.values():
         return ''
@@ -97,16 +100,16 @@ def leiden_form_from_children(parent: XmlElement, classes: dict[str, type]) -> s
     if len(children) == 0:
         return parent.text or ''
     
-    ctors = [classes.get(child.localname, lambda x: x) for child in children]
+    ctors = [classes.get(child.localname, lambda x: x.descendant_text) for child in children]
     objs = [ctor(child) for (ctor, child) in zip(ctors, children)]
 
-    for obj in objs:
-        if not isinstance(obj, (TeiElement, XmlText)):
-            if isinstance(obj, XmlElement):
-                raise TypeError(f'obj is an <{obj.localname}/> element.')
-            raise TypeError(f'obj is {type(obj)}. Expected: TeiElement or XmlText')
+    # for obj in objs:
+    #     if not isinstance(obj, (TeiElement, XmlText)):
+    #         if isinstance(obj, XmlElement):
+    #             raise TypeError(f'obj is an <{obj.localname}/>, parent is <{parent.localname}/> element.')
+    #         raise TypeError(f'obj is {type(obj)}. Expected: TeiElement or XmlText')
 
-    nodes: list[TeiElement | XmlText] = objs
+    nodes: list[TeiElement | XmlText | str] = objs
     strings = [get_leiden_str(node) for node in nodes]
 
     leiden_str = ''.join(strings)

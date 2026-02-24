@@ -1,3 +1,4 @@
+from __future__ import annotations
 import re
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.tei.tei_element import TeiElement
@@ -32,6 +33,11 @@ class PersName(TokenizableElement):
         from .num import Num
         from .surplus import Surplus
         from .w import W
+        from .g import G
+        from .lb import Lb
+        from .role_name import RoleName
+        from .supplied import Supplied
+        from .gap import Gap
 
         element_classes: dict[str, type] = {
             'expan': Expan,
@@ -39,7 +45,13 @@ class PersName(TokenizableElement):
             'name': Name,
             'num': Num,
             'surplus': Surplus,
-            'w': W
+            'w': W,
+            'g': G,
+            'persName': PersName,
+            'roleName': RoleName,
+            'lb': Lb,
+            'supplied': Supplied,
+            'gap': Gap
         }
         
         leiden = leiden_form_from_children(
@@ -58,6 +70,7 @@ class PersName(TokenizableElement):
         from .name import Name
         from .num import Num
         from .surplus import Surplus
+        from .g import G
 
         element_classes: dict[str, type] = {
             'expan': Expan,
@@ -65,7 +78,8 @@ class PersName(TokenizableElement):
             'name': Name,
             'num': Num,
             'surplus': Surplus,
-            'w': W
+            'w': W,
+            'g': G
         }
         
         return normalized_form_from_children(
@@ -77,3 +91,9 @@ class PersName(TokenizableElement):
     @property
     def pers_name_type(self) -> str:
         return self.get_attr('type') or ''
+    
+    @property
+    def pers_names(self) -> list[PersName]:
+        pers_name_elems = self._e.descendant_elements_by_local_name('persName')
+        pers_names = [PersName(name) for name in pers_name_elems]
+        return pers_names

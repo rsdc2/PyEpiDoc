@@ -31,6 +31,8 @@ class _W(RepresentableElement):
         from .choice import Choice
         from .g import G
         from .lb import Lb
+        from .gap import Gap
+        from .unclear import Unclear
 
         element_classes: dict[str, type] = {
             'expan': Expan,
@@ -41,7 +43,9 @@ class _W(RepresentableElement):
             'w': W,
             'choice': Choice,
             'g': G,
-            'lb': Lb
+            'lb': Lb,
+            'gap': Gap,
+            'unclear': Unclear
         }
         
         return leiden_form_from_children(
