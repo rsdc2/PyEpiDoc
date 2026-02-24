@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import override
+# from typing import override
 from pyepidoc.tei.tei_element import TeiElement
 from .change import Change
 from .list_change import ListChange
@@ -17,7 +17,7 @@ class RevisionDesc(TeiElement):
         self.list_change.append_change(change)
         return self
 
-    @override
+    # @override
     @classmethod
     def create(
             cls      

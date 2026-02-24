@@ -1,4 +1,4 @@
-from typing import override
+# from typing import override
 
 from pyepidoc.tei.tei_doc import TeiDoc
 from .ario_body import ArioBody
@@ -6,7 +6,7 @@ from .ario_body import ArioBody
 
 class ArioDoc(TeiDoc):
     
-    @override
+    # @override
     @property
     def body(self) -> ArioBody:
 

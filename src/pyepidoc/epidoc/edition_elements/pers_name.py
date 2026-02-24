@@ -59,7 +59,6 @@ class PersName(TokenizableElement):
         from .num import Num
         from .surplus import Surplus
 
-
         element_classes: dict[str, type] = {
             'expan': Expan,
             'hi': Hi,

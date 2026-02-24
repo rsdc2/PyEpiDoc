@@ -4,7 +4,7 @@ from typing import (
     Literal, 
     overload,
     Callable, 
-    override
+    # override
 )
 from functools import cached_property
 
@@ -113,7 +113,7 @@ class EpiDoc(TeiDoc):
     def apparatus(self) -> list[XmlElement]:
         return self._e.get_div_descendants_by_type('apparatus')
         
-    @override
+    # @override
     @property
     def body(self) -> Body:
 
@@ -833,7 +833,7 @@ class EpiDoc(TeiDoc):
         
         return ""
 
-    @override
+    # @override
     def prettify(
             self, 
             prettifier: Literal['pyepidoc'] = 'pyepidoc',

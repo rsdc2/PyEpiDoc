@@ -4,7 +4,7 @@ from typing import (
     Optional, 
     cast,
     overload,
-    override
+    # override
 )
 from itertools import chain
 
@@ -305,7 +305,7 @@ class TokenizableElement(TeiElement, Showable):
         return "latin" if set(self.form) - A_TO_Z_SET == set() \
             else "other"
     
-    @override
+    # @override
     @property
     def child_elems(self) -> Sequence[TokenizableElement]:
         return [TokenizableElement(child) for child in self._e.child_elements]
