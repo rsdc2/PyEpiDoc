@@ -1,4 +1,4 @@
-from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_from_children
 from pyepidoc.epidoc.edition_elements.w import _W
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
@@ -22,28 +22,32 @@ class Num(_W):
         from .expan import Expan
         from .choice import Choice
         from .g import G
+        from .hi import Hi
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'choice': Choice,
-            'g': G
+            'g': G,
+            'hi': Hi
         }
         
-        return leiden_str_from_children(self._e, element_classes)
+        return leiden_form_from_children(self._e, element_classes)
     
     @property
     def normalized_form(self) -> str:
         from .expan import Expan
         from .choice import Choice
         from .g import G
+        from .hi import Hi
 
         element_classes: dict[str, type] = {
             'expan': Expan,
             'choice': Choice,
-            'g': G
+            'g': G, 
+            'hi': Hi
         }
         
-        normalized_str = normalized_str_from_children(
+        normalized_str = normalized_form_from_children(
             self._e, 
             element_classes, 
             'node'

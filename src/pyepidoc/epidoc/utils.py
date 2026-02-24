@@ -64,67 +64,56 @@ def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[XmlElement]):
     return str(epidoc_elem)
 
 
-def get_leiden_str(obj: TeiElement) -> str:
+def get_leiden_str(obj: TeiElement | XmlText) -> str:
+    if isinstance(obj, XmlText):
+        return obj.text
+    
     if obj._e.localname in RegTextType.values():
         return ''
     
     if hasattr(obj, 'leiden_form'):
         leiden_str = obj.leiden_form
     else:
-        leiden_str = str(obj)
+        raise AttributeError(f'No leiden_form attribute on {type(obj)}')
 
     if obj._e.localname in AtomicTokenType.values():
-        leiden_str = leiden_str.strip() + ' '
+        ancestor_local_names = [ancestor.localname for ancestor in obj._e.ancestors_excl_self]
+        if set(ancestor_local_names).intersection(AtomicTokenType.values()) == set():
+            leiden_str = leiden_str.strip() + ' '
 
     return leiden_str
 
 
-def leiden_str_from_children(
-        parent: XmlElement,
-        classes: dict[str, type]) -> str:
-
+def leiden_form_from_children(parent: XmlElement, classes: dict[str, type]) -> str:
     """
     Return a Leiden string from a parent element.
-
-    param:child_type sets whether or not the children are elements or
-    nodes (where nodes include text content)
     """
+
     assert isinstance(parent, XmlElement)
     if parent.has_ancestors_by_names(RegTextType.values()):
         return ''
-    children = parent.child_elements
+    
+    children = parent.child_nodes
     if len(children) == 0:
         return parent.text or ''
     
-    ctors = [classes.get(child.localname) for child in children]
-    objs = [ctor(child) for (ctor, child) in zip(ctors, children)
-            if ctor is not None]
+    ctors = [classes.get(child.localname, lambda x: x) for child in children]
+    objs = [ctor(child) for (ctor, child) in zip(ctors, children)]
 
-    strings = [get_leiden_str(obj) for obj in objs]
+    for obj in objs:
+        if not isinstance(obj, (TeiElement, XmlText)):
+            if isinstance(obj, XmlElement):
+                raise TypeError(f'obj is an <{obj.localname}/> element.')
+            raise TypeError(f'obj is {type(obj)}. Expected: TeiElement or XmlText')
+
+    nodes: list[TeiElement | XmlText] = objs
+    strings = [get_leiden_str(node) for node in nodes]
 
     leiden_str = ''.join(strings)
     return leiden_str
-    
-    # child_str = 'child::node()' if child_type == 'node' else 'child::*'
-    # ancestors_str = ' and '.join([f'not(ancestor::ns:{ancestor})' 
-    #                             for ancestor in non_ancestors])
-    # xpath_str = f'{child_str}[{ancestors_str}]'
-    
-    # children = [child for child in parent.xpath(xpath_str, namespaces={'ns': TEINS})]
-
-    # if len(children) == 0:
-    #     # If there are no children, create a 
-    #     objs = [classes.get(parent.localname, lambda _: '')(parent)]
-    # else:
-    #     objs = [classes.get(child.localname, lambda c: c.descendant_text)(child) 
-    #             for child in children]
-        
-    # return ''.join([obj.leiden_form 
-    #                 if hasattr(obj, 'leiden_form') 
-    #                 else str(obj) for obj in objs])
 
 
-def normalized_str_from_children(
+def normalized_form_from_children(
         parent: XmlElement,
         classes: dict[str, type],
         child_type: Literal['element', 'node']) -> str:

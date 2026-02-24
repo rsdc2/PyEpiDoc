@@ -1,5 +1,5 @@
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
-from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_from_children
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from .expan import Expan
@@ -26,10 +26,10 @@ class Del(TokenizableElement):
         
         return ''.join([
             '⟦',
-            leiden_str_from_children(self._e, element_classes),
+            leiden_form_from_children(self._e, element_classes),
             '⟧'
         ])
     
     @property
     def normalized_form(self) -> str:
-        return normalized_str_from_children(self._e, element_classes, 'node')
+        return normalized_form_from_children(self._e, element_classes, 'node')

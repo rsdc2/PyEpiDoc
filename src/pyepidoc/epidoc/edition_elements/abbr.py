@@ -5,7 +5,7 @@ from typing import Optional
 from pyepidoc.shared import head
 
 from pyepidoc.epidoc.representable import RepresentableElement
-from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_from_children
 from .am import Am
 
 
@@ -100,12 +100,12 @@ class Abbr(RepresentableElement):
 
     @property
     def leiden_form(self) -> str:
-        return leiden_str_from_children(self._e, self._element_classes)
+        return leiden_form_from_children(self._e, self._element_classes)
 
     @property
     def normalized_form(self) -> str:
         
-        normalized = normalized_str_from_children(
+        normalized = normalized_form_from_children(
             self._e,
             self._element_classes,
             'node'

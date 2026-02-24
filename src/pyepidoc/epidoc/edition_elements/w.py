@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_from_children
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.iterables import maxone
 from pyepidoc.shared.namespaces import XMLNS
@@ -19,7 +19,7 @@ class _W(RepresentableElement):
         return self.leiden_form
     
     def __repr__(self) -> str:
-        return f'W("{self.leiden_form}")'
+        return f'_W("{self.leiden_form}")'
 
     @property
     def leiden_form(self) -> str:
@@ -44,7 +44,7 @@ class _W(RepresentableElement):
             'lb': Lb
         }
         
-        return leiden_str_from_children(
+        return leiden_form_from_children(
             self._e, 
             element_classes
         )
@@ -109,7 +109,7 @@ class _W(RepresentableElement):
             'g': G
         }
         
-        return normalized_str_from_children(
+        return normalized_form_from_children(
             self._e, 
             element_classes, 
             'node'
@@ -121,3 +121,6 @@ class W(_W):
 
         if self._e.localname != 'w':
             raise TypeError(f'Element should be <w> not {self._e.localname}.')
+        
+    def __repr__(self) -> str:
+        return f'W("{self.leiden_form}")'

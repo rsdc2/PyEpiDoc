@@ -16,6 +16,9 @@ token_elements = [
      'decebris'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
      'evok(ato)'),
+    ('<expan><abbr>evok</abbr><ex>ato</ex></expan>', 'evok(ato)'),
+    ('<w><expan><abbr>evok</abbr><ex>ato</ex></expan></w>', 'evok(ato)'),
+    ('<expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan>', 'evok(ato)'),
     ('<orig>CHEDONI</orig>', 'CHEDONI'),
     ('<orig>hello</orig>', 'HELLO')
 ]

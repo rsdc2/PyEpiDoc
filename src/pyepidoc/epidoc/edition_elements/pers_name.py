@@ -3,8 +3,8 @@ from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.utils import (
-    leiden_str_from_children, 
-    normalized_str_from_children
+    leiden_form_from_children, 
+    normalized_form_from_children
 )
 
 class PersName(TokenizableElement):
@@ -42,7 +42,7 @@ class PersName(TokenizableElement):
             'w': W
         }
         
-        leiden = leiden_str_from_children(
+        leiden = leiden_form_from_children(
             self._e, 
             element_classes
         )
@@ -69,7 +69,7 @@ class PersName(TokenizableElement):
             'w': W
         }
         
-        return normalized_str_from_children(
+        return normalized_form_from_children(
             self._e, 
             element_classes, 
             'node'

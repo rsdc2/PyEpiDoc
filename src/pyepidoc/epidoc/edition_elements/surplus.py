@@ -1,17 +1,7 @@
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
-from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_from_children
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
-
-from .abbr import Abbr
-from .am import Am
-from .ex import Ex
-
-element_classes: dict[str, type] = {
-    'abbr': Abbr,
-    'am': Am,
-    'ex': Ex
-}
 
 
 class Surplus(TokenizableElement):
@@ -28,10 +18,21 @@ class Surplus(TokenizableElement):
 
     @property
     def leiden_form(self) -> str:
-        
+        from .abbr import Abbr
+        from .am import Am
+        from .ex import Ex
+        from .hi import Hi
+
+        element_classes: dict[str, type] = {
+            'abbr': Abbr,
+            'am': Am,
+            'ex': Ex,
+            'hi': Hi
+        }
+
         return ''.join([
             '{',
-            leiden_str_from_children(self._e, element_classes),
+            leiden_form_from_children(self._e, element_classes),
             '}'
         ])
 

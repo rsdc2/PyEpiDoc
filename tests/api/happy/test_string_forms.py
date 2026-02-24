@@ -44,8 +44,6 @@ leiden_and_normalized_tests = [
 ]
 
 
-
-
 @pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'leiden_tokens'], leiden_and_normalized_tests)
 def test_normalized_string_forms(
     xml: str, 

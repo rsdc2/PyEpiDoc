@@ -1,5 +1,5 @@
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
-from pyepidoc.epidoc.utils import leiden_str_from_children
+from pyepidoc.epidoc.utils import leiden_form_from_children
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 
@@ -26,7 +26,7 @@ class Corr(TokenizableElement):
             'expan': Expan
         }
         
-        return leiden_str_from_children(self._e, element_classes)
+        return leiden_form_from_children(self._e, element_classes)
     
     @property
     def normalized_form(self) -> str:

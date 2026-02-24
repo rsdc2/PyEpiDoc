@@ -17,7 +17,7 @@ from .am import Am
 from .g import G
 
 from pyepidoc.shared.enums import AbbrType
-from pyepidoc.epidoc.utils import leiden_str_from_children, normalized_str_from_children
+from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_from_children
 
 
 class Expan(TokenizableElement):
@@ -224,11 +224,11 @@ class Expan(TokenizableElement):
         of the <expan> element
         """
 
-        return leiden_str_from_children(self._e, self.element_classes)
+        return leiden_form_from_children(self._e, self.element_classes)
     
     @property
     def normalized_form(self) -> str:
-        return normalized_str_from_children(
+        return normalized_form_from_children(
             self._e, 
             self.element_classes, 
             'element'

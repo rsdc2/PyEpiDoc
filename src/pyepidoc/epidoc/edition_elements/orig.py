@@ -3,7 +3,8 @@ from functools import cached_property
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.representable import RepresentableElement
-from pyepidoc.epidoc.utils import leiden_str_from_children
+from pyepidoc.epidoc.utils import leiden_form_from_children
+
 
 
 class Orig(RepresentableElement):
@@ -25,11 +26,13 @@ class Orig(RepresentableElement):
     def leiden_form(self) -> str:
 
         from .expan import Expan
+        from .abbr import Abbr
 
         element_classes: dict[str, type] = {
-            'expan': Expan
+            'expan': Expan,
+            'abbr': Abbr
         }
-        leiden_str = leiden_str_from_children(self._e, element_classes)
+        leiden_str = leiden_form_from_children(self._e, element_classes)
         
         if self._e.has_ancestor_by_name('choice'):
             return leiden_str
