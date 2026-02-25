@@ -49,7 +49,7 @@ def test_abbr_forms():
 
     assert token.normalized_form == 'duoviro'
     assert token.leiden_form == 'IIvir(o)'
-    assert token.leiden_plus_form == '|IIvir(o)'
+    assert token.leiden_plus_form == ' | IIvir(o)'
 
 
 def test_am():

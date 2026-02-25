@@ -38,9 +38,12 @@ leiden_and_normalized_tests = [
     ('<num value="3"><choice><orig>tris</orig><reg>tres</reg></choice></num>',
      ['tres'], ['tris']),
     ('<num value="73">ο <g ref="#ivy-leaf">❦</g> γ </num>',
-     ['ογ'], ['ο ❦ γ ']),
+     ['ογ'], ['ο❦γ']),
     ('<w>mere<hi rend="ligature">nt<surplus><hi rend="tall">t</hi></surplus></hi>i</w>',
-     ['merenti'], [r'merent{t}i'])
+     ['merenti'], [r'merent{t}i']),
+    ('<persName><w><expan><abbr>f</abbr><ex>ilio</ex></expan></w> <g ref="#interpunct">·</g> <name><w>Asi <lb break="no"/>atico</w></name></persName>', 
+     ['filio', 'Asiatico'], ['f(ilio)', 'Asi|atico'])
+
 ]
 
 
@@ -63,23 +66,29 @@ def test_normalized_string_forms(
     assert normalized_tokens == expected_normalized_tokens
 
 
-@pytest.mark.parametrize(['xml', 'normalized_tokens', 'leiden_tokens'], leiden_and_normalized_tests)
+@pytest.mark.parametrize(['xml', 'normalized_tokens', 'expected_leiden_tokens'], leiden_and_normalized_tests)
 def test_leiden_string_forms(
     xml: str, 
     normalized_tokens: list[str], 
-    leiden_tokens: list[str]):
+    expected_leiden_tokens: list[str]):
     """
     Tests token strings correct
     """
+    # Arrange
+    element = XmlElement.from_str(abify(xml))
+    ab = Ab(element)
 
-    ab = Ab(XmlElement.from_str(abify(xml)))
-    assert ab.tokens_list_leiden_str == leiden_tokens
+    # Act
+    leiden_tokens = ab.tokens_list_leiden_str
+
+    # Assert
+    assert leiden_tokens == expected_leiden_tokens
 
 leiden_plus_tests = [
     ('<w>ἐτῶν</w>\n<lb n="7"/>',
-     ['ἐτῶν'], [r'ἐτῶν|']),
+     ['ἐτῶν'], [r'ἐτῶν | ']),
     ('<lb n="7"/><num value="37">λζ</num>  ',
-     ['λζ'], [r'|λζ'])  
+     ['λζ'], [r' | λζ'])  
 ]
 @pytest.mark.parametrize(['xml', 'leiden_forms', 'leiden_plus_forms'], leiden_plus_tests)
 def test_leiden_plus_forms(

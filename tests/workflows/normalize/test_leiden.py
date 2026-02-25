@@ -6,16 +6,17 @@ from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
 
 token_elements = [
-    ('<persName><name type="cognomen"><w>Melant<supplied reason="undefined" '
-     'evidence="previouseditor">hi</supplied> '
-     '<supplied reason="lost" evidence="previouseditor"><g ref="#interpunct">·</g></supplied>'
+    ('<persName><name type="cognomen"><w>Melant<supplied reason="undefined">hi</supplied> '
+     '<supplied reason="lost"><g ref="#interpunct">·</g></supplied>'
      '<lb n="5" break="no"/><g ref="#interpunct">·</g> n</w></name></persName>', 
-     'Melant[hi] [·]|· n'),
+     'Melant[hi][·]|·n'),
     ('<persName><name><w>Joe</w></name><name><w>Bloggs</w></name></persName>', 'Joe Bloggs'),
     ('<w><choice><orig>decebris</orig><reg>decembres</reg></choice></w>',
      'decebris'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
      'evok(ato)'),
+    ('<w>Jo<lb break="no"/>e</w>', 'Jo|e'),
+    ('<persName><name><w>Asi<lb break="no"/>atico</w></name></persName>', 'Asi|atico'),
     ('<expan><abbr>evok</abbr><ex>ato</ex></expan>', 'evok(ato)'),
     ('<w><expan><abbr>evok</abbr><ex>ato</ex></expan></w>', 'evok(ato)'),
     ('<expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan>', 'evok(ato)'),
@@ -43,7 +44,7 @@ token_elements = [
      'evidence="previouseditor">hi</supplied> '
      '<supplied reason="lost" evidence="previouseditor"><g ref="#interpunct">·</g></supplied>'
      '<lb n="5" break="no"/><g ref="#interpunct">·</g> n</w></name></persName>', 
-     'Melant[hi] [·]|· n'),
+     'Melant[hi][·]|·n'),
     ('<w><choice><orig>decebris</orig><reg>decembres</reg></choice></w>',
      'decebris'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
@@ -67,7 +68,9 @@ def test_token_leiden_plus_form(inpt: tuple[str, str]):
     ('<name><w>Nearchia<supplied reason="lost">e</supplied></w></name>',
      'Nearchia[e]'),
     ('<name><w>Nearchia<supplied reason="lost">e</supplied></w></name> <gap reason="lost" extent="unknown" unit="character"/>',
-     'Nearchia[e] [-?-]')
+     'Nearchia[e] [-?-]'),
+    ('<persName><w><expan><abbr>f</abbr><ex>ilio</ex></expan></w> <g ref="#interpunct">·</g> <name><w>Asi <lb break="no"/>atico</w></name></persName>', 
+     'f(ilio) · Asi\natico')
 ])
 def test_edition_leiden(xml_str: str, expected: str):
     # Arrange

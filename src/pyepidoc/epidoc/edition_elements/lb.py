@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.shared.enums import AtomicTokenType
 from typing import Optional
 
 
@@ -35,6 +36,8 @@ class Lb(TokenizableElement):
 
     @property
     def leiden_form(self) -> str:
+        if self._e.has_ancestors_by_names(AtomicTokenType.values()):
+            return '|'
         return '|'
 
     @property

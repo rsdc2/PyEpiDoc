@@ -66,39 +66,42 @@ def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[XmlElement]):
 
 def get_leiden_str(obj: TeiElement | XmlText | str) -> str:
     if isinstance(obj, XmlText):
-        return obj.text
+        return obj.text.strip()
     
     if isinstance(obj, str):
-        return obj
+        return obj.strip()
     
     if obj._e.localname in RegTextType.values():
         return ''
     
     if hasattr(obj, 'leiden_form'):
-        leiden_str = obj.leiden_form
+        leiden_form = obj.leiden_form
     else:
         raise AttributeError(f'No leiden_form attribute on {type(obj)}')
 
     if obj._e.localname in AtomicTokenType.values():
-        ancestor_local_names = [ancestor.localname for ancestor in obj._e.ancestors_excl_self]
-        if set(ancestor_local_names).intersection(AtomicTokenType.values()) == set():
-            leiden_str = leiden_str.strip() + ' '
+        if not obj._e.has_ancestors_by_names(AtomicTokenType.values()):
+            leiden_form = leiden_form.strip() + ' '
 
-    return leiden_str
+    if obj._e.localname in ['lb', 'g']:
+        if not obj._e.has_ancestors_by_names(AtomicTokenType.values()):
+            leiden_form = ' ' + leiden_form.strip() + ' '
+
+    return leiden_form
 
 
-def leiden_form_from_children(parent: XmlElement, classes: dict[str, type]) -> str:
+def leiden_form_from_children(element: XmlElement, classes: dict[str, type]) -> str:
     """
     Return a Leiden string from a parent element.
     """
 
-    assert isinstance(parent, XmlElement)
-    if parent.has_ancestors_by_names(RegTextType.values()):
+    assert isinstance(element, XmlElement)
+    if element.has_ancestors_by_names(RegTextType.values()):
         return ''
     
-    children = parent.child_nodes
+    children = element.child_nodes
     if len(children) == 0:
-        return parent.text or ''
+        return element.text or ''
     
     ctors = [classes.get(child.localname, lambda x: x.descendant_text) for child in children]
     objs = [ctor(child) for (ctor, child) in zip(ctors, children)]
