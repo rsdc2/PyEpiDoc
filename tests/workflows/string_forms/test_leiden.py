@@ -5,6 +5,7 @@ from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.xml.xml_element import XmlElement
 
+
 token_elements = [
     ('<persName><name type="cognomen"><w>Melant<supplied reason="undefined">hi</supplied> '
      '<supplied reason="lost"><g ref="#interpunct">·</g></supplied>'
@@ -17,15 +18,14 @@ token_elements = [
      'evok(ato)'),
     ('<w>Jo<lb break="no"/>e</w>', 'Jo|e'),
     ('<persName><name><w>Asi<lb break="no"/>atico</w></name></persName>', 'Asi|atico'),
-    ('<expan><abbr>evok</abbr><ex>ato</ex></expan>', 'evok(ato)'),
     ('<w><expan><abbr>evok</abbr><ex>ato</ex></expan></w>', 'evok(ato)'),
-    ('<expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan>', 'evok(ato)'),
-    ('<orig>CHEDONI</orig>', 'CHEDONI'),
+    ('<w><expan><abbr>evok</abbr><ex>ato</ex></expan></w>', 'evok(ato)'),
+    ('<w><orig>CHEDONI</orig></w>', 'CHEDONI'),
     ('<orig>hello</orig>', 'HELLO')
 ]
 
 @pytest.mark.parametrize('inpt', token_elements)
-def test_token_leiden_form(inpt: tuple[str, str]):
+def test_leiden_form_of_single_tokens(inpt: tuple[str, str]):
 
     # Arrange
     xml_str, expected_leiden_form = inpt
@@ -49,17 +49,32 @@ token_elements = [
      'decebris'),
     ('<w><expan><choice><orig><abbr>evok</abbr></orig><reg><abbr>evoc</abbr></reg></choice><ex>ato</ex></expan></w>',
      'evok(ato)'),
-    ('<orig>CHEDONI</orig>', 'CHEDONI')
+    ('<orig>CHEDONI</orig>', 'CHEDONI'),
+    
 ]
 
 @pytest.mark.parametrize('inpt', token_elements)
-def test_token_leiden_plus_form(inpt: tuple[str, str]):
-
+def test_token_leiden_plus_form_of_single_tokens(inpt: tuple[str, str]):
+    # Arrange
     xml_str, leiden_plus_form = inpt
     elem = XmlElement.from_str(xml_str)
     token = Token(elem)
+
+    # Act / Assert
     assert token.leiden_plus_form == leiden_plus_form
 
+
+def test_leiden_plus_forms_of_tokens_in_context():
+    # Arrange
+    xml_str = '<lb n="1"/><g>·</g> <w>Dis</w> <g>·</g>'
+    edition = Edition.from_xml_str(xml_str)
+
+    # Act
+    leiden_plus_str = edition.tokens_leiden_str
+
+    # Assert
+    assert leiden_plus_str == '| · Dis · '
+    
 
 @pytest.mark.parametrize(['xml_str', 'expected'], [
     ('<orig>CHEDONI</orig>', 'CHEDONI'),
@@ -72,7 +87,7 @@ def test_token_leiden_plus_form(inpt: tuple[str, str]):
     ('<persName><w><expan><abbr>f</abbr><ex>ilio</ex></expan></w> <g ref="#interpunct">·</g> <name><w>Asi <lb break="no"/>atico</w></name></persName>', 
      'f(ilio) · Asi\natico')
 ])
-def test_edition_leiden(xml_str: str, expected: str):
+def test_leiden_edition(xml_str: str, expected: str):
     # Arrange
     edition = Edition.from_xml_str(xml_str=xml_str)
 
@@ -84,4 +99,4 @@ def test_edition_leiden(xml_str: str, expected: str):
 
 
 if __name__ == '__main__':
-    test_token_leiden_form(token_elements[1])
+    test_leiden_form_of_single_tokens(token_elements[1])

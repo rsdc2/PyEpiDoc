@@ -10,7 +10,7 @@ from pyepidoc.epidoc.representable import RepresentableElement
 
 import pytest
 
-leiden_and_normalized_tests = [
+leiden_and_normalized_string_list_tests = [
     ('<w><expan><abbr><num value="2"><hi rend="intraline">II</hi></num>vir</abbr><ex>o</ex></expan></w>', 
      ['duoviro'], ['IIvir(o)']), 
     ('<w><expan><abbr><num value="2">II</num>vir</abbr><ex>o</ex></expan></w>', 
@@ -45,10 +45,11 @@ leiden_and_normalized_tests = [
      ['filio', 'Asiatico'], ['f(ilio)', 'Asi|atico'])
 
 ]
-
-
-@pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'leiden_tokens'], leiden_and_normalized_tests)
-def test_normalized_string_forms(
+@pytest.mark.parametrize(
+    ['xml', 'expected_normalized_tokens', 'leiden_tokens'], 
+    leiden_and_normalized_string_list_tests
+)
+def test_normalized_string_lists(
     xml: str, 
     expected_normalized_tokens: list[str],
     leiden_tokens: list[str]):
@@ -66,8 +67,8 @@ def test_normalized_string_forms(
     assert normalized_tokens == expected_normalized_tokens
 
 
-@pytest.mark.parametrize(['xml', 'normalized_tokens', 'expected_leiden_tokens'], leiden_and_normalized_tests)
-def test_leiden_string_forms(
+@pytest.mark.parametrize(['xml', 'normalized_tokens', 'expected_leiden_tokens'], leiden_and_normalized_string_list_tests)
+def test_leiden_string_lists(
     xml: str, 
     normalized_tokens: list[str], 
     expected_leiden_tokens: list[str]):
@@ -83,6 +84,7 @@ def test_leiden_string_forms(
 
     # Assert
     assert leiden_tokens == expected_leiden_tokens
+    
 
 leiden_plus_tests = [
     ('<w>ἐτῶν</w>\n<lb n="7"/>',
@@ -91,7 +93,7 @@ leiden_plus_tests = [
      ['λζ'], [r' | λζ'])  
 ]
 @pytest.mark.parametrize(['xml', 'leiden_forms', 'leiden_plus_forms'], leiden_plus_tests)
-def test_leiden_plus_forms(
+def test_leiden_plus_string_lists(
     xml: str, 
     leiden_forms: list[str], 
     leiden_plus_forms: list[str]):
@@ -116,7 +118,7 @@ non_token_tests = [
      ['[-?-]'], [' [-?-] '])
 ]
 @pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'leiden_tokens'], non_token_tests)
-def test_non_tokens_normalized_string_forms(
+def test_non_tokens_normalized_string_lists(
     xml: str, 
     expected_normalized_tokens: list[str],
     leiden_tokens: list[str]):
@@ -135,7 +137,7 @@ def test_non_tokens_normalized_string_forms(
 
 
 @pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'expected_leiden_tokens'], non_token_tests)
-def test_non_tokens_leiden_string_forms(
+def test_non_tokens_leiden_string_lists(
     xml: str, 
     expected_normalized_tokens: list[str],
     expected_leiden_tokens: list[str]):

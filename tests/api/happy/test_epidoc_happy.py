@@ -6,9 +6,9 @@ from pathlib import Path
 from pyepidoc.epidoc.epidoc import EpiDoc
 from pyepidoc.tei.metadata.title_stmt import TitleStmt
 from pyepidoc.shared import head
-from pyepidoc.epidoc.dom import lang, line
+from pyepidoc.epidoc.dom import line
 
-from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark, save_and_reload
+from pyepidoc.shared.testing import save_and_reload
 from tests.config import FILE_WRITE_MODE
 
 import pytest
@@ -139,20 +139,6 @@ def test_date_range(filename: str, date_range: tuple[int | None, int | None]):
     fp = Path(test_files_path + "single_files_untokenized") / Path(filename)
     doc = EpiDoc(fp)
     assert doc.daterange == date_range
-
-
-def test_leiden_plus_text():
-    """
-    Tests that collects the leiden plus text of a 
-    token correctly
-    """
-
-    fp = relative_filepaths['leiden']
-    doc = EpiDoc(fp)
-
-    leiden_strs = [token.leiden_plus_form for token in doc.tokens_no_nested]
-    
-    assert leiden_strs[0] == '| · Dis · '
 
 
 def test_lines():
