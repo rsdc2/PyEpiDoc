@@ -14,7 +14,7 @@ class TeiHeader(TokenizableElement):
         file_desc: FileDesc
     ) -> TeiHeader:
         
-        self.e._e.append(file_desc._e._e)
+        self._e.append_node(file_desc._e)
         return self
 
     def append_new_file_desc(self) -> TeiHeader:

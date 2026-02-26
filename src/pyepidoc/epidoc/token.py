@@ -152,7 +152,7 @@ class Token(RepresentableElement):
 
     @property
     def expans(self) -> list[Expan]:
-        return [Expan(elem.e) for elem in self.expan_elems]
+        return [Expan(elem._e) for elem in self.expan_elems]
 
     @property
     def first_expan(self) -> Optional[Expan]:

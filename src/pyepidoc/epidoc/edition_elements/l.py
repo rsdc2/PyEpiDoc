@@ -18,9 +18,9 @@ class L(Ab):
             raise TypeError('e should be _Element or Element type.')
 
         if type(e) is TokenizableElement:
-            self._e = e.e
+            self._e = e._e
         elif type(e) is XmlElement:
-            self._e = e.e
+            self._e = e._e
 
         if self._e.tag.name != 'l':
             raise TypeError('Element should be of type <l>.')

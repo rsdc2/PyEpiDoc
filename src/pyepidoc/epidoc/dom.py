@@ -130,7 +130,7 @@ def last_in_ab(elem: TokenizableElement) -> bool:
     if ab is None:
         return False
     
-    return id(elem.e._e) == id(ab.tokens[-1].e._e)
+    return id(elem._e._e) == id(ab.tokens[-1]._e._e)
 
 
 def line(elem: TokenizableElement) -> Optional[Lb]:

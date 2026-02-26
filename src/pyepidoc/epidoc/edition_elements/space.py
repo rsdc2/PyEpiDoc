@@ -15,7 +15,7 @@ class Space(RepresentableElement):
         super().__init__(e)
 
         if self._e.localname != 'space':
-            raise TypeError(f'Element should be <space> but is <{self.e.localname}>.')
+            raise TypeError(f'Element should be <space> but is <{self._e.localname}>.')
         
     def __repr__(self) -> str:
         return f'Space("{self.leiden_form}")'

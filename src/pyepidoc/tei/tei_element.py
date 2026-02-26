@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Sequence, overload
+from typing import Sequence, overload, Optional
 
 from lxml.etree import (
     XMLSyntaxError, 
@@ -63,6 +63,18 @@ class TeiElement:
         elem = XmlElement.create(localname, TEINS, attributes)
         return TeiElement(elem)
     
+    def find_next_sibling(self) -> TeiElement | None:
+
+        """
+        Finds the next non-comment sibling |TeiElement|.
+        """
+        next_sibling_element = self._e.next_element
+        if isinstance(next_sibling_element, XmlElement):
+            return TeiElement(next_sibling_element)
+
+        return None
+
+
     def get_attr(
             self, 
             attribname: str, 
@@ -167,6 +179,34 @@ class TeiElement:
             return []
         
         return []
+    
+    @property
+    def text(self) -> str:
+        """
+        Return the text contents of the element. Returns an empty string if there is no text
+        """
+        if self._e is None:
+            return ''
+
+        if self._e.text is None:
+            return ''
+            
+        return self._e.text
+
+    @text.setter
+    def text(self, value:str):
+        if self._e is None:
+            return
+
+        self._e.text = value
+
+    def set_attr(
+        self, 
+        attribname: str, 
+        value: str | None, 
+        namespace: Optional[str]=None) -> None:
+        
+        self._e.set_attr(attribname, value, namespace)
     
     def __repr__(self) -> str:
         return f"TeiElement({self._e.tag}: '{self._e.text_desc_compressed_whitespace.strip()}{self._e.tail.strip() if self._e.tail is not None else ''}')"

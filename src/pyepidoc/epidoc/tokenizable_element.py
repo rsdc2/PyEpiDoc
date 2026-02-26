@@ -8,7 +8,7 @@ from typing import (
 )
 from itertools import chain
 
-from pyepidoc.shared.classes import Showable, SetRelation
+from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared import update_set_inplace
 from pyepidoc.shared.string import to_lower
 from pyepidoc.xml.xml_element import XmlElement
@@ -20,6 +20,7 @@ import re
 from pyepidoc.xml.namespace import Namespace as ns
 from pyepidoc.xml.xml_element import XmlNode, XmlElement
 from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared.constants import (
     A_TO_Z_SET, 
@@ -93,7 +94,7 @@ def tokenize_subatomic_tags(subelement: XmlElement) -> TokenizableElement:
     return w
 
 
-class TokenizableElement(TeiElement, Showable):    
+class TokenizableElement(RepresentableElement):    
     """
     Provides services for EpiDoc edition elements, 
     i.e. elements that would be represented in a text edition.
@@ -250,26 +251,6 @@ class TokenizableElement(TeiElement, Showable):
     def __str__(self):
         return self._e.text_desc_compressed_whitespace
 
-    @property
-    def abbr_elems(self) -> Sequence[TokenizableElement]:
-        """
-        Return all abbreviation elements as a |list| of |Element|.
-        """
-
-        return [TokenizableElement(abbr) 
-                for abbr in self.get_desc('abbr')]
-        
-    @property
-    def am_elems(self) -> Sequence[TokenizableElement]:
-        """
-        Returns a |list| of abbreviation marker elements <am>.
-        See https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-am.html,
-        last accessed 2023-04-13.
-        """
-
-        return [TokenizableElement(abbr) 
-                for abbr in self.get_desc('am')]
-
     def append_space(self) -> TokenizableElement:
         """
         Appends a space to the element in place.
@@ -336,11 +317,7 @@ class TokenizableElement(TeiElement, Showable):
         return {'name': self._e.localname, 
                 'ns': self._e.tag.ns, 
                 'attrs': self._e.attrs}
-
-    @property
-    def e(self) -> XmlElement:
-        return self._e
-
+    
     @property
     def ex_elems(self) -> Sequence[TokenizableElement]:
         """
@@ -351,15 +328,6 @@ class TokenizableElement(TeiElement, Showable):
         return [TokenizableElement(ex) 
                 for ex in self.get_desc('ex')]
 
-    @property
-    def expan_elems(self) -> Sequence[TokenizableElement]:
-        """
-        Return all abbreviation expansions (i.e. abbreviation + expansion) 
-        as a |list| of |Element|.
-        """
-
-        return [TokenizableElement(expan) 
-                for expan in self.get_desc('expan')]
 
     @property
     def has_whitepace_tail(self) -> bool:
@@ -398,19 +366,6 @@ class TokenizableElement(TeiElement, Showable):
         return internal_token_elements[0]
 
     @property
-    def following_nodes_in_ab(self) -> list[XmlNode]:
-
-        """
-        Returns any following Element or Text nodes whose
-        ancestor is an `<ab>`.
-        """
-
-        return self._e.xpath(
-            'following::node()[ancestor::x:ab]', 
-            namespaces={'x': TEINS}
-        )
-
-    @property
     def following_nodes_in_edition(self) -> list[XmlNode]:
 
         """
@@ -422,15 +377,6 @@ class TokenizableElement(TeiElement, Showable):
             'following::node()[ancestor::x:div[@type="edition"]]', 
             namespaces={"x": TEINS}
         )
-
-    @cached_property
-    def form(self) -> str:
-        """
-        Returns the full form, including any abbreviation expansion.
-        Compare @normalized_form
-        """
-
-        return self._e._clean_text(self._e.text_desc)
 
     @property
     def gaps(self) -> list[TokenizableElement]:
@@ -642,7 +588,7 @@ class TokenizableElement(TeiElement, Showable):
                 return [tokenize_subatomic_tags(subelement=e_copy)]
 
             elif edition_element._e.tag.name == 'Comment':
-                comment = deepcopy(edition_element.e)
+                comment = deepcopy(edition_element._e)
                 comment.tail = '' 
 
                 return [TokenizableElement(comment)]
@@ -745,7 +691,7 @@ class TokenizableElement(TeiElement, Showable):
             next_elem = element.find_next_sibling()
 
             if isinstance(next_elem, TokenizableElement):
-                if next_elem.e is None:
+                if next_elem._e is None:
                     return False
                 if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
                     if next_elem._e.attrs.get('break') == 'no':
@@ -769,31 +715,6 @@ class TokenizableElement(TeiElement, Showable):
             return next_no_spaces(acc + [element], element.find_next_sibling())
 
         return next_no_spaces([], self)
-
-    def find_next_sibling(self) -> TokenizableElement | None:
-
-        """
-        Finds the next non-comment sibling |EpiDocElement|.
-        """
-        next_sibling_element = self._e.next_element
-        if isinstance(next_sibling_element, XmlElement):
-            return TokenizableElement(next_sibling_element)
-
-        return None
-
-    @property
-    def local_id(self) -> str | None:
-        """
-        Return `@n` id
-        """
-        return self.get_attr('n')
-    
-    @local_id.setter
-    def local_id(self, value: str | None) -> None:
-        if value is None:
-            self._e.remove_attr('n')
-        else:
-            self._e.set_attr('n', value)
 
     @property
     def no_gaps(self) -> bool:
@@ -843,19 +764,6 @@ class TokenizableElement(TeiElement, Showable):
             return TokenizableElement(_parent)
         elif _parent is None:
             return None
-
-    @property
-    def preceding_nodes_in_ab(self) -> list[XmlNode]:
-
-        """
-        Returns any preceding |_Element| or 
-        |_ElementUnicodeResult| whose ancestor is an edition.
-        """
-
-        return self._e.xpath(
-            'preceding::node()[ancestor::x:ab]', 
-            namespaces={'x': TEINS}
-        )
 
     @property
     def preceding_nodes_in_edition(
@@ -955,14 +863,6 @@ class TokenizableElement(TeiElement, Showable):
     @property
     def root(self) -> XmlElement:
         return self._e.get_ancestors_incl_self()[-1]
-
-    def set_attr(
-        self, 
-        attribname: str, 
-        value: str | None, 
-        namespace: Optional[str]=None) -> None:
-        
-        self._e.set_attr(attribname, value, namespace)
 
     def set_id(
             self, 
@@ -1139,35 +1039,15 @@ class TokenizableElement(TeiElement, Showable):
 
         tail_token_elems = list(map(make_words, self._tail_prototokens))
         if tail_token_elems != []:
-            if self.e is not None:
-                if self.e.tail != '' and self.e.tail is not None:
-                    if self.e.tail[-1] in ['\n', ' ']:
+            if self._e is not None:
+                if self._e.tail != '' and self._e.tail is not None:
+                    if self._e.tail[-1] in ['\n', ' ']:
                         tail_token_elems[-1]._final_space = True
                         return tail_token_elems
             
             tail_token_elems[-1]._final_space = False
         
         return tail_token_elems
-            
-    @property
-    def text(self) -> str:
-        """
-        Return the text contents of the element. Returns an empty string if there is no text
-        """
-        if self._e is None:
-            return ''
-
-        if self._e.text is None:
-            return ''
-            
-        return self._e.text
-
-    @text.setter
-    def text(self, value:str):
-        if self._e is None:
-            return
-
-        self._e.text = value    # type: ignore
 
     @property
     def tokenized_children(self) -> list[TokenizableElement]:
@@ -1336,9 +1216,9 @@ class TokenizableElement(TeiElement, Showable):
         token_elements = internal_token_elements + tail_token_elements
         
         if token_elements != []:
-            if self.e is not None:
-                if self.e.tail != '' and self.e.tail is not None:
-                    if self.e.tail[-1] in ['\n', ' ']:
+            if self._e is not None:
+                if self._e.tail != '' and self._e.tail is not None:
+                    if self._e.tail[-1] in ['\n', ' ']:
                         token_elements[-1]._final_space = True
                         return token_elements
                     
@@ -1398,8 +1278,7 @@ class TokenizableElement(TeiElement, Showable):
                 tailtokens = [TokenizableElement.w_factory(prototoken=tailtoken_str) 
                     for tailtoken_str in tailword_strs]
                 for tailtoken in tailtokens:
-                    if tailtoken.e is not None:
-                        _parent.append_node(tailtoken._e)
+                    _parent.append_node(tailtoken._e)
 
             return _parent           
 
@@ -1471,7 +1350,7 @@ class TokenizableElement(TeiElement, Showable):
                             first_w.append_node(new_e)
                             first_w.child_elements[-1].tail = child.tail        
                     else:
-                        new_w = tokenize_subatomic_tags(e_without_tail).e
+                        new_w = tokenize_subatomic_tags(e_without_tail)._e
                         parent_copy.append_node(new_w)
                         parent_copy = append_tail_or_text(child.tail, parent_copy)              
                     
@@ -1493,21 +1372,5 @@ class TokenizableElement(TeiElement, Showable):
 
         return TokenizableElement(new_w, final_space=True)
     
-    @property
-    def xml_id(self) -> str | None:
-        """
-        Returns value of the xml:id attribute in the XML file.
-        """
-        return self.get_attr('id', namespace=XMLNS)
-
-    @xml_id.setter
-    def xml_id(self, id_value: str | None) -> None:
-        """
-        Sets the value of the xml:id attribute in the XML file.
-        """
-        if id_value is None:
-            self._e.remove_attr('id', namespace=XMLNS)
-        else:
-            self.set_attr('id', id_value, namespace=XMLNS)
 
 

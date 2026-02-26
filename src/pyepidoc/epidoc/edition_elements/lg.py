@@ -18,7 +18,7 @@ class Lg(TokenContainer):
             raise TypeError('e should be of type TokenizableElement or XmlElement.')
 
         if type(e) is TokenizableElement:
-            self._e = e.e
+            self._e = e._e
         elif type(e) is XmlElement:
             self._e = e.e
 

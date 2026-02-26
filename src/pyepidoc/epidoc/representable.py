@@ -1,6 +1,6 @@
 from __future__ import annotations
-
 from functools import cached_property, reduce
+from typing import Sequence
 from pyepidoc.xml.xml_text import XmlText
 from pyepidoc.xml.xml_element import (
     XmlComment, 
@@ -8,17 +8,74 @@ from pyepidoc.xml.xml_element import (
     ProcessingInstruction
 )
 
-from pyepidoc.shared.namespaces import XMLNS
+from pyepidoc.shared.namespaces import XMLNS, TEINS
 from pyepidoc.shared.enums import RegTextType
-from .tokenizable_element import TokenizableElement
+from pyepidoc.shared.classes import Showable
+from pyepidoc.tei.tei_element import TeiElement
 
 
-class RepresentableElement(TokenizableElement):
+class RepresentableElement(TeiElement, Showable):
+
+    @property
+    def abbr_elems(self) -> Sequence[RepresentableElement]:
+        """
+        Return all abbreviation elements as a |list| of |Element|.
+        """
+
+        return [RepresentableElement(abbr) 
+                for abbr in self.get_desc('abbr')]
+        
+    @property
+    def am_elems(self) -> Sequence[RepresentableElement]:
+        """
+        Returns a |list| of abbreviation marker elements <am>.
+        See https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-am.html,
+        last accessed 2023-04-13.
+        """
+
+        return [RepresentableElement(abbr) 
+                for abbr in self.get_desc('am')]
+    
+    @property
+    def expan_elems(self) -> Sequence[RepresentableElement]:
+        """
+        Return all abbreviation expansions (i.e. abbreviation + expansion) 
+        as a |list| of |Element|.
+        """
+
+        return [RepresentableElement(expan) 
+                for expan in self.get_desc('expan')]
+
+
+    def deepcopy(self) -> RepresentableElement:
+        return RepresentableElement(self._e.deepcopy())
 
     @property
     def elem_classes(self) -> dict[str, type[RepresentableElement]]:
         from .representable_classes import representable_classes
         return representable_classes
+
+    @property
+    def following_nodes_in_ab(self) -> list[XmlNode]:
+
+        """
+        Returns any following Element or Text nodes whose
+        ancestor is an `<ab>`.
+        """
+
+        return self._e.xpath(
+            'following::node()[ancestor::x:ab]', 
+            namespaces={'x': TEINS}
+        )
+
+    @cached_property
+    def form(self) -> str:
+        """
+        Returns the full form, including any abbreviation expansion.
+        Compare @normalized_form
+        """
+
+        return self._e._clean_text(self._e.text_desc)
 
     @property
     def form_normalized(self) -> str:
@@ -96,8 +153,52 @@ class RepresentableElement(TokenizableElement):
 
         return prec_text + self.leiden_form + following_text        
 
+    @property
+    def local_id(self) -> str | None:
+        """
+        Return `@n` id
+        """
+        return self.get_attr('n')
+    
+    @local_id.setter
+    def local_id(self, value: str | None) -> None:
+        if value is None:
+            self._e.remove_attr('n')
+        else:
+            self._e.set_attr('n', value)
+
+    @property
+    def xml_id(self) -> str | None:
+        """
+        Returns value of the xml:id attribute in the XML file.
+        """
+        return self.get_attr('id', namespace=XMLNS)
+
+    @xml_id.setter
+    def xml_id(self, id_value: str | None) -> None:
+        """
+        Sets the value of the xml:id attribute in the XML file.
+        """
+        if id_value is None:
+            self._e.remove_attr('id', namespace=XMLNS)
+        else:
+            self.set_attr('id', id_value, namespace=XMLNS)
+
+    @property
+    def preceding_nodes_in_ab(self) -> list[XmlNode]:
+
+        """
+        Returns any preceding |_Element| or 
+        |_ElementUnicodeResult| whose ancestor is an edition.
+        """
+
+        return self._e.xpath(
+            'preceding::node()[ancestor::x:ab]', 
+            namespaces={'x': TEINS}
+        )
+
     @cached_property
-    def simple_lemmatized_edition_element(self) -> TokenizableElement:
+    def simple_lemmatized_edition_element(self) -> RepresentableElement:
         """
         Element for use in simple-lemmatized edition
         """
@@ -105,7 +206,7 @@ class RepresentableElement(TokenizableElement):
         elem = t(self.deepcopy()._e)
         elem._e.remove_children()
         elem._e.remove_attr('id', XMLNS)
-        elem.text = self.simple_lemmatized_edition_form
+        elem._e.text = self.simple_lemmatized_edition_form
         return elem
     
     @cached_property

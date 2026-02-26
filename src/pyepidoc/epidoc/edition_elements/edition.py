@@ -297,11 +297,7 @@ class Edition(TokenizableElement):
 
     @property
     def expans(self) -> list[Expan]:
-        return [Expan(e.e) for e in self.expan_elems]
-    
-    # def filter_elements(self, predicate: Callable[[EpiDocElement], bool]) -> list[EpiDocElement]:
-    #     self.des
-
+        return [Expan(e._e) for e in self.expan_elems]
 
     @property
     def formatted_text(self) -> str:

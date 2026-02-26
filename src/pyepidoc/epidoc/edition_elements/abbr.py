@@ -16,7 +16,7 @@ class Abbr(RepresentableElement):
 
     @property
     def am(self) -> list[Am]:
-        return [Am(elem.e) for elem in self.am_elems]
+        return [Am(elem._e) for elem in self.am_elems]
 
     @property
     def am_count(self) -> int:

@@ -55,7 +55,7 @@ class Expan(TokenizableElement):
         """
         Returns a list of <abbr> Elements
         """
-        return [Abbr(elem.e) for elem in self.abbr_elems]        
+        return [Abbr(elem._e) for elem in self.abbr_elems]        
 
     @property
     def abbr_count(self) -> int:

@@ -76,7 +76,7 @@ class TokenContainer(RepresentableElement):
 
     @property
     def expans(self) -> list[Expan]:
-        return [Expan(e.e) for e in self.expan_elems]
+        return [Expan(e._e) for e in self.expan_elems]
 
     @property
     def first_token(self) -> Optional[Token]:
