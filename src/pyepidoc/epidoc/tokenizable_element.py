@@ -327,28 +327,6 @@ class TokenizableElement(RepresentableElement):
 
         return [TokenizableElement(ex) 
                 for ex in self.get_desc('ex')]
-
-
-    @property
-    def has_whitepace_tail(self) -> bool:
-        """
-        Returns True if the final element of the tail is a whitespace,
-        implying a word break at the end of the element.
-        """
-
-        if self._e.tail is None: 
-            return False
-        
-        if self._e.localname == 'lb' and self.get_attr('break') == 'no':
-            return False
-        
-        if self._e.tail == '':
-            return False
-        
-        if self._e.tag.name == "Comment":
-            return False
-
-        return self._e.tail[-1] in whitespace
     
     @property
     def _first_internal_protoword(self) -> str:
@@ -621,31 +599,6 @@ class TokenizableElement(RepresentableElement):
         return TokenizableElement(prev_sibling)._join_to_next
 
     @property
-    def has_lb_in_preceding_or_ancestor(self) -> XmlElement | None:
-
-        """
-        Returns any preceding or |_Element| containing an
-        <lb> element.
-        cf. https://www.w3.org/TR/1999/REC-xpath-19991116/#axes
-        last accessed 2023-04-20.
-        """
-
-        def get_preceding_lb(elem: TokenizableElement) -> list[XmlElement]:
-            
-            result = elem._e.xpath('preceding::*[descendant-or-self::ns:lb]')
-
-            if result == []:
-                if elem.parent is None:
-                    return []
-
-                return get_preceding_lb(elem.parent)
-
-            return [item for item in result
-                    if isinstance(item, XmlElement)]
-        
-        return last(get_preceding_lb(self))
-
-    @property
     def left_bound(self) -> bool:
         """
         Return False if self is <lb break='no'>, otherwise return True.
@@ -680,41 +633,6 @@ class TokenizableElement(RepresentableElement):
                     'supplied',
                     'g'
                 ])]
-
-    def _find_next_no_spaces(self) -> list[TokenizableElement]:
-
-        """Returns a list of the next |Element|s not 
-        separated by whitespace."""
-
-        def no_break_next(element: TokenizableElement) -> bool:
-            """Keep going if element is a linebreak with no word break"""
-            next_elem = element.find_next_sibling()
-
-            if isinstance(next_elem, TokenizableElement):
-                if next_elem._e is None:
-                    return False
-                if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
-                    if next_elem._e.attrs.get('break') == 'no':
-                        return True
-                if next_elem._e.tag.name == 'Comment':
-                    return True
-
-            return False
-                
-        def next_no_spaces(acc: list[TokenizableElement], element: Optional[TokenizableElement]):
-            
-            if not isinstance(element, TokenizableElement): 
-                return acc
-
-            if no_break_next(element):
-                return next_no_spaces(acc + [element], element.find_next_sibling())
-
-            if element.has_whitepace_tail:
-                return acc + [element]
-            
-            return next_no_spaces(acc + [element], element.find_next_sibling())
-
-        return next_no_spaces([], self)
 
     @property
     def no_gaps(self) -> bool:

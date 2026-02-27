@@ -7,18 +7,18 @@ from typing import Optional, Sequence
 
 from pyepidoc.shared.constants import *
 from pyepidoc.shared import maxone, head
-from pyepidoc.xml.utils import localname
 from pyepidoc.xml.xml_text import XmlText
 from pyepidoc.xml.xml_element import XmlNode, XmlElement
 
 from .epidoc import EpiDoc
 from .tokenizable_element import TokenizableElement
+from .representable import RepresentableElement
 from .edition_elements.ab import Ab
 from .edition_elements.edition import Edition
 from .edition_elements.lb import Lb
 
 
-def ancestor_abs(elem: TokenizableElement) -> Sequence[Ab]:
+def ancestor_abs(elem: RepresentableElement) -> Sequence[Ab]:
     """
     Returns a |Sequence| of |Ab|s containing an |Element|,
     starting with the ancestor closest to the |Element|
@@ -27,7 +27,7 @@ def ancestor_abs(elem: TokenizableElement) -> Sequence[Ab]:
         if elem.localname == 'ab']
 
 
-def owner_doc(elem: TokenizableElement) -> Optional[EpiDoc]:
+def owner_doc(elem: RepresentableElement) -> Optional[EpiDoc]:
     """
     Returns the |EpiDoc| document owning an element.
     """
@@ -39,7 +39,7 @@ def owner_doc(elem: TokenizableElement) -> Optional[EpiDoc]:
     return EpiDoc(roottree)
 
 
-def ancestor_edition(elem: TokenizableElement) -> Optional[Edition]:
+def ancestor_edition(elem: RepresentableElement) -> Optional[Edition]:
 
     """
     Returns the |Edition| containing an element (if any).
@@ -89,7 +89,7 @@ def doc_id(elem: TokenizableElement) -> Optional[str]:
     return doc.id
 
 
-def lang(elem: TokenizableElement) -> Optional[str]:
+def lang(elem: RepresentableElement) -> Optional[str]:
     """
     Returns the language of the element, based on 
     the language specified either in the 

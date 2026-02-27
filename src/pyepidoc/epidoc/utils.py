@@ -14,6 +14,7 @@ from pyepidoc.shared.enums import (
 )
 from pyepidoc.shared.constants import TEINS
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
+from pyepidoc.epidoc.representable import RepresentableElement
 
 
 def callable_from_localname(
@@ -43,8 +44,8 @@ def callable_from_localname(
     return elem_cls(elem)
 
 
-def descendant_atomic_tokens(elem: TokenizableElement) -> list[TokenizableElement]:
-    desc_tokens = map(TokenizableElement, elem.get_desc(AtomicTokenType.values()))
+def descendant_atomic_tokens(elem: RepresentableElement) -> list[RepresentableElement]:
+    desc_tokens = map(RepresentableElement, elem.get_desc(AtomicTokenType.values()))
 
     return [token for token 
         in desc_tokens

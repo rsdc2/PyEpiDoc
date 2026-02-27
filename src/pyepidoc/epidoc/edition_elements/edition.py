@@ -23,7 +23,8 @@ from pyepidoc.xml.namespace import Namespace as ns
 
 
 from .. import ids
-from ..tokenizable_element import TokenizableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
+from pyepidoc.epidoc.token_container import TokenContainer
 from .ab import Ab
 from .expan import Expan
 from .l import L
@@ -194,7 +195,7 @@ def prettify(
     return edition
 
 
-class Edition(TokenizableElement):
+class Edition(TokenContainer):
 
     """
     Provides services for <div type="edition> elements.

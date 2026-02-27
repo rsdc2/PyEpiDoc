@@ -7,11 +7,16 @@ from pyepidoc.xml.xml_element import (
     XmlNode, 
     ProcessingInstruction
 )
-
+from pyepidoc.xml.namespace import Namespace as ns
+from pyepidoc.shared.enums import (
+    whitespace
+)
 from pyepidoc.shared.namespaces import XMLNS, TEINS
 from pyepidoc.shared.enums import RegTextType
 from pyepidoc.shared.classes import Showable
 from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.shared.iterables import last
 
 
 class RepresentableElement(TeiElement, Showable):
@@ -55,6 +60,48 @@ class RepresentableElement(TeiElement, Showable):
         from .representable_classes import representable_classes
         return representable_classes
 
+    def _find_next_no_spaces(self) -> list[RepresentableElement]:
+
+        """Returns a list of the next |Element|s not 
+        separated by whitespace."""
+
+        def no_break_next(element: RepresentableElement) -> bool:
+            """Keep going if element is a linebreak with no word break"""
+            next_elem = element.find_next_sibling()
+
+            if isinstance(next_elem, RepresentableElement):
+                if next_elem._e is None:
+                    return False
+                if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
+                    if next_elem._e.attrs.get('break') == 'no':
+                        return True
+                if next_elem._e.tag.name == 'Comment':
+                    return True
+
+            return False
+                
+        def next_no_spaces(acc: list[RepresentableElement], element: RepresentableElement) -> list[RepresentableElement]:
+
+            if not isinstance(element, RepresentableElement): 
+                return acc
+
+            next_sibling = element.find_next_sibling()
+            if next_sibling is None:
+                return acc + [element]
+
+            if no_break_next(element):
+                return next_no_spaces(acc + [element], RepresentableElement(next_sibling))
+
+            if element.has_whitepace_tail:
+                return acc + [element]
+            
+            return next_no_spaces(acc + [element], RepresentableElement(next_sibling))
+
+        result = next_no_spaces([], self)
+        if result is None:
+            pass
+        return result
+
     @property
     def following_nodes_in_ab(self) -> list[XmlNode]:
 
@@ -86,6 +133,52 @@ class RepresentableElement(TeiElement, Showable):
         """
         return self.normalized_form
     
+    @property
+    def has_lb_in_preceding_or_ancestor(self) -> XmlElement | None:
+
+        """
+        Returns any preceding or |_Element| containing an
+        <lb> element.
+        cf. https://www.w3.org/TR/1999/REC-xpath-19991116/#axes
+        last accessed 2023-04-20.
+        """
+
+        def get_preceding_lb(elem: XmlElement) -> list[XmlElement]:
+            
+            result = elem.xpath('preceding::*[descendant-or-self::ns:lb]')
+
+            if result == []:
+                if elem.parent is None:
+                    return []
+
+                return get_preceding_lb(elem.parent)
+
+            return [item for item in result
+                    if isinstance(item, XmlElement)]
+        
+        return last(get_preceding_lb(self._e))
+
+    @property
+    def has_whitepace_tail(self) -> bool:
+        """
+        Returns True if the final element of the tail is a whitespace,
+        implying a word break at the end of the element.
+        """
+
+        if self._e.tail is None: 
+            return False
+        
+        if self._e.localname == 'lb' and self.get_attr('break') == 'no':
+            return False
+        
+        if self._e.tail == '':
+            return False
+        
+        if self._e.tag.name == "Comment":
+            return False
+
+        return self._e.tail[-1] in whitespace
+
     @property
     def leiden_form(self) -> str:
         """

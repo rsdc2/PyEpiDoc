@@ -89,7 +89,7 @@ class Expan(TokenizableElement):
     
     @property
     def as_element(self) -> TokenizableElement:
-        return TokenizableElement(self.e)
+        return TokenizableElement(self._e)
     
     def contains_g(self, with_ref: str | None = None) -> bool:
         """
@@ -134,7 +134,7 @@ class Expan(TokenizableElement):
 
     @property
     def exs(self) -> list[Ex]:
-        return [Ex(elem.e) for elem in self.ex_elems]
+        return [Ex(elem._e) for elem in self.ex_elems]
 
     def _desc_text_node_parent(self, position: str) -> Optional[_Element]:
         xpath = f'descendant::text()[position()={position}]/parent::*'

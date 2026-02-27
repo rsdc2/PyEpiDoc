@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_from_children
-from pyepidoc.epidoc.representable import RepresentableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.shared.iterables import maxone
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 
-class _W(RepresentableElement):
+class _W(TokenizableElement):
     """
     Provides services for string representation of <w> elements.
     """

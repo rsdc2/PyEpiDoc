@@ -8,7 +8,7 @@ from pyepidoc.xml.xml_element import XmlElement
 class Space(RepresentableElement):
     """
     Provides services for abbreviation expansions 
-    given in <gap> elements.
+    given in <space> elements.
     """
 
     def __init__(self, e: TeiElement | XmlElement):
@@ -33,7 +33,7 @@ class Space(RepresentableElement):
         return self.get_attr('quantity')
     
     @cached_property
-    def simple_lemmatized_edition_element(self) -> TokenizableElement:
+    def simple_lemmatized_edition_element(self) -> RepresentableElement:
         """
         Element for use in simple-lemmatized edition
         """

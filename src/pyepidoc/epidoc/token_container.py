@@ -20,11 +20,11 @@ from pyepidoc.xml import XmlElement
 from pyepidoc.shared import head
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.types import Base
-from pyepidoc.epidoc.representable import RepresentableElement
+from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.utils import descendant_atomic_tokens
 
 
-class TokenContainer(RepresentableElement):
+class TokenContainer(TokenizableElement):
 
     """
     The Ab class provides services for interaction with 
@@ -50,8 +50,8 @@ class TokenContainer(RepresentableElement):
     def __init__(self, e: TeiElement | XmlElement):
         super().__init__(e)
         
-        if self._e.tag.name != 'ab':
-            raise TypeError('Element should be of type <ab>.')
+        if self._e.tag.name not in ['ab', 'div']:
+            raise TypeError('Element should be of type <ab> or <div>.')
 
     @property
     def compound_tokens(self) -> list[TokenizableElement]:
@@ -111,7 +111,7 @@ class TokenContainer(RepresentableElement):
         node, at which point returns the <div> @lang attribute, if any.
         """
         
-        def _get_lang(elem:TokenizableElement) -> Optional[str]:
+        def _get_lang(elem: TokenizableElement) -> Optional[str]:
             
             lang = elem.get_attr('lang', XMLNS)
             

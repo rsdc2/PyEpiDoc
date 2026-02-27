@@ -48,7 +48,7 @@ class Gap(RepresentableElement):
         return f' [-{self.extent}-] '
     
     @cached_property
-    def simple_lemmatized_edition_element(self) -> TokenizableElement:
+    def simple_lemmatized_edition_element(self) -> RepresentableElement:
         """
         Element for use in simple-lemmatized edition
         """
