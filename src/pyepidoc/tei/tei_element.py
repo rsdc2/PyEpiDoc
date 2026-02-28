@@ -74,7 +74,6 @@ class TeiElement:
 
         return None
 
-
     def get_attr(
             self, 
             attribname: str, 

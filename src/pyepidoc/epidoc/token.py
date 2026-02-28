@@ -1,25 +1,17 @@
 from __future__ import annotations
 
-from typing import (
-    Optional, 
-    Sequence, 
-    Union
-)
+from typing import Optional, Sequence
 from functools import cached_property
-from copy import deepcopy
 
 from pyepidoc.xml import Namespace as ns
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.shared import maxone, remove_none, head
 from pyepidoc.shared.namespaces import TEINS, XMLNS
-from pyepidoc.shared.enums import (
-    PUNCTUATION,
-    RegTextType
-)
+from pyepidoc.shared.enums import PUNCTUATION, RegTextType
 
 from .utils import descendant_atomic_tokens
-from .representable import RepresentableElement
+from .tokenizable_element import TokenizableElement
 from .edition_elements.abbr import Abbr
 from .edition_elements.am import Am
 from .edition_elements.choice import Choice
@@ -31,7 +23,6 @@ from .edition_elements.gap import Gap
 from .edition_elements.hi import Hi
 from .edition_elements.lb import Lb
 from .edition_elements.num import Num
-from .edition_elements.orig import Orig
 from .edition_elements.supplied import Supplied
 from .edition_elements.surplus import Surplus
 from .edition_elements.unclear import Unclear
@@ -56,7 +47,7 @@ elem_classes: dict[str, type] = {
 }
 
 
-class Token(RepresentableElement):
+class Token(TokenizableElement):
 
     """
     Class for providing services for tokens, including

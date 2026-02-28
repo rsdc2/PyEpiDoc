@@ -1,23 +1,24 @@
 from __future__ import annotations
 
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.enums import AtomicTokenType
 from typing import Optional
 
 
-class Lb(TokenizableElement):    
+class Lb(RepresentableElement):    
 
     """
     Provides services for <lb> ('line break') elements.
     """
 
-    def __init__(self, e: TokenizableElement | XmlElement):
+    def __init__(self, e: RepresentableElement | XmlElement):
 
         super().__init__(e)
 
         if self._e.localname != 'lb':
-            node_name_err_msg = f'Element must be <lb>. Element is {TokenizableElement(e)._e.localname}.'
+            node_name_err_msg = f'Element must be <lb>. Element is {RepresentableElement(e)._e.localname}.'
             raise TypeError(node_name_err_msg)
 
     def __repr__(self):

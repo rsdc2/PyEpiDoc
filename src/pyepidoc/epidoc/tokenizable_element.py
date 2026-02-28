@@ -914,9 +914,6 @@ class TokenizableElement(RepresentableElement):
 
         return self._e.tail
 
-    def get_supplied(self) -> list[TokenizableElement]:
-        return [TokenizableElement(supplied) for supplied in self.get_desc('supplied')]
-
     @property
     def _tail_prototokens(self) -> list[str]:
 

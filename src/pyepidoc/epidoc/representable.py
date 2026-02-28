@@ -86,9 +86,10 @@ class RepresentableElement(TeiElement, Showable):
                 return acc
 
             next_sibling = element.find_next_sibling()
+
             if next_sibling is None:
                 return acc + [element]
-
+            
             if no_break_next(element):
                 return next_no_spaces(acc + [element], RepresentableElement(next_sibling))
 
@@ -98,8 +99,6 @@ class RepresentableElement(TeiElement, Showable):
             return next_no_spaces(acc + [element], RepresentableElement(next_sibling))
 
         result = next_no_spaces([], self)
-        if result is None:
-            pass
         return result
 
     @property
@@ -133,6 +132,9 @@ class RepresentableElement(TeiElement, Showable):
         """
         return self.normalized_form
     
+    def get_supplied(self) -> list[RepresentableElement]:
+        return [RepresentableElement(supplied) for supplied in self.get_desc('supplied')]
+
     @property
     def has_lb_in_preceding_or_ancestor(self) -> XmlElement | None:
 
