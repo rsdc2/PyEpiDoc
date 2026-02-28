@@ -6,7 +6,7 @@ from .revision_desc import RevisionDesc
 
 class TeiHeader(TokenizableElement):
     """
-    The <teiHeader> element
+    Represents a <teiHeader> element
     """
 
     def append_file_desc(
