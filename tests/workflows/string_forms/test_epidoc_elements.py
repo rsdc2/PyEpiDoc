@@ -46,7 +46,7 @@ def test_abbr_leiden_plus_form():
     token = edition.tokens_no_nested[0]
 
     # Act / Assert
-    assert token.leiden_plus_form == ' | IIvir(o)'
+    assert token.leiden_plus_form == '| IIvir(o)'
 
 
 def test_am():

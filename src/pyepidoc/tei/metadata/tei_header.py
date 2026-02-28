@@ -40,13 +40,13 @@ class TeiHeader(TokenizableElement):
         self._e.append_node(revision_desc._e)
         return self
     
-    @staticmethod
-    def create() -> TeiHeader:
+    @classmethod
+    def create(cls, localname = 'teiHeader', attrs: dict[str, str] = dict()) -> TeiHeader:
         """
         Create a new <teiHeader> element, but do not
         append it to its host document
         """
-        tei_header_elem = TokenizableElement.create('teiHeader')
+        tei_header_elem = super().create(localname)
         return TeiHeader(tei_header_elem)
     
     def ensure_revision_desc(self) -> RevisionDesc:

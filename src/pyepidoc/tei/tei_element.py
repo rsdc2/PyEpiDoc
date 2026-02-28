@@ -48,8 +48,8 @@ class TeiElement:
     def child_elems(self) -> Sequence[TeiElement]:
         return [TeiElement(child) for child in self._e.child_elements]
 
-    @staticmethod
-    def create(localname: str, attrs: dict[str, str] = dict()) -> TeiElement:
+    @classmethod
+    def create(cls, localname: str, attrs: dict[str, str] = dict()) -> TeiElement:
         """
         Create a new Element in the TEI namespace with local name 
         `localname` and `attrs`

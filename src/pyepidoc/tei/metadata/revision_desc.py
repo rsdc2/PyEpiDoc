@@ -1,4 +1,6 @@
 from __future__ import annotations
+from typing import overload
+
 from pyepidoc.tei.tei_element import TeiElement
 from .change import Change
 from .list_change import ListChange
@@ -16,12 +18,9 @@ class RevisionDesc(TeiElement):
         self.list_change.append_change(change)
         return self
 
-    @staticmethod
-    def create() -> RevisionDesc:
-        """
-        Create a new <revisionDesc> element with an empty <listChange> 
-        """
-        tei_element = TeiElement.create('revisionDesc')
+    @classmethod
+    def create(cls, localname = 'revisionDesc', attrs: dict[str, str] = dict()) -> TeiElement:
+        tei_element = super().create(localname, attrs)
         revision_desc = RevisionDesc(tei_element)
         list_change = ListChange.create()
         revision_desc._e.append_node(list_change._e)

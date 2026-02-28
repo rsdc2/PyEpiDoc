@@ -88,9 +88,9 @@ def test_leiden_string_lists(
 
 leiden_plus_tests = [
     ('<w>ἐτῶν</w>\n<lb n="7"/>',
-     ['ἐτῶν'], [r'ἐτῶν | ']),
+     ['ἐτῶν'], [r'ἐτῶν |']),
     ('<lb n="7"/><num value="37">λζ</num>  ',
-     ['λζ'], [r' | λζ'])  
+     ['λζ'], [r'| λζ'])  
 ]
 @pytest.mark.parametrize(['xml', 'leiden_forms', 'leiden_plus_forms'], leiden_plus_tests)
 def test_leiden_plus_string_lists(

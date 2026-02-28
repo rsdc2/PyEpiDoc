@@ -1,6 +1,8 @@
 from __future__ import annotations
+import re
 from functools import cached_property, reduce
 from typing import Sequence
+
 from pyepidoc.xml.xml_text import XmlText
 from pyepidoc.xml.xml_element import (
     XmlComment, 
@@ -17,6 +19,7 @@ from pyepidoc.shared.classes import Showable
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.iterables import last
+from pyepidoc.shared.enums import AtomicTokenType
 
 
 class RepresentableElement(TeiElement, Showable):
@@ -251,7 +254,9 @@ class RepresentableElement(TeiElement, Showable):
         prec_text = ''.join(map(string_rep, preceding_upto_text))
         following_text = ''.join(map(string_rep, following_upto_text))
 
-        return prec_text + self.leiden_form + following_text        
+        combined = prec_text + self.leiden_form + following_text  
+        combined = re.sub(r'\s+', ' ', combined).strip()
+        return combined
 
     @property
     def local_id(self) -> str | None:

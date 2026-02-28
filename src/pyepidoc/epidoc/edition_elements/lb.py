@@ -39,7 +39,7 @@ class Lb(RepresentableElement):
     def leiden_form(self) -> str:
         if self._e.has_ancestors_by_names(AtomicTokenType.values()):
             return '|'
-        return '|'
+        return ' | '
 
     @property
     def line_elems(self):

@@ -84,9 +84,9 @@ def get_leiden_str(obj: TeiElement | XmlText | str) -> str:
         if not obj._e.has_ancestors_by_names(AtomicTokenType.values()):
             leiden_form = leiden_form.strip() + ' '
 
-    if obj._e.localname in ['lb', 'g']:
-        if not obj._e.has_ancestors_by_names(AtomicTokenType.values()):
-            leiden_form = ' ' + leiden_form.strip() + ' '
+    # if obj._e.localname in ['lb', 'g']:
+    #     if not obj._e.has_ancestors_by_names(AtomicTokenType.values()):
+    #         leiden_form = ' ' + leiden_form.strip() + ' '
 
     return leiden_form
 

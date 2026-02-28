@@ -28,7 +28,7 @@ class G(RepresentableElement):
         if self._e.has_ancestors_by_names(AtomicTokenType.values()):
             return self._e.text_desc_compressed_whitespace
         
-        return self._e.text_desc_compressed_whitespace
+        return ' ' + self._e.text_desc_compressed_whitespace + ' '
 
     @property
     def normalized_form(self) -> str:

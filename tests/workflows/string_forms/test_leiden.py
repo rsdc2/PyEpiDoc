@@ -73,7 +73,7 @@ def test_leiden_plus_forms_of_tokens_in_context():
     leiden_plus_str = edition.tokens_leiden_str
 
     # Assert
-    assert leiden_plus_str == '| · Dis · '
+    assert leiden_plus_str == '| · Dis ·'
     
 
 @pytest.mark.parametrize(['xml_str', 'expected'], [
