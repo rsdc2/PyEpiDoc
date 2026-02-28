@@ -65,6 +65,16 @@ def epidoc_elem_to_str(xml: str, epidoc_elem_type: type[XmlElement]):
     return str(epidoc_elem)
 
 
+def final_leiden_str_process(leiden_form: str) -> str:
+    leiden_form = re.sub(r'\|\s+?\|', '|', leiden_form)
+    leiden_form = re.sub(r'·\s+?·', '·', leiden_form)
+    leiden_form = re.sub(r'\s{2,}', ' ', leiden_form)
+    # leiden_form = re.sub(r'\s?\|\s?', '|', leiden_form)
+    leiden_form = re.sub(r'\]\s\[\-\?\-', '-?-', leiden_form)
+    leiden_form = re.sub(r'\]\s\[', ' ', leiden_form)
+    return leiden_form
+
+
 def get_leiden_str(obj: TeiElement | XmlText | str) -> str:
     if isinstance(obj, XmlText):
         return obj.text.strip()

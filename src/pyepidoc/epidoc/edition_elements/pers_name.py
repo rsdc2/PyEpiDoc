@@ -5,7 +5,8 @@ from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.epidoc.utils import (
     leiden_form_from_children, 
-    normalized_form_from_children
+    normalized_form_from_children,
+    final_leiden_str_process
 )
 
 class PersName(TokenizableElement):
@@ -54,13 +55,14 @@ class PersName(TokenizableElement):
             'gap': Gap
         }
         
-        leiden = leiden_form_from_children(
-            self._e, 
-            element_classes
-        )
+        leiden = leiden_form_from_children(self._e, element_classes)
 
-        with_normalized_spaces = re.sub('\s+', ' ', leiden).strip()  
+        with_normalized_spaces = re.sub('\s+', ' ', leiden)
         return with_normalized_spaces
+    
+    @property
+    def finalised_leiden_form(self) -> str:
+        return final_leiden_str_process(self.leiden_form)
     
     @property
     def normalized_form(self) -> str:
@@ -82,11 +84,7 @@ class PersName(TokenizableElement):
             'g': G
         }
         
-        return normalized_form_from_children(
-            self._e, 
-            element_classes, 
-            'node'
-        )
+        return normalized_form_from_children(self._e, element_classes, 'node')
     
     @property
     def pers_name_type(self) -> str:

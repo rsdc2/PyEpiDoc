@@ -40,12 +40,12 @@ class Supplied(TokenizableElement):
             'w': W,
             'num': Num
         }
-        
-        return ''.join([
-            '[',
-            leiden_form_from_children(self._e, element_classes),
-            ']'
-        ])
+
+        leiden_form = leiden_form_from_children(self._e, element_classes)
+
+        if len(leiden_form) > 0 and leiden_form[-1] == ' ':
+            return ''.join(['[', leiden_form.strip(), ']', ' '])
+        return ''.join(['[', leiden_form, ']'])
     
     @property
     def normalized_form(self) -> str:

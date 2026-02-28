@@ -18,6 +18,7 @@ from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.iterables import maxone, seek, default_str
 from pyepidoc.tei.metadata.change import Change
 from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.epidoc.utils import final_leiden_str_process
 
 from pyepidoc.xml.namespace import Namespace as ns
 
@@ -392,9 +393,7 @@ class Edition(TokenContainer):
             
             return list(filter(has_not_token_ancestor, desc))        
 
-    def get_text(
-            self, 
-            type: Literal['leiden', 'normalized', 'xml']) -> str:
+    def get_text(self, type: Literal['leiden', 'normalized', 'xml']) -> str:
         
         """
         :param type: the type of text wanted, whether
@@ -407,13 +406,9 @@ class Edition(TokenContainer):
 
             leiden = ' '.join([repr.leiden_form 
                                for repr in self.representable_no_subatomic])
-            
-            leiden = re.sub(r'\|\s+?\|', '|', leiden)
-            leiden = re.sub(r'·\s+?·', '·', leiden)
-            leiden = re.sub(r'\s{2,}', ' ', leiden)
-            leiden = re.sub(r'\s?\|\s?', '|', leiden)
-
-            return leiden.replace('|', '\n').strip()
+            leiden = final_leiden_str_process(leiden)
+            leiden = re.sub(r'\s?\|\s?', '\n', leiden).strip()
+            return leiden
         
         elif type == 'normalized':
             normalized = ' '.join([repr.normalized_form 

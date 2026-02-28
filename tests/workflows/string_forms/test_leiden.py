@@ -83,9 +83,29 @@ def test_leiden_plus_forms_of_tokens_in_context():
     ('<name><w>Nearchia<supplied reason="lost">e</supplied></w></name>',
      'Nearchia[e]'),
     ('<name><w>Nearchia<supplied reason="lost">e</supplied></w></name> <gap reason="lost" extent="unknown" unit="character"/>',
-     'Nearchia[e] [-?-]'),
+     'Nearchia[e-?-]'),
     ('<persName><w><expan><abbr>f</abbr><ex>ilio</ex></expan></w> <g ref="#interpunct">·</g> <name><w>Asi <lb break="no"/>atico</w></name></persName>', 
-     'f(ilio) · Asi\natico')
+     'f(ilio) · Asi\natico'),
+    ('<supplied><w>Joe</w></supplied><supplied><w>Bloggs</w></supplied><w>is</w>', '[Joe Bloggs] is'),
+    ('<persName>'
+        '<name>'
+            '<supplied>'
+                '<expan>'
+                    '<abbr>Cn</abbr>'
+                    '<ex>aei</ex>'
+                '</expan>'
+            '</supplied>'
+        '</name>'
+    '</persName>'
+    '<w>'
+        '<supplied>'
+            '<expan>'
+                '<abbr>f</abbr>'
+                '<ex>ilio</ex>'
+            '</expan>'
+        '</supplied>'
+    '</w>',
+     '[Cn(aei) f(ilio)]')
 ])
 def test_leiden_edition(xml_str: str, expected: str):
     # Arrange
