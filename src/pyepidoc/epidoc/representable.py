@@ -51,7 +51,6 @@ class RepresentableElement(TeiElement, Showable):
         return [RepresentableElement(expan) 
                 for expan in self.get_desc('expan')]
 
-
     def deepcopy(self) -> RepresentableElement:
         return RepresentableElement(self._e.deepcopy())
 
@@ -60,27 +59,34 @@ class RepresentableElement(TeiElement, Showable):
         from .representable_classes import representable_classes
         return representable_classes
 
-    def _find_next_no_spaces(self) -> list[RepresentableElement]:
+    @property
+    def is_no_break(self) -> bool:
+        """
+        Return true if element is a linebreak with no word break
+        """
+        next_elem = self.find_next_sibling()
 
-        """Returns a list of the next |Element|s not 
-        separated by whitespace."""
-
-        def no_break_next(element: RepresentableElement) -> bool:
-            """Keep going if element is a linebreak with no word break"""
-            next_elem = element.find_next_sibling()
-
-            if isinstance(next_elem, RepresentableElement):
-                if next_elem._e is None:
-                    return False
-                if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
-                    if next_elem._e.attrs.get('break') == 'no':
-                        return True
-                if next_elem._e.tag.name == 'Comment':
+        if isinstance(next_elem, RepresentableElement):
+            if next_elem._e is None:
+                return False
+            if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
+                if next_elem._e.attrs.get('break') == 'no':
                     return True
+            # TODO: Check this works
+            if next_elem._e.tag.name == 'Comment':
+                return True
 
-            return False
+        return False
+    
+    def find_next_no_spaces(self) -> list[RepresentableElement]:
+
+        """
+        Returns a list of the next |Element|s not separated by whitespace.
+        """
                 
-        def next_no_spaces(acc: list[RepresentableElement], element: RepresentableElement) -> list[RepresentableElement]:
+        def _find_next_no_spaces(
+                acc: list[RepresentableElement], 
+                element: RepresentableElement) -> list[RepresentableElement]:
 
             if not isinstance(element, RepresentableElement): 
                 return acc
@@ -90,15 +96,15 @@ class RepresentableElement(TeiElement, Showable):
             if next_sibling is None:
                 return acc + [element]
             
-            if no_break_next(element):
-                return next_no_spaces(acc + [element], RepresentableElement(next_sibling))
+            if element.is_no_break:
+                return _find_next_no_spaces(acc + [element], RepresentableElement(next_sibling))
 
             if element.has_whitepace_tail:
                 return acc + [element]
             
-            return next_no_spaces(acc + [element], RepresentableElement(next_sibling))
+            return _find_next_no_spaces(acc + [element], RepresentableElement(next_sibling))
 
-        result = next_no_spaces([], self)
+        result = _find_next_no_spaces([], self)
         return result
 
     @property

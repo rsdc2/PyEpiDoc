@@ -587,7 +587,7 @@ class TokenizableElement(RepresentableElement):
 
     @property
     def _join_to_next(self) -> bool:
-        return len(self._find_next_no_spaces()) > 1
+        return len(self.find_next_no_spaces()) > 1
 
     @property
     def _join_to_prev(self) -> bool:
@@ -1008,10 +1008,10 @@ class TokenizableElement(RepresentableElement):
             if element in acc_desc:
                 return get_word_carrier_sequences(acc, acc_desc, tokenables[1:])
 
-            new_acc = acc + [element._find_next_no_spaces()]
+            new_acc = acc + [element.find_next_no_spaces()]
 
             next_no_spaces_desc = [e._e.descendant_elements 
-                                   for e in element._find_next_no_spaces()] + [[e._e for e in element._find_next_no_spaces()]]
+                                   for e in element.find_next_no_spaces()] + [[e._e for e in element.find_next_no_spaces()]]
             next_no_spaces_desc_flat = [TokenizableElement(item) 
                                         for item in chain(*next_no_spaces_desc)]
             
