@@ -4,8 +4,10 @@ from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_fro
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.shared.iterables import maxone
 from pyepidoc.shared.namespaces import XMLNS
+from pyepidoc.shared.enums import AtomicTokenType
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
+
 
 class _W(TokenizableElement):
     """
@@ -48,11 +50,12 @@ class _W(TokenizableElement):
             'unclear': Unclear
         }
         
-        return leiden_form_from_children(
-            self._e, 
-            element_classes
-        )
-    
+        leiden_form = leiden_form_from_children(self._e, element_classes)
+        # return leiden_form
+        if self._e.has_ancestors_by_names(AtomicTokenType.values()):
+            return leiden_form.strip()
+        return leiden_form.strip() + ' '
+
     @property
     def leiden_str(self) -> str:
         return self.leiden_form

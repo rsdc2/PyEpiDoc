@@ -199,7 +199,7 @@ class RepresentableElement(TeiElement, Showable):
             return self._e.text_desc
         if type(self.representable_cls_inst) is type(self):
             raise TypeError(f'Class {type(self)} must implement property `leiden_form`.')
-        return self.representable_cls_inst.leiden_form
+        return self.representable_cls_inst.leiden_form.strip()
 
     @property
     def leiden_plus_form(self) -> str:

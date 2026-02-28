@@ -113,9 +113,9 @@ def test_leiden_plus_string_lists(
 
 non_token_tests = [
     ('<gap reason="lost" unit="line" quantity="1"><desc>[-?-]</desc></gap>', 
-     ['[-?-]'], [' [-?-] ']),
+     ['[-?-]'], ['[-?-]']),
     ('<gap reason="lost" unit="line" quantity="1">[-?-]</gap>', 
-     ['[-?-]'], [' [-?-] '])
+     ['[-?-]'], ['[-?-]'])
 ]
 @pytest.mark.parametrize(['xml', 'expected_normalized_tokens', 'leiden_tokens'], non_token_tests)
 def test_non_tokens_normalized_string_lists(

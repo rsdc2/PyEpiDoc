@@ -2,6 +2,7 @@ from pyepidoc.epidoc.utils import leiden_form_from_children, normalized_form_fro
 from pyepidoc.epidoc.edition_elements.w import _W
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
+from pyepidoc.shared.enums import AtomicTokenType
 
 
 class Num(_W):
@@ -31,7 +32,10 @@ class Num(_W):
             'hi': Hi
         }
         
-        return leiden_form_from_children(self._e, element_classes)
+        leiden_form = leiden_form_from_children(self._e, element_classes)
+        if self._e.has_ancestors_by_names(AtomicTokenType.values()):
+            return leiden_form.strip()
+        return leiden_form.strip() + ' '
     
     @property
     def normalized_form(self) -> str:
