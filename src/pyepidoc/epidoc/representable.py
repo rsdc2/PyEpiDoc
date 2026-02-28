@@ -64,17 +64,12 @@ class RepresentableElement(TeiElement, Showable):
         """
         Return true if element is a linebreak with no word break
         """
-        next_elem = self.find_next_sibling()
-
-        if isinstance(next_elem, RepresentableElement):
-            if next_elem._e is None:
-                return False
-            if next_elem._e._e.tag == ns.give_ns('lb', TEINS):
-                if next_elem._e.attrs.get('break') == 'no':
-                    return True
-            # TODO: Check this works
-            if next_elem._e.tag.name == 'Comment':
+        if self._e._e.tag == ns.give_ns('lb', TEINS):
+            if self._e.attrs.get('break') == 'no':
                 return True
+        # TODO: Check this works
+        if self._e.tag.name == 'Comment':
+            return True
 
         return False
     
@@ -96,7 +91,7 @@ class RepresentableElement(TeiElement, Showable):
             if next_sibling is None:
                 return acc + [element]
             
-            if element.is_no_break:
+            if RepresentableElement(next_sibling).is_no_break:
                 return _find_next_no_spaces(acc + [element], RepresentableElement(next_sibling))
 
             if element.has_whitepace_tail:
