@@ -96,8 +96,8 @@ def tokenize_subatomic_tags(subelement: XmlElement) -> TokenizableElement:
 
 class TokenizableElement(RepresentableElement):    
     """
-    Provides services for EpiDoc edition elements, 
-    i.e. elements that would be represented in a text edition.
+    Represents any element that is both representable in a text edition 
+    and contains at least one token, and therefore may be tokenized
     """
 
     _final_space: bool = False
@@ -972,8 +972,8 @@ class TokenizableElement(RepresentableElement):
 
         return [TokenizableElement(child) for child in self.child_elems
             if child._e.localname in AtomicTokenType.values() or \
-                child._e.tag.name == "Comment"]
-
+                child._e.tag.name == 'Comment']
+    
     def find_token_carriers(self) -> list[TokenizableElement]:
 
         """
@@ -987,14 +987,14 @@ class TokenizableElement(RepresentableElement):
                 acc.append(epidoc_element)
         return acc
 
-    def _find_token_carrier_sequences(self) -> list[list[TokenizableElement]]:
+    def find_token_carrier_sequences(self) -> list[list[TokenizableElement]]:
 
         """
         Returns maximal sequences of word_carriers between whitespace.
         These sequences are what are tokenized in <w/> elements etc.
         """
         
-        def get_word_carrier_sequences(
+        def _find_token_carrier_sequences(
             acc: list[list[TokenizableElement]], 
             acc_desc: set[TokenizableElement], 
             tokenables: list[TokenizableElement]
@@ -1006,9 +1006,9 @@ class TokenizableElement(RepresentableElement):
             element = tokenables[0]
 
             if element in acc_desc:
-                return get_word_carrier_sequences(acc, acc_desc, tokenables[1:])
+                return _find_token_carrier_sequences(acc, acc_desc, tokenables[1:])
 
-            new_acc = acc + [element.find_next_no_spaces()]
+            new_acc = acc + [[TokenizableElement(e) for e in element.find_next_no_spaces()]]
 
             next_no_spaces_desc = [e._e.descendant_elements 
                                    for e in element.find_next_no_spaces()] + [[e._e for e in element.find_next_no_spaces()]]
@@ -1017,12 +1017,9 @@ class TokenizableElement(RepresentableElement):
             
             # NB this doesn't work if use 'update_set_copy'
             # TODO: work out why
-            new_acc_desc = update_set_inplace(
-                acc_desc, 
-                set(next_no_spaces_desc_flat)
-            )
+            new_acc_desc = update_set_inplace(acc_desc, set(next_no_spaces_desc_flat))
         
-            return get_word_carrier_sequences(
+            return _find_token_carrier_sequences(
                 new_acc, 
                 new_acc_desc, 
                 tokenables[1:]
@@ -1040,7 +1037,7 @@ class TokenizableElement(RepresentableElement):
             
             return acc + [sequence]
 
-        tokencarrier_sequences = get_word_carrier_sequences(
+        tokencarrier_sequences = _find_token_carrier_sequences(
             acc=[], 
             acc_desc=set(), 
             tokenables=self.find_token_carriers()
@@ -1080,7 +1077,7 @@ class TokenizableElement(RepresentableElement):
         """
         self.tokenize_initial_text_in_container()
 
-        token_carriers = list(chain(*self._find_token_carrier_sequences()))
+        token_carriers = list(chain(*self.find_token_carrier_sequences()))
         token_carriers_sorted = [TokenizableElement(elem) for elem 
                                  in sorted([token_carrier._e for token_carrier in token_carriers])]
         

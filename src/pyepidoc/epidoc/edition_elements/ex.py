@@ -1,15 +1,15 @@
-from pyepidoc.epidoc.tokenizable_element import TokenizableElement
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 
 
-class Ex(TokenizableElement):
+class Ex(RepresentableElement):
     """
     Provides services for abbreviation expansions 
     given in <ex> elements.
     """
 
-    def __init__(self, e: TokenizableElement | TeiElement | XmlElement):
+    def __init__(self, e: RepresentableElement | TeiElement | XmlElement):
 
         super().__init__(e)
 

@@ -1,13 +1,12 @@
-from pyepidoc.epidoc.tokenizable_element import TokenizableElement
+from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.enums import AtomicTokenType
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.xml.xml_element import XmlElement
 
 
-class G(TokenizableElement):
+class G(RepresentableElement):
     """
-    Provides services for abbreviation expansions 
-    given in <ex> elements.
+    Represents <g> elements
     """
 
     def __init__(self, e: TeiElement | XmlElement):

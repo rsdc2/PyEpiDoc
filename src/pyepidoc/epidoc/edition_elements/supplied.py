@@ -6,8 +6,7 @@ from pyepidoc.tei.tei_element import TeiElement
 
 class Supplied(TokenizableElement):
     """
-    Provides services for abbreviation expansions 
-    given in <ex> elements.
+    Represents <supplied> elements
     """
 
     def __init__(self, e: TeiElement | XmlElement):

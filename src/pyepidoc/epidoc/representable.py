@@ -20,11 +20,15 @@ from pyepidoc.shared.iterables import last
 
 
 class RepresentableElement(TeiElement, Showable):
+    """
+    Represents any element that has a representation in a printed version of the
+    document.
+    """
 
     @property
     def abbr_elems(self) -> Sequence[RepresentableElement]:
         """
-        Return all abbreviation elements as a |list| of |Element|.
+        Returns all abbreviation elements as a |list| of |Element|.
         """
 
         return [RepresentableElement(abbr) 
@@ -44,7 +48,7 @@ class RepresentableElement(TeiElement, Showable):
     @property
     def expan_elems(self) -> Sequence[RepresentableElement]:
         """
-        Return all abbreviation expansions (i.e. abbreviation + expansion) 
+        Returns all abbreviation expansions (i.e. abbreviation + expansion) 
         as a |list| of |Element|.
         """
 
@@ -62,7 +66,7 @@ class RepresentableElement(TeiElement, Showable):
     @property
     def is_no_break(self) -> bool:
         """
-        Return true if element is a linebreak with no word break
+        Returns true if element is a linebreak with no word break
         """
         if self._e._e.tag == ns.give_ns('lb', TEINS):
             if self._e.attrs.get('break') == 'no':
