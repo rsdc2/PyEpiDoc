@@ -284,10 +284,10 @@ class XmlElement(Showable):
         return len(self.descendant_elements_by_local_name(localname=localname)) > 0
     
     @staticmethod
-    def create(name: str, namespace: str, attrs: dict[str, str] | None = None) -> XmlElement:
+    def create(localname: str, namespace: str, attrs: dict[str, str] | None = None) -> XmlElement:
         
         element = etree.Element(
-            _tag = ns.give_ns(name, namespace),
+            _tag = ns.give_ns(localname, namespace),
             attrib = attrs,
             nsmap = None
         )
@@ -1060,11 +1060,21 @@ class XmlComment(XmlElement):
 
     @property
     def text(self) -> str:
-        return str(self._e)
+        return self._e.text
+
+    @text.setter
+    def text(self, value: str):
+        self._e.text = value
     
     @property
     def localname(self) -> str:
         return 'Comment'
+    
+    @staticmethod
+    def from_str(s: str) -> XmlComment:
+        comment = etree.Comment(s)
+        return XmlComment(comment)
+
 
 
 XmlNode = XmlText | XmlElement | XmlComment | ProcessingInstruction

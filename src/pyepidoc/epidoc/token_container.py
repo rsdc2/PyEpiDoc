@@ -168,10 +168,6 @@ class TokenContainer(TokenizableElement):
             return element._prototokens + acc
 
         return reduce(_redfunc, reversed(token_carriers_sorted), [])
-
-    def set_ids(self, id: Optional[str], base: Base=52) -> None:
-        for idcarrier in self.id_carriers:
-            idcarrier.set_id(id, base)
     
     @property
     def textparts(self) -> list[TextPart]:

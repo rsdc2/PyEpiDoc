@@ -48,19 +48,14 @@ class TeiElement:
     def child_elems(self) -> Sequence[TeiElement]:
         return [TeiElement(child) for child in self._e.child_elements]
 
-    @classmethod
-    def create(
-            cls, 
-            localname: str, 
-            attributes: dict[str, str] = dict()
-        ) -> TeiElement:
-        
+    @staticmethod
+    def create(localname: str, attrs: dict[str, str] = dict()) -> TeiElement:
         """
         Create a new Element in the TEI namespace with local name 
-        `localname` and `attributes`
+        `localname` and `attrs`
         """
 
-        elem = XmlElement.create(localname, TEINS, attributes)
+        elem = XmlElement.create(localname, TEINS, attrs)
         return TeiElement(elem)
     
     def find_next_sibling(self) -> TeiElement | None:

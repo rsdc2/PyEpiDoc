@@ -1,5 +1,4 @@
 from __future__ import annotations
-# from typing import override
 from pyepidoc.tei.tei_element import TeiElement
 from .change import Change
 from .list_change import ListChange
@@ -7,7 +6,7 @@ from .list_change import ListChange
 
 class RevisionDesc(TeiElement):
     """
-    The <revisionDesc> element
+    Represents a <revisionDesc> element
     """
     
     def append_change(self, change: Change) -> RevisionDesc:
@@ -17,15 +16,13 @@ class RevisionDesc(TeiElement):
         self.list_change.append_change(change)
         return self
 
-    # @override
-    @classmethod
-    def create(
-            cls      
-        ) -> RevisionDesc:
+    @staticmethod
+    def create() -> RevisionDesc:
         """
         Create a new <revisionDesc> element with an empty <listChange> 
         """
-        revision_desc = RevisionDesc(TeiElement.create('revisionDesc'))
+        tei_element = TeiElement.create('revisionDesc')
+        revision_desc = RevisionDesc(tei_element)
         list_change = ListChange.create()
         revision_desc._e.append_node(list_change._e)
         return revision_desc
@@ -51,4 +48,3 @@ class RevisionDesc(TeiElement):
             raise Exception('No <listChange> element present in <revisionDesc>')
         
         return ListChange.from_tei_element(TeiElement(list_change))
-
