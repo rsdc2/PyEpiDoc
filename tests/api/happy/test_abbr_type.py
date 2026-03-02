@@ -3,7 +3,6 @@ import pytest
 from pyepidoc.epidoc.edition_elements.expan import Expan
 from pyepidoc.shared.enums import AbbrType
 from pyepidoc.shared import contains
-from lxml import etree
 from pyepidoc.shared.constants import TEINS
 from pyepidoc.xml.xml_element import XmlElement
 

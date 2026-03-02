@@ -27,7 +27,6 @@ from lxml.etree import (
 from pyepidoc.shared.classes import Tag, Showable, ExtendableSeq, SetRelation
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared import maxone
-from pyepidoc.xml.utils import descendant_text
 
 from .namespace import Namespace as ns
 from .xml_text import XmlText
@@ -64,7 +63,11 @@ class ProcessingInstruction:
 
     @property
     def text(self) -> str:
-        raise NotImplementedError()
+        return ''
+    
+    @property
+    def descendant_text(self) -> str:
+        return ''
     
     def __str__(self) -> str:
         return str(self._e)
@@ -370,7 +373,8 @@ class XmlElement(Showable):
 
     @property
     def descendant_text(self) -> str:
-        return descendant_text(self._e)
+        s = ''.join(map(str, self.xpath('.//text()'))) 
+        return re.sub(r'[\n\t]|\s+', '', s)
 
     @property
     def dict_desc(self) -> dict:
@@ -1091,3 +1095,5 @@ def xml_node(node: _Element | _ElementUnicodeResult | _Comment | _ProcessingInst
     raise TypeError(f'Node {node} is node of valid type: '
                     'expected _Element, _ElementUnicodeResult, _Comment or _ProcessingInstruction ' \
                     'but is {type(node)}')
+
+

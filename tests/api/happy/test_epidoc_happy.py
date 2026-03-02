@@ -1,6 +1,4 @@
 from __future__ import annotations
-
-from lxml import etree
 from pathlib import Path
 
 from pyepidoc.epidoc.epidoc import EpiDoc

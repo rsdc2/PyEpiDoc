@@ -1,21 +1,11 @@
 from __future__ import annotations
 
-from lxml import etree
-from pathlib import Path
-
 from pyepidoc.shared.enums import DoNotPrettifyChildren
 from pyepidoc.epidoc.epidoc import EpiDoc
-from pyepidoc.epidoc.tokenizable_element import TokenizableElement
-from pyepidoc.epidoc.edition_elements.edition import Edition
-from pyepidoc.epidoc.edition_elements.edition import Ab
 from pyepidoc.xml.xml_element import XmlElement
-from pyepidoc.shared import head
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
-from pyepidoc.epidoc.dom import lang, line
 
-from pyepidoc.xml.utils import abify, editionify
-
-from ...config import FILE_WRITE_MODE
+from tests.config import FILE_WRITE_MODE
 
 import pytest
 

@@ -2,11 +2,6 @@ from __future__ import annotations
 
 from typing import Sequence, overload, Optional
 
-from lxml.etree import (
-    XMLSyntaxError, 
-    XMLSyntaxAssertionError
-)
-
 from pyepidoc.xml.xml_element import XmlElement
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 
@@ -145,35 +140,18 @@ class TeiElement:
         :return: a list of descendant elements where the
         `@type` attribute matches `divtype`.
         """
-        try:
-            if lang is None:
-                descendants = self._e.xpath(f".//ns:div[@type='{divtype}']", 
-                        namespaces={'ns': TEINS})
+        if lang is None:
+            descendants = self._e.xpath(f".//ns:div[@type='{divtype}']", 
+                    namespaces={'ns': TEINS})
 
-            elif lang is not None:
-                descendants = self._e.xpath(
-                    f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
-                    namespaces={'ns': TEINS, 'xml': XMLNS})
-            
-            return [node for node in descendants 
-                if isinstance(node, XmlElement)]
-            
-        except XMLSyntaxAssertionError as e:
-            print('XMLSyntaxAssertionError in getdivdescendants')
-            print(e)
-            return []
+        elif lang is not None:
+            descendants = self._e.xpath(
+                f".//ns:div[@type='{divtype} @xml:lang='{lang}']",
+                namespaces={'ns': TEINS, 'xml': XMLNS})
         
-        except XMLSyntaxError as e:
-            print('XMLSyntaxError in getdivdescendants')
-            print(e)
-            return []
-        
-        except AssertionError as e:
-            print(e)
-            return []
-        
-        return []
-    
+        return [node for node in descendants 
+            if isinstance(node, XmlElement)]
+
     @property
     def text(self) -> str:
         """

@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import Optional, cast
+from typing import Optional
 from itertools import chain
 
-from lxml.etree import _Element
-
 from pyepidoc.shared import head
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_element import XmlElement, XmlNode
 from pyepidoc.tei.tei_element import TeiElement
 
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
@@ -36,7 +34,7 @@ class Expan(TokenizableElement):
                             f'but is of type <{self._e.localname}>.')
 
     def __repr__(self):
-        tail = '' if self.tail is None else self.tail
+        tail = '' if self._e.tail is None else self._e.tail
         content = ''.join([
             "'",
             str(self),
@@ -136,12 +134,10 @@ class Expan(TokenizableElement):
     def exs(self) -> list[Ex]:
         return [Ex(elem._e) for elem in self.ex_elems]
 
-    def _desc_text_node_parent(self, position: str) -> Optional[_Element]:
+    def _desc_text_node_parent(self, position: str) -> XmlNode | None:
         xpath = f'descendant::text()[position()={position}]/parent::*'
         result = head(self._e.xpath(xpath))
-        if result is None:
-            return None
-        return cast(_Element, result)
+        return result
 
     def _desc_textnode_is_desc_of(self, position: str, localname: str) -> bool:
         desc_text_parent_xpath = f'descendant::text()[position()={position}]/parent::*'

@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import Literal, cast
 import re
 
-from lxml.etree import _Element, _ElementUnicodeResult
 from pyepidoc.xml.utils import localname
 from pyepidoc.xml.xml_element import XmlElement, XmlText
 from pyepidoc.tei.tei_element import TeiElement
@@ -18,7 +17,7 @@ from pyepidoc.epidoc.representable import RepresentableElement
 
 
 def callable_from_localname(
-            elem: _Element | _ElementUnicodeResult,
+            elem: XmlElement | XmlText,
             classes: dict[str, type]
         ) -> str | None:
 
@@ -27,10 +26,10 @@ def callable_from_localname(
     to the tag of param:elem
     """
 
-    if type(elem) is _ElementUnicodeResult:
+    if type(elem) is XmlText:
         return str(elem)
     
-    if type(elem) is _Element:
+    if type(elem) is XmlElement:
         elem_cls = classes.get(localname(elem), None)
 
     else:
