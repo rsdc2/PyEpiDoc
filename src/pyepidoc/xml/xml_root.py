@@ -9,20 +9,16 @@ from copy import deepcopy
 from io import BytesIO
 
 from lxml import etree, isoschematron
-from lxml.etree import ( 
-    _Comment,
+from lxml.etree import (
     _Element, 
     _ElementTree, 
-    _ElementUnicodeResult,
-    _ProcessingInstruction,
     XMLSyntaxError, 
     XMLSyntaxAssertionError,
     DocumentInvalid
 )
 
-from pyepidoc.xml.xml_element import XmlElement
-from .xml_element import XmlElement, XmlNode, XmlText, ProcessingInstruction
-from .errors import handle_xmlsyntaxerror
+from pyepidoc.xml.xml_node_types import XmlElement
+from .xml_node_types import XmlElement, XmlNode, XmlText, ProcessingInstruction
 
 class XmlRoot:  
     _tree: _ElementTree

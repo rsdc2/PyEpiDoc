@@ -5,7 +5,7 @@ from pyepidoc.xml.utils import abify
 from pyepidoc.processing.processor import Processor
 from pyepidoc.processing.operations import update_lemmatized_edition
 from pyepidoc.epidoc.edition_elements.ab import Ab
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 
 from pyepidoc.shared.enums import StandoffEditionElements
 from tests.config import EMPTY_TEMPLATE_PATH

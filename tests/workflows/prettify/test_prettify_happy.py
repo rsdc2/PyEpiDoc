@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pyepidoc.shared.enums import DoNotPrettifyChildren
 from pyepidoc.epidoc.epidoc import EpiDoc
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.shared.testing import save_reload_and_compare_with_benchmark
 
 from tests.config import FILE_WRITE_MODE

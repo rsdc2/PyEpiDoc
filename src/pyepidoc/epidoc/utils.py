@@ -4,7 +4,7 @@ from typing import Literal, cast
 import re
 
 from pyepidoc.xml.utils import localname
-from pyepidoc.xml.xml_element import XmlElement, XmlText
+from pyepidoc.xml.xml_node_types import XmlElement, XmlText
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.shared.enums import (
     NonNormalized, 

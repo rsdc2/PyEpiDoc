@@ -11,14 +11,14 @@ from itertools import chain
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared import update_set_inplace
 from pyepidoc.shared.string import to_lower
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 
 from copy import deepcopy
 from functools import reduce, cached_property
 import re
 
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.xml.xml_element import XmlNode, XmlElement
+from pyepidoc.xml.xml_node_types import XmlNode, XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import TEINS, XMLNS

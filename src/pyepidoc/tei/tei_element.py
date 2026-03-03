@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Sequence, overload, Optional
 
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.shared.namespaces import TEINS, XMLNS
 
 from pyepidoc.shared.iterables import maxone

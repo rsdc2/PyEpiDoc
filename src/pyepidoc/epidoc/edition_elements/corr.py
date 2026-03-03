@@ -1,7 +1,7 @@
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.utils import leiden_form_from_children
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 
 
 class Corr(TokenizableElement):

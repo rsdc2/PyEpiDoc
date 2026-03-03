@@ -2,8 +2,8 @@ from pyepidoc.epidoc.utils import epidoc_elem_to_str
 from pyepidoc.epidoc.epidoc import Expan
 from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.edition_elements.abbr import Abbr
-from pyepidoc.xml.xml_element import XmlElement
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 
 
 def test_abbr():

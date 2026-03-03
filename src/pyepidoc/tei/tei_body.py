@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.shared.namespaces import TEINS
 

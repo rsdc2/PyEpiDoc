@@ -1,6 +1,6 @@
 import pytest
 from pyepidoc import EpiDoc
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.epidoc.edition_elements.name import Name
 from pyepidoc.epidoc.edition_elements.num import Num

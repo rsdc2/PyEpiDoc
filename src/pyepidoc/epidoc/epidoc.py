@@ -15,7 +15,7 @@ import io
 from io import BytesIO
 
 from pyepidoc.xml.xml_root import XmlRoot
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.tei_doc import TeiDoc

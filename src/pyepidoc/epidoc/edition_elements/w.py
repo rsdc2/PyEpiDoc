@@ -5,7 +5,7 @@ from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.shared.iterables import maxone
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.enums import AtomicTokenType
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 
 

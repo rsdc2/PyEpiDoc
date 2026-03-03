@@ -1,3 +1,8 @@
+"""
+Definitions for fundamental XML Node types: 
+XmlElement, XmlText, XmlComment and XmlProcessingInstruction
+"""
+
 from __future__ import annotations
 from typing import (
     List,
@@ -29,7 +34,33 @@ from pyepidoc.shared.namespaces import TEINS, XMLNS
 from pyepidoc.shared import maxone
 
 from .namespace import Namespace as ns
-from .xml_text import XmlText
+from .errors import PyEpiDocXmlSyntaxError
+
+
+class XmlText:
+    _text: _ElementUnicodeResult
+
+    def __init__(self, text: _ElementUnicodeResult):
+        assert isinstance(text, _ElementUnicodeResult)
+        self._text = text
+
+    @property
+    def text(self) -> str:
+        return str(self._text)
+    
+    @property
+    def localname(self) -> str:
+        return "#text"
+
+    @property
+    def descendant_text(self) -> str:
+        return str(self._text)
+    
+    def __str__(self) -> str:
+        return self.text
+    
+    def __repr__(self) -> str:
+        return f'XmlText("{str(self)}")'
 
 
 class ProcessingInstruction:
@@ -536,7 +567,10 @@ class XmlElement(Showable):
                                for elemname in _elemnames])
 
         # TODO: should 'ns' here be actually the ns variable?
-        xpath_result = self.xpath(xpathstr, namespaces={'ns': namespace})
+        try:
+            xpath_result = self.xpath(xpathstr, namespaces={'ns': namespace})
+        except XMLSyntaxError as e:
+            raise PyEpiDocXmlSyntaxError(f'XML syntax error in document', e)
         return [res for res in xpath_result if isinstance(res, XmlElement)]
 
     def get_first_parent_by_name(
@@ -1078,7 +1112,6 @@ class XmlComment(XmlElement):
     def from_str(s: str) -> XmlComment:
         comment = etree.Comment(s)
         return XmlComment(comment)
-
 
 
 XmlNode = XmlText | XmlElement | XmlComment | ProcessingInstruction

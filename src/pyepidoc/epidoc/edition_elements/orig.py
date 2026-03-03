@@ -1,7 +1,7 @@
 from functools import cached_property
 
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.epidoc.utils import leiden_form_from_children
 

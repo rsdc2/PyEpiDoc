@@ -14,14 +14,14 @@ from functools import cached_property
 from itertools import chain
 from pathlib import Path
 
-from lxml.etree import XMLSyntaxError  
-
 from pyepidoc.shared.classes import SetRelation
 from pyepidoc.shared.iterables import maxone, top, remove_none
 from pyepidoc.shared.numbers import percentage
 from pyepidoc.shared.string import format_year
 from pyepidoc.shared.generic_collection import GenericCollection
 from pyepidoc.shared.enums import TextClass
+
+from pyepidoc.xml.errors import PyEpiDocXmlSyntaxError
 
 from .abbreviations import Abbreviations
 from .epidoc import EpiDoc
@@ -254,7 +254,7 @@ class EpiDocCorpus:
             
             return list(sorted(_docs, key=lambda doc: doc.id))
         
-        except XMLSyntaxError as e:
+        except PyEpiDocXmlSyntaxError as e:
             print('XMLSyntaxError in docs')
             print(e)
             return []

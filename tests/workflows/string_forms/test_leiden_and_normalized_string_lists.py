@@ -5,7 +5,7 @@ or sequences of tokens, are as expected.
 
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import abify
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.epidoc.representable import RepresentableElement
 
 import pytest

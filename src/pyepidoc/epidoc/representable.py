@@ -3,23 +3,20 @@ import re
 from functools import cached_property, reduce
 from typing import Sequence
 
-from pyepidoc.xml.xml_text import XmlText
-from pyepidoc.xml.xml_element import (
+from pyepidoc.xml.xml_node_types import (
     XmlComment, 
     XmlNode, 
-    ProcessingInstruction
+    ProcessingInstruction,
+    XmlText
 )
 from pyepidoc.xml.namespace import Namespace as ns
-from pyepidoc.shared.enums import (
-    whitespace
-)
+from pyepidoc.shared.enums import whitespace
 from pyepidoc.shared.namespaces import XMLNS, TEINS
 from pyepidoc.shared.enums import RegTextType
 from pyepidoc.shared.classes import Showable
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.xml.xml_element import XmlElement
+from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.shared.iterables import last
-from pyepidoc.shared.enums import AtomicTokenType
 
 
 class RepresentableElement(TeiElement, Showable):
