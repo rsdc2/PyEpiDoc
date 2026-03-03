@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Literal
 
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.metadata.resp_stmt import RespStmt
 from pyepidoc.tei.tei_body import TeiBody

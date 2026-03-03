@@ -1,7 +1,7 @@
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.enums import AtomicTokenType
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 
 
 class G(RepresentableElement):

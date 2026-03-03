@@ -3,7 +3,7 @@ from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.edition_elements.w import W
 from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 
 
 token_elements = [

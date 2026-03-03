@@ -18,8 +18,16 @@ from copy import deepcopy
 import operator
 import re
 
-from xml.etree import ElementTree
-from xml.etree.ElementTree import Element, Comment
+from lxml import etree 
+from lxml.etree import ( 
+    _Element,
+    _ElementTree, 
+    _Comment,
+    _ElementUnicodeResult,
+    _ProcessingInstruction,
+    XMLSyntaxError,
+    XMLSyntaxAssertionError
+)
 
 from pyepidoc.shared.classes import Tag, Showable, ExtendableSeq, SetRelation
 from pyepidoc.shared.namespaces import TEINS, XMLNS

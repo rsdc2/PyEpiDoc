@@ -8,7 +8,7 @@ from pyepidoc.xml.utils import abify, editionify
 from pyepidoc.epidoc.edition_elements.edition import Edition
 from pyepidoc.epidoc.edition_elements.ab import Ab
 
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc import EpiDoc
 

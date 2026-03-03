@@ -7,7 +7,7 @@ from typing import Optional, Sequence
 
 from pyepidoc.shared.constants import *
 from pyepidoc.shared import maxone, head
-from pyepidoc.xml.xml_node_types import XmlNode, XmlElement, XmlText
+from pyepidoc.xml.lxml_node_types import XmlNode, XmlElement, XmlText
 
 from .epidoc import EpiDoc
 from .tokenizable_element import TokenizableElement

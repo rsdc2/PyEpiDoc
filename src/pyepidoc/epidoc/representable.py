@@ -3,7 +3,7 @@ import re
 from functools import cached_property, reduce
 from typing import Sequence
 
-from pyepidoc.xml.xml_node_types import (
+from pyepidoc.xml.lxml_node_types import (
     XmlComment, 
     XmlNode, 
     ProcessingInstruction,
@@ -15,7 +15,7 @@ from pyepidoc.shared.namespaces import XMLNS, TEINS
 from pyepidoc.shared.enums import RegTextType
 from pyepidoc.shared.classes import Showable
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.shared.iterables import last
 
 

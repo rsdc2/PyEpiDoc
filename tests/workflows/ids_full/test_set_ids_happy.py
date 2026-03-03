@@ -4,7 +4,7 @@ Tests for converting ids in EpiDoc files
 
 import pytest
 from pyepidoc import EpiDoc
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import abify
 from pyepidoc.shared.testing import save_and_reload

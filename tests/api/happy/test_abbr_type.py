@@ -4,7 +4,7 @@ from pyepidoc.epidoc.edition_elements.expan import Expan
 from pyepidoc.shared.enums import AbbrType
 from pyepidoc.shared import contains
 from pyepidoc.shared.constants import TEINS
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 
 multiplications = [
     f'<expan xmlns="{TEINS}"><hi rend="supraline"><abbr>d<am>d</am></abbr></hi><ex cert="low">ominis</ex></expan>',     # from ISic000501

@@ -6,7 +6,7 @@ from tests.config import EMPTY_TEMPLATE_PATH
 
 from pyepidoc import EpiDoc, EpiDocCorpus
 from pyepidoc.epidoc.ids import compress, decompress, pad_and_insert_fixed_strs
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import abify
 

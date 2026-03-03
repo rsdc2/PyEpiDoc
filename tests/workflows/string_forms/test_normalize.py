@@ -4,7 +4,7 @@ from pyepidoc.epidoc.token import Token
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.edition_elements.edition import Edition
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 
 w_elements = [
     ('<persName><name type="cognomen"><w>Melant<supplied reason="undefined" '

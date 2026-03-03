@@ -1,6 +1,6 @@
 from pyepidoc.shared.constants import TEINS
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 import pytest
 
 xmls =[

@@ -1,5 +1,5 @@
 import pytest
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.xml.utils import abify    
 
 previous_sibling_cases = [

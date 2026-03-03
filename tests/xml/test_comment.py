@@ -1,4 +1,4 @@
-from pyepidoc.xml.xml_node_types import XmlComment
+from pyepidoc.xml.lxml_node_types import XmlComment
 
 def test_get_comment_text():
     # Arrange

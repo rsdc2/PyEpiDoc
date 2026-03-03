@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.representable import RepresentableElement
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.shared.enums import AtomicTokenType
 from typing import Optional
 

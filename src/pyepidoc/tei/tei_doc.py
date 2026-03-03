@@ -13,7 +13,7 @@ from pyepidoc.shared.namespaces import TEINS
 from pyepidoc.shared.enums import SpaceUnit, DoNotPrettifyChildren
 
 from pyepidoc.xml.xml_root import XmlRoot
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from pyepidoc.tei.tei_text import Text
 

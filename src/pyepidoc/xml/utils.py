@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.xml.xml_node_types import XmlNode, XmlElement
+from pyepidoc.xml.lxml_node_types import XmlNode, XmlElement
 from pyepidoc.shared.constants import TEINS
 
 

@@ -1,6 +1,6 @@
 from pyepidoc.epidoc.epidoc import EpiDoc, Expan
-from pyepidoc.xml.xml_node_types import XmlElement
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.shared import head
 from pyepidoc.shared.constants import TEINS
 

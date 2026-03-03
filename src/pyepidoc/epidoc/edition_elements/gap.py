@@ -3,7 +3,7 @@ from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.epidoc.representable import RepresentableElement
 from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 
 
 class Gap(RepresentableElement):

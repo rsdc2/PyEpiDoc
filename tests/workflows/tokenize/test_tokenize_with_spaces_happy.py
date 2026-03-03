@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pyepidoc.epidoc.edition_elements.ab import Ab
 from pyepidoc.xml.utils import abify
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 
 input_path = Path('tests/workflows/tokenize/files/untokenized')
 output_path = Path('tests/workflows/tokenize/files/tokenized_output')

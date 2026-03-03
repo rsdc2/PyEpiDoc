@@ -4,7 +4,7 @@ correct Leiden plus text
 """
 
 import pytest
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.epidoc.token import Token
 from pyepidoc.shared.constants import TEINS
 

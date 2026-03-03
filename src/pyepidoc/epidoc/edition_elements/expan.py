@@ -4,7 +4,7 @@ from typing import Optional
 from itertools import chain
 
 from pyepidoc.shared import head
-from pyepidoc.xml.xml_node_types import XmlElement, XmlNode
+from pyepidoc.xml.lxml_node_types import XmlElement, XmlNode
 from pyepidoc.tei.tei_element import TeiElement
 
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement

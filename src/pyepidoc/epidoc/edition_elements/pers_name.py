@@ -2,7 +2,7 @@ from __future__ import annotations
 import re
 from pyepidoc.epidoc.tokenizable_element import TokenizableElement
 from pyepidoc.tei.tei_element import TeiElement
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.epidoc.utils import (
     leiden_form_from_children, 
     normalized_form_from_children,

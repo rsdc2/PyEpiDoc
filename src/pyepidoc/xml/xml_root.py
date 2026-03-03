@@ -17,8 +17,8 @@ from lxml.etree import (
     DocumentInvalid
 )
 
-from pyepidoc.xml.xml_node_types import XmlElement
-from .xml_node_types import XmlElement, XmlNode, XmlText, ProcessingInstruction
+from pyepidoc.xml.lxml_node_types import XmlElement
+from .lxml_node_types import XmlElement, XmlNode, XmlText, ProcessingInstruction
 
 class XmlRoot:  
     _tree: _ElementTree

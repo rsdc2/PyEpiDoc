@@ -1,5 +1,5 @@
 from __future__ import annotations
-from pyepidoc.xml.xml_node_types import XmlElement
+from pyepidoc.xml.lxml_node_types import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
 from .w import _W
 
