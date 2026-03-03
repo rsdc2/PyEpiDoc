@@ -505,7 +505,7 @@ class XmlElement(Showable):
         parser = etree.XMLParser(
             load_dtd=False,
             resolve_entities=False,
-            remove_blank_text=False,
+            remove_blank_text=False
         )
         lxml_elem: _Element = etree.fromstring(
             text=xml_str, 
