@@ -1,9 +1,5 @@
-from pyepidoc.tei.s import S
+from pyepidoc.tei.tei_s import TeiS
 from .ario_w import ArioW as W
 
-class ArioS(S):
-    
-    @property
-    def ws(self) -> list[W]:
-        return [W(child) for child in self._e.child_elements 
-                if child.localname == 'w']
+class ArioS(TeiS):
+    pass

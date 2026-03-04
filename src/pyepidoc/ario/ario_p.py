@@ -1,9 +1,5 @@
-from pyepidoc.tei.p import P
+from pyepidoc.tei.tei_p import TeiP
 from .ario_s import ArioS as S
 
-class ArioP(P):
-    
-    @property
-    def ss(self) -> list[S]:
-        return [S(child) for child in self._e.child_elements
-                if child.tag.name == 's']
+class ArioP(TeiP):
+    pass

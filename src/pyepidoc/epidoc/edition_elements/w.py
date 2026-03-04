@@ -7,7 +7,7 @@ from pyepidoc.shared.namespaces import XMLNS
 from pyepidoc.shared.enums import AtomicTokenType
 from pyepidoc.xml.xml_node_types import XmlElement
 from pyepidoc.tei.tei_element import TeiElement
-
+from pyepidoc.tei.tei_w import TeiW
 
 class _W(TokenizableElement):
     """
