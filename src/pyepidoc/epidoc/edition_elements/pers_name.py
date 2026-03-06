@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from lxml.etree import _Element
 from pyepidoc.epidoc.epidoc_element import EpiDocElement
 from pyepidoc.epidoc.utils import (
@@ -33,6 +35,7 @@ class PersName(EpiDocElement):
         from .num import Num
         from .surplus import Surplus
         from .w import W
+        from .g import G
 
         element_classes: dict[str, type] = {
             'expan': Expan,
@@ -40,14 +43,16 @@ class PersName(EpiDocElement):
             'name': Name,
             'num': Num,
             'surplus': Surplus,
-            'w': W
+            'w': W,
+            'g': G,
+            'persName': PersName
         }
         
         return leiden_str_from_children(
             self.e, 
             element_classes, 
             'node'
-        )
+        ).replace('   ', ' ').replace('  ', ' ')
     
     @property
     def normalized_form(self) -> str:
@@ -58,14 +63,14 @@ class PersName(EpiDocElement):
         from .num import Num
         from .surplus import Surplus
 
-
         element_classes: dict[str, type] = {
             'expan': Expan,
             'hi': Hi,
             'name': Name,
             'num': Num,
             'surplus': Surplus,
-            'w': W
+            'w': W,
+            'persName': PersName
         }
         
         return normalized_str_from_children(
@@ -76,4 +81,10 @@ class PersName(EpiDocElement):
     
     @property
     def pers_name_type(self) -> str:
-        return self.get_attrib("type") or ""
+        return self.get_attrib('type') or ''
+    
+    @property
+    def pers_names(self) -> list[PersName]:
+        pers_name_elems = self.descendant_elements_by_local_name('persName')
+        pers_names = [PersName(name._e) for name in pers_name_elems]
+        return pers_names
