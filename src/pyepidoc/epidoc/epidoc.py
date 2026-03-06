@@ -1097,7 +1097,7 @@ class EpiDoc(DocRoot):
         """
 
         return Path(inspect.getfile(pyepidoc))
-    
+
     @property
     def _rng_path(self) -> Path:
         """

@@ -882,8 +882,11 @@ class EpiDocElement(XmlElement, Showable):
         return self.get_attrib('n')
     
     @local_id.setter
-    def local_id(self, value: str) -> None:
-        self.set_attrib('n', value)
+    def local_id(self, value: str | None) -> None:
+        if value is None:
+            self.remove_attr('n')
+        else:
+            self.set_attrib('n', value)
 
     @property
     def no_gaps(self) -> bool:
@@ -1068,10 +1071,9 @@ class EpiDocElement(XmlElement, Showable):
 
     def set_attrib(
         self, 
-        attribname:str, 
-        value:str, 
-        namespace:Optional[str]=None
-        ) -> None:
+        attribname: str, 
+        value: str | None, 
+        namespace: Optional[str]=None) -> None:
         
         if self._e is None:
             return
@@ -1608,10 +1610,13 @@ class EpiDocElement(XmlElement, Showable):
         return self.get_attrib('id', namespace=XMLNS)
 
     @xml_id.setter
-    def xml_id(self, id_value:str) -> None:
+    def xml_id(self, id_value: str | None) -> None:
         """
         Sets the value of the xml:id attribute in the XML file.
         """
-        self.set_attrib('id', id_value, namespace=XMLNS)
+        if id_value is None:
+            self.remove_attr('id', namespace=XMLNS)
+        else:
+            self.set_attrib('id', id_value, namespace=XMLNS)
 
 
