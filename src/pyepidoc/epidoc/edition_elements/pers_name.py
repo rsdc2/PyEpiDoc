@@ -57,7 +57,7 @@ class PersName(TokenizableElement):
         
         leiden = leiden_form_from_children(self._e, element_classes)
 
-        with_normalized_spaces = re.sub('\s+', ' ', leiden)
+        with_normalized_spaces = re.sub(r'\s+', ' ', leiden)
         return with_normalized_spaces
     
     @property
