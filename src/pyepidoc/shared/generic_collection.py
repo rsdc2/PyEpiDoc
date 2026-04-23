@@ -87,6 +87,12 @@ class GenericCollection(Generic[T]):
         """
         return GenericCollection(list(map(func, self._values)))
     
+    def percentages(self) -> GenericCollection[tuple[T, float]]:
+        freqs = self.frequencies()
+        total = self.count
+        pcs = [(value, (freq / total) * 100) for (value, freq) in freqs]
+        return GenericCollection(pcs)
+    
     def print(self):
         """
         Print the values
@@ -103,6 +109,14 @@ class GenericCollection(Generic[T]):
                 print(f"{label}:{(int(20 - (len(label) + 1)) * ' ')}{freq}")
             else:
                 print(f"{label}:{(int(20 - (len(str(label)) + 1)) * ' ')}{freq}")
+
+    def print_percentages(self):
+        pcs = self.percentages()
+        for label, pc in pcs:
+            if hasattr(label, '__len__'):
+                print(f"{label}:{(int(20 - (len(label) + 1)) * ' ')}{pc}")
+            else:
+                print(f"{label}:{(int(20 - (len(str(label)) + 1)) * ' ')}{pc}")
 
     def reduce(self, func: Callable[[T, T], T], initial: T) -> T:
         """
