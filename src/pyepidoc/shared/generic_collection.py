@@ -89,6 +89,12 @@ class GenericCollection(Generic[T]):
         """
         return GenericCollection(list(map(func, self._values)))
     
+    def percentages(self) -> GenericCollection[tuple[T, float]]:
+        freqs = self.frequencies()
+        total = self.count
+        pcs = [(value, (freq / total) * 100) for (value, freq) in freqs]
+        return GenericCollection(pcs)
+    
     def print(self):
         """
         Print the values
