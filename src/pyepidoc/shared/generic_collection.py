@@ -63,8 +63,13 @@ class GenericCollection(Generic[T]):
         Return a dictionary with the frequencies of each item
         """
 
-        d = {k: self._values.count(k) 
-                for k in self.unique()._values}
+        d = dict[T, int]()
+
+        for value in self._values:
+            if value not in d.keys():
+                d[value] = 1
+            else:
+                d[value] += 1
 
         l = ([(value, frequency) for value, frequency in d.items()])
         sorted_l = sorted(l, key=lambda item: item[1], reverse=True)
