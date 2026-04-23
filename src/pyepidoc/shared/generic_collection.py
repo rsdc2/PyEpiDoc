@@ -112,6 +112,14 @@ class GenericCollection(Generic[T]):
             else:
                 print(f"{label}:{(int(20 - (len(str(label)) + 1)) * ' ')}{freq}")
 
+    def print_percentages(self):
+        pcs = self.percentages()
+        for label, pc in pcs:
+            if hasattr(label, '__len__'):
+                print(f"{label}:{(int(20 - (len(label) + 1)) * ' ')}{pc}")
+            else:
+                print(f"{label}:{(int(20 - (len(str(label)) + 1)) * ' ')}{pc}")
+
     def reduce(self, func: Callable[[T, T], T], initial: T) -> T:
         """
         Reduce the collection to a single value
