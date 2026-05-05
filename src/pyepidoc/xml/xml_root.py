@@ -109,7 +109,7 @@ class XmlRoot:
         Turn a <tag></tag> to <tag/>
         """
 
-        for elem in self.root.descendant_elements:
+        for elem in self._e.descendant_elements:
             if elem.text == '':
                 elem.text = None 
 
@@ -167,7 +167,7 @@ class XmlRoot:
         xml file. Deepcopies the file.
         """
         
-        prettified_str: bytes = self.root.to_bytes(
+        prettified_str: bytes = self._e.to_bytes(
             xml_declaration=True, 
             pretty_print=True)
         
@@ -210,14 +210,14 @@ class XmlRoot:
             
             return _processing_instructions(acc + [previous], previous)
 
-        return _processing_instructions([], self.root)
+        return _processing_instructions([], self._e)
     
     @property
     def processing_instructions_str(self) -> str:
         return '\n'.join([str(x) for x in self.processing_instructions])
     
     @property
-    def root(self) -> XmlElement:
+    def _e(self) -> XmlElement:
         root = self._tree.getroot()
         if root is None:
             raise TypeError('Root should not be none.')
@@ -225,7 +225,7 @@ class XmlRoot:
 
     @property
     def root_tree(self) -> _ElementTree:
-        return self.root._e.getroottree()
+        return self._e._e.getroottree()
 
     @property
     def text_desc(self) -> str:
@@ -233,7 +233,7 @@ class XmlRoot:
         Return the inner text of all the descendant nodes
         """
         
-        xpath_result: list[XmlText] = cast(list[XmlText], self.root.xpath('.//text()'))
+        xpath_result: list[XmlText] = cast(list[XmlText], self._e.xpath('.//text()'))
         return ''.join([text.text for text in xpath_result])
 
     def to_bytes(self, collapse_empty_elements: bool = False) -> bytes:
@@ -250,7 +250,7 @@ class XmlRoot:
 
         try:
             b_str = etree.tostring( 
-                self.root._e, 
+                self._e._e, 
                 encoding='utf-8',   # type: ignore
                 pretty_print=False,      # type: ignore
                 xml_declaration=False   # type: ignore
@@ -277,7 +277,7 @@ class XmlRoot:
 
         try:
             s = etree.tostring( 
-                self.root._e, 
+                self._e._e, 
                 pretty_print=False,      # type: ignore
                 encoding='unicode',       # type: ignore
                 xml_declaration=False   # type: ignore
@@ -368,4 +368,4 @@ class XmlRoot:
         return self.to_str(collapse_empty_elements=True)
     
     def xpath(self, xpathstr: str) -> list[XmlNode]:
-        return self.root.xpath(xpathstr)
+        return self._e.xpath(xpathstr)

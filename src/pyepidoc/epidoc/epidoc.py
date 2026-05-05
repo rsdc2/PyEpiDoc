@@ -897,7 +897,7 @@ class EpiDoc(TeiDoc):
         """
 
         epidoc = self
-        elem = XmlElement(epidoc._root.root)
+        elem = XmlElement(epidoc._root._e)
         elem.prettify_element_with_pyepidoc(
             space_unit, 
             multiplier, 
@@ -908,7 +908,7 @@ class EpiDoc(TeiDoc):
         # Remove trailing text
         self.root_elem.tail = ''
         self.root_elem.text = '\n' + multiplier * space_unit + (self.root_elem.text or '').strip() \
-            if len(self._root.root.descendant_elements) > 0 \
+            if len(self._root._e.descendant_elements) > 0 \
             else '\n' + space_unit * multiplier + (self.root_elem.text or '').strip()
         
         return epidoc
@@ -969,7 +969,7 @@ class EpiDoc(TeiDoc):
 
     @property
     def root_elem(self) -> XmlElement:
-        return self._root.root
+        return self._root._e
 
     def set_ids(self, base: Base=100) -> None:
         
@@ -1113,7 +1113,7 @@ class EpiDoc(TeiDoc):
         information
         """
 
-        elem = maxone([desc for desc in self._root.root.descendant_elements
+        elem = maxone([desc for desc in self._root._e.descendant_elements
                 if desc.localname == 'rs' and desc.get_attr('type') == 'textType'],
                 throw_if_more_than_one=False)
         

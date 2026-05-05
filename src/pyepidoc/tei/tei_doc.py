@@ -58,7 +58,7 @@ class TeiDoc:
         else:
             self._root = XmlRoot(inpt)
 
-        self._e = TeiElement(self._root.root)
+        self._e = TeiElement(self._root._e)
         self.assert_has_tei_ns()
 
     def __repr__(self) -> str:
@@ -86,7 +86,7 @@ class TeiDoc:
         Insert a <teiHeader> element as the first child
         """
         tei_header_elem = TeiHeader.create()
-        self._root.root.insert(0, tei_header_elem._e)
+        self._root._e.insert(0, tei_header_elem._e)
         return self
 
     def append_resp_stmt(self, resp_stmt: RespStmt) -> TeiDoc:
@@ -111,10 +111,10 @@ class TeiDoc:
         Return True if uses TEI namespaces;
         raises an AssertionError if not
         """
-        if self._root.root is None:
+        if self._root._e is None:
             raise TypeError("No root element present")
         
-        nsmap: dict[str, str] = self._root.root.nsmap
+        nsmap: dict[str, str] = self._root._e.nsmap
 
         if nsmap is None:
              raise TEINSError("No namespaces are specified")
@@ -443,7 +443,7 @@ class TeiDoc:
  
     @property
     def orig_place(self) -> str:
-        xpath_results = self._root.root.xpath('//ns:history/ns:origin/'
+        xpath_results = self._root._e.xpath('//ns:history/ns:origin/'
                                    'ns:origPlace/ns:placeName'
                                    '[@type="ancient"]/text()')
         result = head(
@@ -532,10 +532,10 @@ class TeiDoc:
         
         # Root element
         # Remove trailing text
-        self._root.root.tail = ''
-        self._root.root.text = '\n' + multiplier * space_unit + (self._root.root.text or '').strip() \
-            if len(self._root.root.descendant_elements) > 0 \
-            else '\n' + space_unit * multiplier + (self._root.root.text or '').strip()
+        self._root._e.tail = ''
+        self._root._e.text = '\n' + multiplier * space_unit + (self._root._e.text or '').strip() \
+            if len(self._root._e.descendant_elements) > 0 \
+            else '\n' + space_unit * multiplier + (self._root._e.text or '').strip()
         
         return epidoc
 
@@ -547,7 +547,7 @@ class TeiDoc:
 
     @property
     def publication_stmt(self) -> PublicationStmt | None:
-        publication_stmt = maxone(self._root.root.get_desc('publicationStmt', namespace=TEINS))
+        publication_stmt = maxone(self._root._e.get_desc('publicationStmt', namespace=TEINS))
         if publication_stmt is None:
             return None
         return PublicationStmt(publication_stmt)
@@ -576,7 +576,7 @@ class TeiDoc:
         """
         Return the `<TEI>` root element
         """
-        return maxone(self._root.root.get_desc('TEI', None, TEINS))
+        return maxone(self._root._e.get_desc('TEI', None, TEINS))
 
     @property
     def tei_header(self) -> TeiHeader | None:
@@ -589,7 +589,7 @@ class TeiDoc:
 
     @property
     def text(self) -> Text:
-        text = self._root.root.child_element_by_local_name('text')
+        text = self._root._e.child_element_by_local_name('text')
         if text is None:
             raise ValueError('Document has no <text> element.')
         return Text(text)
@@ -616,7 +616,7 @@ class TeiDoc:
         """
 
         textlang = maxone([TeiElement(textlang) 
-            for textlang in self._root.root.get_desc('textLang', None, TEINS)])
+            for textlang in self._root._e.get_desc('textLang', None, TEINS)])
         
         if textlang is None: 
             return None
@@ -630,7 +630,7 @@ class TeiDoc:
         information
         """
 
-        elem = maxone([desc for desc in self._root.root.descendant_elements
+        elem = maxone([desc for desc in self._root._e.descendant_elements
                 if desc.localname == 'rs' and desc.get_attr('type') == 'textType'],
                 throw_if_more_than_one=False)
         
@@ -734,7 +734,7 @@ class TeiDoc:
     
     @property
     def element(self) -> XmlElement:
-        return self._root.root
+        return self._root._e
 
     @property
     def xmlroot(self) -> XmlRoot:
