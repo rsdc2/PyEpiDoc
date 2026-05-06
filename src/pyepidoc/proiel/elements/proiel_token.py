@@ -1,4 +1,5 @@
 from .proiel_element import ProielElement
+from .proiel_morphology import ProielMorphology
 
 class ProielToken(ProielElement):
 
@@ -17,6 +18,13 @@ class ProielToken(ProielElement):
         return citation_part
     
     @property
+    def form(self) -> str:
+        form = self._e.get_attr('form')
+        if form is None:
+            raise ValueError('Form cannot be None')
+        return form
+    
+    @property
     def lemma(self) -> str:
         lemma = self._e.get_attr('lemma')
         if lemma is None:
@@ -31,11 +39,11 @@ class ProielToken(ProielElement):
         return pos
     
     @property
-    def morphology(self) -> str:
+    def morphology(self) -> ProielMorphology | None:
         morphology = self._e.get_attr('morphology')
         if morphology is None:
-            raise ValueError('Morphology cannot be None')
-        return morphology
+            return None
+        return ProielMorphology(morphology)
 
     @property
     def head_id_str(self) -> str | None:

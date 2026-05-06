@@ -11,3 +11,15 @@ class ProielMorphology:
     @property
     def _elements(self) -> list[str]:
         return list(self._morph_str)
+
+    @property
+    def tense(self) -> str:
+        return self._elements[2]
+    
+    @property
+    def mood(self) -> str:
+        return self._elements[3]
+    
+    @property
+    def voice(self) -> str:
+        return self._elements[4]
