@@ -1,5 +1,6 @@
 from .proiel_element import ProielElement
 from .proiel_morphology import ProielMorphology
+from .proiel_bible_citation import ProielBibleCitation
 
 class ProielToken(ProielElement):
 
@@ -16,6 +17,10 @@ class ProielToken(ProielElement):
         if citation_part is None:
             raise ValueError('Citation part cannot be None')
         return citation_part
+    
+    @property
+    def citation(self) -> ProielBibleCitation:
+        return ProielBibleCitation.from_str(self.citation_part)
     
     @property
     def form(self) -> str:
