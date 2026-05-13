@@ -5,27 +5,13 @@ from .bible_book import BibleBook
 @dataclass
 class BibleRef:
     book: BibleBook
-    chapter: str
-    verse: str
-    verse_token_id: str
-
-    @property
-    def chapter_int(self) -> int:
-        return int(self.chapter)
-    
-    @property
-    def verse_int(self) -> int:
-        return int(self.verse)
-    
-    @property
-    def verse_token_id_int(self) -> int:
-        if self.verse_token_id.strip() in ['', '0', None]:
-            return 0
-        return int(self.verse_token_id) 
+    chapter: int
+    verse: int
+    verse_token_id: int
     
     def __str__(self) -> str:
-        verse_token_id_str = '' if self.verse_token_id_int == 0 else '.' + str(self.verse_token_id_int)
-        return f'{str(self.book)} {self.chapter_int}:{self.verse_int}{verse_token_id_str}'
+        verse_token_id_str = '' if self.verse_token_id == 0 else '.' + str(self.verse_token_id)
+        return f'{str(self.book)} {self.chapter}:{self.verse}{verse_token_id_str}'
 
     def __hash__(self) -> int:
         return hash(str(self))

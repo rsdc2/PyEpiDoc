@@ -62,20 +62,20 @@ NT_BOOKS: dict[Bk, list[str]] = {
 @dataclass
 class BibleBook:
 
-    _book: Bk
+    _bk: Bk
 
     def __init__(self, book_id: str):
         for book in NT_BOOKS.items():
             ids = book[1]
             bk_id = book[0]
             if book_id.lower().replace(' ', '') in ids:
-                self._book = bk_id
+                self._bk = bk_id
                 return
         raise ValueError(f"Book id {book_id} not found")
     
     @property
     def book(self) -> Bk:
-        return self._book
+        return self._bk
 
     def __str__(self) -> str:
-        return NT_BOOKS[self._book][0].capitalize()
+        return NT_BOOKS[self._bk][0].capitalize()
