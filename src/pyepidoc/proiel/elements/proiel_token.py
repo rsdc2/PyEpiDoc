@@ -1,6 +1,6 @@
 from .proiel_element import ProielElement
 from .proiel_morphology import ProielMorphology
-from .proiel_bible_citation import ProielBibleCitation
+from .proiel_bible_ref import ProielBibleRef
 
 class ProielToken(ProielElement):
 
@@ -19,8 +19,8 @@ class ProielToken(ProielElement):
         return citation_part
     
     @property
-    def citation(self) -> ProielBibleCitation:
-        return ProielBibleCitation.from_str(self.citation_part)
+    def citation(self) -> ProielBibleRef:
+        return ProielBibleRef.from_proiel_citation(self.citation_part)
     
     @property
     def form(self) -> str:

@@ -1,6 +1,7 @@
 from .proiel_element import ProielElement
 from .proiel_token import ProielToken
 
+
 class ProielSentence(ProielElement):
     
     @property
