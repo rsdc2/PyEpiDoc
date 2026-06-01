@@ -1,6 +1,8 @@
 from .proiel_sentence import ProielSentence
 from .has_proiel_sentences import HasProielSentences
-
+from .proiel_verse import ProielVerse
+from .proiel_bible_ref import ProielBibleRef
+from .proiel_token import ProielToken
 
 class ProielDiv(HasProielSentences):
 
@@ -23,4 +25,13 @@ class ProielDiv(HasProielSentences):
         if title is None:
             raise ValueError('Title cannot be None')
         return title
+        
+    def verse(self, verse: int) -> ProielVerse | None:
+        acc: list[ProielToken] = []
+        for token in self.tokens:
+            if token.citation.verse == verse:
+                acc.append(token)
+
+        proiel_verse = ProielVerse(acc[0].citation.book, verse, acc)
+        return proiel_verse
     

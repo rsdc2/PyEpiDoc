@@ -1,17 +1,13 @@
-from dataclasses import dataclass
-from typing import Iterable
 from pyepidoc.shared.bible_refs.bible_book import BibleBook
-from .proiel_verse import ProielVerse
-from .proiel_token import ProielToken
+from .proiel_div import ProielDiv
 
-
-@dataclass
-class ProielChapter:
-    book_ref: BibleBook
-    verses: list[ProielVerse]
+class ProielChapter(ProielDiv):
 
     @property
-    def tokens(self) -> Iterable[ProielToken]:
-        for verse in self.verses:
-            for token in verse.tokens:
-                yield token
+    def book_ref(self) -> BibleBook:
+        return self.tokens[0].citation.book
+    
+    @property
+    def chapter(self) -> int:
+        return self.tokens[0].citation.chapter
+    

@@ -1,11 +1,16 @@
 from pathlib import Path
 from pyepidoc.xml import XmlElement
 from pyepidoc.xml import XmlRoot
+from pyepidoc.shared.bible_refs.bible_book import BibleBook
 
 from .has_proiel_sentences import HasProielSentences
 from .proiel_source import ProielSource
 from .proiel_div import ProielDiv
 from .proiel_sentence import ProielSentence
+from .proiel_bible_ref import ProielBibleRef
+from .proiel_chapter import ProielChapter
+from .proiel_verse import ProielVerse
+from .proiel_token import ProielToken
 
 class ProielDoc(HasProielSentences):
     _root: XmlRoot
@@ -48,3 +53,19 @@ class ProielDoc(HasProielSentences):
     @property
     def sentences(self) -> list[ProielSentence]:
         return self.source.sentences
+    
+    def chapter(self, book: str, chapter: int) -> ProielChapter | None:
+        for div in self.divs:
+            first_token_citation = div.tokens[0].citation
+            if first_token_citation.book == BibleBook(book) and \
+                first_token_citation.chapter == chapter:
+
+                return ProielChapter(div._e)
+            
+        return None
+        
+        
+
+
+                
+
