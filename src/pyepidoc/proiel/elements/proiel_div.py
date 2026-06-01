@@ -1,8 +1,10 @@
+from pyepidoc.shared.bible_refs.bible_token_ref import BibleTokenRef
+
 from .proiel_sentence import ProielSentence
 from .has_proiel_sentences import HasProielSentences
 from .proiel_verse import ProielVerse
 from .proiel_bible_ref import ProielBibleRef
-from .proiel_token import ProielToken
+from .proiel_verse_token import ProielVerseToken
 
 class ProielDiv(HasProielSentences):
 
@@ -27,11 +29,17 @@ class ProielDiv(HasProielSentences):
         return title
         
     def verse(self, verse: int) -> ProielVerse | None:
-        acc: list[ProielToken] = []
+        tokens_in_verse: list[ProielVerseToken] = []
+        verse_token_counter = 1
         for token in self.tokens:
             if token.citation.verse == verse:
-                acc.append(token)
+                verse_token = ProielVerseToken(token, verse_token_counter)
+                verse_token_counter += 1
+                tokens_in_verse.append(verse_token)
+            elif len(tokens_in_verse) > 0:
+                break
 
-        proiel_verse = ProielVerse(acc[0].citation.book, verse, acc)
+        book = tokens_in_verse[0].proiel_token.citation.book
+        proiel_verse = ProielVerse(book, verse, tokens_in_verse)
         return proiel_verse
     

@@ -2,6 +2,7 @@ from typing import Iterable
 from dataclasses import dataclass
 from pyepidoc.shared.bible_refs.bible_book import BibleBook
 from .proiel_token import ProielToken
+from .proiel_verse_token import ProielVerseToken
 
 
 @dataclass
@@ -13,4 +14,4 @@ class ProielVerse:
 
     book_ref: BibleBook
     verse_ref: int
-    tokens: list[ProielToken]
+    tokens: list[ProielVerseToken]
