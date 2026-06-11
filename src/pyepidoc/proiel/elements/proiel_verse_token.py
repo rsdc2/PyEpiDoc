@@ -10,5 +10,10 @@ class ProielVerseToken:
     verse_token_id: int
 
     @property
+    def form(self) -> str:
+        return self.proiel_token.form
+
+    @property
     def token_ref(self) -> BibleTokenRef:
         return BibleTokenRef(self.proiel_token.citation, self.verse_token_id)
+    
