@@ -3,32 +3,32 @@ from enum import Enum
 
 
 class Bk(Enum):
-    Mt = 'mt'
-    Mk = 'mk'
-    Lk = 'lk'
-    Jn = 'jn'
-    Rm = 'rm'
-    Ac = 'ac'
-    ICo = '1co'
-    IICo = '2co'
-    Ga = 'ga'
-    Ep = 'ep'
-    Co = 'co'
-    Ph = 'ph'
-    ITh = '1th'
-    IITh = '2th'
-    ITi = '1ti'
-    IITi = '2ti'
-    Ti = 'ti'
-    Hb = 'hb'
-    Js = 'js'
-    IPe = '1pe'
-    IIPe = '2pe'
-    Ju = 'ju'
-    IJn = '1jn'
-    IIJn = '2jn'
-    IIIJn = '3jn'
-    Rv = 'rv'
+    Mt = 'Mat'
+    Mk = 'Mrk'
+    Lk = 'Luk'
+    Jn = 'Jhn'
+    Rm = 'Rom'
+    Ac = 'Act'
+    ICo = '1Co'
+    IICo = '2Co'
+    Ga = 'Gal'
+    Ep = 'Eph'
+    Co = 'Col'
+    Ph = 'Php'
+    ITh = '1Th'
+    IITh = '2Th'
+    ITi = '1Ti'
+    IITi = '2Ti'
+    Ti = 'Tit'
+    Hb = 'Heb'
+    Js = 'Jas'
+    IPe = '1Pe'
+    IIPe = '2Pe'
+    Ju = 'Jud'
+    IJn = '1Jn'
+    IIJn = '2Jn'
+    IIIJn = '3Jn'
+    Rv = 'Rev'
 
 NT_BOOKS: dict[Bk, list[str]] = {
     Bk.Mt: ['mt', 'matt', 'matthew'],
@@ -78,4 +78,4 @@ class BibleBook:
         return self._bk
 
     def __str__(self) -> str:
-        return NT_BOOKS[self._bk][0].capitalize()
+        return str(self._bk.value)
