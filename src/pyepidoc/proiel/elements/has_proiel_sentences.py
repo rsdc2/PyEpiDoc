@@ -1,7 +1,9 @@
 from abc import abstractmethod
 from .proiel_element import ProielElement
-from .proiel_token import ProielToken
+from .proiel_verse import ProielVerse
+from .proiel_verse_token import ProielVerseToken
 from .proiel_sentence import ProielSentence
+from .proiel_token import ProielToken
 
 class HasProielSentences(ProielElement):
 
@@ -11,8 +13,9 @@ class HasProielSentences(ProielElement):
         ...
 
     @property
-    def tokens(self) -> list[ProielToken]:
+    def sentence_tokens(self) -> list[ProielToken]:
         tokens = []
         for s in self.sentences:
             tokens.extend(s.tokens)
         return tokens
+    

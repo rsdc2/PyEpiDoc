@@ -11,6 +11,8 @@ class ProielBibleRef(BibleRef):
         """
         e.g. JOHN 1.1
         """
+        if citation.strip() == '':
+            return EmptyProielBibleRef()
         space_split = citation.split(' ')
         book = space_split[0]
         bible_book = BibleBook(book)
@@ -32,6 +34,11 @@ class ProielBibleRef(BibleRef):
         chapter = chapter_verse[0]
         verse = chapter_verse[1]
         return ProielBibleRef(bible_book, int(chapter), int(verse))
+
+@dataclass
+class EmptyProielBibleRef(ProielBibleRef):
+    def __init__(self):
+        pass
 
     
     

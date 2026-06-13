@@ -11,6 +11,7 @@ from .proiel_bible_ref import ProielBibleRef
 from .proiel_chapter import ProielChapter
 from .proiel_verse import ProielVerse
 from .proiel_token import ProielToken
+from .proiel_verse_token import ProielVerseToken
 
 class ProielDoc(HasProielSentences):
     _root: XmlRoot
@@ -56,14 +57,33 @@ class ProielDoc(HasProielSentences):
     
     def chapter(self, book: str, chapter: int) -> ProielChapter | None:
         for div in self.divs:
-            first_token_citation = div.tokens[0].citation
+            first_token_citation = div.sentence_tokens[0].citation
             if first_token_citation.book == BibleBook(book) and \
                 first_token_citation.chapter == chapter:
 
                 return ProielChapter(div._e)
             
         return None
-        
+    
+    @property
+    def chapters(self) -> list[ProielChapter]:
+        return [ProielChapter(div._e) for div in self.divs]
+    
+    @property
+    def verses(self) -> list[ProielVerse]:
+        verses: list[ProielVerse] = []
+        for chapter in self.chapters:
+            verses.extend(chapter.verses)
+
+        return verses
+    
+    @property
+    def verse_tokens(self) -> list[ProielVerseToken]:
+        verse_tokens: list[ProielVerseToken] = []
+        for verse in self.verses:
+            verse_tokens.extend(verse.tokens)
+
+        return verse_tokens
         
 
 

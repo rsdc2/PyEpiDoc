@@ -15,7 +15,7 @@ class ProielToken(ProielElement):
     def citation_part(self) -> str:
         citation_part = self._e.get_attr('citation-part')
         if citation_part is None:
-            raise ValueError('Citation part cannot be None')
+            return ''
         return citation_part
     
     @property
@@ -26,21 +26,21 @@ class ProielToken(ProielElement):
     def form(self) -> str:
         form = self._e.get_attr('form')
         if form is None:
-            raise ValueError('Form cannot be None')
+            return ''
         return form
     
     @property
     def lemma(self) -> str:
         lemma = self._e.get_attr('lemma')
         if lemma is None:
-            raise ValueError('Lemma cannot be None')
+            return ''
         return lemma
     
     @property
     def part_of_speech(self) -> str:
         pos = self._e.get_attr('part-of-speech')
         if pos is None:
-            raise ValueError('Part of speech cannot be None')
+            return ''
         return pos
     
     @property

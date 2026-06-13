@@ -20,6 +20,7 @@ class Bk(Enum):
     ITi = '1Ti'
     IITi = '2Ti'
     Ti = 'Tit'
+    Philem = 'Phl'
     Hb = 'Heb'
     Js = 'Jas'
     IPe = '1Pe'
@@ -48,6 +49,7 @@ NT_BOOKS: dict[Bk, list[str]] = {
     Bk.ITi: ['1ti', '1tim', 'iti', 'itim', '1timothy', 'itimothy'],
     Bk.IITi: ['2ti', '2tim', 'iiti', 'iitim', '2timothy', 'iitimothy'],
     Bk.Ti: ['ti', 'tit', 'titus'],
+    Bk.Philem: ['philem'],
     Bk.Hb: ['hb', 'heb', 'hebrews'],
     Bk.Js: ['js', 'jas', 'james'],
     Bk.IPe: ['1pe', '1pet', 'ipeter', '1peter'],

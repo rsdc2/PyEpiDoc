@@ -1,5 +1,5 @@
 from .proiel_element import ProielElement
-from .proiel_token import ProielToken
+from .proiel_verse_token import ProielToken
 
 
 class ProielSentence(ProielElement):
