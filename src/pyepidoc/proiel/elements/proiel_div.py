@@ -64,7 +64,7 @@ class ProielDiv(HasProielSentences):
                 verse_token = ProielVerseToken(token, 1)
                 tokens_in_verse = [verse_token]
                 verse_counter += 1
-                verse_token_counter = 1
+                verse_token_counter = 2
 
         return verses
  
