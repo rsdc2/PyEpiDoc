@@ -32,10 +32,10 @@ class Bk(Enum):
     Rv = 'Rev'
 
 NT_BOOKS: dict[Bk, list[str]] = {
-    Bk.Mt: ['mt', 'matt', 'matthew'],
-    Bk.Mk: ['mk', 'mark'],
-    Bk.Lk: ['lk', 'luke'],
-    Bk.Jn: ['jn', 'john'],
+    Bk.Mt: ['mt', 'matt', 'matthew', 'mat'],
+    Bk.Mk: ['mk', 'mark', 'mrk'],
+    Bk.Lk: ['lk', 'luke', 'luk'],
+    Bk.Jn: ['jn', 'john', 'jhn'],
     Bk.Rm: ['rm', 'rom', 'romans'],
     Bk.Ac: ['ac', 'acts'],
     Bk.ICo: ['1co', '1cor', '1corinthians', 'icorinthians', 'icorinthians', 'ico', 'icor'],

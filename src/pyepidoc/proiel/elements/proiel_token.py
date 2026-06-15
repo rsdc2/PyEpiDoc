@@ -23,10 +23,8 @@ class ProielToken(ProielElement):
         return ProielBibleRef.from_proiel_citation(self.citation_part)
     
     @property
-    def form(self) -> str:
+    def form(self) -> str | None:
         form = self._e.get_attr('form')
-        if form is None:
-            return ''
         return form
     
     @property

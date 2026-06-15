@@ -54,6 +54,8 @@ class ProielDiv(HasProielSentences):
         for token in self.sentence_tokens:
             if isinstance(token.citation, EmptyProielBibleRef):
                 continue
+            if token.form is None:
+                continue
             if token.citation.verse == verse_counter:
                 verse_token = ProielVerseToken(token, verse_token_counter)
                 verse_token_counter += 1
@@ -65,7 +67,9 @@ class ProielDiv(HasProielSentences):
                 tokens_in_verse = [verse_token]
                 verse_counter += 1
                 verse_token_counter = 2
-
+        
+        verse = ProielVerse(book, verse_counter, tokens_in_verse)
+        verses.append(verse)
         return verses
  
     
