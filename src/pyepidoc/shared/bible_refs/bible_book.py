@@ -81,3 +81,8 @@ class BibleBook:
 
     def __str__(self) -> str:
         return str(self._bk.value)
+    
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, BibleBook):
+            return self._bk == other._bk
+        return false
