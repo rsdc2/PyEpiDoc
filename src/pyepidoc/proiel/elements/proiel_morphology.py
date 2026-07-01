@@ -14,16 +14,16 @@ class ProielMorphology:
     
     @property
     def mood(self) -> str:
-        return self._elements[3]
+        return self._elements[3].lower()
     
     @property
     def morph_str(self) -> str:
-        return self.morph_str
+        return self.morph_str.lower()
 
     @property
     def tense(self) -> str:
-        return self._elements[2]
+        return self._elements[2].lower()
 
     @property
     def voice(self) -> str:
-        return self._elements[4]
+        return self._elements[4].lower()

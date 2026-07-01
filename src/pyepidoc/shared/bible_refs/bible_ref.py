@@ -8,6 +8,11 @@ class BibleRef:
     book: BibleBook
     chapter: int
     verse: int
+
+    def __init__(self, book: str, chapter: int, verse: int):
+        self.book = BibleBook(book)
+        self.chapter = chapter
+        self.verse = verse
     
     def verse_eq(self, other) -> bool:
         if not isinstance(other, BibleRef):
